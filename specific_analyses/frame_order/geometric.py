@@ -27,6 +27,7 @@ from copy import deepcopy
 from math import pi
 from numpy import array, dot, eye, float64, zeros
 import sys
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxFault
@@ -41,7 +42,9 @@ from lib.structure.internal.object import Internal
 from lib.structure.represent.cone import cone
 from lib.structure.represent.rotor import rotor
 from lib.text.sectioning import subsection, subsubsection
+from lib.warnings import RelaxWarning
 from pipe_control.structure.mass import pipe_centre_of_mass
+from specific_analyses.frame_order.checks import check_parameters
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
 
 
@@ -202,11 +205,6 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
                     cone_theta = cdp.cone_theta_sim[sim_indices[i]]
                 else:
                     cone_theta = cdp.cone_theta
-            elif hasattr(cdp, 'cone_s1'):
-                if sims:
-                    cone_theta = order_parameters.iso_cone_S_to_theta(cdp.cone_s1_sim[sim_indices[i]])
-                else:
-                    cone_theta = order_parameters.iso_cone_S_to_theta(cdp.cone_s1)
 
             # The object.
             cone_obj = Iso_cone(cone_theta)
@@ -409,7 +407,7 @@ def add_rotors(structure=None, representation=None, sims=False):
 
             # Get the CoM of the entire molecule to use as the centre of the rotor.
             if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
-                com.append(pipe_centre_of_mass(verbosity=0))
+                com.append(pipe_centre_of_mass(verbosity=0, missing_error=False))
             else:
                 com.append(pivot1)
 
@@ -519,7 +517,7 @@ def average_position(structure=None, models=None, sim=None):
                 euler_to_R_zyz(0.0, cdp.ave_pos_beta_sim[i], cdp.ave_pos_gamma_sim[i], R)
             else:
                 euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-        origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
+        origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0, missing_error=False)
         structure.rotate(R=R, origin=origin, model=models[i], selection=selection)
 
         # Then translate the moving domain.
@@ -549,6 +547,11 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, model=1, 
 
     # Printout.
     subsection(file=sys.stdout, text="Creating a PDB file with the moving domains shifted to the average position.")
+
+    # Checks.
+    if not hasattr(cdp, 'structure'):
+        warn(RelaxWarning("No structural data is present, cannot create the average position representation."))
+        return
 
     # Initialise.
     titles = []
@@ -632,6 +635,9 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
 
     # Printout.
     subsection(file=sys.stdout, text="Creating a PDB file containing a geometric object representing the frame order dynamics.")
+
+    # Checks.
+    check_parameters(escalate=2)
 
     # Initialise.
     titles = []
@@ -734,7 +740,7 @@ def generate_axis_system(sim_index=None):
     pivot = generate_pivot(order=1, sim_index=sim_index, pdb_limit=True)
 
     # The CoM of the system.
-    com = pipe_centre_of_mass(verbosity=0)
+    com = pipe_centre_of_mass(verbosity=0, missing_error=False)
 
     # The system for the rotor models.
     if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:

@@ -89,6 +89,9 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
     @type force:            bool
     """
 
+    # Store the current data pipe name.
+    original_pipe = pipes.cdp_name()
+
     # The model names, titles and directories, including axis permutations.
     models = []
     model_titles = []
@@ -123,20 +126,23 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
             continue
 
         # No file.
-        if not access(dirs[i]+sep+'results.bz2', F_OK):
+        found = False
+        for ext in ['.bz2', '', 'gz']:
+            file = dirs[i]+sep+'results'+ext
+            if access(file, F_OK):
+                found = True
+                break
+        if not found:
             continue
 
-        # Switch to the data pipe if it already exists.
-        if pipes.has_pipe(models[i]):
-            pipes.switch(models[i])
+        # Create a data pipe.
+        pipe_name = 'temp %s' % models[i]
+        if pipes.has_pipe(pipe_name):
+            pipes.delete(pipe_name)
+        pipes.create(pipe_name, 'frame order')
 
-        # Otherwise load the data.
-        else:
-            # Create a data pipe.
-            pipes.create(models[i], 'frame order')
-
-            # Load the data.
-            results.read(file='results', dir=dirs[i])
+        # Load the data.
+        results.read(file='results', dir=dirs[i])
 
         # SciPy quadratic integration has been used.
         if hasattr(cdp, 'quad_int') and cdp.quad_int:
@@ -151,6 +157,9 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
         count[models[i]] = cdp.sobol_points_used
         count_total[models[i]] = cdp.sobol_max_points
         percentage[models[i]] = "%10.3f" % (float(cdp.sobol_points_used) / float(cdp.sobol_max_points) * 100.0) + '%'
+
+        # Delete the temporary data pipe.
+        pipes.delete(pipe_name)
 
     # Initialise the output string.
     string = "Quasi-random Sobol' numerical PCS integration point counting:\n\n"
@@ -174,6 +183,10 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
     file = open_write_file(file_name=file_name, dir=dir, force=force)
     file.write(string)
     file.close()
+
+    # Switch back to the original data pipe, if it exists.
+    if original_pipe:
+        pipes.switch(original_pipe)
 
 
 def model_directory(model, base_dir=None):
@@ -212,6 +225,9 @@ def summarise(file_name='summary', dir=None, force=True):
     @keyword force:         A flag which if True will cause any preexisting file to be overwritten.
     @type force:            bool
     """
+
+    # Store the current data pipe name.
+    original_pipe = pipes.cdp_name()
 
     # The model names, titles and directories, including axis permutations.
     models = []
@@ -257,20 +273,23 @@ def summarise(file_name='summary', dir=None, force=True):
     contents2 = []
     for i in range(len(models)):
         # No file.
-        if not access(dirs[i]+sep+'results.bz2', F_OK):
+        found = False
+        for ext in ['.bz2', '', 'gz']:
+            file = dirs[i]+sep+'results'+ext
+            if access(file, F_OK):
+                found = True
+                break
+        if not found:
             continue
 
-        # Switch to the data pipe if it already exists.
-        if pipes.has_pipe(models[i]):
-            pipes.switch(models[i])
+        # Create a data pipe.
+        pipe_name = 'temp %s' % models[i]
+        if pipes.has_pipe(pipe_name):
+            pipes.delete(pipe_name)
+        pipes.create(pipe_name, 'frame order')
 
-        # Otherwise load the data.
-        else:
-            # Create a data pipe.
-            pipes.create(models[i], 'frame order')
-
-            # Load the data.
-            results.read(file='results', dir=dirs[i])
+        # Load the data.
+        results.read(file='results', dir=dirs[i])
 
         # Number of params.
         k = len(cdp.params)
@@ -297,7 +316,7 @@ def summarise(file_name='summary', dir=None, force=True):
 
         # Convert the axis alpha angle to spherical angles for comparison.
         if hasattr(cdp, 'axis_alpha') and cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
-            axis_theta, axis_phi = convert_axis_alpha_to_spherical(alpha=cdp.axis_alpha, pivot=generate_pivot(order=1, pipe_name=models[i]), point=pipe_centre_of_mass(verbosity=0))
+            axis_theta, axis_phi = convert_axis_alpha_to_spherical(alpha=cdp.axis_alpha, pivot=generate_pivot(order=1, pipe_name=pipe_name), point=pipe_centre_of_mass(verbosity=0))
             contents1[-1][5] = wrap_angles(axis_theta, 0.0, 2.0*pi)
             contents1[-1][6] = wrap_angles(axis_phi, 0.0, 2.0*pi)
 
@@ -338,6 +357,9 @@ def summarise(file_name='summary', dir=None, force=True):
         contents2[-1][8] = cdp.pivot_y
         contents2[-1][9] = cdp.pivot_z
 
+        # Delete the temporary data pipe.
+        pipes.delete(pipe_name)
+
     # Add the tables.
     string += format_table(headings=headings1, contents=contents1, custom_format=[None, None, "%.2f", "%.2f", "%.3f", "%.3f", "%.3f", "%.2f", "%.2f", "%.2f", "%.2f"])
     string += format_table(headings=headings2, contents=contents2, custom_format=[None, "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f"])
@@ -351,6 +373,10 @@ def summarise(file_name='summary', dir=None, force=True):
     file.write(string)
     file.close()
 
+    # Switch back to the original data pipe, if it exists.
+    if original_pipe:
+        pipes.switch(original_pipe)
+
 
 
 class Frame_order_analysis:
@@ -359,13 +385,13 @@ class Frame_order_analysis:
     # Debugging and test suite variables.
     _final_state = True
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, results_compress_type=0, rigid_grid_split=False, store_intermediate=True):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
         @type data_pipe_full:           str
-        @param data_pipe_subset:        The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.
-        @type data_pipe_subset:         str
+        @param data_pipe_subset:        The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.  This optional argument is used to massively speed up the analysis.
+        @type data_pipe_subset:         str or None
         @keyword pipe_bundle:           The data pipe bundle to associate all spawned data pipes with.
         @type pipe_bundle:              str
         @keyword results_dir:           The directory where files are saved in.
@@ -390,6 +416,12 @@ class Frame_order_analysis:
         @type brownian_snapshot:        int
         @keyword brownian_total:        The total argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
         @type brownian_total:           int
+        @keyword results_compress_type: The type of compression to use when creating the results files.  See the results.write user function for details.
+        @type results_compress_type:    int
+        @keyword rigid_grid_split:      A flag which if True will cause the grid search for the rigid model to be split so that the rotation is optimised first followed by the translation.  When combined with grid zooming, this can save optimisation time.  However it may result in the global minimum being missed.
+        @type rigid_grid_split:         bool
+        @keyword store_intermediate:    A flag which if True will cause all intermediate optimisation results to be stored in the 'intermediate_results' directory.  These can then be used for studying the optimisation settings or loaded for subsequent analyses.
+        @type store_intermediate:       bool
         """
 
         # Execution lock.
@@ -412,6 +444,9 @@ class Frame_order_analysis:
             self.brownian_step_size = brownian_step_size
             self.brownian_snapshot = brownian_snapshot
             self.brownian_total = brownian_total
+            self.results_compress_type = results_compress_type
+            self.rigid_grid_split = rigid_grid_split
+            self.store_intermediate = store_intermediate
 
             # Re-order the models to enable the parameter nesting protocol.
             self.models = self.reorder_models(models)
@@ -588,15 +623,17 @@ class Frame_order_analysis:
             raise RelaxError("The mc_sim_num user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
 
 
-    def custom_grid_incs(self, model, inc=None):
+    def custom_grid_incs(self, model, inc=None, pivot_search=True):
         """Set up a customised grid search increment number for each model.
 
-        @param model:   The frame order model.
-        @type model:    str
-        @keyword inc:   The number of grid search increments to use for each dimension.
-        @type inc:      int
-        @return:        The list of increment values.
-        @rtype:         list of int and None
+        @param model:           The frame order model.
+        @type model:            str
+        @keyword inc:           The number of grid search increments to use for each dimension.
+        @type inc:              int
+        @keyword pivot_search:  A flag which if False will prevent the pivot point from being included in the grid search.
+        @type pivot_search:     bool
+        @return:                The list of increment values.
+        @rtype:                 list of int and None
         """
 
         # Initialise the structure.
@@ -605,7 +642,7 @@ class Frame_order_analysis:
         # The pivot parameters.
         if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
             # Optimise the pivot for the rotor model.
-            if model == MODEL_ROTOR:
+            if pivot_search and model == MODEL_ROTOR:
                 incs += [inc, inc, inc]
 
             # Otherwise use preset values (copied from other models).
@@ -789,7 +826,7 @@ class Frame_order_analysis:
             pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
 
             # Copy the cone angle directly.
-            if model == MODEL_ISO_CONE_TORSIONLESS:
+            if model in [MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS]:
                 print("Obtaining the cone angle from the isotropic cone model.")
                 cdp.cone_theta = pipe.cone_theta
 
@@ -797,11 +834,6 @@ class Frame_order_analysis:
             elif model == MODEL_PSEUDO_ELLIPSE:
                 print("Obtaining the cone X angle from the isotropic cone model.")
                 cdp.cone_theta_x = pipe.cone_theta
-
-            # Convert to the order parameter S.
-            elif model == MODEL_ISO_CONE_FREE_ROTOR:
-                print("Obtaining the cone order parameter from the isotropic cone model.")
-                cdp.cone_s1 = iso_cone_theta_to_S(pipe.cone_theta)
 
         # The X and Y cone angles from the pseudo-ellipse model.
         elif model in [MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
@@ -904,7 +936,10 @@ class Frame_order_analysis:
             # Otherwise use the base data pipes.
             else:
                 # Create the data pipe using the full data set, and switch to it.
-                self.interpreter.pipe.copy(self.data_pipe_subset, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
+                if self.data_pipe_subset != None:
+                    self.interpreter.pipe.copy(self.data_pipe_subset, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
+                else:
+                    self.interpreter.pipe.copy(self.data_pipe_full, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
                 self.interpreter.pipe.switch(self.pipe_name_dict[model])
 
                 # Select the Frame Order model.
@@ -918,61 +953,25 @@ class Frame_order_analysis:
                 self.nested_params_order(model)
 
             # Optimisation using the PCS subset (skipped if a pre-run directory is supplied).
-            opt = self.opt_subset
-            if opt != None and not self.pre_run_flag:
-                # Printout.
-                subsubtitle(file=sys.stdout, text="Optimisation using the PCS subset")
+            if self.data_pipe_subset != None and self.opt_subset != None and not self.pre_run_flag:
+                self.optimisation(model=model, opt=self.opt_subset, pcs_text="PCS subset", intermediate_dir='pcs_subset')
 
-                # Zooming grid search.
-                for i in opt.loop_grid():
-                    # Set the zooming grid search level.
-                    zoom = opt.get_grid_zoom_level(i)
-                    if zoom != None:
-                        self.interpreter.minimise.grid_zoom(level=zoom)
+            # Operations if a subset was used, otherwise these are not needed.
+            if self.data_pipe_subset != None and self.data_pipe_full != None:
+                # Copy the PCS data.
+                self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
 
-                    # The numerical optimisation settings.
-                    self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
-                    self.sobol_setup(opt.get_grid_sobol_info(i))
+                # Reset the selection status.
+                for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
+                    # Get the spin from the original pipe.
+                    spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
 
-                    # Set up the custom grid increments.
-                    incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
-
-                    # Perform the grid search.
-                    self.interpreter.minimise.grid_search(inc=incs)
-
-                # Minimise (for the PCS data subset and full RDC set).
-                for i in opt.loop_min():
-                    # The numerical optimisation settings.
-                    self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
-                    self.sobol_setup(opt.get_min_sobol_info(i))
-
-                    # Perform the optimisation.
-                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
-
-            # Printout.
-            subsubtitle(file=sys.stdout, text="Optimisation using the full data set")
-
-            # Copy the PCS data.
-            self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
-
-            # Reset the selection status.
-            for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
-                # Get the spin from the original pipe.
-                spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
-
-                # Reset the spin selection.
-                spin.select = spin_orig.select
+                    # Reset the spin selection.
+                    spin.select = spin_orig.select
 
             # Optimisation using the full data set.
-            opt = self.opt_full
-            if opt != None:
-                for i in opt.loop_min():
-                    # The numerical optimisation settings.
-                    self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
-                    self.sobol_setup(opt.get_min_sobol_info(i))
-
-                    # Perform the optimisation.
-                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
+            if self.opt_full != None:
+                self.optimisation(model=model, opt=self.opt_full, pcs_text="full data set", intermediate_dir='all_data')
 
             # Results printout.
             self.print_results()
@@ -985,6 +984,86 @@ class Frame_order_analysis:
 
             # Perform the axis permutation analysis.
             self.axis_permutation_analysis(model=model)
+
+
+    def optimisation(self, model=None, opt=None, pcs_text=None, intermediate_dir=None):
+        """Perform the grid search and minimisation.
+
+        @keyword model:             The frame order model to optimise.
+        @type model:                str
+        @keyword opt:               The grid search, zooming grid search and minimisation settings object for optimisation of all models.
+        @type opt:                  Optimisation_settings instance
+        @keyword pcs_text:          The text to use in the title.  This is either about the PCS subset or full data set.
+        @type pcs_text:             str
+        @keyword intermediate_dir:  The directory for this PCS data set for storing the intermediate results.
+        @type intermediate_dir:     str
+        """
+
+        # Printout.
+        subsubtitle(file=sys.stdout, text="Optimisation using the %s" % pcs_text)
+
+        # Results directory stub for intermediate results.
+        intermediate_stub = self.results_dir + sep + 'intermediate_results' + sep + intermediate_dir
+
+        # Zooming grid search.
+        for i in opt.loop_grid():
+            # The intermediate results directory.
+            intermediate_dir = intermediate_stub + '_grid%i' % i
+
+            # Set the zooming grid search level.
+            zoom = opt.get_grid_zoom_level(i)
+            if zoom != None:
+                self.interpreter.minimise.grid_zoom(level=zoom)
+                intermediate_dir += '_zoom%i' % zoom
+
+            # Set up the custom grid increments.
+            incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i), pivot_search=opt.get_grid_pivot_search(i))
+            intermediate_dir += '_inc%i' % opt.get_grid_inc(i)
+
+            # The numerical optimisation settings.
+            quad_int = opt.get_grid_quad_int(i)
+            if quad_int:
+                self.interpreter.frame_order.quad_int(True)
+                intermediate_dir += '_quad_int'
+            else:
+                sobol_num = opt.get_grid_sobol_info(i)
+                self.sobol_setup(sobol_num)
+                intermediate_dir += '_sobol%i' % sobol_num[0]
+
+            # Perform the grid search.
+            self.interpreter.minimise.grid_search(inc=incs, skip_preset=False)
+
+            # Store the intermediate results and statistics.
+            if self.store_intermediate:
+                self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
+                count_sobol_points(dir=intermediate_dir, force=True)
+                summarise(dir=intermediate_dir, force=True)
+
+        # Minimisation.
+        for i in opt.loop_min():
+            # The intermediate results directory.
+            func_tol = opt.get_min_func_tol(i)
+            max_iter = opt.get_min_max_iter(i)
+            intermediate_dir = intermediate_stub + '_min%i_ftol%g_max_iter%i' % (i, func_tol, max_iter)
+
+            # The numerical optimisation settings.
+            quad_int = opt.get_min_quad_int(i)
+            if quad_int:
+                self.interpreter.frame_order.quad_int(True)
+                intermediate_dir += '_quad_int'
+            else:
+                sobol_num = opt.get_min_sobol_info(i)
+                self.sobol_setup(sobol_num)
+                intermediate_dir += '_sobol%i' % sobol_num[0]
+
+            # Perform the optimisation.
+            self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
+
+            # Store the intermediate results.
+            if self.store_intermediate:
+                self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
+                count_sobol_points(dir=intermediate_dir, force=True)
+                summarise(dir=intermediate_dir, force=True)
 
 
     def optimise_rigid(self):
@@ -1034,29 +1113,60 @@ class Frame_order_analysis:
         # Optimisation.
         opt = self.opt_rigid
         if opt != None:
-            # Split zooming grid search for the translation.
-            print("\n\nTranslation active - splitting the grid search and iterating.")
-            self.interpreter.value.set(param='ave_pos_x', val=0.0)
-            self.interpreter.value.set(param='ave_pos_y', val=0.0)
-            self.interpreter.value.set(param='ave_pos_z', val=0.0)
-            for i in opt.loop_grid():
-                # Set the zooming grid search level.
-                zoom = opt.get_grid_zoom_level(i)
-                if zoom != None:
-                    self.interpreter.minimise.grid_zoom(level=zoom)
+            # No grid search.
+            if not opt.has_grid():
+                # Set up the initial parameters.
+                print("\n\nNo grid search, so setting the translational and rotational parameters to zero.")
+                self.interpreter.value.set(param='ave_pos_x', val=0.0)
+                self.interpreter.value.set(param='ave_pos_y', val=0.0)
+                self.interpreter.value.set(param='ave_pos_z', val=0.0)
+                self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+                self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+                self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
 
-                # The numerical optimisation settings.
-                self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
-                self.sobol_setup(opt.get_grid_sobol_info(i))
+            # Grid search alternation.
+            elif self.rigid_grid_split:
+                # Split zooming grid search for the translation.
+                print("\n\nTranslation active - splitting the grid search and iterating.")
+                self.interpreter.value.set(param='ave_pos_x', val=0.0)
+                self.interpreter.value.set(param='ave_pos_y', val=0.0)
+                self.interpreter.value.set(param='ave_pos_z', val=0.0)
+                for i in opt.loop_grid():
+                    # Set the zooming grid search level.
+                    zoom = opt.get_grid_zoom_level(i)
+                    if zoom != None:
+                        self.interpreter.minimise.grid_zoom(level=zoom)
 
-                # The number of increments.
-                inc = opt.get_grid_inc(i)
+                    # The numerical optimisation settings.
+                    self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
+                    self.sobol_setup(opt.get_grid_sobol_info(i))
 
-                # First optimise the rotation.
-                self.interpreter.minimise.grid_search(inc=[None, None, None, inc, inc, inc], skip_preset=False)
+                    # The number of increments.
+                    inc = opt.get_grid_inc(i)
 
-                # Then the translation.
-                self.interpreter.minimise.grid_search(inc=[inc, inc, inc, None, None, None], skip_preset=False)
+                    # First optimise the rotation.
+                    self.interpreter.minimise.grid_search(inc=[None, None, None, inc, inc, inc], skip_preset=False)
+
+                    # Then the translation.
+                    self.interpreter.minimise.grid_search(inc=[inc, inc, inc, None, None, None], skip_preset=False)
+
+            # Normal grid search.
+            else:
+                for i in opt.loop_grid():
+                    # Set the zooming grid search level.
+                    zoom = opt.get_grid_zoom_level(i)
+                    if zoom != None:
+                        self.interpreter.minimise.grid_zoom(level=zoom)
+
+                    # The numerical optimisation settings.
+                    self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
+                    self.sobol_setup(opt.get_grid_sobol_info(i))
+
+                    # The number of increments.
+                    inc = opt.get_grid_inc(i)
+
+                    # Grid search
+                    self.interpreter.minimise.grid_search(inc=inc, skip_preset=False)
 
             # Minimise.
             for i in opt.loop_min():
@@ -1131,7 +1241,7 @@ class Frame_order_analysis:
             sys.stdout.write(format_vect % ('axis:', axis))
 
         # Frame ordering.
-        if hasattr(cdp, 'cone_theta_x') or hasattr(cdp, 'cone_theta_y') or hasattr(cdp, 'cone_theta') or hasattr(cdp, 'cone_s1') or hasattr(cdp, 'cone_sigma_max'):
+        if hasattr(cdp, 'cone_theta_x') or hasattr(cdp, 'cone_theta_y') or hasattr(cdp, 'cone_theta') or hasattr(cdp, 'cone_sigma_max'):
             sys.stdout.write("\nFrame ordering:\n")
         if hasattr(cdp, 'cone_theta_x'):
             sys.stdout.write(format_float % ('cone theta_x:', cdp.cone_theta_x))
@@ -1139,8 +1249,6 @@ class Frame_order_analysis:
             sys.stdout.write(format_float % ('cone theta_y:', cdp.cone_theta_y))
         if hasattr(cdp, 'cone_theta'):
             sys.stdout.write(format_float % ('cone theta:', cdp.cone_theta))
-        if hasattr(cdp, 'cone_s1'):
-            sys.stdout.write(format_float % ('cone s1:', cdp.cone_s1))
         if hasattr(cdp, 'cone_sigma_max'):
             sys.stdout.write(format_float % ('sigma_max:', cdp.cone_sigma_max))
 
@@ -1171,23 +1279,33 @@ class Frame_order_analysis:
         base_dir = self.results_dir
         if pre_run:
             base_dir = self.pre_run_dir
-        path = model_directory(model, base_dir=base_dir) + sep + 'results.bz2'
+        path = model_directory(model, base_dir=base_dir) + sep + 'results'
 
-        # The file does not exist.
-        if not access(path, F_OK):
-            return False
+        # Loop over the compression types.
+        found = False
+        for ext in ['.bz2', '', 'gz']:
+            # The full file name.
+            full_path = path + ext
 
-        # Create an empty data pipe.
-        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type='frame order')
+            # The file does not exist.
+            if not access(full_path, F_OK):
+                continue
 
-        # Read the results file.
-        self.interpreter.results.read(path)
+            # Create an empty data pipe.
+            self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type='frame order')
 
-        # Results printout.
-        self.print_results()
+            # Read the results file.
+            self.interpreter.results.read(full_path)
+
+            # Results printout.
+            self.print_results()
+
+            # The flag.
+            found = True
+            break
 
         # Success.
-        return True
+        return found
 
 
     def reorder_models(self, models=None):
@@ -1228,7 +1346,7 @@ class Frame_order_analysis:
         return new
 
 
-    def results_output(self, dir=None, model=None, results_file=True):
+    def results_output(self, dir=None, model=None, results_file=True, simulation=True):
         """Create visual representations of the frame order results for the given model.
 
         This will call the following user functions:
@@ -1249,6 +1367,8 @@ class Frame_order_analysis:
         @type model:            str
         @keyword results_file:  A flag which if True will cause a results file to be created via the results.write user function.
         @type results_file:     bool
+        @keyword simulation:    A flag which if True will allow the pseudo-Brownian frame order dynamics simulation to be run.
+        @type simulation:       bool
         """
 
         # Printout.
@@ -1260,7 +1380,7 @@ class Frame_order_analysis:
 
         # The results file.
         if results_file:
-            self.interpreter.results.write(dir=dir, force=True)
+            self.interpreter.results.write(dir=dir, compress_type=self.results_compress_type, force=True)
 
         # The RDC and PCS correlation plots.
         self.interpreter.rdc.corr_plot(dir=dir, force=True)
@@ -1277,7 +1397,8 @@ class Frame_order_analysis:
         script.close()
 
         # The pseudo-Brownian dynamics simulation.
-        self.interpreter.frame_order.simulate(dir=dir, step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+        if simulation:
+            self.interpreter.frame_order.simulate(dir=dir, step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
 
 
     def sobol_setup(self, info=None):
@@ -1320,6 +1441,7 @@ class Optimisation_settings:
         self._grid_sobol_max_points = []
         self._grid_sobol_oversample = []
         self._grid_quad_int = []
+        self._grid_pivot_search = []
 
         # Initialise some private structures for the minimisation.
         self._min_count = 0
@@ -1351,7 +1473,7 @@ class Optimisation_settings:
             raise RelaxError("The iteration index %i is too high, only %i minimisations are set up." % (i, self._min_count))
 
 
-    def add_grid(self, inc=None, zoom=None, sobol_max_points=None, sobol_oversample=None, quad_int=False):
+    def add_grid(self, inc=None, zoom=None, sobol_max_points=None, sobol_oversample=None, quad_int=False, pivot_search=True):
         """Add a grid search step.
 
         @keyword inc:               The grid search size (the number of increments per dimension).
@@ -1364,6 +1486,8 @@ class Optimisation_settings:
         @type sobol_oversample:     None or int
         @keyword quad_int:          The SciPy quadratic integration flag.  See the frame_order.quad_int user function for details.
         @type quad_int:             bool
+        @keyword pivot_search:      A flag which if False will prevent the pivot point from being included in the grid search.
+        @type pivot_search:         bool
         """
 
         # Value checking, as this will be set up by a user.
@@ -1379,6 +1503,7 @@ class Optimisation_settings:
         self._grid_sobol_max_points.append(sobol_max_points)
         self._grid_sobol_oversample.append(sobol_oversample)
         self._grid_quad_int.append(quad_int)
+        self._grid_pivot_search.append(pivot_search)
 
         # Increment the count.
         self._grid_count += 1
@@ -1435,6 +1560,22 @@ class Optimisation_settings:
 
         # Return the value.
         return self._grid_incs[i]
+
+
+    def get_grid_pivot_search(self, i):
+        """Return the pivot grid search flag.
+
+        @param i:   The grid search iteration from the loop_grid() method.
+        @type i:    int
+        @return:    The pivot grid search flag.
+        @rtype:     bool
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='grid')
+
+        # Return the value.
+        return self._grid_pivot_search[i]
 
 
     def get_grid_quad_int(self, i):
@@ -1563,6 +1704,21 @@ class Optimisation_settings:
 
         # Return the value.
         return self._min_sobol_max_points[i], self._min_sobol_oversample[i]
+
+
+    def has_grid(self):
+        """Is a grid search set up?
+
+        @return:    True if a grid search has been set up.
+        @rtype:     bool
+        """
+
+        # Grid information is present. 
+        if self._grid_count > 0:
+            return True
+
+        # No grid.
+        return False
 
 
     def loop_grid(self):

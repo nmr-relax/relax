@@ -65,7 +65,6 @@ class Base_script:
     EIGEN_BETA = None
     EIGEN_GAMMA = None
     CONE_THETA = None
-    CONE_S1 = None
     CONE_THETA_X = None
     CONE_THETA_Y = None
     CONE_SIGMA_MAX = None
@@ -178,7 +177,6 @@ class Base_script:
             'cone_theta_x',
             'cone_theta_y',
             'cone_theta',
-            'cone_s1',
             'cone_sigma_max',
             'cone_sigma_max_2'
         ]

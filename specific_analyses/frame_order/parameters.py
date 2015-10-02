@@ -128,27 +128,23 @@ def linear_constraints(scaling_matrix=None):
 
     In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter values, and b is a vector of scalars, these inequality constraints are::
 
-        | 1  0  0  0  0 |                        |   0    |
-        |               |                        |        |
-        |-1  0  0  0  0 |                        |  -pi   |
-        |               |                        |        |
-        | 0  1  0  0  0 |                        |   0    |
-        |               |                        |        |
-        | 0 -1  0  0  0 |     |   theta   |      |  -pi   |
-        |               |     |           |      |        |
-        | 0 -1  1  0  0 |     |  theta_x  |      |   0    |
-        |               |     |           |      |        |
-        | 0  0  1  0  0 |  .  |  theta_y  |  >=  |   0    |
-        |               |     |           |      |        |
-        | 0  0 -1  0  0 |     |    S      |      |  -pi   |
-        |               |     |           |      |        |
-        | 0  0  0  1  0 |     | sigma_max |      | -0.125 |
-        |               |                        |        |
-        | 0  0  0 -1  0 |                        |  -1    |
-        |               |                        |        |
-        | 0  0  0  0  1 |                        |   0    |
-        |               |                        |        |
-        | 0  0  0  0 -1 |                        |  -pi   |
+        | 1  0  0  0 |                        |   0    |
+        |            |                        |        |
+        |-1  0  0  0 |                        |  -pi   |
+        |            |                        |        |
+        | 0  1  0  0 |                        |   0    |
+        |            |     |   theta   |      |        |
+        | 0 -1  0  0 |     |           |      |  -pi   |
+        |            |     |  theta_x  |      |        |
+        | 0 -1  1  0 |  .  |           |  >=  |   0    |
+        |            |     |  theta_y  |      |        |
+        | 0  0  1  0 |     |           |      |   0    |
+        |            |     | sigma_max |      |        |
+        | 0  0 -1  0 |                        |  -pi   |
+        |            |                        |        |
+        | 0  0  0  1 |                        |   0    |
+        |            |                        |        |
+        | 0  0  0 -1 |                        |  -pi   |
 
     The pivot and average position constraints in the A.x >= b notation are::
 
@@ -237,17 +233,6 @@ def linear_constraints(scaling_matrix=None):
                         j = j + 1
 
 
-        # The order parameter.
-        if cdp.params[i] == 'cone_s1':
-            # -0.125 <= S <= 1.
-            A.append(zero_array * 0.0)
-            A.append(zero_array * 0.0)
-            A[j][i] = 1.0
-            A[j+1][i] = -1.0
-            b.append(-0.125 / scaling_matrix[i, i])
-            b.append(-1 / scaling_matrix[i, i])
-            j = j + 2
-
     # Convert to numpy data structures.
     A = array(A, float64)
     b = array(b, float64)
@@ -335,12 +320,9 @@ def update_model(verbosity=1):
         cdp.params.append('cone_theta_y')
 
     # Cone parameters - single isotropic angle or order parameter.
-    if cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_TORSIONLESS]:
+    if cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS]:
         updated.append("cone opening half-angles")
         cdp.params.append('cone_theta')
-    if cdp.model in [MODEL_ISO_CONE_FREE_ROTOR]:
-        updated.append("cone order parameter")
-        cdp.params.append('cone_s1')
 
     # Cone parameters - torsion angle.
     if cdp.model in [MODEL_DOUBLE_ROTOR, MODEL_ROTOR, MODEL_ISO_CONE, MODEL_PSEUDO_ELLIPSE]:

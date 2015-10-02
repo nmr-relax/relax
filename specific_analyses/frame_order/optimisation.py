@@ -26,13 +26,14 @@
 from math import cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
-from numpy import arccos, array, dot, float64, ones, zeros
+from numpy import arccos, array, dot, float64, ndarray, ones, zeros
 from numpy.linalg import inv, norm
 from re import search
 import sys
 from warnings import warn
 
 # relax module imports.
+from lib.check_types import is_float
 from lib.float import isNaN, isInf
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoPCSError, RelaxNoRDCError
 from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse_array
@@ -134,9 +135,7 @@ def count_sobol_points(target_fn=None, verbosity=1):
         cone_sigma_max = cdp.cone_sigma_max
 
     # The isotropic cone angle.
-    if cdp.model == MODEL_ISO_CONE_FREE_ROTOR:
-        cone_theta = order_parameters.iso_cone_S_to_theta(cdp.cone_s1)
-    elif not pe and 'theta' in dims:
+    if not pe and 'theta' in dims:
         cone_theta = cdp.cone_theta
 
     # Loop over the Sobol' points to count them.
@@ -263,12 +262,8 @@ def minimise_setup_atomic_pos(sim_index=None, verbosity=1):
             continue
 
         # A single atomic position.
-        if spin.pos.shape == (3,):
+        if (isinstance(spin.pos, list) or isinstance(spin.pos, ndarray)) and len(spin.pos) == 3 and is_float(spin.pos[0]):
             atomic_pos.append(spin.pos)
-
-        # A single model (rank-2 array of a single position).
-        elif spin.pos.shape == (1, 3):
-            atomic_pos.append(spin.pos[0])
 
         # Average multiple atomic positions.
         else:
@@ -282,15 +277,19 @@ def minimise_setup_atomic_pos(sim_index=None, verbosity=1):
 
             # The average position.
             ave_pos = zeros(3, float64)
+            count = 0
             for i in range(len(spin.pos)):
+                if spin.pos[i] == None:
+                    continue
                 ave_pos += spin.pos[i]
-            ave_pos = ave_pos / len(spin.pos)
+                count += 1
+            ave_pos = ave_pos / float(count)
 
             # Store.
             atomic_pos.append(ave_pos)
 
     # Give a warning about the atomic position averaging.
-    if verbosity and len(ave_warning_spin_ids):
+    if verbosity and ave_warning_num != 1 and len(ave_warning_spin_ids):
         warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spins %s." % (ave_warning_num, ave_warning_spin_ids)))
 
     # Convert to numpy objects.
@@ -768,6 +767,10 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling_matrix=None, unset
     @type unset_fail:           bool
     """
 
+    # Model printout.
+    if verbosity:
+        print("Frame order model:  %s" % cdp.model)
+
     # Assemble the parameter vector.
     param_vector = assemble_param_vector(sim_index=sim_index, unset_fail=unset_fail)
 
@@ -904,10 +907,6 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
             obj = getattr(cdp, cdp.params[i]+'_sim')
             obj[sim_index] = param_vector[i]
 
-            # Order parameter to angle conversion.
-            if cdp.params[i] == 'cone_s1':
-                cdp.cone_theta_sim[sim_index] = order_parameters.iso_cone_S_to_theta(param_vector[i])
-
         # Optimisation stats.
         cdp.chi2_sim[sim_index] = func
         cdp.iter_sim[sim_index] = iter_count
@@ -928,10 +927,6 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
 
             # Store the value.
             setattr(cdp, cdp.params[i], param_vector[i])
-
-            # Order parameter to angle conversion.
-            if cdp.params[i] == 'cone_s1':
-                cdp.cone_theta = order_parameters.iso_cone_S_to_theta(param_vector[i])
 
         # Optimisation stats.
         cdp.chi2 = func

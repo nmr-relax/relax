@@ -442,7 +442,7 @@ def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, to
         pivot[i] = generate_pivot(order=i+1, pdb_limit=True)
 
     # Shift to the average position.
-    average_position(structure=structure, models=[1])
+    average_position(structure=structure, models=[None])
 
     # The motional eigenframe.
     frame = generate_axis_system()

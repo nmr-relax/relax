@@ -274,15 +274,6 @@ class Frame_order(API_base, API_common):
         else:
             text += "simulation %i." % sim
 
-        # Isotropic order parameter out of range.
-        if name == 'cone_s1' and hasattr(cdp, 'cone_s1'):
-            if cdp.cone_s1 > 1.0:
-                print(text % ("cone S1 order", cdp.cone_s1, "greater", 1.0))
-                return True
-            if cdp.cone_s1 < -0.125:
-                print(text % ("cone S1 order", cdp.cone_s1, "less", -0.125))
-                return True
-
         # Isotropic cone angle out of range.
         if name == 'cone_theta' and hasattr(cdp, 'cone_theta'):
             if cdp.cone_theta >= pi:

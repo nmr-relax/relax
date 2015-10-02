@@ -176,24 +176,28 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The pseudo-elliptic frame order models consist of multiple solutions as the optimisation space contains multiple local minima.  Because of the constraint cone_theta_x <= cone_theta_y, there are exactly three local minima (out of 6 possible permutations).  These correspond to permutations of the motional system - the eigenframe x, y and z-axes as well as the cone opening angles cone_theta_x, cone_theta_y, and cone_sigma_max associated with these axes.  But as the mechanics of the cone angles is not identical to that of the torsion angle, only one of the three local minima is the global minimum.")
+uf.desc[-1].add_paragraph("The isotropic and pseudo-elliptic cone frame order models consist of multiple solutions as the optimisation space contains multiple local minima.  Because of the constraint cone_theta_x <= cone_theta_y in the pseudo-ellipse model, there are exactly three local minima (out of 6 possible permutations).  However the cone_theta_x == cone_theta_y condition of the isotropic cone collapses this to two minima.  The multiple minima correspond to permutations of the motional system - the eigenframe x, y and z-axes as well as the cone opening angles cone_theta_x, cone_theta_y, and cone_sigma_max associated with these axes.  But as the mechanics of the cone angles is not identical to that of the torsion angle, only one of the three local minima is the global minimum.")
 uf.desc[-1].add_paragraph("When optimising the pseudo-elliptic models, specifically the '%s' and '%s' model, any of the three local minima can be found.  Convergence to the global minimum is not guaranteed.  Therefore this user function can be used to permute the motional system to jump from one local minimum to the other.  Optimisation will be required as the permuted parameters will not be exactly at the minimum." % (MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS))
 table = uf_tables.add_table(label="table: frame_order.permute_axes combinations", caption="The motional eigenframe permutations for the frame_order.permute_axes user function.", caption_short="The permutations for the frame_order.permute_axes user function.")
-table.add_headings(["Permutation ",  "Axis inversion", "If x < y < z", "If x < z < y", "If z < x < y"])
-table.add_row([     "[x', y', z']", "      z        ", "    Self    ", "    Self    ", "    Self    "])
-table.add_row([     "[x', z', y']", "     -z        ", "     A      ", "     A      ", "     x      "])
-table.add_row([     "[y', x', z']", "     -z        ", "     x      ", "     x      ", "     x      "])
-table.add_row([     "[y', z', x']", "      z        ", "     B      ", "     x      ", "     x      "])
-table.add_row([     "[z', x', y']", "      z        ", "     x      ", "     x      ", "     A      "])
-table.add_row([     "[z', y', x']", "     -z        ", "     x      ", "     B      ", "     B      "])
+table.add_headings(["Condition", "Permutation name", "Cone angles", "Axes"])
+table.add_row(["x < y < z", "Self", "[x, y, z]", "[x, y, z]"])
+table.add_row(["         ", " A  ", "[x, z, y]", "[-z, y, x]"])
+table.add_row(["         ", " B  ", "[y, z, x]", "[z, x, y]"])
+table.add_row(["x < z < y", "Self", "[x, y, z]", "[x, y, z]"])
+table.add_row(["         ", " A  ", "[x, z, y]", "[-z, y, x]"])
+table.add_row(["         ", " B  ", "[z, y, x]", "[x, -z, y]"])
+table.add_row(["z < x < y", "Self", "[x, y, z]", "[x, y, z]"])
+table.add_row(["         ", " A  ", "[z, x, y]", "[y, z, x]"])
+table.add_row(["         ", " B  ", "[z, y, x]", "[x, -z, y]"])
 uf.desc[-1].add_table(table.label)
+uf.desc[-1].add_paragraph("In this table, the condition and cone angle values [x, y, z] correspond to cone_theta_x, cone_theta_y, and cone_sigma_max.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("For combination 'A', simply type:")
 uf.desc[-1].add_prompt("relax> frame_order.permute_axes('A')")
 uf.backend = permute_axes
 uf.menu_text = "per&mute_axes"
-uf.wizard_height_desc = 550
+uf.wizard_height_desc = 580
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
@@ -250,7 +254,7 @@ uf.title = "Turn the high precision quadratic integration on or off."
 uf.title_short = "Quadratic integration."
 uf.add_keyarg(
     name = "flag",
-    default = False,
+    default = True,
     py_type = "bool",
     desc_short = "flag",
     desc = "The flag with if True  will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration."

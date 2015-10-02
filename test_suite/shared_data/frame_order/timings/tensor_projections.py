@@ -11,7 +11,7 @@ sys.path.append(pardir+sep+pardir+sep+pardir+sep+pardir+sep)
 def proj1(vect, A, N=1, verb=True):
     d = zeros(len(vect), float64)
     for i in range(N):
-        for j in xrange(len(vect)):
+        for j in range(len(vect)):
             d[j] = dot(vect[j], dot(A, vect[j]))
     if verb:
         print("\n1st projection - element by element r[i].A.r[i].")
@@ -50,7 +50,7 @@ def proj5(vect, A, N=1, verb=True):
     for i in range(N):
         vect2 = vect**2
         double_vect = 2.0 * vect
-        for j in xrange(len(vect)):
+        for j in range(len(vect)):
             d[j] = vect2[j][0]*A[0, 0] + vect2[j][1]*A[1, 1] + vect2[j][2]*(A[2, 2]) + double_vect[j][0]*vect[j][1]*A[0, 1] + double_vect[j][0]*vect[j][2]*A[0, 2] + double_vect[j][1]*vect[j][2]*A[1, 2]
     if verb:
         print("\n5th projection - expansion and sum.")

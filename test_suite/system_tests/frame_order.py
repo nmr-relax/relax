@@ -207,7 +207,7 @@ class Frame_order(SystemTestCase):
 
         # Minimisation info.
         string = string + "\n"
-        for param in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z', 'ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi', 'cone_theta_x', 'cone_theta_y', 'cone_theta', 'cone_s1', 'cone_sigma_max', 'cone_sigma_max_2']:
+        for param in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z', 'ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi', 'cone_theta_x', 'cone_theta_y', 'cone_theta', 'cone_sigma_max', 'cone_sigma_max_2']:
             if hasattr(cdp, param):
                 obj = getattr(cdp, param)
                 string = string + "%-15s %30.17g\n" % (param, obj)
@@ -302,7 +302,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -345,7 +345,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -388,7 +388,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -431,7 +431,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -472,7 +472,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -513,7 +513,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -1609,6 +1609,39 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
+    def test_pdb_model_rotor(self):
+        """Check the PDB file created by the frame_order.pdb_model user function for the rotor model."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('rotor')
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_theta', val=0.5)
+        self.interpreter.value.set(param='axis_phi', val=0.1)
+        self.interpreter.value.set(param='cone_theta', val=0.1)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=[1, 0, 0], fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
+
+        # Read the contents of the file.
+        file = open(ds.tmpfile)
+        lines = file.readlines()
+        file.close()
+
+
     def test_pseudo_ellipse_zero_cone_angle(self):
         """Catch for a bug in optimisation when the cone_theta_x is set to zero in the pseudo-ellipse models."""
 
@@ -1650,7 +1683,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 212124.83278674766)
+        self.assertAlmostEqual(cdp.chi2, 212124.83317383687)
 
 
     def test_rigid_data_to_iso_cone_free_rotor_model(self):
@@ -1663,7 +1696,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 22295.503345237757)
+        self.assertAlmostEqual(cdp.chi2, 22295.500553417492)
 
 
     def test_rigid_data_to_iso_cone_model(self):
@@ -1741,7 +1774,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 0.011378666767745968)
+        self.assertAlmostEqual(cdp.chi2, 0.011377491600681364)
 
 
     def test_sobol_setup(self):

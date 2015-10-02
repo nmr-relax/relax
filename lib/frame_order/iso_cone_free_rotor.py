@@ -26,68 +26,63 @@
 from math import cos
 
 # relax module imports.
-from lib.order import order_parameters
 from lib.frame_order.matrix_ops import rotate_daeg
 
 
-def compile_2nd_matrix_iso_cone_free_rotor(matrix, Rx2_eigen, s1):
+def compile_1st_matrix_iso_cone_free_rotor(matrix, R_eigen, tmax):
+    """Generate the 1st degree Frame Order matrix for the free rotor isotropic cone.
+
+    @param matrix:  The Frame Order matrix, 1st degree to be populated.
+    @type matrix:   numpy 3D, rank-2 array
+    @param R_eigen: The eigenframe rotation matrix.
+    @type R_eigen:  numpy 3D, rank-2 array
+    @param tmax:    The cone opening angle.
+    @type tmax:     float
+    """
+
+    # Zeros.
+    matrix[:] = 0.0
+
+    # Diagonal values.
+    matrix[2, 2] = cos(tmax) + 1.0
+
+    # Rotate and return the frame order matrix.
+    return 0.5 * rotate_daeg(matrix, R_eigen)
+
+
+def compile_2nd_matrix_iso_cone_free_rotor(matrix, Rx2_eigen, tmax):
     """Generate the rotated 2nd degree Frame Order matrix for the free rotor isotropic cone.
 
-    The cone axis is assumed to be parallel to the z-axis in the eigenframe.  In this model, the three order parameters are defined as::
-
-        S1 = S2,
-        S3 = 0
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
 
 
     @param matrix:      The Frame Order matrix, 2nd degree to be populated.
     @type matrix:       numpy 9D, rank-2 array
     @param Rx2_eigen:   The Kronecker product of the eigenframe rotation matrix with itself.
     @type Rx2_eigen:    numpy 9D, rank-2 array
-    @param s1:          The cone order parameter.
-    @type s1:           float
-    """
-
-    # Populate the Frame Order matrix in the eigenframe.
-    populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1)
-
-    # Rotate and return the frame order matrix.
-    return rotate_daeg(matrix, Rx2_eigen)
-
-
-def populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1):
-    """Populate the 2nd degree Frame Order matrix in the eigenframe for the free rotor isotropic cone.
-
-    The cone axis is assumed to be parallel to the z-axis in the eigenframe.  In this model, the three order parameters are defined as::
-
-        S1 = S2,
-        S3 = 0
-
-    This is in the Kronecker product form.
-
-
-    @param matrix:  The Frame Order matrix, 2nd degree.
-    @type matrix:   numpy 9D, rank-2 array
-    @param s1:      The cone order parameter.
-    @type s1:       float
+    @param tmax:        The cone opening angle.
+    @type tmax:         float
     """
 
     # Zeros.
     matrix[:] = 0.0
 
-    # The c11^2, c22^2, c12^2, and c21^2 elements.
-    matrix[0, 0] = matrix[4, 4] = (s1 + 2.0) / 6.0
+    # Repetitive trig calculations.
+    cos_tmax = cos(tmax)
+    cos_tmax2 = cos_tmax**2
+
+    # Diagonal.
+    matrix[0, 0] = matrix[4, 4] = (cos_tmax2 + cos_tmax + 4.0) / 12.0
+    matrix[1, 1] = matrix[3, 3] = (cos_tmax + 1.0) / 4.0
+    matrix[8, 8] = (cos_tmax2 + cos_tmax + 1.0) / 3.0
+
+    # Off diagonal set 1.
     matrix[0, 4] = matrix[4, 0] = matrix[0, 0]
-
-    # The c33^2 element.
-    matrix[8, 8] = (2.0*s1 + 1.0) / 3.0
-
-    # The c13^2, c31^2, c23^2, c32^2 elements.
-    matrix[0, 8] = matrix[8, 0] = (1.0 - s1) / 3.0
+    matrix[0, 8] = matrix[8, 0] = -(cos_tmax2 + cos_tmax - 2.0) / 6.0
     matrix[4, 8] = matrix[8, 4] = matrix[0, 8]
 
-    # Calculate the cone angle.
-    theta = order_parameters.iso_cone_S_to_theta(s1)
-
-    # The c11.c22 and c12.c21 elements.
-    matrix[1, 1] = matrix[3, 3] = (cos(theta) + 1.0) / 4.0
+    # Off diagonal set 2.
     matrix[1, 3] = matrix[3, 1] = -matrix[1, 1]
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, Rx2_eigen)

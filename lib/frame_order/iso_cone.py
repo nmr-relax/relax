@@ -34,6 +34,35 @@ except ImportError:
 from lib.frame_order.matrix_ops import pcs_pivot_motion_full_qr_int, pcs_pivot_motion_full_quad_int, rotate_daeg
 
 
+def compile_1st_matrix_iso_cone(matrix, R_eigen, cone_theta, sigma_max):
+    """Generate the 1st degree Frame Order matrix for the isotropic cone.
+
+    @param matrix:      The Frame Order matrix, 1st degree to be populated.
+    @type matrix:       numpy 3D, rank-2 array
+    @param R_eigen:     The eigenframe rotation matrix.
+    @type R_eigen:      numpy 3D, rank-2 array
+    @param cone_theta:  The cone opening angle.
+    @type cone_theta:   float
+    @param sigma_max:   The maximum torsion angle.
+    @type sigma_max:    float
+    """
+
+    # Zeros.
+    matrix[:] = 0.0
+
+    # Pre-calculate trig values.
+    sinc_sigma_max = sinc(sigma_max/pi)
+    cos_theta = cos(cone_theta)
+
+    # Diagonal values.
+    matrix[0, 0] = sinc_sigma_max * (cos_theta + 3.0)
+    matrix[1, 1] = matrix[0, 0]
+    matrix[2, 2] = 2.0*cos_theta + 2.0
+
+    # Rotate and return the frame order matrix.
+    return 0.25 * rotate_daeg(matrix, R_eigen)
+
+
 def compile_2nd_matrix_iso_cone(matrix, Rx2_eigen, cone_theta, sigma_max):
     """Generate the rotated 2nd degree Frame Order matrix for the isotropic cone.
 
@@ -49,8 +78,40 @@ def compile_2nd_matrix_iso_cone(matrix, Rx2_eigen, cone_theta, sigma_max):
     @type sigma_max:    float
     """
 
-    # Populate the Frame Order matrix in the eigenframe.
-    populate_2nd_eigenframe_iso_cone(matrix, cone_theta, sigma_max)
+    # Zeros.
+    matrix[:] = 0.0
+
+    # Repetitive trig calculations.
+    sinc_smax = sinc(sigma_max/pi)
+    sinc_2smax = sinc(2.0*sigma_max/pi)
+    cos_tmax = cos(cone_theta)
+    cos_tmax2 = cos_tmax**2
+
+    # Larger factors.
+    fact_sinc_2smax = sinc_2smax*(cos_tmax2 + 4.0*cos_tmax + 7.0) / 24.0
+    fact_cos_tmax2 = (cos_tmax2 + cos_tmax + 4.0) / 12.0
+    fact_cos_tmax = (cos_tmax + 1.0) / 4.0
+
+    # Diagonal.
+    matrix[0, 0] = fact_sinc_2smax  +  fact_cos_tmax2
+    matrix[1, 1] = fact_sinc_2smax  +  fact_cos_tmax
+    matrix[2, 2] = sinc_smax * (2.0*cos_tmax2 + 5.0*cos_tmax + 5.0) / 12.0
+    matrix[3, 3] = matrix[1, 1]
+    matrix[4, 4] = matrix[0, 0]
+    matrix[5, 5] = matrix[2, 2]
+    matrix[6, 6] = matrix[2, 2]
+    matrix[7, 7] = matrix[2, 2]
+    matrix[8, 8] = (cos_tmax2 + cos_tmax + 1.0) / 3.0
+
+    # Off diagonal set 1.
+    matrix[0, 4] = matrix[4, 0] = -fact_sinc_2smax  +  fact_cos_tmax2
+    matrix[0, 8] = matrix[8, 0] = -(cos_tmax2 + cos_tmax - 2.0) / 6.0
+    matrix[4, 8] = matrix[8, 4] = matrix[0, 8]
+
+    # Off diagonal set 2.
+    matrix[1, 3] = matrix[3, 1] = fact_sinc_2smax  -  fact_cos_tmax
+    matrix[2, 6] = matrix[6, 2] = sinc_smax * (cos_tmax2 + cos_tmax - 2.0) / 6.0
+    matrix[5, 7] = matrix[7, 5] = matrix[2, 6]
 
     # Rotate and return the frame order matrix.
     return rotate_daeg(matrix, Rx2_eigen)
@@ -175,71 +236,3 @@ def pcs_numeric_quad_int_iso_cone(theta_max=None, sigma_max=None, c=None, r_pivo
 
     # Return the value.
     return c * result[0] / SA
-
-
-def populate_1st_eigenframe_iso_cone(matrix, angle):
-    """Populate the 1st degree Frame Order matrix in the eigenframe for an isotropic cone.
-
-    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
-
-    @param matrix:  The Frame Order matrix, 1st degree.
-    @type matrix:   numpy 3D, rank-2 array
-    @param angle:   The cone angle.
-    @type angle:    float
-    """
-
-    # Zeros.
-    matrix[:] = 0.0
-
-    # The c33 element.
-    matrix[2, 2] = (cos(angle) + 1.0) / 2.0
-
-
-def populate_2nd_eigenframe_iso_cone(matrix, tmax, smax):
-    """Populate the 2nd degree Frame Order matrix in the eigenframe for the isotropic cone.
-
-    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
-
-
-    @param matrix:  The Frame Order matrix, 2nd degree.
-    @type matrix:   numpy 9D, rank-2 array
-    @param tmax:    The cone opening angle.
-    @type tmax:     float
-    @param smax:    The maximum torsion angle.
-    @type smax:     float
-    """
-
-    # Zeros.
-    matrix[:] = 0.0
-
-    # Repetitive trig calculations.
-    sinc_smax = sinc(smax/pi)
-    sinc_2smax = sinc(2.0*smax/pi)
-    cos_tmax = cos(tmax)
-    cos_tmax2 = cos_tmax**2
-
-    # Larger factors.
-    fact_sinc_2smax = sinc_2smax*(cos_tmax2 + 4.0*cos_tmax + 7.0) / 24.0
-    fact_cos_tmax2 = (cos_tmax2 + cos_tmax + 4.0) / 12.0
-    fact_cos_tmax = (cos_tmax + 1.0) / 4.0
-
-    # Diagonal.
-    matrix[0, 0] = fact_sinc_2smax  +  fact_cos_tmax2
-    matrix[1, 1] = fact_sinc_2smax  +  fact_cos_tmax
-    matrix[2, 2] = sinc_smax * (2.0*cos_tmax2 + 5.0*cos_tmax + 5.0) / 12.0
-    matrix[3, 3] = matrix[1, 1]
-    matrix[4, 4] = matrix[0, 0]
-    matrix[5, 5] = matrix[2, 2]
-    matrix[6, 6] = matrix[2, 2]
-    matrix[7, 7] = matrix[2, 2]
-    matrix[8, 8] = (cos_tmax2 + cos_tmax + 1.0) / 3.0
-
-    # Off diagonal set 1.
-    matrix[0, 4] = matrix[4, 0] = -fact_sinc_2smax  +  fact_cos_tmax2
-    matrix[0, 8] = matrix[8, 0] = -(cos_tmax2 + cos_tmax - 2.0) / 6.0
-    matrix[4, 8] = matrix[8, 4] = matrix[0, 8]
-
-    # Off diagonal set 2.
-    matrix[1, 3] = matrix[3, 1] = fact_sinc_2smax  -  fact_cos_tmax
-    matrix[2, 6] = matrix[6, 2] = sinc_smax * (cos_tmax2 + cos_tmax - 2.0) / 6.0
-    matrix[5, 7] = matrix[7, 5] = matrix[2, 6]

@@ -13,7 +13,7 @@ AVE_POS_BETA = 0.19740471457956135
 AVE_POS_GAMMA = 4.6622313104265416
 AXIS_THETA = 0.96007997859534299767
 AXIS_PHI = 4.03227550621962294031
-CONE_S1 = iso_cone_theta_to_S(1.0)
+CONE_THETA = 1.0
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -90,7 +90,7 @@ value.set(param='ave_pos_beta', val=AVE_POS_BETA)
 value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
 value.set(param='axis_theta', val=AXIS_THETA)
 value.set(param='axis_phi', val=AXIS_PHI)
-value.set(param='cone_s1', val=CONE_S1)
+value.set(param='cone_theta', val=CONE_THETA)
 minimise.calculate()
 frame_order.quad_int(flag=False)
 

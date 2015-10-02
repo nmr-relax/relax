@@ -51,7 +51,7 @@ def check4(flags, N=1, verb=True):
 def check5(flags, N=1, verb=True):
     for i in range(N):
         flag = False
-        for i in xrange(len(flags)):
+        for i in range(len(flags)):
             if flags[i] == 0:
                 flag = True
                 break

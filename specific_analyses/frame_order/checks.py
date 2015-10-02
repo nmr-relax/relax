@@ -51,7 +51,7 @@ def check_domain(domain=None, escalate=0):
     if not hasattr(cdp, 'domain'):
         defined = False
         msg = "No domains have been defined.  Please use the domain user function."
-    if domain != None and domain not in list(cdp.domain.keys()):
+    if domain != None and domain not in cdp.domain:
         defined = False
         msg = "The domain '%s' has not been defined.  Please use the domain user function." % domain
 
