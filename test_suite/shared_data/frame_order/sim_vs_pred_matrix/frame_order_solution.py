@@ -1,16 +1,14 @@
 # relax script!
 
 # Python module imports.
-from math import cos, pi, sin, sqrt
-from numpy import array, cross, dot, eye, float64, outer, transpose, zeros
-from numpy.linalg import det, inv, norm
+from math import pi
+from numpy import array, cross, eye, float64, zeros
+from numpy.linalg import norm
 from string import lower
-import sys
 
 # relax module imports.
 from lib.errors import RelaxError
 from lib.frame_order import double_rotor, free_rotor, iso_cone, iso_cone_free_rotor, iso_cone_torsionless, pseudo_ellipse, pseudo_ellipse_free_rotor, pseudo_ellipse_torsionless, rotor
-from lib.geometry.angles import wrap_angles
 from lib.linear_algebra.kronecker_product import kron_prod
 
 # Variables.

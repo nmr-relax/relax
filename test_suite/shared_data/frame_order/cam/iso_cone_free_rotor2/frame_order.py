@@ -3,9 +3,6 @@
 # Python module imports.
 from numpy import array
 
-# relax module imports.
-from lib.order.order_parameters import iso_cone_theta_to_S
-
 
 # The real parameter values.
 AVE_POS_X = -13.9092836985788

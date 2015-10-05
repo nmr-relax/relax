@@ -2,8 +2,7 @@
 # These 2 solutions should mimic the rotor solution.
 
 # Python module imports.
-from numpy import array, cross, float64, transpose, zeros
-from numpy.linalg import norm
+from numpy import float64, zeros
 import sys
 
 # relax module imports.

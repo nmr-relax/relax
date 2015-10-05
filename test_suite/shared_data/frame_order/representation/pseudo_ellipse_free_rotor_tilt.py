@@ -1,8 +1,6 @@
-from numpy import array, float64, zeros
+from numpy import float64, zeros
 
-from lib.geometry.coord_transform import cartesian_to_spherical
 from lib.geometry.rotations import euler_to_R_zyz
-from lib.frame_order.conversions import create_rotor_axis_spherical
 
 
 # Create the data pipe.
