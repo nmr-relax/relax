@@ -58,7 +58,9 @@ EXCEPTIONS = {
     'test_suite/shared_data/dispersion/profiling/profiling_tap03.py': ['cluster', 'single'],
     'test_suite/shared_data/dispersion/profiling/profiling_tsmfk01.py': ['cluster', 'single'],
     'test_suite/shared_data/dispersion/profiling/profiling_tp02.py': ['cluster', 'single'],
-    'test_suite/shared_data/dispersion/profiling/profiling_m61.py': ['cluster', 'single']
+    'test_suite/shared_data/dispersion/profiling/profiling_m61.py': ['cluster', 'single'],
+    'test_suite/unit_tests/_lib/_geometry/test_rotations.py': ['axis_angle_to_euler_xyx', 'axis_angle_to_euler_xyz', 'axis_angle_to_euler_xzx', 'axis_angle_to_euler_xzy', 'axis_angle_to_euler_yxy', 'axis_angle_to_euler_yxz', 'axis_angle_to_euler_yzx', 'axis_angle_to_euler_yzy', 'axis_angle_to_euler_zxy', 'axis_angle_to_euler_zxz', 'axis_angle_to_euler_zyx', 'axis_angle_to_euler_zyz', 'euler_to_axis_angle_xyx', 'euler_to_axis_angle_xyz', 'euler_to_axis_angle_xzx', 'euler_to_axis_angle_xzy', 'euler_to_axis_angle_yxy', 'euler_to_axis_angle_yxz', 'euler_to_axis_angle_yzx', 'euler_to_axis_angle_yzy', 'euler_to_axis_angle_zxy', 'euler_to_axis_angle_zxz', 'euler_to_axis_angle_zyx', 'euler_to_axis_angle_zyz', 'euler_to_R_xyx', 'euler_to_R_xyz', 'euler_to_R_xzx', 'euler_to_R_xzy', 'euler_to_R_yxy', 'euler_to_R_yxz', 'euler_to_R_yzx', 'euler_to_R_yzy', 'euler_to_R_zxy', 'euler_to_R_zxz', 'euler_to_R_zyx', 'euler_to_R_zyz', 'R_to_euler_xyx', 'R_to_euler_xyz', 'R_to_euler_xzx', 'R_to_euler_xzy', 'R_to_euler_yxy', 'R_to_euler_yxz', 'R_to_euler_yzx', 'R_to_euler_yzy', 'R_to_euler_zxy', 'R_to_euler_zxz', 'R_to_euler_zyx', 'R_to_euler_zyz'],
+    'test_suite/unit_tests/_lib/test_regex.py': ['regex']
 }
 
 
