@@ -396,7 +396,10 @@ class Pcs(SystemTestCase):
                 if i == 1 and j == 1:
                     self.assert_(not hasattr(spin, 'pcs'))
                 else:
-                    self.assertAlmostEqual(pcs[i][j], spin.pcs['tb'])
+                    if pcs[i][j] == None:
+                        self.assertEqual(pcs[i][j], spin.pcs['tb'])
+                    else:
+                        self.assertAlmostEqual(pcs[i][j], spin.pcs['tb'])
                 j += 1
 
 
@@ -455,11 +458,12 @@ class Pcs(SystemTestCase):
                 if i == 1 and j == 1:
                     self.assert_(not hasattr(spin, 'pcs'))
                 else:
-                    self.assertAlmostEqual(pcs[i][j], spin.pcs['tb'])
-                    if pcs[i][j] != None:
-                        self.assertAlmostEqual(pcs[i][j]+1.0, spin.pcs_bc['tb'])
-                    else:
+                    if pcs[i][j] == None:
+                        self.assertEqual(None, spin.pcs['tb'])
                         self.assertEqual(None, spin.pcs_bc['tb'])
+                    else:
+                        self.assertAlmostEqual(pcs[i][j], spin.pcs['tb'])
+                        self.assertAlmostEqual(pcs[i][j]+1.0, spin.pcs_bc['tb'])
                 j += 1
 
 
