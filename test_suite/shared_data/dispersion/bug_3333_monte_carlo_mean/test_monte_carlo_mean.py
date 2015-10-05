@@ -1,6 +1,6 @@
 # Python imports
 import numpy as np
-import numpy.lib.recfunctions 
+from numpy.lib import recfunctions 
 import pandas as pd
 import sys
 import matplotlib.pyplot as plt
@@ -145,16 +145,16 @@ for ref_val, ni_val, t in means:
     ## https://en.wikipedia.org/wiki/Welch%27s_t_test#Calculations
     print ref_val, ni_val, t
     t_w = np.abs( (data[ref_val] - data[ni_val])/np.sqrt(data['ref_err']**2/ref_n + data['ni_err']**2/ni_n) )
-    data = np.lib.recfunctions.append_fields(data, 't_w_%s'%t, t_w, dtypes=data['ni_val'].dtype, usemask=False, asrecarray=True)
+    data = recfunctions.append_fields(data, 't_w_%s'%t, t_w, dtypes=data['ni_val'].dtype, usemask=False, asrecarray=True)
 
     # The within-group degrees of freedom with Welch t-test
     df_wt = np.square(data['ref_err']**2/ref_n + data['ni_err']**2/ni_n) / ( np.square(data['ref_err']**2)/(np.square(ref_n)*(ref_n-1)) + np.square(data['ni_err']**2)/(np.square(ni_n)*(ni_n-1)) )
-    data = np.lib.recfunctions.append_fields(data, 'df_wt_%s'%t, df_wt, dtypes=data['ref_val'].dtype, usemask=False, asrecarray=True)
+    data = recfunctions.append_fields(data, 'df_wt_%s'%t, df_wt, dtypes=data['ref_val'].dtype, usemask=False, asrecarray=True)
 
     # The p-value for the Welch t-test
     # The multiplication by 2, is the meaning of a two-tailed test
     p_wt = stats.distributions.t.sf(np.abs(t_w), df_wt )*2
-    data = np.lib.recfunctions.append_fields(data, 'p_wt_%s'%t, p_wt, dtypes=data['ni_val'].dtype, usemask=False, asrecarray=True)
+    data = recfunctions.append_fields(data, 'p_wt_%s'%t, p_wt, dtypes=data['ni_val'].dtype, usemask=False, asrecarray=True)
 
     # Now sort the data according to the p-values
     print "Sorting according to Welch's tests p-value column.\n"
@@ -165,7 +165,7 @@ for ref_val, ni_val, t in means:
 
     # Now add the i column to the data
     i = np.array(range(k, 0, -1))
-    data = np.lib.recfunctions.append_fields(data, 'i_%s'%t, i, dtypes=data['res_num'].dtype, usemask=False, asrecarray=True)
+    data = recfunctions.append_fields(data, 'i_%s'%t, i, dtypes=data['res_num'].dtype, usemask=False, asrecarray=True)
 
     print "alpha=%1.2f"%(alpha)
     p_sel = data['p_wt_%s'%t] < alpha 
@@ -173,12 +173,12 @@ for ref_val, ni_val, t in means:
 
     # Now calculate the adjusted alpha value fom Holm-sidak
     a_adj = alpha / i
-    data = np.lib.recfunctions.append_fields(data, 'a_adj_%s'%t, a_adj, dtypes=data['ni_val'].dtype, usemask=False, asrecarray=True)
+    data = recfunctions.append_fields(data, 'a_adj_%s'%t, a_adj, dtypes=data['ni_val'].dtype, usemask=False, asrecarray=True)
 
     # Now test if each p-value is less than its corresponding adjusted alpha value
     p_pass = data['p_wt_%s'%t] < a_adj
     r = np.sum(p_pass)
-    data = np.lib.recfunctions.append_fields(data, 'p_pass_%s'%t, p_pass, dtypes=bool, usemask=False, asrecarray=True)
+    data = recfunctions.append_fields(data, 'p_pass_%s'%t, p_pass, dtypes=bool, usemask=False, asrecarray=True)
 
     print "Number of test which p_value is below its adjusted alpha value is equal: %i, out of k groups: %i\n"%(r, k)
 
