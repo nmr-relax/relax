@@ -1,4 +1,3 @@
-import numpy
 try:
     import adolc
 except:

@@ -1,4 +1,3 @@
-import numpy as np
 import numdifftools as nd
 
 class EVAL:

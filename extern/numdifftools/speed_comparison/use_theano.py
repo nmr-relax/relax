@@ -1,9 +1,6 @@
 import theano 
-import numpy
-import time
 
 
-import numpy
 #import adolc
 
 class EVAL:

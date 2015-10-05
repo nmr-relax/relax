@@ -1,5 +1,4 @@
 import numpy as np
-import uncertainties
 import uncertainties.unumpy as unp
 
 
