@@ -33,6 +33,7 @@ import sys
 # An exception list.
 EXCEPTIONS = {
     'dep_check.py': ['bmrblib', 'bz2', 'cProfile', 'ctypes', 'epydoc', 'gzip', 'io', 'matplotlib', 'mpi4py', 'optparse', 'profile', 'pymol', 'readline', 'relax_fit', 'runpy', 'scipy', 'Structure', 'wx'],
+    'lib/compat.py': ['IOBase', 'pickle', 'queue', 'StringIO', 'TextTestResult'],
     'test_suite/shared_data/dispersion/profiling/profiling_b14.py': ['cluster', 'single'],
     'test_suite/shared_data/dispersion/profiling/profiling_b14_full.py': ['cluster', 'single'],
     'test_suite/shared_data/dispersion/profiling/profiling_cr72.py': ['cluster', 'single'],
