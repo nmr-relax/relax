@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,7 +21,7 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, R_OK, W_OK, X_OK, access, getcwd, listdir, sep
+from os import F_OK, R_OK, X_OK, access, getcwd, listdir, sep
 from os.path import isdir
 from re import search
 import sys

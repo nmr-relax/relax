@@ -62,7 +62,6 @@ from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODE
 from lib.geometry.angles import wrap_angles
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
-from lib.order.order_parameters import iso_cone_theta_to_S
 from lib.text.sectioning import subtitle, subsubtitle, title
 from lib.text.table import MULTI_COL, format_table
 from pipe_control import pipes, results

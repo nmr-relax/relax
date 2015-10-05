@@ -33,7 +33,7 @@ from copy import deepcopy
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, chmod, getcwd, sep
-from numpy import any, asarray, arange, concatenate, max, mean, min, savetxt, square, sqrt, std, sum, zeros_like
+from numpy import asarray, arange, concatenate, max, mean, min, savetxt, square, sqrt, std, sum
 if dep_check.scipy_module:
     from scipy.stats import pearsonr
 from stat import S_IRWXU, S_IRGRP, S_IROTH
@@ -44,9 +44,9 @@ from warnings import warn
 import dep_check
 from lib.dispersion.variables import MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from lib.io import extract_data, get_file_path, open_write_file, sort_filenames, write_data
-from lib.text.sectioning import section, subsection, subtitle, title
+from lib.text.sectioning import section, subsection, subtitle
 from lib.warnings import RelaxWarning
-from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
+from pipe_control.mol_res_spin import spin_loop
 from pipe_control import pipes
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import generate_r20_key, has_exponential_exp_type, has_cpmg_exp_type, is_r1_optimised, loop_exp_frq_offset, loop_exp_frq_offset_point, return_param_key_from_data
