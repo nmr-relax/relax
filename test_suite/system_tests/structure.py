@@ -31,7 +31,7 @@ from tempfile import mkdtemp, mktemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import count_spins, return_spin, spin_loop
-from lib.errors import RelaxError, RelaxNoPdbError
+from lib.errors import RelaxError
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz
 from lib.geometry.vectors import vector_angle_acos
 from lib.io import DummyFileObject
