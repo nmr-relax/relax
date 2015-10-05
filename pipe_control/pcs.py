@@ -44,7 +44,7 @@ from lib.sequence import read_spin_data, write_spin_data
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, is_pseudoatom, return_spin, spin_index_loop, spin_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, is_pseudoatom, return_spin, spin_loop
 from pipe_control.pipes import check_pipe
 
 

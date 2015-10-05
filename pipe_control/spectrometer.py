@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,7 +30,7 @@ from warnings import warn
 from lib.checks import Check
 from lib.errors import RelaxError, RelaxNoFrqError
 from lib.periodic_table import periodic_table
-from lib.warnings import RelaxWarning, RelaxNoFrqWarning
+from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from pipe_control.pipes import check_pipe
 

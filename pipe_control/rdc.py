@@ -42,7 +42,7 @@ from lib.plotting.api import write_xy_data, write_xy_header
 from lib.warnings import RelaxWarning, RelaxSpinTypeWarning
 from pipe_control import pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
-from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
+from pipe_control.interatomic import create_interatom, interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, is_pseudoatom, pseudoatom_loop, return_spin
 from pipe_control.pipes import check_pipe
 

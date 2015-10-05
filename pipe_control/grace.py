@@ -26,11 +26,8 @@
 from os import system
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError
-from lib.io import get_file_path, open_write_file, test_binary
-from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data
-from pipe_control import pipes
-from pipe_control.plotting import assemble_data
+from lib.io import get_file_path, test_binary
+from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins
 from specific_analyses.api import return_api
 from status import Status; status = Status()
 

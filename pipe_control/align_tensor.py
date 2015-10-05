@@ -24,7 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import acos, pi, sqrt
+from math import pi, sqrt
 from numpy import arccos, complex128, dot, float64, inner, linalg, zeros
 from numpy.linalg import norm
 import sys

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,6 @@
 from warnings import warn
 
 # relax module imports.
-from lib.errors import RelaxNoPdbError
 from lib.structure.mass import centre_of_mass
 from lib.warnings import RelaxWarning
 from pipe_control.structure.checks import check_structure
