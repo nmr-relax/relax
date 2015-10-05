@@ -22,11 +22,7 @@
 # Module docstring.
 """GUI tests for catching dead user function pages."""
 
-# Python module imports.
-import sys
-
 # relax module imports.
-from lib.errors import RelaxNoPipeError
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.

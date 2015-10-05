@@ -32,7 +32,6 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.string_conv import str_to_gui
 
 
 class General(GuiTestCase):
