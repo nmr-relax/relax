@@ -23,12 +23,11 @@
 
 # Python module imports.
 from os import sep
-from os.path import basename, dirname
+from os.path import dirname
 from tempfile import mkdtemp, NamedTemporaryFile
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-import dep_check
 from pipe_control.mol_res_spin import spin_loop
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
