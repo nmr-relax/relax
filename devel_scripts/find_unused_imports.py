@@ -62,8 +62,14 @@ EXCEPTIONS = {
 }
 
 
+# The directory to use.
+if len(sys.argv) == 2:
+    directory = sys.argv[1]
+else:
+    directory = getcwd()
+
 # Walk through the current dir.
-for root, dirs, files in walk(getcwd()):
+for root, dirs, files in walk(directory):
     # Skip SVN directories.
     if search("svn", root):
         continue
