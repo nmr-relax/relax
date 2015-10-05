@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,29 +23,25 @@
 from unittest import TestCase
 
 # relax module imports.
-from lib import regex
+import lib.regex
 
 
 class Test_regex(TestCase):
     """Unit tests for the functions of the 'lib.regex' module."""
 
-    # Place the lib.regex module into the class namespace.
-    regex = regex
-
-
     def test_search(self):
         """Test the proper behaviour of the lib.regex.search() function."""
 
         # Test a number of calls which should return True.
-        self.assertEqual(True, self.regex.search('H', 'H'))
-        self.assertEqual(True, self.regex.search('H*', 'H'))
-        self.assertEqual(True, self.regex.search('H*', 'H1'))
-        self.assertEqual(True, self.regex.search('H1', 'H1'))
-        self.assertEqual(True, self.regex.search('^H*', 'H'))
-        self.assertEqual(True, self.regex.search('^H*$', 'H'))
-        self.assertEqual(True, self.regex.search('^H*$', 'H'))
+        self.assertEqual(True, lib.regex.search('H', 'H'))
+        self.assertEqual(True, lib.regex.search('H*', 'H'))
+        self.assertEqual(True, lib.regex.search('H*', 'H1'))
+        self.assertEqual(True, lib.regex.search('H1', 'H1'))
+        self.assertEqual(True, lib.regex.search('^H*', 'H'))
+        self.assertEqual(True, lib.regex.search('^H*$', 'H'))
+        self.assertEqual(True, lib.regex.search('^H*$', 'H'))
 
         # Test a number of calls which should return False.
-        self.assertEqual(False, self.regex.search('H*', 'NH'))
-        self.assertEqual(False, self.regex.search('H', 'HN'))
-        self.assertEqual(False, self.regex.search('H', 'H1'))
+        self.assertEqual(False, lib.regex.search('H*', 'NH'))
+        self.assertEqual(False, lib.regex.search('H', 'HN'))
+        self.assertEqual(False, lib.regex.search('H', 'H1'))
