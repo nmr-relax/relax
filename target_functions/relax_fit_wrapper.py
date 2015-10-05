@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -28,7 +28,6 @@ from numpy import array, float64, ndarray, nan_to_num
 
 # relax module imports.
 from dep_check import C_module_exp_fn
-from specific_analyses.relax_fit.parameters import assemble_param_vector
 
 # C modules.
 if C_module_exp_fn:
