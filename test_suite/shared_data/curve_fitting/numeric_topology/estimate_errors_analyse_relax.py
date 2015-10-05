@@ -1,11 +1,11 @@
 # Python module imports.
 from collections import OrderedDict
-from numpy import array, asarray, diag, ones, std, sqrt
+from numpy import asarray, std
 from numpy.random import normal
 from minfx.generic import generic_minimise
-from os import getcwd, makedirs, path, sep
+from os import path, sep
 from random import gauss
-from tempfile import mkdtemp, NamedTemporaryFile
+from tempfile import NamedTemporaryFile
 
 # relax module imports.
 from lib.compat import pickle
@@ -14,14 +14,14 @@ from lib.compat import pickle
 from status import Status; status = Status()
 import dep_check
 from lib.dispersion.variables import MODEL_R2EFF
-from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
-from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data
+from pipe_control.mol_res_spin import generate_spin_string, spin_loop
+from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, loop_exp_frq_offset_point, loop_time, return_param_key_from_data
 from specific_analyses.relax_disp.data import check_intensity_errors
 
 # C modules.
 if dep_check.C_module_exp_fn:
     from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
-    from target_functions.relax_fit import jacobian, jacobian_chi2, setup
+    from target_functions.relax_fit import setup
     # Call the python wrapper function to help with list to numpy array conversion.
     func = func_wrapper
     dfunc = dfunc_wrapper
@@ -49,7 +49,7 @@ make_plots = True
 make_peak_lists = True
 
 if make_plots:
-    from pylab import show, plot, legend, figure, title, subplots
+    from pylab import show, figure
     from matplotlib.font_manager import FontProperties
     fontP = FontProperties()
     fontP.set_size('small')

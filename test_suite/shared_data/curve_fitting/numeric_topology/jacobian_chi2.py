@@ -2,7 +2,7 @@
 
 # Python module imports.
 from math import exp
-from numpy import array, float64
+from numpy import array
 from numdifftools import Jacobian
 
 

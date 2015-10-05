@@ -188,8 +188,9 @@ def chi2(data=None, back_calc=None, errors=None, params=None):
             t_chi2 =  1e100
     else:
         t_chi2 = sum((1.0 / errors * (data - back_calc))**2)
-        #fix_invalid(t_chi2, copy=False, fill_value=1e100)
-        #t_chi2 = nan_to_num( t_chi2 )
+        if 0:
+            fix_invalid(t_chi2, copy=False, fill_value=1e100)
+            t_chi2 = nan_to_num( t_chi2 )
         if not isfinite(t_chi2):
             t_chi2_2 = nan_to_num( t_chi2 )
             #print "Oppps. np=%i, sim=%i, R2=%3.2f, I0=%3.2f %s %s" % (np_i, sim_j, params[0], params[1], t_chi2, t_chi2_2)

@@ -3,7 +3,7 @@
 
 # Python module imports.
 from collections import OrderedDict
-from numpy import array, asarray, diag, ones, std, sqrt
+from numpy import asarray, diag, std, sqrt
 from os import getcwd, makedirs, path, sep
 
 # relax module imports.
@@ -30,7 +30,7 @@ make_plots = False
 make_peak_lists = True
 
 if make_plots:
-    from pylab import show, plot, legend, figure, title, subplots
+    from pylab import show, figure, title
     from matplotlib.font_manager import FontProperties
     fontP = FontProperties()
     fontP.set_size('small')
