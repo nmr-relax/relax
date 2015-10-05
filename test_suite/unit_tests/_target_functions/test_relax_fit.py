@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, transpose, zeros
+from numpy import array, transpose
 from unittest import TestCase
 
 # relax module imports.

@@ -19,11 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from numpy import array, int16
-
 # relax module imports.
-from lib.structure.internal import coordinates
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
