@@ -24,7 +24,6 @@ from __future__ import absolute_import
 """Module for handling the molecule, residue, and spin sequence data."""
 
 # Python module imports.
-import sys
 from warnings import warn
 
 # relax module imports.

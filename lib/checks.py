@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2014 Edward d'Auvergne                                        #
+# Copyright (C) 2014-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,7 +27,6 @@ from __future__ import absolute_import
 from warnings import warn
 
 # relax module imports.
-from lib.errors import RelaxError
 from lib.warnings import RelaxWarning
 
 

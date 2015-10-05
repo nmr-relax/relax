@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import dot, eye, float64, swapaxes, transpose, zeros
+from numpy import dot, eye, float64, transpose, zeros
 import sys
 from warnings import warn
 

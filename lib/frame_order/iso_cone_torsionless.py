@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import cos, pi, sqrt
+from math import cos, pi
 from numpy import divide, dot, eye, float64, multiply, swapaxes, tensordot
 try:
     from scipy.integrate import dblquad

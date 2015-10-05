@@ -23,10 +23,7 @@
 """Module for handling atomic coordinate information."""
 
 # Python module imports.
-from numpy import array, float64, int16, zeros
-
-# relax module imports.
-from lib.errors import RelaxFault
+from numpy import array, float64
 
 
 def assemble_atomic_coordinates(objects=None, object_names=None, molecules=None, models=None, atom_id=None):
