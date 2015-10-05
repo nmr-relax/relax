@@ -24,11 +24,10 @@
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
 import copy
-from numpy import array, asarray, average, exp, median, inf, linspace, log, save, std, sum, zeros
+from numpy import array, asarray, average, exp, median, inf, linspace, log, std, sum, zeros
 from minfx.generic import generic_minimise
 from random import gauss
 import re, math
-from sys import version_info
 from tempfile import mkdtemp, NamedTemporaryFile
 
 
@@ -37,16 +36,15 @@ from auto_analyses import relax_disp
 from auto_analyses.relax_disp_repeat_cpmg import DIC_KEY_FORMAT, Relax_disp_rep
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from lib.dispersion.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_FULL, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
+from lib.dispersion.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
 from lib.errors import RelaxError
-from lib.io import extract_data, get_file_path, open_read_file
+from lib.io import extract_data, get_file_path
 from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_dir_to_files, show_apod_rmsd_to_file
-from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
+from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
-from pipe_control.pipes import display
 from specific_analyses.relax_disp.checks import check_missing_r1
 from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff
-from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
+from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import models_info, nesting_param
 from specific_analyses.relax_disp.parameters import linear_constraints
