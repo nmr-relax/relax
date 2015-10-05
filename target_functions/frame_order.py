@@ -50,7 +50,6 @@ from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODE
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, tilt_torsion_to_R, two_vect_to_R
 from lib.linear_algebra.kronecker_product import kron_prod
-from lib.order import order_parameters
 from lib.physical_constants import pcs_constant
 from target_functions.chi2 import chi2
 

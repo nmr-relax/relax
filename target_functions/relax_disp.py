@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
@@ -26,7 +26,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import all, arctan2, cos, dot, float64, int16, isfinite, max, multiply, ones, rollaxis, pi, sin, sum, version, zeros
+from numpy import all, arctan2, cos, dot, float64, int16, isfinite, max, multiply, ones, rollaxis, pi, sin, sum, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -36,7 +36,6 @@ from lib.dispersion.dpl94 import r1rho_DPL94
 from lib.dispersion.it99 import r2eff_IT99
 from lib.dispersion.lm63 import r2eff_LM63
 from lib.dispersion.lm63_3site import r2eff_LM63_3site
-from lib.dispersion.matrix_exponential import create_index, data_view_via_striding_array_col
 from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.mp05 import r1rho_MP05
@@ -52,7 +51,7 @@ from lib.dispersion.ns_matrices import r180x_3d
 from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tap03 import r1rho_TAP03
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
-from lib.dispersion.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_DW_MIX_DOUBLE, MODEL_LIST_DW_MIX_QUADRUPLE, MODEL_LIST_INV_RELAX_TIMES, MODEL_LIST_R20B, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_OFF_RES, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from lib.dispersion.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_DW_MIX_DOUBLE, MODEL_LIST_DW_MIX_QUADRUPLE, MODEL_LIST_INV_RELAX_TIMES, MODEL_LIST_R20B, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_OFF_RES, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2_rankN
