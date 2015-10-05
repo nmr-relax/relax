@@ -46,35 +46,47 @@ from lib.dispersion.variables import MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_
 ##################################################################################
 # The dispersion model to test.
 if not hasattr(ds, 'data'):
-    ### Take a numerical model to create the data.
-    ## The "NS CPMG 2-site 3D full" is here the best, since you can define both r2a and r2b.
-    #model_create = MODEL_NS_CPMG_2SITE_3D
-    #model_create = MODEL_NS_CPMG_2SITE_3D_FULL
-    #model_create = MODEL_NS_CPMG_2SITE_STAR
-    #model_create = MODEL_NS_CPMG_2SITE_STAR_FULL
-    model_create = MODEL_NS_CPMG_2SITE_EXPANDED
-    #model_create = MODEL_CR72
-    #model_create = MODEL_CR72_FULL
-    #model_create = MODEL_B14
-    #model_create = MODEL_B14_FULL
+    ## Take a numerical model to create the data.
+    model_create_list = []
 
-    ### The select a model to analyse with.
-    ## Analytical : r2a = r2b
-    model_analyse = MODEL_CR72
-    #model_analyse = MODEL_IT99
-    #model_analyse = MODEL_TSMFK01
-    #model_analyse = MODEL_B14
+    # The "NS CPMG 2-site 3D full" is here the best, since you can define both r2a and r2b.
+    model_create_list.append(MODEL_NS_CPMG_2SITE_3D)
+    model_create_list.append(MODEL_NS_CPMG_2SITE_3D_FULL)
+    model_create_list.append(MODEL_NS_CPMG_2SITE_STAR)
+    model_create_list.append(MODEL_NS_CPMG_2SITE_STAR_FULL)
+    model_create_list.append(MODEL_NS_CPMG_2SITE_EXPANDED)
+    model_create_list.append(MODEL_CR72)
+    model_create_list.append(MODEL_CR72_FULL)
+    model_create_list.append(MODEL_B14)
+    model_create_list.append(MODEL_B14_FULL)
 
-    ## Analytical full : r2a != r2b
-    #model_analyse = MODEL_CR72_FULL
-    #model_analyse = MODEL_B14_FULL
-    ## NS : r2a = r2b
-    #model_analyse = MODEL_NS_CPMG_2SITE_3D
-    #model_analyse = MODEL_NS_CPMG_2SITE_STAR
-    #model_analyse = MODEL_NS_CPMG_2SITE_EXPANDED
-    ## NS full : r2a = r2b
-    #model_analyse = MODEL_NS_CPMG_2SITE_3D_FULL
-    #model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL
+    # The model.
+    model_create = model_create_list[4]
+
+    ## The select a model to analyse with.
+    model_analyse_list = []
+
+    # Analytical : r2a = r2b
+    model_analyse_list.append(MODEL_CR72)
+    model_analyse_list.append(MODEL_IT99)
+    model_analyse_list.append(MODEL_TSMFK01)
+    model_analyse_list.append(MODEL_B14)
+
+    # Analytical full : r2a != r2b
+    model_analyse_list.append(MODEL_CR72_FULL)
+    model_analyse_list.append(MODEL_B14_FULL)
+
+    # NS : r2a = r2b
+    model_analyse_list.append(MODEL_NS_CPMG_2SITE_3D)
+    model_analyse_list.append(MODEL_NS_CPMG_2SITE_STAR)
+    model_analyse_list.append(MODEL_NS_CPMG_2SITE_EXPANDED)
+
+    # NS full : r2a = r2b
+    model_analyse_list.append(MODEL_NS_CPMG_2SITE_3D_FULL)
+    model_analyse_list.append(MODEL_NS_CPMG_2SITE_STAR_FULL)
+
+    # The model.
+    model_analyse = model_analyse_list[0]
 
     ## Experiments
     # Exp 1
