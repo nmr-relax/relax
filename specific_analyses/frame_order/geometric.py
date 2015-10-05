@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,18 +25,17 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import array, cross, dot, eye, float64, zeros
+from numpy import cross, dot, eye, float64, zeros
 from numpy.linalg import norm
 import sys
 from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxFault
-from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
+from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_DOUBLE, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_ROTOR
 from lib.geometry.rotations import euler_to_R_zyz
 from lib.io import open_write_file
-from lib.order import order_parameters
 from lib.structure.cones import Iso_cone, Pseudo_elliptic
 from lib.structure.geometric import generate_vector_residues
 from lib.structure.internal.object import Internal

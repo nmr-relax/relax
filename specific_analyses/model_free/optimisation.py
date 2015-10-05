@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -38,7 +38,7 @@ from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
 from pipe_control import pipes
 from pipe_control.interatomic import return_interatom_list
-from pipe_control.mol_res_spin import return_spin, return_spin_from_index, spin_loop
+from pipe_control.mol_res_spin import return_spin, return_spin_from_index
 from specific_analyses.model_free.parameters import assemble_param_vector, disassemble_param_vector
 from target_functions.mf import Mf
 

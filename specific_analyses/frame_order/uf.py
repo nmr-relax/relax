@@ -25,8 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import array, cross, float64, ones, transpose, zeros
-from numpy.linalg import norm
+from numpy import array, float64, ones, transpose, zeros
 from warnings import warn
 
 # relax module imports.
@@ -34,9 +33,9 @@ from lib.arg_check import is_float_array
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFault
 from lib.frame_order.simulation import brownian, uniform_distribution
-from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
-from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_cartesian
-from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_ISO_CONE, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_RIGID
+from lib.geometry.coord_transform import cartesian_to_spherical
+from lib.geometry.rotations import R_to_euler_zyz
 from lib.io import open_write_file
 from lib.warnings import RelaxWarning
 from pipe_control.pipes import check_pipe

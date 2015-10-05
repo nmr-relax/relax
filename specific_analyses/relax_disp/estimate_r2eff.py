@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Troels E. Linnet                                         #
-# Copyright (C) 2014 Edward d'Auvergne                                        #
+# Copyright (C) 2014-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import array, asarray, diag, dot, exp, eye, log, multiply, ones, sqrt, sum, transpose, zeros
+from numpy import array, asarray, diag, exp, log, ones, sqrt, sum, transpose, zeros
 from minfx.generic import generic_minimise
 import sys
 from warnings import warn
@@ -35,7 +35,7 @@ from dep_check import C_module_exp_fn, scipy_module
 from lib.dispersion.variables import MODEL_R2EFF
 from lib.errors import RelaxError
 from lib.statistics import multifit_covar
-from lib.text.sectioning import section, subsection
+from lib.text.sectioning import subsection
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 from specific_analyses.relax_disp.checks import check_model_type

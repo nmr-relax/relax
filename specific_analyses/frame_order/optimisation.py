@@ -28,7 +28,6 @@ from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
 from numpy import arccos, array, dot, float64, ndarray, ones, zeros
 from numpy.linalg import inv, norm
-from re import search
 import sys
 from warnings import warn
 
@@ -39,7 +38,6 @@ from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoPCSError
 from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse_array
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from lib.geometry.angles import wrap_angles
-from lib.order import order_parameters
 from lib.periodic_table import periodic_table
 from lib.physical_constants import dipolar_constant
 from lib.warnings import RelaxWarning

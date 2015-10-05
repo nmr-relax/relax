@@ -61,7 +61,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from lib.dispersion.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_FIT_R1, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_ON_RES, MODEL_LIST_R1RHO_OFF_RES, MODEL_MP05, MODEL_NOREX, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
+from lib.dispersion.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_FIT_R1, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_ON_RES, MODEL_MP05, MODEL_NOREX, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxNoSpinError, RelaxSpinTypeError
 from lib.float import isNaN
 from lib.io import extract_data, get_file_path, open_write_file, strip, write_data
@@ -72,7 +72,6 @@ from lib.plotting.grace import script_grace2images
 from lib.sequence import read_spin_data, write_spin_data
 from lib.text.sectioning import section
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
-from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, generate_spin_string, return_spin, spin_loop
 from pipe_control.pipes import check_pipe
 from pipe_control.result_files import add_result_file

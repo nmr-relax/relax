@@ -37,10 +37,9 @@ from types import MethodType
 from lib.arg_check import is_list, is_str_list
 from lib.dispersion.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, MODEL_R2EFF, PARAMS_R20
 from lib.errors import RelaxError, RelaxImplementError
-from lib.selection import Selection, tokenise
 from lib.text.sectioning import subsection
 from multi import Processor_box
-from pipe_control import pipes, relax_data, sequence
+from pipe_control import pipes, sequence
 from pipe_control.exp_info import bmrb_write_citations, bmrb_write_methods, bmrb_write_software
 from pipe_control.mol_res_spin import bmrb_write_entity, check_mol_res_spin_data, get_molecule_names, return_spin, spin_loop
 from pipe_control.pipes import check_pipe

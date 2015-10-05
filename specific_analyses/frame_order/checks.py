@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,13 +22,9 @@
 # Module docstring.
 """Module for checks for the frame order analysis."""
 
-# Python module imports.
-from warnings import warn
-
 # relax module imports.
 from lib.checks import Check
 from lib.errors import RelaxError
-from lib.warnings import RelaxWarning
 from pipe_control.pipes import cdp_name, get_pipe
 
 

@@ -26,7 +26,7 @@
 from copy import deepcopy
 from math import pi
 from minfx.grid import grid_split_array
-from numpy import array, dot, float64, zeros
+from numpy import float64, zeros
 from random import shuffle
 from warnings import warn
 

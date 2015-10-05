@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -36,7 +36,7 @@ from warnings import warn
 # relax module imports.
 from dep_check import C_module_exp_fn
 from lib.dispersion.two_point import calc_two_point_r2eff, calc_two_point_r2eff_err
-from lib.dispersion.variables import EXP_TYPE_LIST_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_LIST_MMQ, MODEL_LM63, MODEL_M61, MODEL_MP05, MODEL_TAP03, MODEL_TP02
+from lib.dispersion.variables import EXP_TYPE_LIST_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_LM63, MODEL_M61, MODEL_MP05, MODEL_TAP03, MODEL_TP02
 from lib.errors import RelaxError
 from lib.text.sectioning import subsection
 from lib.warnings import RelaxWarning

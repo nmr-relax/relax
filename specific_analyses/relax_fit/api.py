@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -34,7 +34,7 @@ from warnings import warn
 
 # relax module imports.
 from dep_check import C_module_exp_fn
-from lib.errors import RelaxError, RelaxNoModelError, RelaxNoSequenceError
+from lib.errors import RelaxError, RelaxNoModelError
 from lib.text.sectioning import subsection
 from lib.warnings import RelaxDeselectWarning
 from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
