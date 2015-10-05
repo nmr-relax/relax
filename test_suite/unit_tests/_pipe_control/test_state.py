@@ -23,7 +23,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from pipe_control import state
+import pipe_control.state
 from test_suite.unit_tests.state_testing_base import State_base_class
 
 
@@ -32,4 +32,4 @@ class Test_state(State_base_class, TestCase):
     """Unit tests for the functions of the 'pipe_control.state' module."""
 
     # Place the pipe_control.state module into the class namespace.
-    state = state
+    state = pipe_control.state
