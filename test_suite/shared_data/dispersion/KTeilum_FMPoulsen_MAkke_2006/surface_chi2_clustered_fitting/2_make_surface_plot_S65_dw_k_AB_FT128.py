@@ -2,7 +2,6 @@ import numpy as np
 import scipy.interpolate
 from numpy.ma import masked_where
 
-from mpl_toolkits.mplot3d import axes3d
 import matplotlib.pyplot as plt
 from matplotlib import cm
 

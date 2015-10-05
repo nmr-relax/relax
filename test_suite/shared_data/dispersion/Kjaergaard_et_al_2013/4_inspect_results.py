@@ -21,11 +21,10 @@
 
 # Python module imports.
 from os import getcwd, sep
-import re
 
 # relax module imports.
 from lib.dispersion.variables import MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1
-from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
+from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 from specific_analyses.relax_disp.data import generate_r20_key, loop_exp_frq
 
 #########################################
@@ -39,8 +38,10 @@ state.load(state='final_state.bz2', dir=results_dir)
 pipe.display()
 
 # Define models which have been analysed.
-#MODELS = [MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1]
-MODELS = [MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1]
+if 0:
+    MODELS = [MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1]
+else:
+    MODELS = [MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1]
 
 # Print results for each model.
 print("\n################")

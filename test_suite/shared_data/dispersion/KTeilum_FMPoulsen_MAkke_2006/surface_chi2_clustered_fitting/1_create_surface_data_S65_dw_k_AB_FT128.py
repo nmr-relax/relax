@@ -4,7 +4,7 @@ from numpy import array, float64, zeros
 
 # relax module imports.
 from lib.io import open_write_file, write_data
-from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin
+from pipe_control.mol_res_spin import return_spin
 from pipe_control import value
 from specific_analyses.api import return_api
 

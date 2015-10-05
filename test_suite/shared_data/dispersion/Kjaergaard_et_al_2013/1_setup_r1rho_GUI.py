@@ -20,12 +20,11 @@
 ###############################################################################
 
 # Python module imports.
-from os import getcwd, sep
+from os import sep
 
 # relax module imports.
 from status import Status; status = Status()
 
-#data_path = getcwd()
 data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
 
 # Read the spins.

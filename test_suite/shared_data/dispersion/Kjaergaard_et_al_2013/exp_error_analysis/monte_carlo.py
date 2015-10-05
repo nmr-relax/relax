@@ -1,7 +1,7 @@
 # Check the R2eff and I0 errors from a large number of Monte Carlo simulations.
 
 # Python module imports.
-from os import chdir, getcwd, pardir, sep
+from os import chdir, getcwd, pardir
 
 
 # Setup.

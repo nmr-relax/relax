@@ -21,12 +21,11 @@
 
 # Python module imports.
 from os import getcwd, sep
-import re
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
-from lib.dispersion.variables import MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1
+from lib.dispersion.variables import MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1
 
 #########################################
 #### Setup
@@ -43,8 +42,10 @@ if not hasattr(ds, 'data_path'):
 
 # The models to analyse.
 if not hasattr(ds, 'models'):
-    #ds.models = [MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1]
-    ds.models = [MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1]
+    if 0:
+        ds.models = [MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1]
+    else:
+        ds.models = [MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1]
 
 # The number of increments per parameter, to split up the search interval in grid search.
 if not hasattr(ds, 'grid_inc'):

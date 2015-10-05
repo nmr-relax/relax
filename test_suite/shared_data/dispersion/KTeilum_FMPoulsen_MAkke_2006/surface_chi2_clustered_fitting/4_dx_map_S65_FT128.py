@@ -1,10 +1,8 @@
 # Python imports
 from os import getcwd, sep
-from numpy import array, float64, zeros
 
 # relax module imports.
-from lib.io import open_write_file
-from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin
+from pipe_control.mol_res_spin import return_spin
 
 # Variables
 prev_data_path = getcwd()
