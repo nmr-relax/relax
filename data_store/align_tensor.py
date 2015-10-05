@@ -1330,7 +1330,7 @@ class AlignTensorData(Element):
             if sim_index != None:
                 sim_indices = [sim_index]
             else:
-                sim_indices = range(self._sim_num)
+                sim_indices = list(range(self._sim_num))
 
             # Get all the dependencies if possible.
             missing_dep = 0
