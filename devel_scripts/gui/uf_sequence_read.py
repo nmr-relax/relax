@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 import wx
 
 # GUI module imports.
-from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.fonts import font
 
 

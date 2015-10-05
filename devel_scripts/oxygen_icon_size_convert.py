@@ -1,10 +1,9 @@
 """Script to convert oxygen icons to different sizes, and copy to path in relax"""
 
 # Python module imports.
-from os import F_OK, access, getcwd, makedirs, path, sep
+from os import makedirs, path, sep
 import shutil
 import subprocess
-from tempfile import mkdtemp
 
 # relax module imports.
 from status import Status; status = Status()
