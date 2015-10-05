@@ -63,6 +63,10 @@ EXCEPTIONS = {
     'test_suite/unit_tests/_lib/test_regex.py': ['regex']
 }
 
+# Hacks for circular imports - these should rather be fixed.
+EXCEPTIONS['test_suite/unit_tests/_lib/test___init__.py'] = EXCEPTIONS['test_suite/unit_tests/_lib/_geometry/test_rotations.py']
+EXCEPTIONS['test_suite/unit_tests/_lib/_geometry/test___init__.py'] = EXCEPTIONS['test_suite/unit_tests/_lib/_geometry/test_rotations.py']
+
 
 # The directory to use.
 if len(sys.argv) == 2:
