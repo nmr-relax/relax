@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2013-2015 Edward d'Auvergne                                   #
@@ -18,8 +20,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-
-#! /usr/bin/env python
 
 """Find all unused imports within all relax *.py files using the pylint program."""
 
