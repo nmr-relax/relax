@@ -24,15 +24,12 @@
 
 # Python module imports.
 import cProfile
-from copy import deepcopy
 from os import getcwd, path, sep
-from numpy import array, asarray, diag, inf, load, sqrt, sum, zeros
+from numpy import array, asarray, load, sqrt, sum
 import pstats
 import sys
 import tempfile
 from minfx.generic import generic_minimise
-from scipy.optimize import curve_fit, leastsq
-import warnings
 
 # Python 3 support.
 try:
@@ -59,7 +56,6 @@ from status import Status; status = Status()
 from specific_analyses.relax_disp.estimate_r2eff import minimise_leastsq, Exp
 from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
 from target_functions.relax_fit import setup
-from target_functions.chi2 import chi2_rankN
 
 ## Set the min_algor.
 ## simplex is algorithms without gradient. It is quite slow, since it needs to take many steps.

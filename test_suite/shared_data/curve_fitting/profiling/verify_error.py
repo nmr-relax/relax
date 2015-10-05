@@ -21,16 +21,13 @@
 
 # Python module imports.
 from os import sep
-from numpy import asarray, diag, exp, log, sqrt, sum
-from scipy.optimize import leastsq
-import warnings
+from numpy import asarray
 
 # relax module imports.
-from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
+from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 #from specific_analyses.relax_disp.data import average_intensity, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import average_intensity, find_intensity_keys, loop_exp_frq_offset_point, loop_time, return_param_key_from_data
 from status import Status; status = Status()
-from target_functions.chi2 import chi2_rankN
 
 # Initial try for Exponential class.
 from specific_analyses.relax_disp.estimate_r2eff import minimise_leastsq, Exp
