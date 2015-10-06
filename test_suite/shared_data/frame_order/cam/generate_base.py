@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -89,7 +89,10 @@ class Main:
         self.interpreter.on(verbose=False)
 
         # Set up for the progress meter (commas between the thousands).
-        locale.setlocale(locale.LC_ALL, 'en_US')
+        try:
+            locale.setlocale(locale.LC_ALL, 'en_US')
+        except:
+            pass
 
         # Build the axis system.
         self.build_axes()
