@@ -36,7 +36,7 @@ from gui.relax_gui import Main
 from gui.string_conv import str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_window
-from lib.compat import queue
+from lib.compat import SYSTEM, queue
 from lib.errors import RelaxError
 from pipe_control.reset import reset
 from prompt.interpreter import exec_script
@@ -309,22 +309,23 @@ class GuiTestCase(TestCase):
         self.clean_up_windows()
 
         # Print out a list of all living windows to help ensure that custom Close() and Destroy() methods are cleaning up all objects.
-        print("\n\nList of all living GUI elements - this must only include the main GUI window and the relax controller:")
-        all_destroyed = True
-        for window in wx.GetTopLevelWindows():
-            # Printout.
-            print("    Window: %s" % window)
-            if isinstance(window, Wiz_window):
-                print("        Wizard title: %s" % window.title)
-                print("        Wizard pages: %s" % window._pages)
+        if SYSTEM != 'Darwin':
+            print("\n\nList of all living GUI elements - this must only include the main GUI window and the relax controller:")
+            all_destroyed = True
+            for window in wx.GetTopLevelWindows():
+                # Printout.
+                print("    Window: %s" % window)
+                if isinstance(window, Wiz_window):
+                    print("        Wizard title: %s" % window.title)
+                    print("        Wizard pages: %s" % window._pages)
 
-            # Skip the main GUI window and the relax controller.
-            if isinstance(window, Main) or isinstance(window, Controller):
-                continue
+                # Skip the main GUI window and the relax controller.
+                if isinstance(window, Main) or isinstance(window, Controller):
+                    continue
 
-            # Failure of memory management.
-            all_destroyed = False
-        print("\n\n\n")
+                # Failure of memory management.
+                all_destroyed = False
+            print("\n\n\n")
 
         # Memory management check.
         #if not all_destroyed:

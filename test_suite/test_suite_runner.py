@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -79,9 +79,6 @@ class Test_suite_runner:
         self.from_gui = from_gui
         self.categories = categories
 
-        # A list for skipped tests.
-        status.skip = []
-
         # Set up the test runner.
         if from_gui:
             self.runner = GuiTestRunner(stream=sys.stdout, timing=timing)
@@ -93,31 +90,39 @@ class Test_suite_runner:
             unittest.installHandler()
 
 
-    def run_all_tests(self):
-        """Execute all of the test suite test types."""
+    def run_all_tests(self, reset=True):
+        """Execute all of the test suite test types.
+
+        @keyword reset:     A flag which if True will reset the relax status objects for the tests.
+        @type reset:        bool
+        """
+
+        # Reset the list for skipped tests.
+        if reset:
+            status.skipped_tests = []
 
         # Execute the system/functional tests.
         if 'system' in self.categories:
-            status = self.run_system_tests(summary=False)
-            if not status:
+            test_status = self.run_system_tests(summary=False, reset=False)
+            if not test_status:
                 return
 
         # Execute the unit tests.
         if 'unit' in self.categories:
-            status = self.run_unit_tests(summary=False)
-            if not status:
+            test_status = self.run_unit_tests(summary=False, reset=False)
+            if not test_status:
                 return
 
         # Execute the GUI tests.
         if 'gui' in self.categories:
-            status = self.run_gui_tests(summary=False)
-            if not status:
+            test_status = self.run_gui_tests(summary=False, reset=False)
+            if not test_status:
                 return
 
         # Execute the GUI tests.
         if 'verification' in self.categories:
-            status = self.run_verification_tests(summary=False)
-            if not status:
+            test_status = self.run_verification_tests(summary=False, reset=False)
+            if not test_status:
                 return
 
         # Print out a summary of the test suite.
@@ -125,14 +130,20 @@ class Test_suite_runner:
 
 
 
-    def run_gui_tests(self, summary=True):
+    def run_gui_tests(self, summary=True, reset=True):
         """Execute the GUI tests.
 
         @keyword summary:   A flag which if True will cause a summary to be printed.
         @type summary:      bool
+        @keyword reset:     A flag which if True will reset the relax status objects for the tests.
+        @type reset:        bool
         @return:            True if the tests were run, False if a KeyboardInterrupt occurred.
         @rtype:             bool
         """
+
+        # Reset the list for skipped tests.
+        if reset:
+            status.skipped_tests = []
 
         # Run the tests, catching the keyboard interrupt.
         try:
@@ -182,14 +193,20 @@ class Test_suite_runner:
         return True
 
 
-    def run_system_tests(self, summary=True):
+    def run_system_tests(self, summary=True, reset=True):
         """Execute the system/functional tests.
 
         @keyword summary:   A flag which if True will cause a summary to be printed.
         @type summary:      bool
+        @keyword reset:     A flag which if True will reset the relax status objects for the tests.
+        @type reset:        bool
         @return:            True if the tests were run, False if a KeyboardInterrupt occurred.
         @rtype:             bool
         """
+
+        # Reset the list for skipped tests.
+        if reset:
+            status.skipped_tests = []
 
         # Run the tests, catching the keyboard interrupt.
         try:
@@ -214,14 +231,20 @@ class Test_suite_runner:
         return True
 
 
-    def run_unit_tests(self, summary=True):
+    def run_unit_tests(self, summary=True, reset=True):
         """Execute the unit tests.
 
         @keyword summary:   A flag which if True will cause a summary to be printed.
         @type summary:      bool
+        @keyword reset:     A flag which if True will reset the relax status objects for the tests.
+        @type reset:        bool
         @return:            True if the tests were run, False if a KeyboardInterrupt occurred.
         @rtype:             bool
         """
+
+        # Reset the list for skipped tests.
+        if reset:
+            status.skipped_tests = []
 
         # Run the tests, catching the keyboard interrupt.
         try:
@@ -246,12 +269,18 @@ class Test_suite_runner:
         return True
 
 
-    def run_verification_tests(self, summary=True):
+    def run_verification_tests(self, summary=True, reset=True):
         """Execute the software verification tests.
 
         @keyword summary:   A flag which if True will cause a summary to be printed.
         @type summary:      bool
+        @keyword reset:     A flag which if True will reset the relax status objects for the tests.
+        @type reset:        bool
         """
+
+        # Reset the list for skipped tests.
+        if reset:
+            status.skipped_tests = []
 
         # Run the tests, catching the keyboard interrupt.
         try:
