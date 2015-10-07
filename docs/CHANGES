@@ -1,3 +1,65 @@
+Version 4.0.0
+(7 October 2015, from /trunk)
+http://svn.gna.org/svn/relax/tags/4.0.0
+
+    Features:
+        N/A
+
+
+    Changes:
+        * Added a patch file for fixing Epydoc version 3.0.1.  This is needed to allow the dot graph files names to be unique (by no longer truncating to 30 characters), and to allow epydoc to handle newer Graphvis versions.
+        * Improvements for the release checklist document.  The backporting of the CHANGES file to trunk is now more obvious, and instructions for fixing Epydoc have been added.
+        * Clean up of some of the release instructions (for using vim).
+        * Added error catching to the find_unused_imports.py developer script.
+        * Fix for the error catching in the find_unused_imports.py developer script.  The numerous pylint warnings are also sent to STDERR.
+        * Removed the printout of pylint STDERR messages in the find_unused_imports.py developer script.
+        * Elimination of a number of wildcard imports from some frame order timing scripts.  This is to avoid excessive function imports.
+        * Removal of an unused import from the user_functions.frame_order module.
+        * Removal of unused imports from the test_suite/shared_data/frame_order/simulation scripts.
+        * Updated some unused frame order scripts to use the new minimise user function design.
+        * Unused import clean up in the test_suite/shared_data/curve_fitting/numeric_topology directory.  All the scripts in this directory have been cleaned up to remove unused imports.  In one case, commented out code was replaced with an 'if 0:' statement to silence the unused import warnings from the devel_scripts/find_unused_imports.py script.
+        * Unused import clean up in the test_suite/shared_data/curve_fitting/profiling directory.  The scripts in this directory have been cleaned up to remove unused imports.
+        * Added an exception system to the find_unused_imports.py developer script.  Sometimes pylint will give an "Unused import" warning for imports that are needed by the module. Therefore an exception list of the file name and module has been created to skip these warnings. The list covers the dep_check module and all of the profiling_*.py scripts in the directory test_suite/shared_data/dispersion/profiling/.
+        * Added a copyright notice to the find_unused_imports.py development script.  This is mainly to indicate how out of date the script will be in the future.
+        * A directory can now be supplied on the command line for the find_unused_imports.py devel script.
+        * Changed the imports in the test_monte_carlo_mean.py script.  This inconsequential change is to avoid false positives from the find_unused_imports.py devel script.
+        * Modifications of the test suite script for calculating synthetic CPMG data.  The imports in cpmg_synthetic.py are now all used, rather than being commented out.  This allows the find_unused_imports.py devel script to pass.
+        * Unused import cleanup of all scripts in the test_suite/shared_data/dispersion/ directories.  This both removes unused imports, or uncomments but deactivates temporarily unused code.
+        * Removed unused imports from the scripts in the test_suite/shared_data/frame_order subdirectories.
+        * Removed unused imports from the Spectrum system test base module.
+        * Removed unused imports from the Relax_disp system test base module.
+        * Clean up of all unused imports in the system test scripts.
+        * Removed unused imports from the Structure system test base module.
+        * Changed how the import of lib.regex in the Test_regex unit tests is used.  The module is no longer stored in the TestCase class namespace, but is rather called directly within the unit test.
+        * Changed the import of pipe_control.state in the test_state unit test module.
+        * Removed unused imports from the unit tests.
+        * Added another exception to the find_unused_imports.py devel script.  This is for the test_suite.unit_tests._lib._geometry.test_rotations module which programatically obtains the imports using globals().
+        * Added a workaround or hack for exceptions for circular imports in the find_unused_imports.py script.  This is currently for the test_suite.unit_tests._lib.test___init__ and test_suite.unit_tests._lib._geometry.test___init__ modules.
+        * Removal of unused imports from the GUI test modules.
+        * Removed all unused imports from the pipe_control package.
+        * Added import exceptions for the lib.compat module in the find_unused_imports.py devel script.
+        * Added import exceptions for the lib.xml module in the find_unused_imports.py devel script.  These are needed because of eval() function calls on XML stored Python data structures.
+        * Removed all unused imports from the relax library package.
+        * Removed all unused imports from the target_functions package.
+        * Removed unused imports from the developer scripts.
+        * Removed all unused imports from the specific_analyses package.
+        * Removed all unused imports from the auto_analyses package.
+        * Removed all unused imports from the numdifftools extern package.
+        * Removal of the last unused import from the target_functions package.
+        * Fix for the PCS system tests on old Python versions.  The self.assertAlmostEqual() function cannot compare None values in earlier Python versions.
+        * MS Windows fix for the Frame_order.test_generate_rotor2_distribution system test.  The locale.setlocale() function call for correctly setting up a spinning progress meter was failing on MS Windows.  The error is now caught and the local setting skipped.
+        * Added Python 3.5 to the manual C module compilation script.
+        * Added Python 3.5 to the Python multiversion test suite script.
+        * Changes to the introduction of the frame order theory chapter of the manual.
+
+
+    Bugfixes:
+        * Fix for the alignment tensor MC simulation objects in the data store for Python 3.1.  The sim_indices object was sometimes created with the range() method, however the returned iterator does not possess an index() function in Python 3.1.  Therefore it was converted to a standard list.
+        * Cosmetic bug fix for the running of the test suite in the GUI.  The list of skipped tests in the status object was not being reinitialised for each run of the test suite.  This only affects the GUI where the tests can be run multiple times.  The result was that the list of skipped tests was always being printed out, even if no tests were skipped.
+        * Fix for the numpy version number checking in the dep_check module.  The version_comparison() function is now being used to compare numbers, replacing the previous hack.
+
+
+
 Version 3.3.9
 (30 September 2015, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.3.9
