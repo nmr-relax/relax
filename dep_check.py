@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -69,7 +69,7 @@ def version_comparison(version1, version2):
 # numpy.
 try:
     import numpy
-    if float(numpy.version.version[:3]) < 1.6:
+    if version_comparison(numpy.version.version, '1.6') == -1:
         sys.stderr.write("Version %s of the 'numpy' dependency is not supported, numpy >= 1.6 is required.\n" % numpy.version.version)
         sys.exit()
 except ImportError:
