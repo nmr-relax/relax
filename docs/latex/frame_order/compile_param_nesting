@@ -1,0 +1,6 @@
+!# /bin/sh
+
+latex parameter_nesting.tex
+latex parameter_nesting.tex
+latex parameter_nesting.tex
+dvips -R0 -o parameter_nesting.ps parameter_nesting.dvi

@@ -232,7 +232,13 @@ The parameters of order are
 % Parameter nesting.
 \subsubsection{Frame order parameter nesting in the automated protocol}
 
-\input{frame_order/parameter_nesting}
+\begin{table}
+\begin{center}
+\caption[Frame order parameter nesting.]{The nesting of frame order model parameters and the resultant grid search dimensionality.  The boxes highlight parameter sets which are optimised in the initial grid search.  The start of each train of arrows are the optimised parameters which will be copied for the more complex model and excluded from the grid search.  The non-nested gird search dimensionality is given in brackets.}
+\includegraphics[width=\textwidth]{frame_order/parameter_nesting.ps}
+\label{table: frame order parameter nesting}
+\end{center}
+\end{table}
 
 The parameter nesting used in the automated protocol is shown in table~\ref{table: frame order parameter nesting}.
 This massively collapses the dimensionality of the initial grid search.

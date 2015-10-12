@@ -1,7 +1,41 @@
+\documentclass[varwidth=100cm, border=1pt]{standalone}
+
+% Good looking tables.
+\usepackage{booktabs}
+
+% Better maths.
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Colours.
+\usepackage[svgnames]{xcolor}
+
+% Graphics for tables (after xcolor because of package clashing).
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\newcommand*\sethighlight[1]{\tikz[baseline=(char.base)]{\node[shape=rectangle,draw=blue,inner sep=2pt] (char) {#1};}}
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
+
+% Maths commands - frame order specific.
+\newcommand{\Eigenseta}{\mathfrak{E}^\alpha_\textrm{ax}}
+\newcommand{\Eigensetabc}{\mathfrak{E}_{\alpha\beta\gamma}}
+\newcommand{\Eigensetax}{\mathfrak{E}_\textrm{ax}}
+\newcommand{\Pivotsetone}{\mathfrak{p}_1}
+\newcommand{\Pivotsettwo}{\mathfrak{p}_2}
+\newcommand{\Posset}{\mathfrak{P}}
+\newcommand{\Possetred}{\mathfrak{P}'}
+\newcommand{\conesmax}{\sigma_\textrm{max}}
+\newcommand{\conesmaxtwo}{\sigma_{\textrm{max,2}}}
+\newcommand{\conetheta}{\theta}
+\newcommand{\conethetax}{\theta_x}
+\newcommand{\conethetay}{\theta_y}
+
+
+
+\begin{document}
+
 \begin{table}
-\begin{center}
-\caption[Frame order parameter nesting.]{The nesting of frame order model parameters and the resultant grid search dimensionality.  The boxes highlight parameter sets which are optimised in the initial grid search.  The start of each train of arrows are the optimised parameters which will be copied for the more complex model and excluded from the grid search.  The non-nested gird search dimensionality is given in brackets.}
-\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} ccccccccc}
+\begin{tabular}{lccccccccc}
 
 % Spacing.
 \\[-5pt]
@@ -124,8 +158,6 @@ Double rotor &
 
 \bottomrule
 
-\label{table: frame order parameter nesting}
-
 
 % Arrows.
 \begin{tikzpicture}[overlay,remember picture]
@@ -141,6 +173,7 @@ Double rotor &
      \draw[->,ForestGreen] (s2.center) to [out=-20,in=45](s3) to [out=-45,in=45](s4);
 \end{tikzpicture}
 
-\end{tabular*}
-\end{center}
+\end{tabular}
 \end{table}
+
+\end{document}

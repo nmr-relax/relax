@@ -81,13 +81,6 @@
     upquote=true,
 }
 
-% Graphics for tables (after xcolor because of package clashing).
-\usepackage{tikz}
-\usetikzlibrary{calc}
-%\newcommand*\sethighlight[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=1pt] (char) {#1};}}
-\newcommand*\sethighlight[1]{\tikz[baseline=(char.base)]{\node[shape=rectangle,draw=blue,inner sep=2pt] (char) {#1};}}
-\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
-
 % Table row formatting.
 \usepackage{array}
 \newcolumntype{+}{>{\global\let\currentrowstyle\relax}}
