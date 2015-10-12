@@ -29,18 +29,6 @@
 % Better Table of contents (Toc), List of figures (Lof), and List of tables (Lot).
 \usepackage{tocloft}
 
-% Paragraph section formatting.
-\newcommand{\newparagraph}[2][]{
-    \ifthenelse { \equal {#1} {} }
-        { \paragraph{#2}\mbox{} \\}
-        { \paragraph[#1]{#2}\mbox{} \\ }
-}
-\newcommand{\newsubparagraph}[2][]{
-    \ifthenelse { \equal {#1} {} }
-        { \subparagraph{#2}\mbox{} \\}
-        { \subparagraph[#1]{#2}\mbox{} \\ }
-}
-
 % Hyperlinks.
 \usepackage[pdftitle={The relax manual}]{hyperref}
 \hypersetup{colorlinks,
