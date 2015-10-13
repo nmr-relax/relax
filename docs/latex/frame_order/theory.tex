@@ -62,7 +62,7 @@ where
 
 Because of the symmetry $S_{ij}(t) = S_{ji}(t)$, the order matrix has 6 unique elements.
 
-Assuming that the time dependent process modulating $\mu(t)$ is much faster than the evolution period $t_\textrm{max}$ of the observed physical interaction, for example the weak molecular alignment process which induces residual dipolar couplings (RDCs) and pseudo-contact shifts (PCSs) in NMR, the order matrix which gives rise to the non-isotropic effect is equation~\ref{eq: order matrix direction cosine} at $t_\textrm{max} = \infty$.
+Assuming that the time dependent process modulating $\mu(t)$ is much faster than the evolution period $t_{\textrm{max}}$ of the observed physical interaction, for example the weak molecular alignment process which induces residual dipolar couplings (RDCs) and pseudo-contact shifts (PCSs) in NMR, the order matrix which gives rise to the non-isotropic effect is equation~\ref{eq: order matrix direction cosine} at $t_{\textrm{max}} = \infty$.
 Hence the non-zero order matrix is
 \begin{equation}
     S(\infty) = \begin{bmatrix}
@@ -162,16 +162,16 @@ Using the notation $e_x$, $e_y$ and $e_z$ for the orthogonal axis system of the 
 
 If the rank-2, 3D order matrix between the axes A and B is denoted as
 \begin{equation}
-    S_\textrm{AB}(t) = \overline{e_A \otimes e_B},
+    S_{\textrm{AB}}(t) = \overline{e_A \otimes e_B},
 \end{equation}
 
 then the frame order matrix is
 \begin{equation}
     \FO^{T_{14}}(t) =
         \begin{bmatrix}
-            S_\textrm{XX}(t) & S_\textrm{XY}(t) & S_\textrm{XZ}(t) \\
-            S_\textrm{YX}(t) & S_\textrm{YY}(t) & S_\textrm{YZ}(t) \\
-            S_\textrm{ZX}(t) & S_\textrm{ZY}(t) & S_\textrm{ZZ}(t)
+            S_{\textrm{XX}}(t) & S_{\textrm{XY}}(t) & S_{\textrm{XZ}}(t) \\
+            S_{\textrm{YX}}(t) & S_{\textrm{YY}}(t) & S_{\textrm{YZ}}(t) \\
+            S_{\textrm{ZX}}(t) & S_{\textrm{ZY}}(t) & S_{\textrm{ZZ}}(t)
         \end{bmatrix} .
 \end{equation}
 
@@ -426,10 +426,10 @@ In index and direction cosine notation,
 
 The rotation matrices of the general frame order tensor of equation~\ref{eq: frame order definition} can be decomposed into a time dependent and time independent component.
 The original frame $F$ can be defined as the motional eigenframe of the system and a new arbitrary frame $F'$ introduced.
-The forward rotation from the reference frame $F'$ to the motional eigenframe $F$ will be denoted as $R_\textrm{eigen}$.
+The forward rotation from the reference frame $F'$ to the motional eigenframe $F$ will be denoted as $R_{\textrm{eigen}}$.
 The rotation matrix decomposition is
 \begin{equation}
-    R'(t) = R_\textrm{eigen} \cdot R(t) \cdot R_\textrm{eigen}^T .
+    R'(t) = R_{\textrm{eigen}} \cdot R(t) \cdot R_{\textrm{eigen}}^T .
 \end{equation}
 
 Hence the second degree frame order tensor is
@@ -445,17 +445,17 @@ Using the mixed product property
 the arbitrary frame, second degree frame order matrix is
 \begin{subequations}
 \begin{align}
-    \FOtwo &= \overline{\left( R_\textrm{eigen} \cdot R(t) \cdot R_\textrm{eigen}^T \right) \otimes \left( R_\textrm{eigen} \cdot R(t) \cdot R_\textrm{eigen}^T \right)} , \\
+    \FOtwo &= \overline{\left( R_{\textrm{eigen}} \cdot R(t) \cdot R_{\textrm{eigen}}^T \right) \otimes \left( R_{\textrm{eigen}} \cdot R(t) \cdot R_{\textrm{eigen}}^T \right)} , \\
 %           &= \overline{R \cdot \left( R(t) \cdot R^T \right) \otimes R \cdot \left( R(t) \cdot R^T \right)} , \\
-            &= \overline{\left(R_\textrm{eigen} \otimes R_\textrm{eigen} \right) \cdot \left( R(t) \cdot R_\textrm{eigen}^T \right) \otimes \left( R(t) \cdot R_\textrm{eigen}^T \right)} , \\
-            &= \overline{\left(R_\textrm{eigen} \otimes R_\textrm{eigen} \right) \cdot \left( R(t) \otimes R(t) \right) \cdot \left( R_\textrm{eigen}^T \otimes R_\textrm{eigen}^T \right)} , \\
-            &= \left(R_\textrm{eigen} \otimes R_\textrm{eigen} \right) \cdot \overline{\left( R(t) \otimes R(t) \right)} \cdot \left( R_\textrm{eigen}^T \otimes R_\textrm{eigen}^T \right) .
+           &= \overline{\left(R_{\textrm{eigen}} \otimes R_{\textrm{eigen}} \right) \cdot \left( R(t) \cdot R_{\textrm{eigen}}^T \right) \otimes \left( R(t) \cdot R_{\textrm{eigen}}^T \right)} , \\
+           &= \overline{\left(R_{\textrm{eigen}} \otimes R_{\textrm{eigen}} \right) \cdot \left( R(t) \otimes R(t) \right) \cdot \left( R_{\textrm{eigen}}^T \otimes R_{\textrm{eigen}}^T \right)} , \\
+           &= \left(R_{\textrm{eigen}} \otimes R_{\textrm{eigen}} \right) \cdot \overline{\left( R(t) \otimes R(t) \right)} \cdot \left( R_{\textrm{eigen}}^T \otimes R_{\textrm{eigen}}^T \right) .
 \end{align}
 \end{subequations}
 
-Generalising from the \nth{2} to the n$^\textrm{th}$-order, the generalised frame order tensor rotation is
+Generalising from the \nth{2} to the n$^{\textrm{th}}$-order, the generalised frame order tensor rotation is
 \begin{equation} \label{eq: frame order equation, arbitrary frame}
-    \FOn(t) = R_\textrm{eigen}^{\otimes n} \cdot \overline{R^{\otimes n}(t)} \cdot R_\textrm{eigen}^{T \otimes n} .
+    \FOn(t) = R_{\textrm{eigen}}^{\otimes n} \cdot \overline{R^{\otimes n}(t)} \cdot R_{\textrm{eigen}}^{T \otimes n} .
 \end{equation}
 
 
@@ -468,15 +468,15 @@ Generalising from the \nth{2} to the n$^\textrm{th}$-order, the generalised fram
 
 For the modelling aspect of the frame order theory, one more rotation is required.
 In equation~\ref{eq: frame order equation, arbitrary frame}, it is assumed that the starting position for the moving rigid body is that of its motional average.
-However in the initial 3D structure, this is not the case and an additional rotation to the average position $R_\textrm{ave}$ is required.
+However in the initial 3D structure, this is not the case and an additional rotation to the average position $R_{\textrm{ave}}$ is required.
 Taking this into account, the generalised frame order tensor is defined as
 \begin{equation}
-    \FOn(t) = R_\textrm{eigen}^{\otimes n} \cdot \overline{R^{\otimes n}(t)} \cdot R_\textrm{eigen}^{T \otimes n} \cdot R_\textrm{ave}^{T \otimes n} ,
+    \FOn(t) = R_{\textrm{eigen}}^{\otimes n} \cdot \overline{R^{\otimes n}(t)} \cdot R_{\textrm{eigen}}^{T \otimes n} \cdot R_{\textrm{ave}}^{T \otimes n} ,
 \end{equation}
 
-where $R_\textrm{eigen}$ is the eigenframe rotation matrix, $R(t)$ is the time dependent rotation matrix, $R_\textrm{ave}$ is the rotation from the average domain position to the motional eigenframe, and $\otimes n$ is the n$^\textrm{th}$ tensor power.
-In applications to physical processes which require numerical integration, pre-rotating the rigid body by $R_\textrm{ave}$ to the average position is equivalent but more numerically efficient.
-Therefore the $R_\textrm{ave}$ can be dropped and equation~\ref{eq: frame order equation, arbitrary frame} used instead.
+where $R_{\textrm{eigen}}$ is the eigenframe rotation matrix, $R(t)$ is the time dependent rotation matrix, $R_{\textrm{ave}}$ is the rotation from the average domain position to the motional eigenframe, and $\otimes n$ is the n$^{\textrm{th}}$ tensor power.
+In applications to physical processes which require numerical integration, pre-rotating the rigid body by $R_{\textrm{ave}}$ to the average position is equivalent but more numerically efficient.
+Therefore the $R_{\textrm{ave}}$ can be dropped and equation~\ref{eq: frame order equation, arbitrary frame} used instead.
 
 %For the RDC and PCS which are time independent,
 %\begin{equation}
@@ -485,15 +485,15 @@ Therefore the $R_\textrm{ave}$ can be dropped and equation~\ref{eq: frame order 
 %
 %For a single state $i$, its rotation is defined as
 %\begin{equation}
-%    R_i = R_\textrm{eigen} \cdot R(\infty) \cdot R_\textrm{eigen}^T \cdot R_\textrm{ave}^T .
+%    R_i = R_{\textrm{eigen}} \cdot R(\infty) \cdot R_{\textrm{eigen}}^T \cdot R_{\textrm{ave}}^T .
 %\end{equation}
 %
 %or in a different notation as
 %\begin{equation}
-%    R_i = R_\textrm{eigen} \cdot R_i' \cdot R_\textrm{eigen}^T \cdot R_\textrm{ave}^T ,
+%    R_i = R_{\textrm{eigen}} \cdot R_i' \cdot R_{\textrm{eigen}}^T \cdot R_{\textrm{ave}}^T ,
 %\end{equation}
 %
-%where $R_\textrm{eigen}$ is the rotation from the average position frame to the motional eigenframe.
+%where $R_{\textrm{eigen}}$ is the rotation from the average position frame to the motional eigenframe.
 
 
 
@@ -625,7 +625,7 @@ A single element of the reduced tensor is simply a linear combination of all ele
 
 Converting from the rank-2, 3D, symmetric and traceless space of alignment tensors to the rank-1, 5D space, a non-linear frame order superoperator can be written as
 \begin{equation} \label{eq: frame order superoperator}
-    \overline A = \FOtwo_\textrm{5D} \cdot A .
+    \overline A = \FOtwo_{\textrm{5D}} \cdot A .
 \end{equation}
 
 In matrix notation, this is
@@ -739,31 +739,31 @@ Therefore the alignment tensor can then be written as the anisotropic part of th
 
 For the PCS, the lanthanide ion to nuclear vector is
 \begin{equation}
-    \vectr = p_\textrm{N} - p_{\textrm{Ln}^{3+}},
+    \vectr = p_{\textrm{N}} - p_{\textrm{Ln}^{3+}},
 \end{equation}
 
-where $p_\textrm{N}$ is the Cartesian coordinates of the nucleus of interest and $p_{\textrm{Ln}^{3+}}$ is the position of the aligning lanthanide ion.
+where $p_{\textrm{N}}$ is the Cartesian coordinates of the nucleus of interest and $p_{\textrm{Ln}^{3+}}$ is the position of the aligning lanthanide ion.
 $\vectr$ is defined in the alignment frame, and $p_{\textrm{Ln}^{3+}}$ is constant in this frame.
 After a forward rotation to the discrete state $i$, the new atomic position in the reference frame is
 \begin{equation}
-    p_\textrm{N}' = R_i \cdot \left( p_\textrm{N} - p_\textrm{P} \right) + p_\textrm{P}.
+    p_{\textrm{N}}' = R_i \cdot \left( p_{\textrm{N}} - p_{\textrm{P}} \right) + p_{\textrm{P}}.
 \end{equation}
 
-where $p_\textrm{P}$ is the pivot point of the rotation.
+where $p_{\textrm{P}}$ is the pivot point of the rotation.
 Hence the transformed vector is
 \begin{subequations}
 \begin{align}
-    \vectr_i &= p_\textrm{N}^i - p_{\textrm{Ln}^{3+}} , \\
-             &= R_i \cdot \left( p_\textrm{N} - p_\textrm{P} \right) + p_\textrm{P} - p_{\textrm{Ln}^{3+}} . \label{eq: pivoted rotation vector i}
+    \vectr_i &= p_{\textrm{N}}^i - p_{\textrm{Ln}^{3+}} , \\
+             &= R_i \cdot \left( p_{\textrm{N}} - p_{\textrm{P}} \right) + p_{\textrm{P}} - p_{\textrm{Ln}^{3+}} . \label{eq: pivoted rotation vector i}
 \end{align}
 \end{subequations}
 
 The set of three vectors are defining this pivoted system are
 \begin{subequations}
 \begin{align}
-    & \vectr_{\textrm{LN}} = p_\textrm{N} - p_{\textrm{Ln}^{3+}} , \\
-    & \vectr_{\textrm{PN}} = p_\textrm{N} - p_\textrm{P} , \\
-    & \vectr_{\textrm{LP}} = p_\textrm{P} - p_{\textrm{Ln}^{3+}} .
+    & \vectr_{\textrm{LN}} = p_{\textrm{N}} - p_{\textrm{Ln}^{3+}} , \\
+    & \vectr_{\textrm{PN}} = p_{\textrm{N}} - p_{\textrm{P}} , \\
+    & \vectr_{\textrm{LP}} = p_{\textrm{P}} - p_{\textrm{Ln}^{3+}} .
 \end{align}
 \end{subequations}
 
