@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -488,6 +488,34 @@ def fetch_docstrings(target, source, env):
 
     # Delete the Fetch_docstrings class.  This allows the loaded dll files to be deleted through python on MS Windows.
     del Fetch_docstrings
+
+    # Final printout.
+    print("\n\n\n")
+
+
+def replicate_title_check(target, source, env):
+    """Builder action for checking for replicated titles in the LaTeX sources."""
+
+    # Print out.
+    print('')
+    print("#######################################################")
+    print("# Checking for replicated titles in the LaTeX sources #")
+    print("#######################################################\n\n")
+
+    # Import the find_replicate_titles module (needs to be done here so that Sconstruct doesn't need to load the entire program each time).
+    sys.path.append(getcwd())
+    from docs.latex.find_replicate_titles import Replicated_titles
+
+    # Find the replicates.
+    replicates = Replicated_titles()
+    if replicates.find():
+        print("\n\nFatal error:  Replicated titles found.")
+        print("\n\n\n")
+        sys.exit(1)
+
+    # Delete the Replicate_titles class.  This allows the loaded dll files to be deleted through python on MS Windows.
+    del replicates
+    del Replicate_titles
 
     # Final printout.
     print("\n\n\n")

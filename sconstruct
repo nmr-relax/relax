@@ -4,7 +4,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -37,7 +37,7 @@ from tempfile import mkdtemp
 # Scons modules.
 from scons.distrib import package, gpg_sign
 from scons.install import install, uninstall
-from scons.manuals import clean_manual_files, compile_api_manual_html, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, version_file
+from scons.manuals import clean_manual_files, compile_api_manual_html, compile_user_manual_html, compile_user_manual_pdf, fetch_docstrings, replicate_title_check, version_file
 from SCons.Script import ARGUMENTS
 import SCons.Util
 
@@ -306,6 +306,7 @@ class Main:
         manual_env.Manual(target='user_manual_pdf', source=None)
         manual_env.Depends('user_manual_pdf', 'manual_clean')
         manual_env.Depends('user_manual_pdf', 'manual_version_file')
+        manual_env.Depends('user_manual_pdf', 'replicate_title_check')
         manual_env.Depends('user_manual_pdf', 'fetch_docstrings')
         manual_env.Depends('user_manual_pdf', 'compile_user_manual_pdf')
 
@@ -313,12 +314,14 @@ class Main:
         manual_env.Manual(target='user_manual_pdf_nofetch', source=None)
         manual_env.Depends('user_manual_pdf_nofetch', 'manual_clean')
         manual_env.Depends('user_manual_pdf_nofetch', 'manual_version_file')
+        manual_env.Depends('user_manual_pdf_nofetch', 'replicate_title_check')
         manual_env.Depends('user_manual_pdf_nofetch', 'compile_user_manual_pdf')
 
         # Target for creating the user manual (HTML version).
         manual_env.Manual(target='user_manual_html', source=None)
         manual_env.Depends('user_manual_html', 'manual_clean')
         manual_env.Depends('user_manual_html', 'manual_version_file')
+        manual_env.Depends('user_manual_html', 'replicate_title_check')
         manual_env.Depends('user_manual_html', 'fetch_docstrings')
         manual_env.Depends('user_manual_html', 'compile_user_manual_html')
 
@@ -326,6 +329,7 @@ class Main:
         manual_env.Manual(target='user_manual_html_nofetch', source=None)
         manual_env.Depends('user_manual_html_nofetch', 'manual_clean')
         manual_env.Depends('user_manual_html_nofetch', 'manual_version_file')
+        manual_env.Depends('user_manual_html_nofetch', 'replicate_title_check')
         manual_env.Depends('user_manual_html_nofetch', 'compile_user_manual_html')
 
         # Target for creating the API documentation manual (HTML version).
@@ -337,6 +341,10 @@ class Main:
         # Target for creating relax version number LaTeX file.
         manual_env.Append(BUILDERS={'Version' : Builder(action=version_file)})
         manual_env.Version(target='manual_version_file', source=None)
+
+        # Target for checking for replicated titles.
+        manual_env.Append(BUILDERS={'Replicate' : Builder(action=replicate_title_check)})
+        manual_env.Replicate(target='replicate_title_check', source=None)
 
         # Target for fetching the docstrings.
         manual_env.Append(BUILDERS={'Fetch' : Builder(action=fetch_docstrings)})
@@ -547,6 +555,7 @@ class Main:
         string = string + '  %-25s%-40s\n' % ('gpg_src', 'GPG sign the source distribution file')
         string = string + '  %-25s%-40s\n' % ('version_check', 'check the relax version number')
         string = string + '  %-25s%-40s\n' % ('manual_version_file', 'create the relax version number LaTeX file')
+        string = string + '  %-25s%-40s\n' % ('replicate_title_check', 'check for replicated titles in the LaTeX sources')
         string = string + '  %-25s%-40s\n' % ('fetch_docstrings', 'fetch and LaTeX format the docstrings')
         string = string + '  %-25s%-40s\n' % ('compile_user_manual_pdf', 'compile the PDF version of the user manual from the LaTeX sources')
         string = string + '  %-25s%-40s\n' % ('compile_user_manual_html', 'compile the HTML version of the user manual from the LaTeX sources')
