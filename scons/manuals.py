@@ -515,9 +515,10 @@ def replicate_title_check(target, source, env):
 
     # Delete the Replicate_titles class.  This allows the loaded dll files to be deleted through python on MS Windows.
     del replicates
-    del Replicate_titles
+    del Replicated_titles
 
     # Final printout.
+    print("No replicated titles found.")
     print("\n\n\n")
 
 
