@@ -1,6 +1,6 @@
 #! /bin/sh
 
-grep "section{" *.tex -h \
+grep "section{" *.tex */*.tex -h \
 | grep -v subsubsection \
 | sed "s/subsection//g" \
 | sed "s/section//g" \
@@ -11,6 +11,5 @@ grep "section{" *.tex -h \
 | sed "s/^\\\\//g" \
 | sed "s/^The //g" \
 | sed "s/\\\\-//g" \
-| tr '[:upper:]' '[:lower:]' \
 | sort \
 | uniq -cd
