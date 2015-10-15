@@ -27,67 +27,91 @@ from re import search
 import sys
 
 
-# The data structure for holding the unique title names.
-titles = []
+class Replicated_titles:
+    """Class used to find replicated titles in the LaTeX sources."""
 
-# The duplicate count structure.
-duplicate = {}
+    def __init__(self):
+        """Set up the required data structures."""
 
-# Walk through the directories.
-for root, dirs, files in walk(getcwd()):
-    # Loop over the files in the current directory.
-    for file_name in files:
-        # Skip non-LaTeX files.
-        if not search("tex$", file_name):
-            continue
+        # The data structure for holding the unique title names.
+        self.titles = []
 
-        # The full path.
-        file_path = path.join(root, file_name)
+        # The replicate count structure.
+        self.replicate = {}
 
-        # Read the contents of the file.
-        file = open(file_path)
-        lines = file.readlines()
-        file.close()
 
-        # Loop over the file contents.
-        for line in lines:
-            # Skip everything that is not a chapter or section.
-            if not (search("\\\\chapter{", line) or search("\\\\section{", line) or search("\\\\subsection{", line)):
-                continue
+    def find(self):
+        """Find the replicates."""
 
-            # Strip off the newline character.
-            line = line.replace('\n', '')
+        # Reset the data structures if necessary.
+        if len(self.titles):
+            self.titles = []
+            self.replicate = {}
 
-            # Strip off any label.
-            if search(' \\\\label', line):
-                line = line[:line.index(' \label')]
+        # Walk through the directories.
+        for root, dirs, files in walk(getcwd()):
+            # Loop over the files in the current directory.
+            for file_name in files:
+                # Skip non-LaTeX files.
+                if not search("tex$", file_name):
+                    continue
 
-            # Extract the title string by finding the first '{' and chop off the final '}'.
-            title = line[line.index('{')+1:-1]
+                # The full path.
+                file_path = path.join(root, file_name)
 
-            # Is the title new?
-            if not title in titles:
-                titles.append(title)
+                # Read the contents of the file.
+                file = open(file_path)
+                lines = file.readlines()
+                file.close()
 
-            # Replicate!
-            else:
-                # No duplicates yet, so 2 identical titles exist.
-                if not title in duplicate:
-                    duplicate[title] = 2
+                # Loop over the file contents.
+                for line in lines:
+                    # Skip everything that is not a chapter or section.
+                    if not (search("\\\\chapter{", line) or search("\\\\section{", line) or search("\\\\subsection{", line)):
+                        continue
 
-                # At least two identical titles exist, so increment the counter.
-                else:
-                    duplicate[title] += 1
+                    # Strip off the newline character.
+                    line = line.replace('\n', '')
 
-# Final printout.
-if len(duplicate):
-    # The duplicate titles.
-    print("%-80s %-10s" % ("Title", "Count"))
-    for title in duplicate:
-        print("%-80s %10i" % (title, duplicate[title]))
+                    # Strip off any label.
+                    if search(' \\\\label', line):
+                        line = line[:line.index(' \label')]
 
-    # Return a failed exit status.
-    sys.exit(1)
+                    # Extract the title string by finding the first '{' and chop off the final '}'.
+                    title = line[line.index('{')+1:-1]
 
-# No duplicates.
-sys.exit(0)
+                    # Is the title new?
+                    if not title in self.titles:
+                        self.titles.append(title)
+
+                    # Replicate!
+                    else:
+                        # No replicates yet, so 2 identical titles exist.
+                        if not title in self.replicate:
+                            self.replicate[title] = 2
+
+                        # At least two identical titles exist, so increment the counter.
+                        else:
+                            self.replicate[title] += 1
+
+        # Final printout.
+        if len(self.replicate):
+            # The replicate titles.
+            print("%-80s %-10s" % ("Title", "Count"))
+            for title in self.replicate:
+                print("%-80s %10i" % (title, self.replicate[title]))
+
+            # Return a status that replicates have been found.
+            return True
+
+        # No replicates.
+        return False
+
+
+
+if __name__ == "__main__":
+    repli = Replicated_titles()
+    if repli.find():
+        sys.exit(1)
+    else:
+        sys.exit(0)
