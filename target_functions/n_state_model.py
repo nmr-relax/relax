@@ -21,7 +21,7 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import array, dot, eye, float64, ones, rank, transpose, zeros
+from numpy import array, dot, eye, float64, ones, transpose, zeros
 
 # relax module imports.
 from lib.alignment.alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
@@ -1200,7 +1200,7 @@ class N_state_opt:
         """Calculate the paramagnetic centre to spin vectors, distances and constants."""
 
         # Get the vectors and distances.
-        if rank(self.paramag_centre) == 1:
+        if self.paramag_centre.ndim == 1:
             vectors_single_centre(self.atomic_pos, self.paramag_centre, self.paramag_unit_vect, self.paramag_dist)
         else:
             vectors_centre_per_state(self.atomic_pos, self.paramag_centre, self.paramag_unit_vect, self.paramag_dist)
