@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -119,7 +119,7 @@ class Model_free(API_base, API_common):
                     continue
 
                 # Check the unit vectors.
-                if not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
+                if not hasattr(interatoms[i], 'vector') or interatoms[i].vector is None:
                     warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
                     return
 
@@ -1295,7 +1295,7 @@ class Model_free(API_base, API_common):
 
                 # Diagonal scaling.
                 data_store.scaling_matrix = scaling_matrix[index]
-                if data_store.scaling_matrix != None:
+                if data_store.scaling_matrix is not None:
                     opt_params.param_vector = dot(inv(data_store.scaling_matrix), opt_params.param_vector)
 
             # Store the grid search options.
@@ -1702,7 +1702,7 @@ class Model_free(API_base, API_common):
 
                 # Check the unit vectors.
                 if need_vect:
-                    if not hasattr(interatoms[i], 'vector') or interatoms[i].vector == None:
+                    if not hasattr(interatoms[i], 'vector') or interatoms[i].vector is None:
                         warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
                         spin.select = False
                         deselect_flag = True

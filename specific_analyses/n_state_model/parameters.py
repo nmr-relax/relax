@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -111,7 +111,7 @@ def assemble_param_vector(sim_index=None):
             for i in range(3):
                 param_vector.append(None)
         elif sim_index != None:
-            if cdp.paramagnetic_centre_sim[sim_index] == None:
+            if cdp.paramagnetic_centre_sim[sim_index] is None:
                 for i in range(3):
                     param_vector.append(None)
             else:
@@ -226,7 +226,7 @@ def disassemble_param_vector(param_vector=None, data_types=None, sim_index=None)
 
         # Monte Carlo simulated positions.
         else:
-            if cdp.paramagnetic_centre_sim[sim_index] == None:
+            if cdp.paramagnetic_centre_sim[sim_index] is None:
                 cdp.paramagnetic_centre_sim[sim_index] = [None, None, None]
             cdp.paramagnetic_centre_sim[sim_index][0] = param_vector[-3]
             cdp.paramagnetic_centre_sim[sim_index][1] = param_vector[-2]

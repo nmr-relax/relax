@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -76,7 +76,7 @@ def cone_edge(mol=None, cone_obj=None, res_name='CON', res_num=None, chain_id=''
         phi, theta = angles_regular(inc)
 
     # Initialise the rotation matrix.
-    if R == None:
+    if R is None:
         R = eye(3)
 
     # Get the rotation matrix.
@@ -153,7 +153,7 @@ def cone(mol=None, cone_obj=None, start_res=1, apex=None, axis=None, R=None, inc
         axis = array([0, 0, 1], float64)
 
     # No rotation.
-    if R == None:
+    if R is None:
         R = eye(3)
 
     # The first atom number.

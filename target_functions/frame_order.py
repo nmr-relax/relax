@@ -142,25 +142,25 @@ class Frame_order:
 
         # Scaling initialisation.
         self.scaling_matrix = scaling_matrix
-        if self.scaling_matrix != None:
+        if self.scaling_matrix is not None:
             self.scaling_flag = True
         else:
             self.scaling_flag = False
 
         # The total number of alignments.
         self.num_align = 0
-        if rdcs != None:
+        if rdcs is not None:
             self.num_align = len(rdcs)
-        elif pcs != None:
+        elif pcs is not None:
             self.num_align = len(pcs)
 
         # Set the RDC and PCS flags (indicating the presence of data).
         rdc_flag = [True] * self.num_align
         pcs_flag = [True] * self.num_align
         for align_index in range(self.num_align):
-            if rdcs == None or len(rdcs[align_index]) == 0:
+            if rdcs is None or len(rdcs[align_index]) == 0:
                 rdc_flag[align_index] = False
-            if pcs == None or len(pcs[align_index]) == 0:
+            if pcs is None or len(pcs[align_index]) == 0:
                 pcs_flag[align_index] = False
         self.rdc_flag = sum(rdc_flag)
         self.pcs_flag = sum(pcs_flag)
@@ -169,9 +169,9 @@ class Frame_order:
         self._translation_vector = zeros(3, float64)
 
         # Some checks.
-        if self.rdc_flag and (rdc_vect == None or not len(rdc_vect)):
+        if self.rdc_flag and (rdc_vect is None or not len(rdc_vect)):
             raise RelaxError("The rdc_vect argument " + repr(rdc_vect) + " must be supplied.")
-        if self.pcs_flag and (atomic_pos == None or not len(atomic_pos)):
+        if self.pcs_flag and (atomic_pos is None or not len(atomic_pos)):
             raise RelaxError("The atomic_pos argument " + repr(atomic_pos) + " must be supplied.")
 
         # The total number of spins.
@@ -348,9 +348,9 @@ class Frame_order:
         """Set up isotropic cone optimisation against the alignment tensor data."""
 
         # Some checks.
-        if self.full_tensors == None or not len(self.full_tensors):
+        if self.full_tensors is None or not len(self.full_tensors):
             raise RelaxError("The full_tensors argument " + repr(self.full_tensors) + " must be supplied.")
-        if self.full_in_ref_frame == None or not len(self.full_in_ref_frame):
+        if self.full_in_ref_frame is None or not len(self.full_in_ref_frame):
             raise RelaxError("The full_in_ref_frame argument " + repr(self.full_in_ref_frame) + " must be supplied.")
 
         # Tensor set up.
@@ -1969,7 +1969,7 @@ class Frame_order:
         # The lanthanide to pivot vector.
         if self.pivot_opt:
             subtract(pivot, self.paramag_centre, self.r_ln_pivot)
-        if pivot2 != None:
+        if pivot2 is not None:
             subtract(pivot2, self.paramag_centre, self.r_ln_pivot)
 
         # Calculate the average position pivot point to atomic positions vectors once.
@@ -1989,7 +1989,7 @@ class Frame_order:
             subtract(self.r_pivot_atom_rev, pivot, self.r_pivot_atom_rev)
 
         # Calculate the inter-pivot vector for the double motion models.
-        if pivot2 != None:
+        if pivot2 is not None:
             self.r_inter_pivot = pivot - pivot2
 
 
@@ -2136,7 +2136,7 @@ class Frame_order:
             index2 = align_index*5+5
 
             # Reduction.
-            if daeg != None:
+            if daeg is not None:
                 # Reduce the tensor.
                 reduce_alignment_tensor(daeg, self.full_tensors[index1:index2], self.A_5D_bc[index1:index2])
 

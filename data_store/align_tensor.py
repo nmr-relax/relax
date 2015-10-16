@@ -1363,7 +1363,7 @@ class AlignTensorData(Element):
                     # Loop over the dependent structures.
                     for j in range(len(deps)):
                         # None, so skip.
-                        if deps[j] == None or deps[j][i] == None:
+                        if deps[j] is None or deps[j][i] is None:
                             skip = True
 
                         # String data type.

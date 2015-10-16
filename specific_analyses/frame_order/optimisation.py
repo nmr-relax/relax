@@ -277,7 +277,7 @@ def minimise_setup_atomic_pos(sim_index=None, verbosity=1):
             ave_pos = zeros(3, float64)
             count = 0
             for i in range(len(spin.pos)):
-                if spin.pos[i] == None:
+                if spin.pos[i] is None:
                     continue
                 ave_pos += spin.pos[i]
                 count += 1
@@ -472,12 +472,12 @@ def minimise_setup_rdcs(sim_index=None):
     for rdc_index in range(len(unit_vect)):
         # Number of vectors.
         if num == None:
-            if unit_vect[rdc_index] != None:
+            if unit_vect[rdc_index] is not None:
                 num = len(unit_vect[rdc_index])
             continue
 
         # Check.
-        if unit_vect[rdc_index] != None and len(unit_vect[rdc_index]) != num:
+        if unit_vect[rdc_index] is not None and len(unit_vect[rdc_index]) != num:
             raise RelaxError("The number of interatomic vectors for all no match:\n%s" % unit_vect)
 
     # Missing unit vectors.
@@ -486,7 +486,7 @@ def minimise_setup_rdcs(sim_index=None):
 
     # Update None entries.
     for i in range(len(unit_vect)):
-        if unit_vect[i] == None:
+        if unit_vect[i] is None:
             unit_vect[i] = [[None, None, None]]*num
 
     # The RDC data.
@@ -793,9 +793,9 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling_matrix=None, unset
         rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, absolute_rdc = minimise_setup_rdcs(sim_index=sim_index)
 
     # Data checks.
-    if pcs != None and not len(pcs):
+    if pcs is not None and not len(pcs):
         raise RelaxNoPCSError
-    if rdcs != None and not len(rdcs):
+    if rdcs is not None and not len(rdcs):
         raise RelaxNoRDCError
 
     # Get the atomic_positions.
@@ -826,7 +826,7 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling_matrix=None, unset
     # Information printout.
     if verbosity and sim_index == None:
         sys.stdout.write("\nThe average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:\n    %s\n" % list(ave_pos_pivot))
-        if com != None:
+        if com is not None:
             sys.stdout.write("The centre of mass reference coordinate for the rotor models is:\n    %s\n" % list(com))
         if cdp.model != MODEL_RIGID:
             if hasattr(cdp, 'quad_int') and cdp.quad_int:
@@ -834,9 +834,9 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling_matrix=None, unset
             else:
                 sys.stdout.write("Numerical PCS integration:  Quasi-random Sobol' sequence.\n")
         base_data = []
-        if rdcs != None and len(rdcs):
+        if rdcs is not None and len(rdcs):
             base_data.append("RDCs")
-        if pcs != None and len(pcs):
+        if pcs is not None and len(pcs):
             base_data.append("PCSs")
         sys.stdout.write("Base data: %s\n" % repr(base_data))
         sys.stdout.write("\n")
@@ -877,7 +877,7 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
         raise RelaxNaNError('chi-squared')
 
     # Scaling.
-    if scaling_matrix != None:
+    if scaling_matrix is not None:
         param_vector = dot(scaling_matrix, param_vector)
 
     # The parameters to wrap.
@@ -1191,7 +1191,7 @@ class Frame_order_minimise_command(Slave_command):
             self.A, self.b = linear_constraints(scaling_matrix=scaling_matrix)
 
             # Constraint flag set but no constraints present.
-            if self.A == None:
+            if self.A is None:
                 if verbosity:
                     warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
 

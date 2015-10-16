@@ -758,7 +758,7 @@ def unit_vectors(ave=True):
             vector_list = []
             for i in range(len(spin1.pos)):
                 # No structural information.
-                if spin1.pos[i] == None or spin2.pos[i] == None:
+                if spin1.pos[i] is None or spin2.pos[i] is None:
                     warn(RelaxWarning("No structural information for state %i can be found between spins '%s' and '%s'." % (i, interatom.spin_id1, interatom.spin_id2)))
                     vector_list.append(None)
 
@@ -769,7 +769,7 @@ def unit_vectors(ave=True):
         # Unit vectors.
         for i in range(len(vector_list)):
             # No vector.
-            if vector_list[i] == None:
+            if vector_list[i] is None:
                 continue
 
             # Normalisation factor.
@@ -788,7 +788,7 @@ def unit_vectors(ave=True):
             ave_vector = zeros(3, float64)
             count = 0
             for i in range(len(vector_list)):
-                if vector_list[i] != None:
+                if vector_list[i] is not None:
                     ave_vector = ave_vector + vector_list[i]
                     count += 1
             vector_list = [ave_vector / count]

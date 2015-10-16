@@ -177,7 +177,7 @@ class Dispersion:
         if model in MODEL_LIST_R1RHO_OFF_RES:
             if chemical_shifts == None:
                 raise RelaxError("Chemical shifts must be supplied for the '%s' R1rho off-resonance dispersion model." % model)
-            if not r1_fit and r1 == None:
+            if not r1_fit and r1 is None:
                 raise RelaxError("R1 relaxation rates must be supplied for the '%s' R1rho off-resonance dispersion model when not fitting the values." % model)
 
         # Store the arguments.
@@ -298,7 +298,7 @@ class Dispersion:
                         self.frqs_H[ei, si, mi, :] = frq_H
 
                     # Fill r1.
-                    if r1 != None:
+                    if r1 is not None:
                         r1_l = r1[si][mi]
                         self.r1[ei, si, mi, :] = r1_l
 
@@ -404,7 +404,7 @@ class Dispersion:
 
         # Scaling initialisation.
         self.scaling_flag = False
-        if self.scaling_matrix != None:
+        if self.scaling_matrix is not None:
             self.scaling_flag = True
 
         # Initialise the post spin parameter indices.

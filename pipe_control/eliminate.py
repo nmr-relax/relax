@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -66,7 +66,7 @@ def eliminate(function=None, args=None):
             values = api.get_param_values(model_info=model_info)
 
             # No data.
-            if names == None or values == None:
+            if names == None or values is None:
                 continue
 
             # Test that the names and values vectors are of equal length.
@@ -96,7 +96,7 @@ def eliminate(function=None, args=None):
                 values = api.get_param_values(sim_index=j, model_info=model_info)
 
                 # No data.
-                if names == None or values == None:
+                if names == None or values is None:
                     continue
 
                 # Test that the names and values vectors are of equal length.

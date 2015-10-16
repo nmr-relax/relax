@@ -685,7 +685,7 @@ def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=N
     results = generic_minimise(func=finder.func, x0=init_pos, min_algor='Log barrier', min_options=('simplex',), A=A, b=b, func_tol=func_tol, print_flag=1)
 
     # No result.
-    if results == None:
+    if results is None:
         return
 
     # Store the data.
@@ -758,7 +758,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
                     raise RelaxNoSpinError(atom)
 
                 # Test the position.
-                if not hasattr(subspin, 'pos') or subspin.pos == None or not len(subspin.pos):
+                if not hasattr(subspin, 'pos') or subspin.pos is None or not len(subspin.pos):
                     raise RelaxError("Positional information is not available for the atom '%s'." % atom)
 
                 # Alias the position.
@@ -1228,7 +1228,7 @@ def rotate(R=None, origin=None, model=None, atom_id=None, pipe_name=None):
     dp = get_pipe(pipe_name)
 
     # Set the origin if not supplied.
-    if origin == None:
+    if origin is None:
         origin = [0, 0, 0]
 
     # Convert the args to numpy float data structures.

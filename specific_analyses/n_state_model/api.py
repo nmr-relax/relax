@@ -533,7 +533,7 @@ class N_state_model(API_base, API_common):
         chi2 = model.func(param_vector)
 
         # Scaling.
-        if scaling_matrix[0] != None:
+        if scaling_matrix[0] is not None:
             param_vector = dot(scaling_matrix[0], param_vector)
 
         # Disassemble the parameter vector.

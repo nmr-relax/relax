@@ -72,7 +72,7 @@ def disassemble_result(param_vector=None, func=None, iter=None, fc=None, gc=None
     """
 
     # No result.
-    if param_vector == None:
+    if param_vector is None:
         return
 
     # Alias the current data pipe.
@@ -87,7 +87,7 @@ def disassemble_result(param_vector=None, func=None, iter=None, fc=None, gc=None
         raise RelaxNaNError('chi-squared')
 
     # Scaling.
-    if scaling_matrix != None:
+    if scaling_matrix is not None:
         param_vector = dot(scaling_matrix, param_vector)
 
     # Check if the chi-squared value is lower.  This allows for a parallelised grid search!

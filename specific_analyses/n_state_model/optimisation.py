@@ -173,7 +173,7 @@ def minimise_setup_atomic_pos(sim_index=None):
     if not hasattr(cdp, 'paramagnetic_centre'):
         paramag_centre = zeros(3, float64)
     elif sim_index != None and not cdp.paramag_centre_fixed:
-        if not hasattr(cdp, 'paramagnetic_centre_sim') or cdp.paramagnetic_centre_sim[sim_index] == None:
+        if not hasattr(cdp, 'paramagnetic_centre_sim') or cdp.paramagnetic_centre_sim[sim_index] is None:
             paramag_centre = zeros(3, float64)
         else:
             paramag_centre = array(cdp.paramagnetic_centre_sim[sim_index])
@@ -335,7 +335,7 @@ def target_fn_setup(sim_index=None, scaling_matrix=None, verbosity=0):
         probs = cdp.probs
 
     # Diagonal scaling.
-    if len(param_vector) and scaling_matrix != None:
+    if len(param_vector) and scaling_matrix is not None:
         param_vector = dot(inv(scaling_matrix), param_vector)
 
     # Get the data structures for optimisation using the tensors as base data sets.

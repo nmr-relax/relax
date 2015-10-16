@@ -314,7 +314,7 @@ class Relax_fit(API_base, API_common):
             param_vector = assemble_param_vector(spin=spin)
 
             # Diagonal scaling.
-            if scaling_matrix[model_index] != None:
+            if scaling_matrix[model_index] is not None:
                 param_vector = dot(inv(scaling_matrix[model_index]), param_vector)
 
             # Linear constraints.
@@ -356,7 +356,7 @@ class Relax_fit(API_base, API_common):
 
             # The scaling matrix in a diagonalised list form.
             scaling_list = []
-            if scaling_matrix[model_index] == None:
+            if scaling_matrix[model_index] is None:
                 for i in range(len(param_vector)):
                     scaling_list.append(1.0)
             else:
@@ -413,7 +413,7 @@ class Relax_fit(API_base, API_common):
                 param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
-            if scaling_matrix[model_index] != None:
+            if scaling_matrix[model_index] is not None:
                 param_vector = dot(scaling_matrix[model_index], param_vector)
 
             # Disassemble the parameter vector.

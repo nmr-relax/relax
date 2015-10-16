@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -188,7 +188,7 @@ class N_state_opt:
 
         # Scaling initialisation.
         self.scaling_matrix = scaling_matrix
-        if self.scaling_matrix != None:
+        if self.scaling_matrix is not None:
             self.scaling_flag = True
         else:
             self.scaling_flag = False
@@ -196,11 +196,11 @@ class N_state_opt:
         # The 2-domain N-state model.
         if model == '2-domain':
             # Some checks.
-            if red_data == None or not len(red_data):
+            if red_data is None or not len(red_data):
                 raise RelaxError("The red_data argument " + repr(red_data) + " must be supplied.")
-            if red_errors == None or not len(red_errors):
+            if red_errors is None or not len(red_errors):
                 raise RelaxError("The red_errors argument " + repr(red_errors) + " must be supplied.")
-            if full_in_ref_frame == None or not len(full_in_ref_frame):
+            if full_in_ref_frame is None or not len(full_in_ref_frame):
                 raise RelaxError("The full_in_ref_frame argument " + repr(full_in_ref_frame) + " must be supplied.")
 
             # Tensor set up.
@@ -234,18 +234,18 @@ class N_state_opt:
         elif model in ['population', 'fixed']:
             # The total number of alignments (must be the same for the RDC and PCS data).
             self.num_align = 0
-            if rdcs != None:
+            if rdcs is not None:
                 self.num_align = len(rdcs)
-            if pcs != None:
+            if pcs is not None:
                 self.num_align = max(self.num_align, len(pcs))
 
             # Set the RDC and PCS flags (indicating the presence of data).
             self.rdc_flag = [True] * self.num_align
             self.pcs_flag = [True] * self.num_align
             for align_index in range(self.num_align):
-                if rdcs == None or len(rdcs[align_index]) == 0:
+                if rdcs is None or len(rdcs[align_index]) == 0:
                     self.rdc_flag[align_index] = False
-                if pcs == None or len(pcs[align_index]) == 0:
+                if pcs is None or len(pcs[align_index]) == 0:
                     self.pcs_flag[align_index] = False
             self.rdc_flag_sum = sum(self.rdc_flag)
             self.pcs_flag_sum = sum(self.pcs_flag)
@@ -253,7 +253,7 @@ class N_state_opt:
             # Some checks.
             if self.rdc_flag_sum and (rdc_vect == None or not len(rdc_vect)):
                 raise RelaxError("The rdc_vect argument " + repr(rdc_vect) + " must be supplied.")
-            if self.pcs_flag_sum and (atomic_pos == None or not len(atomic_pos)):
+            if self.pcs_flag_sum and (atomic_pos is None or not len(atomic_pos)):
                 raise RelaxError("The atomic_pos argument " + repr(atomic_pos) + " must be supplied.")
 
             # The total number of spins.
@@ -271,7 +271,7 @@ class N_state_opt:
             self.dA = zeros((5, 3, 3), float64)
 
             # Fixed alignment tensors.
-            if full_tensors != None:
+            if full_tensors is not None:
                 # Convert to numpy.
                 self.full_tensors = array(full_tensors, float64)
 
@@ -377,7 +377,7 @@ class N_state_opt:
                 self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
                 self.paramag_dist = zeros((self.num_spins, self.N), float64)
                 self.pcs_const = zeros((self.num_align, self.num_spins, self.N), float64)
-                if self.paramag_centre == None:
+                if self.paramag_centre is None:
                     self.paramag_centre = zeros(3, float64)
 
                 # The gradient structures.

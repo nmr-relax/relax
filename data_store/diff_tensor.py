@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -758,7 +758,7 @@ class DiffTensorData(Element):
                     # Loop over the dependent structures.
                     for j in range(len(deps)):
                         # None, so skip.
-                        if deps[j] == None or deps[j][i] == None:
+                        if deps[j] is None or deps[j][i] is None:
                             skip = True
 
                         # String data type.

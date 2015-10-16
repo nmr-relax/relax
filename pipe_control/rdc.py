@@ -1224,7 +1224,7 @@ def return_rdc_data(sim_index=None, verbosity=0):
         # Sanity check, to prevent cryptic Python errors.
         indices = []
         for i in range(len(unit_vect[-1])):
-            if unit_vect[-1][i] == None:
+            if unit_vect[-1][i] is None:
                 raise RelaxError("Unit vectors of None have been detected between the spins '%s' and '%s' %s." % (interatom.spin_id1, interatom.spin_id2, unit_vect[-1]))
 
         # Store the measured J coupling.
@@ -1239,12 +1239,12 @@ def return_rdc_data(sim_index=None, verbosity=0):
 
         # Number of vectors.
         if num == None:
-            if unit_vect[rdc_index] != None:
+            if unit_vect[rdc_index] is not None:
                 num = len(unit_vect[rdc_index])
             continue
 
         # Check.
-        if unit_vect[rdc_index] != None and len(unit_vect[rdc_index]) != num:
+        if unit_vect[rdc_index] is not None and len(unit_vect[rdc_index]) != num:
             raise RelaxError("The number of interatomic vectors for all no match:\n%s" % unit_vect[rdc_index])
 
     # Missing unit vectors.
@@ -1253,7 +1253,7 @@ def return_rdc_data(sim_index=None, verbosity=0):
 
     # Update None entries.
     for i in range(len(unit_vect)):
-        if unit_vect[i] == None:
+        if unit_vect[i] is None:
             unit_vect[i] = [[None, None, None]]*num
 
     # The RDC data.

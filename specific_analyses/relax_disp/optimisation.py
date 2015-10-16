@@ -353,7 +353,7 @@ def minimise_r2eff(spins=None, spin_ids=None, min_algor=None, min_options=None, 
             param_vector = assemble_param_vector(spins=[spins[si]], key=param_key, sim_index=sim_index)
 
             # Diagonal scaling.
-            if scaling_matrix != None:
+            if scaling_matrix is not None:
                 param_vector = dot(inv(scaling_matrix), param_vector)
 
             # Linear constraints.
@@ -395,7 +395,7 @@ def minimise_r2eff(spins=None, spin_ids=None, min_algor=None, min_options=None, 
 
             # The scaling matrix in a diagonalised list form.
             scaling_list = []
-            if scaling_matrix == None:
+            if scaling_matrix is None:
                 for i in range(len(param_vector)):
                     scaling_list.append(1.0)
             else:
@@ -425,7 +425,7 @@ def minimise_r2eff(spins=None, spin_ids=None, min_algor=None, min_options=None, 
                 param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
-            if scaling_matrix != None:
+            if scaling_matrix is not None:
                 param_vector = dot(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
@@ -718,7 +718,7 @@ class Disp_result_command(Result_command):
             print("Simulation %s, cluster %s" % (memo.sim_index+1, memo.spin_ids))
 
         # Scaling.
-        if memo.scaling_matrix != None:
+        if memo.scaling_matrix is not None:
             param_vector = dot(memo.scaling_matrix, self.param_vector)
 
         # Disassemble the parameter vector.

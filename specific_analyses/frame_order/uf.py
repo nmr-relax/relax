@@ -347,7 +347,7 @@ def pivot(pivot=None, order=1, fix=False):
     cdp.pivot_fixed = fix
 
     # No pivot given, so update the model if needed and quit.
-    if pivot == None:
+    if pivot is None:
         if hasattr(cdp, 'model'):
             update_model()
         return

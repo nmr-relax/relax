@@ -323,7 +323,7 @@ class Frame_order(SystemTestCase):
                 point[i] = -point[i]
 
         # Rotation.
-        if R != None:
+        if R is not None:
             point = dot(R, point)
 
         # Extend the length and add the origin.

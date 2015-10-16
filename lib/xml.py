@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -106,7 +106,7 @@ def object_to_xml(doc, elem, value=None):
     val_elem.appendChild(doc.createTextNode(repr(value)))
 
     # The object type.
-    if value == None:
+    if value is None:
         py_type = 'None'
     elif isinstance(value, bool):
         py_type = 'bool'
@@ -183,7 +183,7 @@ def object_to_xml(doc, elem, value=None):
         ieee_obj = []
         for i in range(len(value)):
             # Handle None elements.
-            if value[i] == None:
+            if value[i] is None:
                 ieee_obj.append(None)
                 continue
 

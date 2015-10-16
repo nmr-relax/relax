@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -84,7 +84,7 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
     val = 0.0
 
     # No weights given.
-    if weights == None:
+    if weights is None:
         pc = 1.0 / N
         weights = [pc] * N
 
@@ -146,7 +146,7 @@ def ave_pcs_tensor_ddeltaij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     grad = 0.0
 
     # No weights given.
-    if weights == None:
+    if weights is None:
         pc = 1.0 / N
         weights = [pc] * N
 
@@ -227,7 +227,7 @@ def ave_pcs_tensor_ddeltaij_dc(ddj=None, dj=None, r=None, unit_vect=None, N=None
     grad = 0.0
 
     # No weights given.
-    if weights == None:
+    if weights is None:
         pc = 1.0 / N
         weights = [pc] * N
 

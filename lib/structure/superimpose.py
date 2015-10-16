@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -206,7 +206,7 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centre_
     """
 
     # Calculate the centroids.
-    if centroid != None:
+    if centroid is not None:
         centroid_from = centroid
         centroid_to = centroid
     elif centre_type == 'centroid':

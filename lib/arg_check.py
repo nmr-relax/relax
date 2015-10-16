@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -198,7 +198,7 @@ def is_float_matrix(arg, name=None, dim=None, can_be_none=False, none_elements=F
     else:
         for i in range(len(arg)):
             # Catch None elements.
-            if arg[i] == None:
+            if arg[i] is None:
                 if not none_elements:
                     fail = True
                 continue
@@ -720,7 +720,7 @@ def is_num_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Fail if not a list.

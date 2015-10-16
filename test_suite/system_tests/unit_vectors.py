@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -56,7 +56,7 @@ class Unit_vectors(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, 24)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
         self.assert_(hasattr(cdp.interatomic[0], 'vector'))
-        self.assertNotEqual(cdp.interatomic[0].vector, None)
+        self.assert_(cdp.interatomic[0].vector is not None)
         self.assertAlmostEqual(cdp.interatomic[0].vector[0], 0.40899187)
         self.assertAlmostEqual(cdp.interatomic[0].vector[1], -0.80574458)
         self.assertAlmostEqual(cdp.interatomic[0].vector[2], 0.42837054)

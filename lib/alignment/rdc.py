@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -144,7 +144,7 @@ def ave_rdc_tensor(dj, vect, N, A, weights=None):
     val = 0.0
 
     # No weights given.
-    if weights == None:
+    if weights is None:
         pc = 1.0 / N
         weights = [pc] * N
 
@@ -206,7 +206,7 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     grad = 0.0
 
     # No weights given.
-    if weights == None:
+    if weights is None:
         pc = 1.0 / N
         weights = [pc] * N
 

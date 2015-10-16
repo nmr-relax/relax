@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -165,7 +165,7 @@ def generate_pivot(order=1, sim_index=None, pipe_name=None, pdb_limit=False):
             pivot = array([dp.pivot_x, dp.pivot_y, dp.pivot_z], float64)
 
     # PDB limits.
-    if pivot != None and pdb_limit:
+    if pivot is not None and pdb_limit:
         # The original pivot, as text.
         orig_pivot = "[%.3f, %.3f, %.3f]" % (pivot[0], pivot[1], pivot[2])
 

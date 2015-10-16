@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -759,7 +759,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
                 raise RelaxNoSpinError(atom)
 
             # Test the position.
-            if not hasattr(spin, 'pos') or spin.pos == None:
+            if not hasattr(spin, 'pos') or spin.pos is None:
                 raise RelaxError("Positional information is not available for the atom '%s'." % atom)
 
             # Alias the position.

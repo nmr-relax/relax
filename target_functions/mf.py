@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -337,7 +337,7 @@ class Mf:
                 self.init_res_r1_data(self.data[i])
 
         # Scaling initialisation.
-        if self.scaling_matrix != None:
+        if self.scaling_matrix is not None:
             self.scaling_flag = 1
         else:
             self.scaling_flag = 0

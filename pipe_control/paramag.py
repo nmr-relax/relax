@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -62,7 +62,7 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
     source_dp = pipes.get_pipe(pipe)
 
     # Test the centre has already been set.
-    if pos != None and not force and hasattr(cdp, 'paramagnetic_centre'):
+    if pos is not None and not force and hasattr(cdp, 'paramagnetic_centre'):
         raise RelaxError("The paramagnetic centre has already been set to the coordinates " + repr(cdp.paramagnetic_centre) + ".")
 
     # The fixed flag.
@@ -73,7 +73,7 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
     cdp.paramag_centre_fixed = fix
 
     # Position is supplied.
-    if pos != None:
+    if pos is not None:
         centre = array(pos)
         num_pos = 1
         full_pos_list = []
