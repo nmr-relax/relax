@@ -35,6 +35,7 @@ import dep_check
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
+from lib.errors import RelaxMultiSpinIDError
 from lib.physical_constants import N15_CSA
 from lib.io import DummyFileObject, open_read_file
 from status import Status; status = Status()
@@ -496,8 +497,7 @@ class Mf(SystemTestCase):
         self.interpreter.structure.load_spins(spin_id='@HE1')
 
         # Load the relaxation data.
-        self.interpreter.relax_data.read(ri_id='R1_600', ri_type='R1', frq=600402816.0, file='r1_600.txt', dir=path, res_num_col=1, data_col=2, error_col=3)
-
+        self.assertRaises(RelaxMultiSpinIDError, self.interpreter.relax_data.read, ri_id='R1_600', ri_type='R1', frq=600402816.0, file='r1_600.txt', dir=path, res_num_col=1, data_col=2, error_col=3)
 
 
     def test_create_m4(self):
