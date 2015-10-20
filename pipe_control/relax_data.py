@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -762,12 +762,17 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
         if len(spins) == 0:
             continue
 
-        # Check that only a singe spin is present.
+        # Check that multiple spins are not present.
         if len(spins) > 1:
-            if ids:
-                raise RelaxMultiSpinIDError(spin_ids[i], ids)
-            else:
-                raise RelaxMultiSpinIDError(spin_ids[i], ids)
+            # Generate the list of spin IDs.
+            new_ids = []
+            for j in range(len(spins)):
+                new_ids.append(generate_spin_id_unique(mol_name=match_mol_names[j], res_num=match_res_nums[j], res_name=match_res_names[j], spin_num=spins[j].num, spin_name=spins[j].name))
+
+            # Raise the error.
+            raise RelaxMultiSpinIDError(spin_ids[i], new_ids)
+
+        # Check that at least one spin is present.
         if len(spins) == 0:
             raise RelaxNoSpinError(spin_ids[i])
 
