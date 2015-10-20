@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -478,6 +478,26 @@ class Mf(SystemTestCase):
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_21079_local_tm_global_selection.py')
+
+
+    def test_bug_23933_relax_data_read_ids(self):
+        """U{Bug #23933<https://gna.org/bugs/?23933>} catch, the global name 'ids' is not defined error when loading relaxation data."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'bug_23933_relax_data_read_ids'
+
+        # Load the truncated PDB file.
+        self.interpreter.structure.read_pdb(file='LARA_N_term_no_helixFH_reg.pdb', dir=path)
+
+        # Load the spin systems.
+        self.interpreter.structure.load_spins(spin_id='@N')
+        self.interpreter.structure.load_spins(spin_id='@H')
+        self.interpreter.structure.load_spins(spin_id='@NE1')
+        self.interpreter.structure.load_spins(spin_id='@HE1')
+
+        # Load the relaxation data.
+        self.interpreter.relax_data.read(ri_id='R1_600', ri_type='R1', frq=600402816.0, file='r1_600.txt', dir=path, res_num_col=1, data_col=2, error_col=3)
+
 
 
     def test_create_m4(self):
