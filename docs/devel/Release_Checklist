@@ -67,8 +67,8 @@ Package bundling
 
 Bundle minfx and bmrblib by checking out the latest stable release tags, for example:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.11/minfx
-$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.12/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.4/bmrblib
 
 
 Source files
@@ -104,16 +104,16 @@ Build other distribution packages by checking out the tag and bundling minfx and
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/3.3.2
 $ cd 3.3.2
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.11/minfx
-$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.12/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.4/bmrblib
 $ scons binary_dist key=xxxxx
 
 Or:
 
 $ svn co http://svn.gna.org/svn/relax/tags/3.3.2
 $ cd 3.3.2
-$ svn co http://svn.gna.org/svn/minfx/tags/1.0.11/minfx
-$ svn co http://svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
+$ svn co http://svn.gna.org/svn/minfx/tags/1.0.12/minfx
+$ svn co http://svn.gna.org/svn/bmrblib/tags/1.0.4/bmrblib
 $ scons binary_dist
 
 
