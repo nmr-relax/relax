@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -50,7 +50,7 @@ uf.title = "Attach protons to all heteronuclei."
 uf.title_short = "Heteronuclei proton attachment."
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This can be used to attach protons to all the heteronuclei in the current data pipe.  For each proton, a spin container will be created.")
+uf.desc[-1].add_paragraph("This can be used to attach protons to all the heteronuclei in the current data pipe.  For each proton, a spin container will be created.  This should be used when the sequence information is not being extracted from a 3D structure.  Note that the proton spin containers will not possess any positional information, so for analyses which require this position or vectors from one atom to this proton, it should not be used.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To attach protons, simply type:")
