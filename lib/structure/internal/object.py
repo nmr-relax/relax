@@ -46,7 +46,7 @@ from lib.structure.internal.models import ModelList
 from lib.structure.internal.molecules import MolContainer
 from lib.structure.internal.selection import Internal_selection
 from lib.warnings import RelaxWarning
-from lib.xml import object_to_xml, xml_to_object
+from lib.xml import fill_object_contents, object_to_xml, xml_to_object
 
 
 # Module variables.
@@ -2817,6 +2817,12 @@ class Internal:
 
             # Add the displacement data.
             self.displacements.to_xml(doc, disp_element)
+
+        # Blacklisted objects.
+        blacklist = ['structural_data', 'displacements'] + metadata + list(Internal.__dict__.keys()) + list(self.__class__.__dict__.keys()) + list(object.__dict__.keys())
+
+        # Add all simple python objects within the container to the XML element.
+        fill_object_contents(doc, str_element, object=self, blacklist=blacklist)
 
 
     def validate_models(self, verbosity=1):
