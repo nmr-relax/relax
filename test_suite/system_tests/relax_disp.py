@@ -24,7 +24,7 @@
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
 import copy
-from numpy import array, asarray, average, exp, median, inf, linspace, log, std, sum, zeros
+from numpy import array, asarray, average, exp, median, inf, isnan, linspace, log, std, sum, zeros
 from minfx.generic import generic_minimise
 from random import gauss
 import re, math
@@ -782,6 +782,20 @@ class Relax_disp(SystemTestCase):
 
             # Create the spin.
             self.interpreter.spin.create(spin_name=spin_name, spin_num=spin_num, res_name=res_name, res_num=res_num, mol_name=mol_name)
+
+
+    def setup_paul_schanda_nov_2015(self, outdir=None):
+        """This setup the truncated private data which was provided by Paul Schanda."""
+
+        # Data path.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Paul_Schanda_2015_Nov'
+        file = data_path + sep + '1_prepare_data.py'
+
+        # Store the out
+        status.outdir = outdir
+
+        # Run script.
+        self.interpreter.script(file=file, dir=None)
 
 
     def setup_tp02_data_to_ns_r1rho_2site(self, clustering=False):
@@ -6317,6 +6331,64 @@ class Relax_disp(SystemTestCase):
 
         # Check the chi-squared value.
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].chi2, 0.030959849811015544, 3)
+
+
+    def test_paul_schanda_nov_2015(self):
+        """This test truncated private data which was provided by Paul Schanda.  This systemtest uncovers some unfortunate problems when
+        running an analysis and reading points by the R2eff method.
+        """
+
+        # Assign
+        outdir = ds.tmpdir
+
+        # Execute the setup and creation of files.
+        self.setup_paul_schanda_nov_2015(outdir=outdir)
+
+        # Minimum: Just read the sequence data, but this misses a lot of information.
+        self.interpreter.sequence.read(file='residues.txt', res_num_col=1, dir=outdir)
+
+        # Open the settings file.
+        set_file = open(outdir+sep+"exp_settings.txt")
+        set_file_lines = set_file.readlines()
+
+        # Now load the data.
+        for line in set_file_lines:
+            if "#" in line[0]:
+                continue
+
+            # Get data
+            field, RF_field_strength_kHz, f_name = line.split()
+
+            # Assign data
+            spec_id = f_name
+            self.interpreter.relax_disp.exp_type(spectrum_id=spec_id, exp_type='R1rho')
+
+            # Set the spectrometer frequency
+            self.interpreter.spectrometer.frequency(id=spec_id, frq=float(field), units='MHz')
+
+            # Is in kHz, som convert to Hz
+            disp_frq = float(RF_field_strength_kHz)*1000
+
+            # Set The spin-lock field strength, nu1, in Hz
+            self.interpreter.relax_disp.spin_lock_field(spectrum_id=spec_id, field=disp_frq)
+
+            # Read the R2eff data
+            self.interpreter.relax_disp.r2eff_read(id=spec_id, file=f_name, dir=None, disp_frq=disp_frq, res_num_col=1, data_col=2, error_col=3)
+
+            # Is this necessary? The time, in seconds, of the relaxation period.
+            #self.interpreter.relax_disp.relax_time(spectrum_id=spec_id, time=time_sl)
+
+
+        # Check that the number of R2eff points is correct after dropping 1 datapoint for spin 51.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Loop over the R2eff points
+            for key in cur_spin.r2eff:
+                value = cur_spin.r2eff[key]
+                err = cur_spin.r2eff_err[key]
+
+                # Test that values and errors are not nan.
+                self.assert_(not isnan(value))
+                self.assert_(not isnan(err))
 
 
     def test_repeat_cpmg(self):
