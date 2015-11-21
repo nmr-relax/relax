@@ -24,6 +24,7 @@ from __future__ import absolute_import
 """Module for handling the molecule, residue, and spin sequence data."""
 
 # Python module imports.
+from math import isnan
 from warnings import warn
 
 # relax module imports.
@@ -310,6 +311,11 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
                 else:
                     value = float(line[data_col-1])
 
+                    # If it a float, test if is nan.
+                    if isnan(value):
+                        warn(RelaxWarning("The value is 'nan', skipping the line %s" % line))
+                        continue
+
             # Bad data.
             except ValueError:
                 warn(RelaxWarning("Invalid data, skipping the line %s" % line))
@@ -326,6 +332,11 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
                 # A float.
                 else:
                     error = float(line[error_col-1])
+
+                    # If it a float, test if is nan.
+                    if isnan(error):
+                        warn(RelaxWarning("The error is 'nan', skipping the line %s" % line))
+                        continue
 
             # Bad data.
             except ValueError:
