@@ -414,6 +414,37 @@ class Relax_disp(GuiTestCase):
             self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
 
+    def test_paul_schanda_nov_2015(self):
+        """This test truncated private data which was provided by Paul Schanda.  This systemtest uncovers some unfortunate problems when
+        running an analysis and reading points by the R2eff method.
+        """
+
+        # Data path.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Paul_Schanda_2015_Nov'
+        file_1 = data_path + sep + '1_prepare_data.py'
+        file_2 = data_path + sep + '2_load_data_GUI.py'
+
+        ## Store the out
+        outdir = ds.tmpdir
+        status.outdir = outdir
+
+        # Simulate the dispersion analysis wizard.
+        analysis = self.new_analysis_wizard(analysis_type='disp')
+
+        ## Run script to make data.
+        self._execute_uf(uf_name='script', file=file_1, dir=None)
+
+        ## Run script to make setup of data data.
+        self._execute_uf(uf_name='script', file=file_2, dir=None)
+
+        # Change the results directory.
+        analysis.field_results_dir.SetValue(str_to_gui(outdir))
+
+        # Now load the state
+        state_file = outdir + sep + "temp_state.bz2"
+        self.app.gui.state_load(file_name=state_file)
+
+
     def test_read_spins_from_spectrum(self):
         """Test the GUI load spins from a spectrum formatted file."""
 
