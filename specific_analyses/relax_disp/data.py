@@ -2019,6 +2019,9 @@ def plot_disp_curves_to_file(file_name_ini=None, dir=None, y_axis=None, x_axis=N
     # Loop over each spin. Initialise spin counter.
     si = 0
     for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+        if not hasattr(spin, "model"):
+            raise RelaxError("No model information is stored for the spin.  Please use the function: relax_disp.select_model(model='%s')"%MODEL_R2EFF)
+
         # Skip protons for MMQ data.
         if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
             continue
