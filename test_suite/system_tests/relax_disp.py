@@ -6393,7 +6393,7 @@ class Relax_disp(SystemTestCase):
                 self.assert_(not isnan(err))
 
 
-        # Test the number of r2eff points
+        # Test the number of r2eff points. One is subtracted, due to one of the error values are "nan" in spin 51.
         self.assertEqual(len(r2eff_points), 2*(10+19)-1)
 
 
