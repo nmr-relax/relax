@@ -6419,6 +6419,14 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(count_600, 10)
         self.assertEqual(count_950, 19)
 
+        # Name the isotope for field strength scaling.
+        self.interpreter.spin.isotope(isotope='15N')
+
+        # Now test that the plotting can be performed of just the raw data.
+        self.assertRaises(RelaxError, self.interpreter.relax_disp.plot_disp_curves, dir=outdir, y_axis='r2_eff', x_axis='disp', num_points=1000, extend_hz=500.0, extend_ppm=500.0, interpolate='disp', force=True)
+        self.interpreter.relax_disp.select_model(model=MODEL_R2EFF)
+        self.interpreter.relax_disp.plot_disp_curves(dir=outdir, y_axis='r2_eff', x_axis='disp', num_points=1000, extend_hz=500.0, extend_ppm=500.0, interpolate='disp', force=True)
+
 
     def test_repeat_cpmg(self):
         """Test the protocol for repeated dispersion analysis. The class: relax_disp_repeat_cpmg.
