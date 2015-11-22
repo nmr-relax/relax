@@ -52,6 +52,11 @@ from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp.data import has_cpmg_exp_type, has_r1rho_exp_type
 from status import Status; status = Status()
 
+# set defaults
+default_grid_inc = 21
+default_exp_mc_sim_num = 500
+default_mc_sim_num = 500
+
 
 class Auto_relax_disp(Base_analysis):
     """The relaxation dispersion auto-analysis GUI element."""
@@ -369,11 +374,11 @@ class Auto_relax_disp(Base_analysis):
         self.numeric_only = Boolean_ctrl(box, self, text="Pure numeric solutions:", default=False, tooltip=tooltip, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The grid search optimisation settings.
-        self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=21, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=default_grid_inc, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The MC simulation settings.
-        self.exp_mc_sim_num = Spin_ctrl(box, self, text="Exponential curve error analysis:", default=500, min=-1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis when estimating R2eff errors from exponential curve fitting.  Setting to '-1' estimates error from the Covariance matrix.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
-        self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.  For best results, at least 500 is recommended.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.exp_mc_sim_num = Spin_ctrl(box, self, text="Exponential curve error analysis:", default=default_exp_mc_sim_num, min=-1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis when estimating R2eff errors from exponential curve fitting.  Setting to '-1' estimates error from the Covariance matrix.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=default_mc_sim_num, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.  For best results, at least 500 is recommended.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
         self.mc_sim_all_models = Boolean_ctrl(box, self, text="Per model error analysis:", default=False, tooltip="A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The speed up of grid search.
@@ -643,18 +648,24 @@ class Auto_relax_disp(Base_analysis):
         if upload:
             self.data.grid_inc = gui_to_int(self.grid_inc.GetValue())
         elif hasattr(self.data, 'grid_inc'):
+            if self.data.grid_inc == None:
+                self.data.grid_inc = default_grid_inc
             self.grid_inc.SetValue(int(self.data.grid_inc))
 
         # The MC sim number.
         if upload:
             self.data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
         elif hasattr(self.data, 'mc_sim_num'):
+            if self.data.mc_sim_num == None:
+                self.data.mc_sim_num = default_mc_sim_num
             self.mc_sim_num.SetValue(int(self.data.mc_sim_num))
 
         # The EXP MC sim number.
         if upload:
             self.data.exp_mc_sim_num = gui_to_int(self.exp_mc_sim_num.GetValue())
         elif hasattr(self.data, 'exp_mc_sim_num'):
+            if self.data.exp_mc_sim_num == None:
+                self.data.exp_mc_sim_num = default_exp_mc_sim_num
             self.exp_mc_sim_num.SetValue(int(self.data.exp_mc_sim_num))
 
         # The All model MC sim flag.
