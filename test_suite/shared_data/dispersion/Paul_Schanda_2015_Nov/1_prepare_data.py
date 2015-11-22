@@ -26,7 +26,7 @@ import numpy as np
 from status import Status; status = Status()
 
 # Set path
-cwd = DATA_PATH = status.install_path+os.sep+'test_suite'+os.sep+'shared_data'+os.sep+'dispersion'+os.sep+'Paul_Schanda_2015_Nov'
+cwd  = status.install_path+os.sep+'test_suite'+os.sep+'shared_data'+os.sep+'dispersion'+os.sep+'Paul_Schanda_2015_Nov'
 outdir = status.outdir + os.sep
 
 fields = [600, 950]
@@ -90,6 +90,7 @@ f_exp = open(outdir + "exp_settings.txt", "w")
 f_exp.write("# sfrq_MHz RFfield_kHz file_name\n")
 
 # Then write the files for the rates
+k = 1
 for field in all_data['fields']:
     resis = all_data['%s'%field]['np_residues'][0]
     rates = all_data['%s'%field]['np_rates']
@@ -100,7 +101,7 @@ for field in all_data['fields']:
     for i, RF_field_strength_kHz in enumerate(RFfields):
         #print "RF_field_strength_kHz: %3.3f"%RF_field_strength_kHz
         # Generate file name
-        f_name = outdir + "sfrq_%i_MHz_RFfield_%1.3f_kHz.in"%(field, RF_field_strength_kHz)
+        f_name = outdir + "sfrq_%i_MHz_RFfield_%1.3f_kHz_%03d.in"%(field, RF_field_strength_kHz, k)
         cur_file = open(f_name, "w")
         cur_file.write("# resi rate        rate_err\n")
 
@@ -115,5 +116,6 @@ for field in all_data['fields']:
             cur_file.write(string)
 
         cur_file.close()
+        k += 1
 
 f_exp.close()
