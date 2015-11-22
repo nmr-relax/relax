@@ -18,9 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-# relax import
-from pipe_control.mol_res_spin import spin_loop
-
 # Test if running as script or through GUI.
 is_script = False
 if not hasattr(cdp, "pipe_type"):
@@ -32,16 +29,6 @@ if not hasattr(cdp, "pipe_type"):
 
 # Minimum: Just read the sequence data, but this misses a lot of information.
 sequence.read(file='residues.txt', res_num_col=1)
-
-# Name the spins
-for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-    spin.name(name="HN", spin_id=spin_id)
-    # Manually force the model to be R2eff, so plotting can be performed later
-    cur_spin.model = "R2eff"
-
-# Name the isotope for field strength scaling.
-spin.isotope(isotope='15N')
-
 
 # Open the settings file
 set_file = open("exp_settings.txt")
@@ -76,16 +63,19 @@ for line in set_file_lines:
     #relax_disp.relax_time(spectrum_id=spec_id, time=time_sl)
 
 
+# Name the isotope for field strength scaling.
+spin.isotope(isotope='15N')
+relax_disp.select_model(model='R2eff')
+
 # Plot data
 relax_disp.plot_disp_curves(dir='grace', y_axis='r2_eff', x_axis='disp', num_points=1000, extend_hz=500.0, extend_ppm=500.0, interpolate='disp', force=True)
 
 state.save("temp_state", force=True)
 
-
 # Do it through script
-#if False:
+if False:
 #if True:
-if is_script:
+#if is_script:
     # Deselect spin 51, due to weid data point
     #deselect.spin(spin_id=":51@HN", change_all=False)
 
