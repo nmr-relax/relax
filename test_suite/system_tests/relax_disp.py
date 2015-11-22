@@ -6396,6 +6396,29 @@ class Relax_disp(SystemTestCase):
         # Test the number of r2eff points. One is subtracted, due to one of the error values are "nan" in spin 51.
         self.assertEqual(len(r2eff_points), 2*(10+19)-1)
 
+        # Test stored value in the pipe.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 2)
+
+        self.assertEqual(cdp.spectrometer_frq_count, 2)
+        print cdp.spectrometer_frq_list
+        self.assertEqual(cdp.spectrometer_frq_list, [600000000.0, 950000000.0])
+        self.assertEqual(cdp.exp_type_list, ['R1rho'])
+
+        # Test the number of frequencies.
+        count_600 = 0
+        count_950 = 0
+        for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+            if frq == cdp.spectrometer_frq_list[0]:
+                count_600 += 1
+            elif frq == cdp.spectrometer_frq_list[1]:
+                count_950 += 1
+
+        # Assert the number of points
+        self.assertEqual(count_600, 10)
+        self.assertEqual(count_950, 19)
+
 
     def test_repeat_cpmg(self):
         """Test the protocol for repeated dispersion analysis. The class: relax_disp_repeat_cpmg.
