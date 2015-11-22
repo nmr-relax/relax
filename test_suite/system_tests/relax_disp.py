@@ -36,7 +36,7 @@ from auto_analyses import relax_disp
 from auto_analyses.relax_disp_repeat_cpmg import DIC_KEY_FORMAT, Relax_disp_rep
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from lib.dispersion.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
+from lib.dispersion.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
 from lib.errors import RelaxError
 from lib.io import extract_data, get_file_path
 from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_dir_to_files, show_apod_rmsd_to_file
@@ -6426,6 +6426,75 @@ class Relax_disp(SystemTestCase):
         self.assertRaises(RelaxError, self.interpreter.relax_disp.plot_disp_curves, dir=outdir, y_axis='r2_eff', x_axis='disp', num_points=1000, extend_hz=500.0, extend_ppm=500.0, interpolate='disp', force=True)
         self.interpreter.relax_disp.select_model(model=MODEL_R2EFF)
         self.interpreter.relax_disp.plot_disp_curves(dir=outdir, y_axis='r2_eff', x_axis='disp', num_points=1000, extend_hz=500.0, extend_ppm=500.0, interpolate='disp', force=True)
+
+
+        # Number of grid search increments.  If set to None, then the grid search will be turned off and the default parameter values will be used instead.
+        #GRID_INC = None
+        GRID_INC = 21
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+        # Model selection technique.
+        MODSEL = 'AIC'
+        # Which models to analyse ?
+        MODELS = [MODEL_NOREX, MODEL_M61]
+        # Fit, instead of read. Off for On-resonance.
+        r1_fit = False
+        # Set the initial guess from the minimum R2eff point
+        set_grid_r20=True
+
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
+        OPT_FUNC_TOL = 1e-1
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
+        OPT_MAX_ITERATIONS = 1000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
+
+        # Go
+        relax_disp.Relax_disp(pipe_name="relax_disp", pipe_bundle="relax_disp", results_dir=outdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=None, modsel=MODSEL,  pre_run_dir=None, optimise_r2eff=False, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True, set_grid_r20=set_grid_r20, r1_fit=r1_fit)
+
+        # Now simulate that all spins are first deselected, and then selected.
+        self.interpreter.deselect.all()
+        sel_ids = [
+        ":12",
+        ":51",
+        ]
+        for sel_spin in sel_ids:
+            print("Selecting spin %s"%sel_spin)
+            self.interpreter.select.spin(spin_id=sel_spin, change_all=False)
+
+        # Inspect which residues should be analysed together for a clustered/global fit.
+        cluster_ids = sel_ids
+
+        # Cluster spins
+        for curspin in cluster_ids:
+            print("Adding spin %s to cluster"%curspin)
+            self.interpreter.relax_disp.cluster('model_cluster', curspin)
+
+        # Show the pipe
+        print("\nPrinting all the available pipes.")
+        self.interpreter.pipe.display()
+
+        # Get the selected models
+        print("\nChecking which model is stored per spin.")
+        for curspin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=False):
+            print("For spin_id '%s the model is '%s''"%(spin_id, curspin.model))
+
+        # Copy pipe and switch to it.
+        self.interpreter.pipe.copy(pipe_from="final - relax_disp", pipe_to="relax_disp_cluster", bundle_to="relax_disp_cluster")
+        self.interpreter.pipe.switch(pipe_name="relax_disp_cluster")
+        self.interpreter.pipe.display()
+
+        # Go again with clustered spins.
+        relax_disp.Relax_disp(pipe_name="relax_disp_cluster", pipe_bundle="relax_disp_cluster", results_dir=outdir+sep+"cluster", models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=None, modsel=MODSEL,  pre_run_dir=None, optimise_r2eff=False, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True, set_grid_r20=set_grid_r20, r1_fit=r1_fit)
+
+        # Get the clustered fitted values
+        print("\nChecking which value is stored per spin.")
+        kex = None
+        for curspin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=False):
+            if kex == None:
+                kex = curspin.kex
+            self.assertEqual(curspin.kex, kex)
+            print("For spin_id %s the kex is %.3f"%(spin_id, kex))
 
 
     def test_repeat_cpmg(self):
