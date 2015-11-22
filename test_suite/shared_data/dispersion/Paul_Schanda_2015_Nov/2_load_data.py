@@ -99,7 +99,7 @@ if is_script:
     MC_NUM = 3
     # Model selection technique.
     MODSEL = 'AIC'
-    result_dir_name = os.getcwd()
+    result_dir_name = os.getcwd() + os.sep + "results"
     # Which models to analyse ?
     #MODELS = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
     #MODELS = [MODEL_R2EFF, MODEL_NOREX]
