@@ -6380,15 +6380,21 @@ class Relax_disp(SystemTestCase):
 
 
         # Check that the number of R2eff points is correct after dropping 1 datapoint for spin 51.
+        r2eff_points = []
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Loop over the R2eff points
             for key in cur_spin.r2eff:
                 value = cur_spin.r2eff[key]
                 err = cur_spin.r2eff_err[key]
+                r2eff_points.append(value)
 
                 # Test that values and errors are not nan.
                 self.assert_(not isnan(value))
                 self.assert_(not isnan(err))
+
+
+        # Test the number of r2eff points
+        self.assertEqual(len(r2eff_points), 2*(10+19)-1)
 
 
     def test_repeat_cpmg(self):
