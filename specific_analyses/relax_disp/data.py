@@ -2307,7 +2307,7 @@ def r20_from_min_r2eff(force=True, verbosity=1):
 
 
 def r2eff_read(id=None, file=None, dir=None, disp_frq=None, offset=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
-    """Read R2eff/R1rho values directly from a file whereby each row corresponds to a different spin.
+    """Read R2eff/R1rho values directly from a file whereby each row corresponds to a different spin.  If the spin-container already contain r2eff values with the 'frequency of the CPMG pulse' or 'spin-lock field strength', the frequency will be changed by a infinitesimal small value of + 0.001 Hz.  This allow for duplicates or more of the same frequency.
 
     @keyword id:            The experiment ID string to associate the data with.
     @type id:               str
@@ -2408,7 +2408,7 @@ def r2eff_read(id=None, file=None, dir=None, disp_frq=None, offset=None, spin_id
                     disp_frq_infinitesimal += 0.001
                     point_key_infinitesimal = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=disp_frq_infinitesimal)
 
-                warn(RelaxWarning("The dispersion point is changed from %.3f to %.3f, and hhe new key: %s"%(disp_frq, disp_frq_infinitesimal, point_key_infinitesimal)))
+                warn(RelaxWarning("The dispersion point is changed from %.3f to %.3f, and the new key is: %s"%(disp_frq, disp_frq_infinitesimal, point_key_infinitesimal)))
                 spin.r2eff[point_key_infinitesimal] = value
                 store_infinitesimal = True
 
@@ -2435,7 +2435,7 @@ def r2eff_read(id=None, file=None, dir=None, disp_frq=None, offset=None, spin_id
                     disp_frq_infinitesimal += 0.001
                     point_key_infinitesimal = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=disp_frq_infinitesimal)
 
-                warn(RelaxWarning("The dispersion point is changed from %.3f to %.3f, and hhe new key: %s\n"%(disp_frq, disp_frq_infinitesimal, point_key_infinitesimal)))
+                warn(RelaxWarning("The dispersion point is changed from %.3f to %.3f, and the new key is: %s\n"%(disp_frq, disp_frq_infinitesimal, point_key_infinitesimal)))
                 spin.r2eff_err[point_key_infinitesimal] = error
                 store_infinitesimal = True
 
