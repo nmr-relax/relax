@@ -1045,18 +1045,34 @@ def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, n
     cdp.structure.pca_proj = proj
 
     # Generate the graphs.
-    M = len(proj[0])
-    for i in range(num_modes - 1):
+    M = len(coord)
+    for mode in range(num_modes - 1):
+        # Assemble the data.
+        data = [[[]]]
+        current = None
+        for struct in range(M):
+            # Create a unique ID for pipe and molecule name.
+            id = "%s - %s" % (object_id_list[struct], molecule_list[struct])
+            if current == None:
+                current = id
+
+            # Start a new set.
+            if current != id:
+                data[-1].append([])
+
+            # Add the projection.
+            data[-1][-1].append([proj[mode, struct], proj[mode+1, struct]])
+
+        # The number of graph sets.
+        sets = len(data[0][0])
+
         # Open the file for writing.
-        file = open_write_file("graph_pc%s_pc%s.agr" % (i+1, i+2), dir=dir, force=True)
+        file = open_write_file("graph_pc%s_pc%s.agr" % (mode+1, mode+2), dir=dir, force=True)
 
         # The header.
-        write_xy_header(format=format, file=file, title="Principle mode projections", sets=[M], axis_labels=[['PC mode %i' % (i+1), 'PC mode %i' % (i+2)]])
+        write_xy_header(format=format, file=file, title="Principle component projections", sets=[sets], axis_labels=[['PC mode %i (\cE\C)' % (mode+1), 'PC mode %i (\cE\C)' % (mode+2)]], linestyle=[[0]*sets])
 
         # The data.
-        data = [[]]
-        for j in range(M):
-            data[0].append([[proj[i, j], proj[i+1, j]]])
         write_xy_data(format=format, data=data, file=file, graph_type='xy')
 
         # Close the file.
