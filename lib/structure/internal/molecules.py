@@ -384,18 +384,21 @@ class MolContainer:
             self.atom_add(atom_name=atom_name, atom_num=atom_number, pos=[x, y, z], element=atom_name)
 
 
-    def fill_object_from_pdb(self, records, alt_loc_select=None):
+    def fill_object_from_pdb(self, records, alt_loc_select=None, reset_serial=True):
         """Method for generating a complete Structure_container object from the given PDB records.
 
         @param records:             A list of structural PDB records.
         @type records:              list of str
         @keyword alt_loc_select:    The PDB ATOM record 'Alternate location indicator' field value to select which coordinates to use.
         @type alt_loc_select:       str or None
+        @keyword reset_serial:      A flag which if True will cause the first serial number (or atom number) to be reset to 1, and all other numbers shifted.
+        @type reset_serial:         bool
         """
 
         # Loop over the records.
         water = []
         missing_connect = []
+        number_offset = None
         for record in records:
             # Nothing to do.
             if not record or record == '\n':
@@ -408,6 +411,15 @@ class MolContainer:
                     record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.atom(record)
                 if record[:6] == 'HETATM':
                     record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.hetatm(record)
+
+                # The serial number.
+                if reset_serial:
+                    # The first number.
+                    if number_offset == None:
+                        number_offset = serial - 1
+
+                    # Reset.
+                    serial -= number_offset
 
                 # Skip waters.
                 if res_name == 'HOH':
@@ -429,12 +441,23 @@ class MolContainer:
                     element = self._det_pdb_element(name)
 
                 # Add.
-                self.atom_add(pdb_record=record_type, atom_num=serial, atom_name=name, res_name=res_name, chain_id=chain_id, res_num=res_seq, pos=[x, y, z], element=element)
+                self.atom_add(pdb_record=record_type, atom_num=serial, atom_name=name, res_name=res_name, res_num=res_seq, pos=[x, y, z], element=element)
 
             # Connect atoms.
             if record[:6] == 'CONECT':
                 # Parse the record.
                 record_type, serial, bonded1, bonded2, bonded3, bonded4 = pdb_read.conect(record)
+
+                # Reset the serial numbers.
+                if reset_serial:
+                    serial -= number_offset
+                    bonded1 -= number_offset
+                    if bonded2 != None:
+                        bonded2 -= number_offset
+                    if bonded3 != None:
+                        bonded3 -= number_offset
+                    if bonded4 != None:
+                        bonded4 -= number_offset
 
                 # Loop over the atoms of the record.
                 for bonded in [bonded1, bonded2, bonded3, bonded4]:

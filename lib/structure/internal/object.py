@@ -2080,6 +2080,7 @@ class Internal:
             orig_mol_num.append([])
             mol_index = 0
             new_mol_name = []
+            reset_serial = True
             for mol_num, mol_records in self._parse_mols_pdb(model_records):
                 # Only load the desired model.
                 if read_mol and mol_num not in read_mol:
@@ -2109,7 +2110,7 @@ class Internal:
                 mol = MolContainer()
 
                 # Fill the molecular data object.
-                mol.fill_object_from_pdb(mol_records, alt_loc_select=alt_loc)
+                mol.fill_object_from_pdb(mol_records, alt_loc_select=alt_loc, reset_serial=reset_serial)
 
                 # Store the molecule container.
                 mol_conts[model_index].append(mol)
@@ -2119,6 +2120,9 @@ class Internal:
 
                 # Increment the molecule index.
                 mol_index = mol_index + 1
+
+                # No longer reset the serial number to 1.
+                reset_serial = False
 
             # Increment the model index.
             model_index = model_index + 1
