@@ -24,9 +24,10 @@
 
 # Python module imports.
 from numpy import float64, outer, zeros
-from numpy.linalg import eigh
+from numpy.linalg import eigh, svd
 
 # relax library module imports.
+from lib.errors import RelaxError
 from lib.structure.statistics import calc_mean_structure
 
 
@@ -77,19 +78,28 @@ def pca_analysis(coord=None, algorithm='eigen', num_modes=4):
     # Calculate the covariance matrix for the structures.
     covariance_matrix = calc_covariance_matrix(coord)
 
-    # Perform an eigenvalue decomposition on the covariance matrix.
-    values, vectors = eigh(covariance_matrix)
+    # Perform an eigenvalue decomposition of the covariance matrix.
+    if algorithm == 'eigen':
+        values, vectors = eigh(covariance_matrix)
 
-    # Sort the values and vectors.
-    indices = values.argsort()[::-1]
-    values = values[indices]
-    vectors = vectors[:, indices]
+        # Sort the values and vectors.
+        indices = values.argsort()[::-1]
+        values = values[indices]
+        vectors = vectors[:, indices]
+
+    # Perform a singular value decomposition of the covariance matrix.
+    elif algorithm == 'svd':
+        vectors, values, V = svd(covariance_matrix)
+
+    # Invalid algorithm.
+    else:
+        raise RelaxError("The '%s' algorithm is unknown.  It should be either 'eigen' or 'svd'." % algorithm)
 
     # Truncation to the desired number of modes.
     values = values[:num_modes]
     vectors = vectors[:,:num_modes]
 
     # Printout.
-    print("\nThe eigenvalues are:")
+    print("\nThe eigenvalues/singular values are:")
     for i in range(num_modes):
         print("Mode %i:  %10.5f" % (i+1, values[i]))
