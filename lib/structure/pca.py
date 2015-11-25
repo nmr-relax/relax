@@ -23,7 +23,7 @@
 """Module for performing a principle component analysis (PCA)."""
 
 # Python module imports.
-from numpy import float64, outer, zeros
+from numpy import dot, float64, outer, sqrt, zeros
 from numpy.linalg import eigh, svd
 
 # relax library module imports.
@@ -36,14 +36,15 @@ def calc_covariance_matrix(coord=None):
 
     @keyword coord:         The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
     @type coord:            list of numpy rank-2, Nx3 arrays
-    @return:                The covariance matrix.
-    @rtype:                 numpy rank-2, 3N array
+    @return:                The covariance matrix and the deviation matrix.
+    @rtype:                 numpy rank-2 3Nx3N array, numpy rank-2 MxNx3 array
     """
 
     # Init.
     M = len(coord)
     N = len(coord[0])
     covariance_matrix = zeros((N*3, N*3), float64)
+    deviations = zeros((M, N, 3), float64)
     mean_struct = zeros((N, 3), float64)
 
     # Calculate the mean structure.
@@ -52,16 +53,24 @@ def calc_covariance_matrix(coord=None):
     # Loop over the models.
     for i in range(M):
         # The deviations from the mean.
-        deviations = coord[i] - mean_struct
+        deviations[i] = coord[i] - mean_struct
 
         # Sum the covariance element.
-        covariance_matrix += outer(deviations, deviations)
+        covariance_matrix += outer(deviations[i], deviations[i])
 
-    # Normalise.
+    # Average.
     covariance_matrix /= M
 
     # Return the matrix.
-    return covariance_matrix
+    return covariance_matrix, deviations
+
+
+def calc_projections(coord=None, num_modes=4):
+    """Calculate the PCA projections.
+
+    @keyword num_modes:     The number of PCA modes to calculate.
+    @type num_modes:        int
+    """
 
 
 def pca_analysis(coord=None, algorithm='eigen', num_modes=4):
@@ -75,8 +84,12 @@ def pca_analysis(coord=None, algorithm='eigen', num_modes=4):
     @type num_modes:        int
     """
 
+    # Init.
+    M = len(coord)
+    N = len(coord[0])
+
     # Calculate the covariance matrix for the structures.
-    covariance_matrix = calc_covariance_matrix(coord)
+    covariance_matrix, deviations = calc_covariance_matrix(coord)
 
     # Perform an eigenvalue decomposition of the covariance matrix.
     if algorithm == 'eigen':
@@ -95,11 +108,16 @@ def pca_analysis(coord=None, algorithm='eigen', num_modes=4):
     else:
         raise RelaxError("The '%s' algorithm is unknown.  It should be either 'eigen' or 'svd'." % algorithm)
 
-    # Truncation to the desired number of modes.
-    values = values[:num_modes]
-    vectors = vectors[:,:num_modes]
-
     # Printout.
     print("\nThe eigenvalues/singular values are:")
     for i in range(num_modes):
         print("Mode %i:  %10.5f" % (i+1, values[i]))
+
+    # Calculate the projection for each structure.
+    proj = zeros((num_modes, M), float64)
+    for s in range(M):
+        for mode in range(num_modes):
+            proj[mode, s] = dot(vectors[:, mode], deviations[s].reshape(N*3))
+
+    # Truncation to the desired number of modes.
+    values = values[:num_modes]
