@@ -1,7 +1,7 @@
-Covariance analysis log, written Fri Nov 20 19:17:25 2015
+Covariance analysis log, written Fri Nov 20 19:56:28 2015
 
-Program: g_covar
-Working directory: /data/edau/relax/git/relax-trunk/test_suite/shared_data/structures/pca/gromacs
+Program: covar
+Working directory: /data/relax/git/relax-trunk/test_suite/shared_data/structures/pca/gromacs
 
 Read 5 frames from ../distribution.pdb (time 1 to 5 ps)
 
@@ -12,6 +12,6 @@ Diagonalized the 225x225 covariance matrix
 Trace of the covariance matrix before diagonalizing: 0.434933
 Trace of the covariance matrix after diagonalizing: 0.434933
 
-Wrote 225 eigenvalues to eigenval.xvg
+Wrote 4 eigenvalues to eigenval.xvg
 Wrote average structure to average.pdb and eigenvec.trr
 Wrote eigenvectors 1 to 4 to eigenvec.trr

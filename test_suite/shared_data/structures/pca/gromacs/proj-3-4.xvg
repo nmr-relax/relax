@@ -1,10 +1,14 @@
-# This file was created Fri Nov 20 19:17:25 2015
-# by the following command:
-# g_anaeig -f ../distribution.pdb -s ../distribution.pdb -first 3 -last 4 -2d proj-3-4.xvg 
+# This file was created Fri Nov 20 19:56:28 2015
+# Created by:
+#                  :-) GROMACS - gmx anaeig, VERSION 5.1.1 (-:
+# 
+# Executable:   /usr/local/gromacs/bin/gmx
+# Data prefix:  /usr/local/gromacs
+# Command line:
+#   gmx anaeig -f ../distribution.pdb -s ../distribution.pdb -first 3 -last 4 -2d proj-3-4.xvg
+# gmx anaeig is part of G R O M A C S:
 #
-# g_anaeig is part of G R O M A C S:
-#
-# GROningen Mixture of Alchemy and Childrens' Stories
+# Gallium Rubidium Oxygen Manganese Argon Carbon Silicon
 #
 @    title "2D projection of trajectory"
 @    xaxis  label "projection on eigenvector 3 (nm)"

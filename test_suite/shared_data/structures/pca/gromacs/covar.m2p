@@ -1,8 +1,9 @@
 ;
 ;	File 'covar.m2p' was generated
-;	By user: edward (1092)
+;	By user: edward (1001)
 ;	On host: localhost.localdomain
-;	At date: Fri Nov 20 19:17:25 2015
+;	At date: Fri Nov 20 19:56:28 2015
+
 ;
 black&white              = no
 linewidth                = 1
