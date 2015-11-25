@@ -3771,7 +3771,6 @@ class Structure(SystemTestCase):
         # The real atomic data.
         atom_name = ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']
         bonded = [[]]*174
-        chain_id = [None]*174
         element = ['N', 'C', 'H', 'H', 'C', 'O', 'H', 'H', 'H', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'C', 'H', 'H', 'H', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'S', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O']
         pdb_record = ['ATOM']*174
         res_name = ['GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY']
@@ -3786,7 +3785,6 @@ class Structure(SystemTestCase):
         for i in range(len(mol.atom_name)):
             self.assertEqual(mol.atom_name[i], atom_name[i])
             self.assertEqual(mol.bonded[i], bonded[i])
-            self.assertEqual(mol.chain_id[i], chain_id[i])
             self.assertEqual(mol.element[i], element[i])
             self.assertEqual(mol.pdb_record[i], pdb_record[i])
             self.assertEqual(mol.res_name[i], res_name[i])
@@ -3916,7 +3914,6 @@ class Structure(SystemTestCase):
         self.assertEqual(mol.atom_name, ['N', 'N'])
         self.assertEqual(mol.atom_num, [None, None])
         self.assertEqual(mol.bonded, [[], []])
-        self.assertEqual(mol.chain_id, [None, None])
         self.assertEqual(mol.element, ['N', 'N'])
         self.assertEqual(mol.pdb_record, [None, None])
         self.assertEqual(mol.res_name, ['Tyr', 'Phe'])
@@ -3975,7 +3972,6 @@ class Structure(SystemTestCase):
             self.assertEqual(cdp.structure.structural_data[i].mol[0].atom_num, [None, None, None])
             self.assertEqual(cdp.structure.structural_data[i].mol[0].atom_name, ['A', 'A', 'A'])
             self.assertEqual(cdp.structure.structural_data[i].mol[0].bonded, [[], [], []])
-            self.assertEqual(cdp.structure.structural_data[i].mol[0].chain_id, [None, None, None])
             self.assertEqual(cdp.structure.structural_data[i].mol[0].element, ['S', 'S', 'S'])
             self.assertEqual(cdp.structure.structural_data[i].mol[0].pdb_record, [None, None, None])
             self.assertEqual(cdp.structure.structural_data[i].mol[0].res_name, ['UNK', 'UNK', 'UNK'])
@@ -4030,7 +4026,6 @@ class Structure(SystemTestCase):
             self.assertEqual(cdp.structure.structural_data[0].mol[i].atom_num, [None, None, None])
             self.assertEqual(cdp.structure.structural_data[0].mol[i].atom_name, ['A', 'A', 'A'])
             self.assertEqual(cdp.structure.structural_data[0].mol[i].bonded, [[], [], []])
-            self.assertEqual(cdp.structure.structural_data[0].mol[i].chain_id, [None, None, None])
             self.assertEqual(cdp.structure.structural_data[0].mol[i].element, ['S', 'S', 'S'])
             self.assertEqual(cdp.structure.structural_data[0].mol[i].pdb_record, [None, None, None])
             self.assertEqual(cdp.structure.structural_data[0].mol[i].res_name, ['UNK', 'UNK', 'UNK'])
@@ -4321,7 +4316,6 @@ class Structure(SystemTestCase):
         # Check the first atom.
         self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[0], 1)
         self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[0], 'N')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[0], 'A')
         self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[0], 'MET')
         self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[0], 1)
         self.assertEqual(cdp.structure.structural_data[0].mol[0].x[0], 27.340)
@@ -4332,7 +4326,6 @@ class Structure(SystemTestCase):
         # Check the last atom (from the last ATOM record, as water HETATM records are skipped).
         self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 602)
         self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[-1], 'OXT')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[-1], 'A')
         self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[-1], 'GLY')
         self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[-1], 76)
         self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 40.862)
