@@ -4161,6 +4161,37 @@ class Structure(SystemTestCase):
                 self.assertAlmostEqual(cdp.structure.pca_proj[mode, struct], proj[struct, mode], 4)
 
 
+    def test_pca_observers(self):
+        """Test the principle component analysis of the structure.pca user function while using observer molecules."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'structure'+sep+'pca_observers.py')
+
+        # The Gromacs values (converted from nm to Angstrom).
+        values = array([0.417808, 0.0164377, 0.000675256, 1.17952e-05], float64) * 100
+        proj = array([
+            [-0.38735,  0.21143, -0.02325, -0.00119],
+            [ 0.96087,  0.07893,  0.02651,  0.00209],
+            [-0.84236, -0.05173,  0.03651, -0.00140],
+            [-0.23302, -0.11191, -0.02209,  0.00530],
+            [ 0.50186, -0.12672, -0.01767, -0.00481]
+        ], float64) * 10
+
+        # Invert the 3rd and 4th Gromacs eigenvectors to match.
+        proj[:, 2] = -proj[:, 2]
+        proj[:, 3] = -proj[:, 3]
+
+        # Checks.
+        self.assert_(hasattr(cdp.structure, 'pca_values'))
+        self.assert_(hasattr(cdp.structure, 'pca_vectors'))
+        self.assert_(hasattr(cdp.structure, 'pca_proj'))
+        self.assertEqual(len(cdp.structure.pca_values), 4)
+        for mode in range(4):
+            self.assertAlmostEqual(cdp.structure.pca_values[mode], values[mode], 5)
+            for struct in range(5):
+                self.assertAlmostEqual(cdp.structure.pca_proj[mode, struct], proj[struct, mode], 4)
+
+
     def test_pdb_combined_secondary_structure(self):
         """Test the handling of secondary structure metadata when combining multiple PDB structures."""
 
