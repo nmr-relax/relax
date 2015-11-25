@@ -1,0 +1,17 @@
+# This file was created Fri Nov 20 19:17:25 2015
+# by the following command:
+# g_anaeig -f ../distribution.pdb -s ../distribution.pdb -first 3 -last 4 -2d proj-3-4.xvg 
+#
+# g_anaeig is part of G R O M A C S:
+#
+# GROningen Mixture of Alchemy and Childrens' Stories
+#
+@    title "2D projection of trajectory"
+@    xaxis  label "projection on eigenvector 3 (nm)"
+@    yaxis  label "projection on eigenvector 4 (nm)"
+@TYPE xy
+  -0.02325   -0.00119
+   0.02651    0.00209
+   0.03651   -0.00140
+  -0.02209    0.00530
+  -0.01767   -0.00481
