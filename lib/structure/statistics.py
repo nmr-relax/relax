@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 """Module for handling all types of structural statistics."""
 
 # Python module imports.
-from numpy import float64, mean, sqrt, std, zeros
+from numpy import array, float64, mean, ones, sqrt, std, zeros
 from numpy.linalg import norm
 
 
@@ -84,11 +84,13 @@ def atomic_rmsd(coord, verbosity=0):
     return rmsd_mean
 
 
-def calc_mean_structure(coord=None, mean=None):
+def calc_mean_structure(coord=None, mean=None, weights=None):
     """Average the coordinates.
 
     @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
     @type coord:        list of numpy rank-2, Nx3 arrays
+    @keyword weights:   The weights for each structure.
+    @type weights:      list of float
     @keyword mean:      The data storage for the mean structure.
     @type mean:         numpy rank-2, Nx3 array
     """
@@ -96,6 +98,10 @@ def calc_mean_structure(coord=None, mean=None):
     # The number of atoms.
     N = len(coord[0])
     M = len(coord)
+    if weights == None:
+        weights = ones(M, float64)
+    else:
+        weights = array(weights, float64)
 
     # Clear the mean data structure.
     for i in range(N):
@@ -105,7 +111,7 @@ def calc_mean_structure(coord=None, mean=None):
     for i in range(N):
         # Loop over the models.
         for j in range(M):
-            mean[i] += coord[j][i]
+            mean[i] += weights[j] * coord[j][i]
 
         # Average.
-        mean[i] = mean[i] / M
+        mean[i] = mean[i] / weights.sum()
