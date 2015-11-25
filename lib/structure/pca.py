@@ -103,6 +103,7 @@ def pca_analysis(coord=None, weights=None, algorithm='eigen', num_modes=4):
 
     # Perform an eigenvalue decomposition of the covariance matrix.
     if algorithm == 'eigen':
+        text = 'eigenvalues'
         values, vectors = eigh(covariance_matrix)
 
         # Sort the values and vectors.
@@ -112,6 +113,7 @@ def pca_analysis(coord=None, weights=None, algorithm='eigen', num_modes=4):
 
     # Perform a singular value decomposition of the covariance matrix.
     elif algorithm == 'svd':
+        text = 'singular values'
         vectors, values, V = svd(covariance_matrix)
 
     # Invalid algorithm.
@@ -119,9 +121,9 @@ def pca_analysis(coord=None, weights=None, algorithm='eigen', num_modes=4):
         raise RelaxError("The '%s' algorithm is unknown.  It should be either 'eigen' or 'svd'." % algorithm)
 
     # Printout.
-    print("\nThe eigenvalues/singular values are:")
+    print("\nThe %s in Angstrom are:" % text)
     for i in range(num_modes):
-        print("Mode %i:  %10.5f" % (i+1, values[i]))
+        print("Mode %i:  %15.5f" % (i+1, values[i]))
 
     # Calculate the projection for each structure.
     proj = zeros((num_modes, M), float64)
