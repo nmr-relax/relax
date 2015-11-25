@@ -112,7 +112,7 @@ def add_model(model_num=None):
     print("Created the empty model number %s." % model_num)
 
 
-def assemble_structural_coordinates(pipes=None, models=None, molecules=None, atom_id=None):
+def assemble_structural_coordinates(pipes=None, models=None, molecules=None, atom_id=None, lists=False):
     """Assemble the common atomic coordinates taking sequence alignments into account.
  
     @keyword pipes:     The data pipes to assemble the coordinates from.
@@ -123,6 +123,8 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
     @type molecules:    None or list of lists of str
     @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:      str or None
+    @keyword lists:     A flag which if true will cause the object ID list per molecule, the model number list per molecule, and the molecule name list per molecule to also be returned.
+    @type lists:        bool
     @return:            The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names; the common list of residue names; the common list of residue numbers; the common list of atom names; the common list of element names.
     @rtype:             numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
     """
@@ -196,7 +198,10 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
 
     # Assemble and return the atomic coordinates and common atom information.
     coord, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common = assemble_coord_array(atom_pos=atom_pos, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, sequences=one_letter_codes, skip=skip)
-    return coord, ids, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common
+    if lists:
+        return coord, ids, object_id_list, model_list, molecule_list, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common
+    else:
+        return coord, ids, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common
 
 
 def assemble_structural_objects(pipes=None, models=None, molecules=None):
