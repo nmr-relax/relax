@@ -1059,6 +1059,7 @@ def pca(pipes=None, models=None, molecules=None, obs_pipes=None, obs_models=None
                         weights[struct] = 0.0
 
     # Perform the PC analysis.
+    print("\n\nStarting the PCA analysis.\n")
     values, vectors, proj = pca_analysis(coord=coord, weights=weights, algorithm=algorithm, num_modes=num_modes)
 
     # Store the values.
@@ -1071,27 +1072,31 @@ def pca(pipes=None, models=None, molecules=None, obs_pipes=None, obs_models=None
         # Assemble the data.
         data = [[[]]]
         current = None
+        labels = []
         for struct in range(M):
             # Create a unique ID for pipe and molecule name.
             id = "%s - %s" % (object_id_list[struct], molecule_list[struct])
             if current == None:
                 current = id
+                labels.append(current)
 
             # Start a new set.
             if current != id:
                 data[-1].append([])
+                current = id
+                labels.append(current)
 
             # Add the projection.
             data[-1][-1].append([proj[mode, struct], proj[mode+1, struct]])
 
         # The number of graph sets.
-        sets = len(data[0][0])
+        sets = len(labels)
 
         # Open the file for writing.
         file = open_write_file("graph_pc%s_pc%s.agr" % (mode+1, mode+2), dir=dir, force=True)
 
         # The header.
-        write_xy_header(format=format, file=file, title="Principle component projections", sets=[sets], axis_labels=[['PC mode %i (\cE\C)' % (mode+1), 'PC mode %i (\cE\C)' % (mode+2)]], linestyle=[[0]*sets])
+        write_xy_header(format=format, file=file, title="Principle component projections", sets=[sets], set_names=[labels], axis_labels=[['PC mode %i (\cE\C)' % (mode+1), 'PC mode %i (\cE\C)' % (mode+2)]], linestyle=[[0]*sets])
 
         # The data.
         write_xy_data(format=format, data=data, file=file, graph_type='xy')
