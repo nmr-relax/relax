@@ -919,9 +919,28 @@ uf.add_keyarg(
     desc_short = "number of modes",
     desc = "The number of PCA modes to calculate."
 )
+uf.add_keyarg(
+    name = "format",
+    default = "grace",
+    py_type = "str",
+    desc_short = "graph format",
+    desc = "The format of the plot data.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["grace"],
+    wiz_read_only = True,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir sel",
+    desc_short = "directory name",
+    desc = "The directory to save the graphs into.",
+    can_be_none = True
+)
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Perform a principle component analysis (PCA) for all the chosen structures.")
+uf.desc[-1].add_paragraph("Perform a principle component analysis (PCA) for all the chosen structures.  2D graphs of the PC projections will be generated and placed in the specified directory.")
 uf.desc[-1].add_paragraph(paragraph_multi_struct)
 uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.

@@ -1004,7 +1004,7 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
     cdp.N = len(from_mols)
 
 
-def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, num_modes=4):
+def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, num_modes=4, format='grace', dir=None):
     """PCA analysis of the motions between all the loaded models.
 
     @keyword pipes:     The data pipes to determine the RMSD for.
@@ -1019,6 +1019,10 @@ def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, n
     @type algorithm:    str
     @keyword num_modes: The number of PCA modes to calculate.
     @type num_modes:    int
+    @keyword format:    The graph format to use.
+    @type format:       str
+    @keyword dir:       The optional directory to place the graphs into.
+    @type dir:          str
     """
 
     # Checks.
