@@ -1028,7 +1028,12 @@ def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, n
     coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # Perform the PCA analysis.
-    pca_analysis(coord=coord, algorithm=algorithm, num_modes=num_modes)
+    values, vectors, proj = pca_analysis(coord=coord, algorithm=algorithm, num_modes=num_modes)
+
+    # Store the values.
+    cdp.structure.pca_values = values
+    cdp.structure.pca_vectors = vectors
+    cdp.structure.pca_proj = proj
 
 
 def read_gaussian(file=None, dir=None, set_mol_name=None, set_model_num=None, verbosity=1, fail=True):
