@@ -82,6 +82,8 @@ def pca_analysis(coord=None, algorithm='eigen', num_modes=4):
     @type algorithm:        str
     @keyword num_modes:     The number of PCA modes to calculate.
     @type num_modes:        int
+    @return:                The PCA values and vectors, and the per structure projections.
+    @rtype:                 numpy rank-1 array, numpy rank-3 array, numpy rank2 array
     """
 
     # Init.
@@ -121,3 +123,7 @@ def pca_analysis(coord=None, algorithm='eigen', num_modes=4):
 
     # Truncation to the desired number of modes.
     values = values[:num_modes]
+    vectors = vectors[:,:num_modes].reshape((3, N, num_modes))
+
+    # Return the results.
+    return values, vectors, proj
