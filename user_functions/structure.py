@@ -908,9 +908,9 @@ uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To determine the PCA modes of all models in the current data pipe, simply type:")
-uf.desc[-1].add_prompt("relax> structure.pcs()")
-uf.backend = pipe_control.structure.main.pcs
-uf.menu_text = "&pcs"
+uf.desc[-1].add_prompt("relax> structure.pca()")
+uf.backend = pipe_control.structure.main.pca
+uf.menu_text = "&pca"
 uf.wizard_height_desc = 400
 uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
