@@ -35,7 +35,7 @@ from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFileError
 from lib.geometry.vectors import vector_angle_atan2
 from lib.io import get_file_path, open_write_file, write_data
-from lib.plotting.api import correlation_matrix
+from lib.plotting.api import correlation_matrix, write_xy_data, write_xy_header
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
 from lib.sequence_alignment.msa import msa_general, msa_residue_numbers, msa_residue_skipping
@@ -1034,7 +1034,7 @@ def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, n
     check_pipe()
 
     # Assemble the structural coordinates.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
+    coord, ids, object_id_list, model_list, molecule_list, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id, lists=True)
 
     # Perform the PCA analysis.
     values, vectors, proj = pca_analysis(coord=coord, algorithm=algorithm, num_modes=num_modes)
@@ -1043,6 +1043,24 @@ def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, n
     cdp.structure.pca_values = values
     cdp.structure.pca_vectors = vectors
     cdp.structure.pca_proj = proj
+
+    # Generate the graphs.
+    M = len(proj[0])
+    for i in range(num_modes - 1):
+        # Open the file for writing.
+        file = open_write_file("graph_pc%s_pc%s.agr" % (i+1, i+2), dir=dir, force=True)
+
+        # The header.
+        write_xy_header(format=format, file=file, title="Principle mode projections", sets=[M], axis_labels=[['PC mode %i' % (i+1), 'PC mode %i' % (i+2)]])
+
+        # The data.
+        data = [[]]
+        for j in range(M):
+            data[0].append([[proj[i, j], proj[i+1, j]]])
+        write_xy_data(format=format, data=data, file=file, graph_type='xy')
+
+        # Close the file.
+        file.close()
 
 
 def read_gaussian(file=None, dir=None, set_mol_name=None, set_model_num=None, verbosity=1, fail=True):
