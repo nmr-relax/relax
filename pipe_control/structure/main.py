@@ -42,6 +42,7 @@ from lib.sequence_alignment.msa import msa_general, msa_residue_numbers, msa_res
 from lib.structure.internal.coordinates import assemble_atomic_coordinates, assemble_coord_array, loop_coord_structures
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
+from lib.structure.pca import pca_analysis
 from lib.structure.represent.diffusion_tensor import diffusion_tensor
 from lib.structure.statistics import atomic_rmsd
 from lib.structure.superimpose import fit_to_first, fit_to_mean
@@ -1001,6 +1002,29 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
 
     # Set the number of states for use in the specific analyses.
     cdp.N = len(from_mols)
+
+
+def pca(pipes=None, models=None, molecules=None, atom_id=None):
+    """PCA analysis of the motions between all the loaded models.
+
+    @keyword pipes:     The data pipes to determine the RMSD for.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to determine the RMSD for.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to determine the RMSD for.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    """
+
+    # Checks.
+    check_pipe()
+
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
+
+    # Perform the PCA analysis.
+    pca_analysis(coord=coord)
 
 
 def read_gaussian(file=None, dir=None, set_mol_name=None, set_model_num=None, verbosity=1, fail=True):
