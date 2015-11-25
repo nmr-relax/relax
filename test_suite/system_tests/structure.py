@@ -4130,6 +4130,18 @@ class Structure(SystemTestCase):
             self.assertEqual(contents[i], lines[i])
 
 
+    def test_pca(self):
+        """Test the principle component analysis of the structure.pca user function."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'structure'+sep+'pca.py')
+
+        # Checks.
+        self.assert_(hasattr(cdp.structure, 'pca_values'))
+        self.assert_(hasattr(cdp.structure, 'pca_vectors'))
+        self.assert_(hasattr(cdp.structure, 'pca_proj'))
+
+
     def test_pdb_combined_secondary_structure(self):
         """Test the handling of secondary structure metadata when combining multiple PDB structures."""
 
