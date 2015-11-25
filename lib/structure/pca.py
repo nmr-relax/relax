@@ -23,7 +23,7 @@
 """Module for performing a principle component analysis (PCA)."""
 
 # Python module imports.
-from numpy import dot, float64, outer, sqrt, zeros
+from numpy import array, dot, float64, outer, sqrt, zeros
 from numpy.linalg import eigh, svd
 
 # relax library module imports.
@@ -31,11 +31,13 @@ from lib.errors import RelaxError
 from lib.structure.statistics import calc_mean_structure
 
 
-def calc_covariance_matrix(coord=None):
+def calc_covariance_matrix(coord=None, weights=None):
     """Calculate the covariance matrix for the structures.
 
     @keyword coord:         The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
     @type coord:            list of numpy rank-2, Nx3 arrays
+    @keyword weights:       The weights for each structure.
+    @type weights:          list of float
     @return:                The covariance matrix and the deviation matrix.
     @rtype:                 numpy rank-2 3Nx3N array, numpy rank-2 MxNx3 array
     """
@@ -43,12 +45,16 @@ def calc_covariance_matrix(coord=None):
     # Init.
     M = len(coord)
     N = len(coord[0])
+    if weights == None:
+        weights = ones(M, float64)
+    else:
+        weights = array(weights, float64)
     covariance_matrix = zeros((N*3, N*3), float64)
     deviations = zeros((M, N, 3), float64)
     mean_struct = zeros((N, 3), float64)
 
     # Calculate the mean structure.
-    calc_mean_structure(coord, mean_struct)
+    calc_mean_structure(coord, mean_struct, weights=weights)
 
     # Loop over the models.
     for i in range(M):
@@ -56,10 +62,10 @@ def calc_covariance_matrix(coord=None):
         deviations[i] = coord[i] - mean_struct
 
         # Sum the covariance element.
-        covariance_matrix += outer(deviations[i], deviations[i])
+        covariance_matrix += weights[i] * (outer(deviations[i], deviations[i]))
 
     # Average.
-    covariance_matrix /= M
+    covariance_matrix /= weights.sum()
 
     # Return the matrix.
     return covariance_matrix, deviations
@@ -73,11 +79,13 @@ def calc_projections(coord=None, num_modes=4):
     """
 
 
-def pca_analysis(coord=None, algorithm='eigen', num_modes=4):
+def pca_analysis(coord=None, weights=None, algorithm='eigen', num_modes=4):
     """Perform the PCA analysis.
 
     @keyword coord:         The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
     @type coord:            list of numpy rank-2, Nx3 arrays
+    @keyword weights:       The weights for each structure.
+    @type weights:          list of float
     @keyword algorithm:     The PCA algorithm to use (either 'eigen' or 'svd').
     @type algorithm:        str
     @keyword num_modes:     The number of PCA modes to calculate.
@@ -91,7 +99,7 @@ def pca_analysis(coord=None, algorithm='eigen', num_modes=4):
     N = len(coord[0])
 
     # Calculate the covariance matrix for the structures.
-    covariance_matrix, deviations = calc_covariance_matrix(coord)
+    covariance_matrix, deviations = calc_covariance_matrix(coord, weights=weights)
 
     # Perform an eigenvalue decomposition of the covariance matrix.
     if algorithm == 'eigen':

@@ -21,7 +21,7 @@
 
 # Python module imports.
 from minfx.generic import generic_minimise
-from numpy import array, average, dot, float64, mean, std, zeros
+from numpy import array, average, dot, float64, mean, ones, std, zeros
 from numpy.linalg import norm
 from os import F_OK, access, getcwd
 from re import search
@@ -1009,25 +1009,31 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
     cdp.N = len(from_mols)
 
 
-def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, num_modes=4, format='grace', dir=None):
-    """PCA analysis of the motions between all the loaded models.
+def pca(pipes=None, models=None, molecules=None, obs_pipes=None, obs_models=None, obs_molecules=None, atom_id=None, algorithm=None, num_modes=4, format='grace', dir=None):
+    """PC analysis of the motions between all the loaded models.
 
-    @keyword pipes:     The data pipes to determine the RMSD for.
-    @type pipes:        None or list of str
-    @keyword models:    The list of models to determine the RMSD for.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
-    @type models:       None or list of lists of int
-    @keyword molecules: The list of molecules to determine the RMSD for.  The number of elements must match the pipes argument.
-    @type molecules:    None or list of lists of str
-    @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
-    @type atom_id:      str or None
-    @keyword algorithm: The PCA algorithm to use (either 'eigen' or 'svd').
-    @type algorithm:    str
-    @keyword num_modes: The number of PCA modes to calculate.
-    @type num_modes:    int
-    @keyword format:    The graph format to use.
-    @type format:       str
-    @keyword dir:       The optional directory to place the graphs into.
-    @type dir:          str
+    @keyword pipes:         The data pipes to perform the PC analysis on.
+    @type pipes:            None or list of str
+    @keyword models:        The list of models to perform the PC analysis on.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:           None or list of lists of int
+    @keyword molecules:     The list of molecules to perform the PC analysis on.  The number of elements must match the pipes argument.
+    @type molecules:        None or list of lists of str
+    @keyword obs_pipes:     The data pipes in the PC analysis which will have zero weight.  These structures are for comparison.
+    @type obs_pipes:        None or list of str
+    @keyword obs_models:    The list of models in the PC analysis which will have zero weight.  These structures are for comparison.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type obs_models:       None or list of lists of int
+    @keyword obs_molecules: The list of molecules in the PC analysis which will have zero weight.  These structures are for comparison.  The number of elements must match the pipes argument.
+    @type obs_molecules:    None or list of lists of str
+    @keyword atom_id:       The atom identification string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:          str or None
+    @keyword algorithm:     The PCA algorithm to use (either 'eigen' or 'svd').
+    @type algorithm:        str
+    @keyword num_modes:     The number of PCA modes to calculate.
+    @type num_modes:        int
+    @keyword format:        The graph format to use.
+    @type format:           str
+    @keyword dir:           The optional directory to place the graphs into.
+    @type dir:              str
     """
 
     # Checks.
@@ -1036,8 +1042,24 @@ def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, n
     # Assemble the structural coordinates.
     coord, ids, object_id_list, model_list, molecule_list, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id, lists=True)
 
-    # Perform the PCA analysis.
-    values, vectors, proj = pca_analysis(coord=coord, algorithm=algorithm, num_modes=num_modes)
+    # Determine the structure weights.
+    M = len(coord)
+    if obs_pipes == None:
+        obs_pipes = []
+    weights = ones(M, float64)
+    for struct in range(M):
+        # Is the structure in the 'observing' lists?
+        for i in range(len(obs_pipes)):
+            # Matching data pipe.
+            if object_id_list[struct] == obs_pipes[i]:
+                # Matching molecules.
+                if obs_molecules == None or molecule_list[struct] == obs_molecules[i]:
+                    # Matching models.
+                    if obs_models == None or model_list[struct] == obs_models[i]:
+                        weights[struct] = 0.0
+
+    # Perform the PC analysis.
+    values, vectors, proj = pca_analysis(coord=coord, weights=weights, algorithm=algorithm, num_modes=num_modes)
 
     # Store the values.
     cdp.structure.pca_values = values
@@ -1045,7 +1067,6 @@ def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, n
     cdp.structure.pca_proj = proj
 
     # Generate the graphs.
-    M = len(coord)
     for mode in range(num_modes - 1):
         # Assemble the data.
         data = [[[]]]

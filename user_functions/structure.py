@@ -869,12 +869,12 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 # The structure.pca user function.
 uf = uf_info.add_uf('structure.pca')
 uf.title = "Principle component analysis (PCA) of the motions in an ensemble of structures."
-uf.title_short = "PCA analysis of structures."
+uf.title_short = "Structural PCA."
 uf.add_keyarg(
     name = "pipes",
     py_type = "str_list",
     desc_short = "data pipes",
-    desc = "The data pipes to determine the RMSD for.",
+    desc = "The data pipes to perform the PC analysis on.",
     wiz_combo_iter = pipe_names,
     wiz_read_only = False,
     can_be_none = True
@@ -883,14 +883,37 @@ uf.add_keyarg(
     name = "models",
     py_type = "int_list_of_lists",
     desc_short = "model list for each data pipe",
-    desc = "The list of models for each data pipe to determine the RMSD for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    desc = "The list of models for each data pipe to perform the PC analysis on.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
     py_type = "str_list_of_lists",
     desc_short = "molecule list for each data pipe",
-    desc = "The list of molecules for each data pipe to determine the RMSD for.  The RMSD will only be calculated for atoms with identical residue name and number and atom name.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    desc = "The list of molecules for each data pipe to perform the PC analysis on.  The PCA will only be calculated for atoms with identical residue name and number and atom name.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "obs_pipes",
+    py_type = "str_list",
+    desc_short = "observing data pipes",
+    desc = "The data pipes in the PC analysis which will have zero weight.  These structures are for comparison.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "obs_models",
+    py_type = "int_list_of_lists",
+    desc_short = "observing model list for each data pipe",
+    desc = "The list of models for each data pipe in the PC analysis which will have zero weight.  These structures are for comparison.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "obs_molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "observing molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe in the PC analysis which will have zero weight.  These structures are for comparison.  The PCA will only be calculated for atoms with identical residue name and number and atom name.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -942,6 +965,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("Perform a principle component analysis (PCA) for all the chosen structures.  2D graphs of the PC projections will be generated and placed in the specified directory.")
 uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph("A subset of the structures can be set as 'observing'.  This means that they will have a weight of zero when constructing the covariance matrix and determining its eigenvectors.  Therefore the structures will not contribute to the principle components, but will be present and compared to structures used in the analysis.")
 uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
@@ -949,7 +973,7 @@ uf.desc[-1].add_paragraph("To determine the PCA modes of all models in the curre
 uf.desc[-1].add_prompt("relax> structure.pca()")
 uf.backend = pipe_control.structure.main.pca
 uf.menu_text = "&pca"
-uf.wizard_height_desc = 400
+uf.wizard_height_desc = 300
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
