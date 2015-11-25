@@ -900,6 +900,25 @@ uf.add_keyarg(
     desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "algorithm",
+    default = "eigen",
+    py_type = "str",
+    desc_short = "PCA algorithm",
+    desc = "The PCA algorithm used to find the principle components of.  This can be either 'eigen' for an eigenvalue/eigenvector decomposition, or 'svd' for a singular value decomposition.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["eigen", "svd"],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "num_modes",
+    py_type = "int",
+    default = 4,
+    min = 1,
+    max = 1000,
+    desc_short = "number of modes",
+    desc = "The number of PCA modes to calculate."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("Perform a principle component analysis (PCA) for all the chosen structures.")
@@ -912,7 +931,7 @@ uf.desc[-1].add_prompt("relax> structure.pca()")
 uf.backend = pipe_control.structure.main.pca
 uf.menu_text = "&pca"
 uf.wizard_height_desc = 400
-uf.wizard_size = (900, 700)
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 

@@ -63,11 +63,13 @@ def calc_covariance_matrix(coord=None):
     return covariance_matrix
 
 
-def pca_analysis(coord=None, num_modes=4):
+def pca_analysis(coord=None, algorithm='eigen', num_modes=4):
     """Perform the PCA analysis.
 
     @keyword coord:         The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
     @type coord:            list of numpy rank-2, Nx3 arrays
+    @keyword algorithm:     The PCA algorithm to use (either 'eigen' or 'svd').
+    @type algorithm:        str
     @keyword num_modes:     The number of PCA modes to calculate.
     @type num_modes:        int
     """

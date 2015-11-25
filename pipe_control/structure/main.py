@@ -1004,7 +1004,7 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
     cdp.N = len(from_mols)
 
 
-def pca(pipes=None, models=None, molecules=None, atom_id=None):
+def pca(pipes=None, models=None, molecules=None, atom_id=None, algorithm=None, num_modes=4):
     """PCA analysis of the motions between all the loaded models.
 
     @keyword pipes:     The data pipes to determine the RMSD for.
@@ -1015,6 +1015,10 @@ def pca(pipes=None, models=None, molecules=None, atom_id=None):
     @type molecules:    None or list of lists of str
     @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:      str or None
+    @keyword algorithm: The PCA algorithm to use (either 'eigen' or 'svd').
+    @type algorithm:    str
+    @keyword num_modes: The number of PCA modes to calculate.
+    @type num_modes:    int
     """
 
     # Checks.
@@ -1024,7 +1028,7 @@ def pca(pipes=None, models=None, molecules=None, atom_id=None):
     coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # Perform the PCA analysis.
-    pca_analysis(coord=coord)
+    pca_analysis(coord=coord, algorithm=algorithm, num_modes=num_modes)
 
 
 def read_gaussian(file=None, dir=None, set_mol_name=None, set_model_num=None, verbosity=1, fail=True):
