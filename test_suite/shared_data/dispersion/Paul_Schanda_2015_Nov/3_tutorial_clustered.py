@@ -30,7 +30,7 @@ state.load(os.getcwd() + os.sep + "results" + os.sep + "final_state", force=True
 # Now simulate that all spins are first deselected, and then selected.
 deselect.all()
 sel_ids = [
-":2",
+":12",
 ":51",
 ]
 
