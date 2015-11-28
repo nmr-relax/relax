@@ -58,7 +58,7 @@ function download {
   curl http://download.gna.org/relax/relax-$VREL.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
   tar xvjf relax-$VREL.GNU-Linux.x86_64.tar.bz2
   rm relax-$VREL.GNU-Linux.x86_64.tar.bz2
-  ln -s $HOME/relax-4.0.0/relax $HOME/bin/relax-$VREL
+  ln -s $HOME/relax-4.0.0/relax $HOME/bin/relax_$VREL
 
   # Get the subversion of relax
   svn co svn://svn.gna.org/svn/relax/trunk relax_trunk
@@ -80,8 +80,8 @@ function checkinstallation {
   mpirun --report-bindings -np 4 echo "mpirun with 4 CPU echoes"
 
   # Print info
-  which relax
-  relax -i
+  which relax_$VREL
+  relax_$VREL -i
 
   which relax_svn
   relax_svn -i
