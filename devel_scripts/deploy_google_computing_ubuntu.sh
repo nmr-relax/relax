@@ -72,20 +72,29 @@ function dopiplocal {
 # Get latest compiled version of relax
 function getlatest {
   cd $HOME
-  curl http://download.gna.org/relax/relax-$VREL.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
-  tar xvjf relax-$VREL.GNU-Linux.x86_64.tar.bz2
-  rm relax-$VREL.GNU-Linux.x86_64.tar.bz2
-  ln -s $HOME/relax-$VREL/relax $HOME/bin/relax_$VREL
+  if [ ! -d "$HOME/relax-$VREL" ]; then
+    curl http://download.gna.org/relax/relax-$VREL.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
+    tar xvjf relax-$VREL.GNU-Linux.x86_64.tar.bz2
+    rm relax-$VREL.GNU-Linux.x86_64.tar.bz2
+  fi
+  if [ ! \( -e "$HOME/bin/relax_$VREL" \) ]; then
+    ln -s $HOME/relax-$VREL/relax $HOME/bin/relax_$VREL
+  fi
   cd $HOME
 }
 
 # Get the trunk of relax with subversion
 function gettrunk {
   cd $HOME
-  svn co svn://svn.gna.org/svn/relax/trunk relax_trunk
+  if [ ! -d "$HOME/relax_trunk" ]; then
+    svn co svn://svn.gna.org/svn/relax/trunk relax_trunk
+  fi
   cd $HOME/relax_trunk
+  svn up
   scons
-  ln -s $HOME/relax_trunk/relax $HOME/bin/relax_trunk
+  if [ ! \( -e "$HOME/bin/relax_trunk" \) ]; then
+    ln -s $HOME/relax_trunk/relax $HOME/bin/relax_trunk
+  fi
   cd $HOME
 }
 
@@ -102,8 +111,8 @@ function checkinstallation {
   which relax_$VREL
   relax_$VREL -i
 
-  which relax_svn
-  relax_svn -i
+  which relax_trunk
+  relax_trunk -i
 }
 
 # Combine functions
