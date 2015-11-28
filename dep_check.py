@@ -28,7 +28,7 @@ If essential dependencies are missing, then an error message is printed and the 
 
 # Python modules.
 import platform
-from os import F_OK, access, sep
+from os import F_OK, access, environ, sep
 from re import sub
 import sys
 
@@ -133,6 +133,9 @@ except ImportError:
 try:
     import matplotlib
     matplotlib_module = True
+    if not "DISPLAY" in environ:
+        # Force matplotlib to not use any Xwindows backend.
+        matplotlib.use('Agg')
 except ImportError:
     matplotlib_module = False
 
