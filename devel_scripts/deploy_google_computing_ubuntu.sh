@@ -128,4 +128,4 @@ function installandcheck {
 }
 
 # Do functions
-installandcheck
+#installandcheck
