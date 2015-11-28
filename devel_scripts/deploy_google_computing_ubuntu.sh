@@ -2,20 +2,10 @@
 # -*- coding: UTF-8 -*-
 # Script for deploying relax on Google Cloud Computing GCC
 
-function download {
+# Install apt-get packages
+function doaptget {
   # Install lynx
   sudo apt-get -y install lynx
-
-  # From the wiki, get current versions
-  VMIN=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_minfx" | grep -A 10 "Template:Current version minfx" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
-  VBMR=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_bmrblib" | grep -A 10 "Template:Current version bmrblib" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
-  VMPI=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_mpi4py" | grep -A 10 "Template:Current version mpi4py" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
-  VREL=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_relax" | grep -A 10 "Template:Current version relax" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
-
-  echo "Current version of minfx is: $VMIN"
-  echo "Current version of bmrblib is: $VMBR"
-  echo "Current version of mpi4py is: $VMPI"
-  echo "Current version of relax is: $VREL"
 
   # Install for server management
   sudo apt-get -y install htop
@@ -26,16 +16,40 @@ function download {
   # Install dependencies
   sudo apt-get -y install python-numpy
   sudo apt-get -y install python-scipy python-matplotlib python-pip
+
+  # For trunk checkout and graphs
+  sudo apt-get -y install subversion scons grace
+}
+
+# Install python packages
+function dopip {
   sudo pip install mpi4py
   sudo pip install epydoc
-  sudo apt-get -y install subversion scons grace
+}
 
-  # Make home bin
+function getversions {
+  # From the wiki, get current versions
+  VMIN=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_minfx" | grep -A 10 "Template:Current version minfx" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
+  VBMR=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_bmrblib" | grep -A 10 "Template:Current version bmrblib" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
+  VMPI=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_mpi4py" | grep -A 10 "Template:Current version mpi4py" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
+  VREL=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_relax" | grep -A 10 "Template:Current version relax" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
+
+  echo "Current version of minfx is: $VMIN"
+  echo "Current version of bmrblib is: $VMBR"
+  echo "Current version of mpi4py is: $VMPI"
+  echo "Current version of relax is: $VREL"
+}
+
+# Make home bin
+function dobin {
   mkdir -p $HOME/bin
   echo '' >> $HOME/.bashrc
   echo 'export PATH=$PATH:$HOME/bin' >> $HOME/.bashrc
   source $HOME/.bashrc
+}
 
+# Do local istallations of pip
+function dopiplocal {
   # Install minfx
   mkdir -p $HOME/Downloads
   cd $HOME/Downloads
@@ -53,24 +67,29 @@ function download {
   cd bmrblib-$VBMR
   sudo pip install .
   cd $HOME
+}
 
-  # Get latest compiled version of relax
+# Get latest compiled version of relax
+function getlatest {
+  cd $HOME
   curl http://download.gna.org/relax/relax-$VREL.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
   tar xvjf relax-$VREL.GNU-Linux.x86_64.tar.bz2
   rm relax-$VREL.GNU-Linux.x86_64.tar.bz2
-  ln -s $HOME/relax-4.0.0/relax $HOME/bin/relax_$VREL
+  ln -s $HOME/relax-$VREL/relax $HOME/bin/relax_$VREL
+  cd $HOME
+}
 
-  # Get the subversion of relax
+# Get the trunk of relax with subversion
+function gettrunk {
+  cd $HOME
   svn co svn://svn.gna.org/svn/relax/trunk relax_trunk
-
-  # Build
   cd $HOME/relax_trunk
   scons
   ln -s $HOME/relax_trunk/relax $HOME/bin/relax_trunk
   cd $HOME
 }
 
-
+# Do some check of installation
 function checkinstallation {
   # Then check server
   uptime
@@ -87,6 +106,17 @@ function checkinstallation {
   relax_svn -i
 }
 
+# Combine functions
+function installandcheck {
+  doaptget
+  dopip
+  getversions
+  dobin
+  dopiplocal
+  getlatest
+  gettrunk
+  checkinstallation
+}
+
 # Do functions
-download
-checkinstallation
+installandcheck
