@@ -26,7 +26,7 @@ import numpy
 from os import path, sep, walk
 from re import search
 import sys
-from tempfile import mkdtemp
+from tempfile import mkdtemp, mktemp
 
 # relax module imports.
 from auto_analyses.dauvergne_protocol import dAuvergne_protocol
@@ -498,6 +498,16 @@ class Mf(SystemTestCase):
 
         # Load the relaxation data.
         self.assertRaises(RelaxMultiSpinIDError, self.interpreter.relax_data.read, ri_id='R1_600', ri_type='R1', frq=600402816.0, file='r1_600.txt', dir=path, res_num_col=1, data_col=2, error_col=3)
+
+
+    def test_bug_24131_bmrb_deposition(self):
+        """Test catching U{bug #24131<https://gna.org/bugs/?24131>}, the local tm global model selection."""
+
+        # The output file.
+        ds.tmpfile = mktemp()
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_24131_bmrb_deposition.py')
 
 
     def test_create_m4(self):
