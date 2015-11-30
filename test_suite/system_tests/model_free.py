@@ -35,7 +35,7 @@ import dep_check
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
-from lib.errors import RelaxMultiSpinIDError
+from lib.errors import RelaxError, RelaxMultiSpinIDError
 from lib.physical_constants import N15_CSA
 from lib.io import DummyFileObject, open_read_file
 from status import Status; status = Status()
@@ -507,7 +507,7 @@ class Mf(SystemTestCase):
         ds.tmpfile = mktemp()
 
         # Execute the script.
-        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_24131_bmrb_deposition.py')
+        self.assertRaises(RelaxError, self.script_exec, status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_24131_bmrb_deposition.py')
 
 
     def test_create_m4(self):
