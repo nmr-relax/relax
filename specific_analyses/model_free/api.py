@@ -238,6 +238,11 @@ class Model_free(API_base, API_common):
                 warn(RelaxWarning("Skipping the proton spin '%s'." % spin_id))
                 continue
 
+            # No model setup.
+            if not hasattr(spin, 'model'):
+                warn(RelaxWarning("Skipping the spin '%s' as no model-free model has been set up." % spin_id))
+                continue
+
             # Check the data for None (not allowed in BMRB!).
             if res_num == None:
                 raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
