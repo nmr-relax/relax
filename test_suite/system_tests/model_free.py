@@ -501,13 +501,23 @@ class Mf(SystemTestCase):
 
 
     def test_bug_24131_bmrb_deposition(self):
-        """Test catching U{bug #24131<https://gna.org/bugs/?24131>}, the local tm global model selection."""
+        """Test catching U{bug #24131<https://gna.org/bugs/?24131>}, the BMRB export failure with the SpinContainer object having no s2 value."""
 
         # The output file.
         ds.tmpfile = mktemp()
 
         # Execute the script.
         self.assertRaises(RelaxError, self.script_exec, status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_24131_bmrb_deposition.py')
+
+
+    def test_bug_24131_missing_interaction(self):
+        """Test catching U{bug #24131<https://gna.org/bugs/?24131>}, the BMRB export failure with missing interatomic interactions."""
+
+        # The output file.
+        ds.tmpfile = mktemp()
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_24131_missing_interaction.py')
 
 
     def test_create_m4(self):
