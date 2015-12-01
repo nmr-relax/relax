@@ -161,7 +161,7 @@ def bmrb_write(star):
     attached_element_list = []
 
     # Store the spin specific data in lists for later use.
-    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
         # Check the data for None (not allowed in BMRB!).
         if res_num == None:
             raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
