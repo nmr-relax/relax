@@ -1,3 +1,116 @@
+Version 4.0.1
+(14 December 2015, from /trunk)
+http://svn.gna.org/svn/relax/tags/4.0.1
+
+    Features:
+        * Many improvements for the compilation of the HTML version of the relax manual (http://www.nmr-relax.com/manual/index.html).
+        * Updated relax to eliminate all FutureWarnings from numpy >= 1.9, to future-proof relax against upcoming numpy behaviour changes.
+        * Ability to handle replicated R2eff data points by the relax_disp.r2eff_read user function, but adding 0.001 to the frequency value for the replicated point.
+        * A new sample script for loading a model-free results file and back-calculating relaxation data.
+        * Improvements for the handling of PDB structural data.
+        * Implementation of the structure.pca user function for performing principle component analyses (PCA) of an ensemble of structures.
+        * Addition of a script for rapid deployment on the Google Cloud Computing infrastructure.
+
+
+    Changes:
+        * Fix for the rigid frame order model 2nd degree frame order matrix in the manual.  The wrong symbol was being used.
+        * Removed the newparagraph and newsubparagraph definitions from the LaTeX manual.  These were causing conflicts with latex2html, preventing the HTML version of the manual at http://www.nmr-relax.com/manual/index.html from being compiled.  These definitions are unnecessary for the current set up of the sectioning in the manual.
+        * Modified the short captions in the new frame models chapter of the manual.  The runic Daeg character has been replaced simply by 'Daeg'.  This is due to incompatibilities with latex2html which prevents the HTML manual at http://www.nmr-relax.com/manual/index.html from being compiled.
+        * Removal of the definition of a fixed-width table column from the LaTeX manual preamble.  This is required as the definition breaks latex2html compatibility, causing a corruption in the figure numbering resulting in the images in the HTML to be essentially randomised.
+        * Removal of the accents package to allow the HTML manual to be compiled.  The 'accents' LaTeX package is not compatible with latex2html, so the easiest fix is to eliminate the package.
+        * Manually rotated the frame order matrix element EPS manual figures, for latex2html compatibility.  The '90 rotate' command has been deleted and the bounding box permuted as 'a b c d' -> 'b -c d -a'.  This allows the angle argument in the \includegraphics{} command to be dropped, as latex2html does not recognise this.  It allows the figures to be visible in the HTML version of the manual at http://www.nmr-relax.com/manual/index.html .
+        * Redesign of the frame order parameter nesting table in the manual for latex2html compatibility.  The table uses the tikz package, which is fatal for latex2html, even if not used.  Therefore the table in the docs/latex/frame_order/parameter_nesting.tex file has been converted into a standalone LaTeX document to create a cropped postscript version of the tikz formatted table.  A compilation script has been added as well.  The resultant *.ps file is now included into the PCS numerical integration section, rather than this section creating the tikz table.  All tikz preamble text has been removed to allow latex2html to run.
+        * Workaround for latex2html not being able to handle the allrunes package or associated font.  In the preamble 'htmlonly' environment, the frame order symbols are redefined using the text 'Daeg' instead of the runic character.
+        * Fixes for sub and superscripts throughout the manual.  This introduces {} around all sub and superscripted \textrm{} instances.  This is not needed for the PDF version of the manual as the missing bracket problem is avoided, but it affects the HTML version of the manual compiled by latex2html, which requires the correct notation.  The fixes are for both the new frame order chapter as well as the relaxation dispersion chapter.
+        * Editing and fixes for the relax 4.0.0 part of the CHANGES file.
+        * Updated and improved the wiki instructions in the relax release checklist document.
+        * One more wiki instruction about checking for dead links in the release checklist document.
+        * More minor changes to the 'Announcement' section of the release checklist document.
+        * Updated the shell script for finding duplicated titles in the LaTeX files of the manual.
+        * Converted the duplicate title finding shell script into a Python script.  The Python script is far more advanced and uses a different logic to produce a table of replicated titles and their count.  The script also returns a failed exit status when replicates exist.
+        * Converted the replicated title finding Python script to use a class structure.  This allows the script to be imported as a module.  The replicate finding has been shifted into a find() class method.
+        * Renamed the replicate title finding script.
+        * Removed the duplicate LaTeX title finding shell script.  This is now handled by the far more advanced Python script.
+        * The Scons compilation of the PDF and HTML manuals now checks for replicated titles.  A new replicate_title_check target has been added to the scons scripts.  This calls the find() method of the replicate LaTeX title finding script to determine if any titles are replicated, and if so the scons target returns with a sys.exit(1) call.  This target is set at the start of the user_manual_pdf, user_manual_pdf_nofetch, user_manual_html, user_manual_html_nofetch scons targets.  The result is that the manual cannot be compiled if replicate titles exist, forcing the titles to be changed.  The result will be that the HTML pages at http://www.nmr-relax.com/manual/ will all be unique, as replicated titles results in only one HTML page being created for all the sections.
+        * Elimination of replicated titles in the LaTeX sources that the new frame order chapters introduced.
+        * Removal of an old replicated title in the LaTeX sources for the manual.  This is the title 'Model-free analysis' which is used for the entire specific analysis chapter as well as for the model-free analysis section of the values, gradients, and Hessians for optimisation chapter.
+        * Fixes and improved printouts for the replicate_title_check scons target.
+        * Updated all of relax to protect against future changes occurring in the numpy Python package.  From numpy version 1.9, the FutureWarning "__main__:1: FutureWarning: comparison to `None` will result in an elementwise object comparison in the future." is seen in a large percentage of all relax's user functions.  This is caught and turned into a RelaxWarning with the same message.  The issue is that the behaviour of the comparison operators '==' and '!=' will change with future numpy versions.  These have been replaced with 'is' and 'is not' throughout the relax code base.  Changes have also been made to the minfx and bmrblib packages to match.
+        * More future protection against numpy changes.  The FutureWarning is "`rank` is deprecated; use the `ndim` attribute or function instead.  To find the rank of a matrix see `numpy.linalg.matrix_rank`."  Therefore the N-state model target function method paramag_info() has been updated to use the .ndim attribute and longer use numpy.rank() function.
+        * Created the Mf.test_bug_23933_relax_data_read_ids system test.  This is designed to catch bug #23933 (https://gna.org/bugs/?23933), the "NameError: global name 'ids' is not defined" problem when loading relaxation data.  A truncated version of the PDB file and relaxation data, the full versions of which are attached to the bug report, consisting solely of residues 329, 330, and 331 have been added to the test suite shared data directories, and the system test written to catch the NameError.
+        * Updated the Mf.test_bug_23933_relax_data_read_ids system test to catch the RelaxMultiSpinIDError.  This allows the system test to pass, as a RelaxMultiSpinIDError is expected.
+        * Updated the minfx and bmrblib versions in the release checklist document to 1.0.12 and 1.0.4.  This is to remove the numpy FutureWarning messages about the '== None' and '=! None' comparisons to numpy data structures, which in the future will change in behaviour.
+        * Increased the Gna! news item sectioning depth in the release checklist document.
+        * Expanded the description of the sequence.attach_protons user function.  This follows from http://thread.gmane.org/gmane.science.nmr.relax.user/1849/focus=1855 .
+        * Added initial data for testing data from Paul Schanda.  This will demonstrate that there are several possibilities to enhance the r2eff point method.
+        * Added the Relax_disp.test_paul_schanda_nov_2015 system test.  This will catch the loaning of "nan" values.
+        * Made additional check in sequence reading, that "nan" values are skipped.
+        * Making sure that the replicated 4000 Hz point fpr the 950 MHz experiment is not overwritten.
+        * In the Relax_disp.test_paul_schanda_nov_2015 system test, added a test of counting the R2eff values.  This shows that the replicated R2eff at 950 MHz/4000 Hz point is overwritten.  A solution could be to change the dispersion frequency very little, to allow the addition of the data point.
+        * Expanded a comment about why 1 is subtracted in a test.
+        * Added further tests to Relax_disp.test_paul_schanda_nov_2015.  This will show that replicates of R2eff values is not handled well.
+        * In the function of r2eff_read, in data module of the dispersion, added the possibilities to read r2eff values which are replicated.  This is done first checking if the dispersion key exists in the r2eff dictionary.  If it exists, continue add 0.001 to the frequency until a new possibility exists.  This should help handle multiple R2eff points, as separate values and not taking any decision to average them.
+        * Added the expectation of raising an relax error, if trying to plot and no model information is stored.
+        * Raising an error if plotting dispersion curves, and no model is saved.
+        * Changed example script for analysing data.
+        * Extended the Relax_disp.test_paul_schanda_nov_2015 system test to include auto-analysis and clustered fits.  This should show that the analysis is now possible.
+        * Added a temporary state and a script for GUI setup to the data Paul Schanda.
+        * Added the Relax_disp.test_paul_schanda_nov_2015 GUI test.  This will show that loading a state will create a problem.  Traceback (most recent call last): TypeError: int() argument must be a string or a number, not 'NoneType'.
+        * Added a sample script for back-calculating relaxation data from a model-free results file.  This is useful when the results file is not the final model, as these results file do not contain the back-calculated data.  This is in response to Christina Möller's sr #3303 support request (https://gna.org/support/?3303).
+        * Using Gary's lib.float.isNaN() instead of math.isnan(), to have backwards compatibility with python 2.5.
+        * Fix for spelling mistake and documenting the new behavior of relax_disp.r2eff_read(), when reading r2eff points with the same frequency.  If the spin-container already contain r2eff values with the 'frequency of the CPMG pulse' or 'spin-lock field strength', the frequency will be changed by a infinitesimal small value of + 0.001 Hz.  This allow for duplicates or more of the same frequency.
+        * Modified the internal structural object to be less influenced by the format of the PDB.  The PDB serial number is now intelligently handled, in that it is reset to 1 when a new model is created.  This information is still kept for supporting the logic of the reading of the CONECT records, and will be eliminated in the future.  The chain ID information is now no longer stored in the internal structural object, as this information is recreated by the structure.write_pdb user function based on how the internal structural object has been created.
+        * Updates to the Noe and Structure system test classes for the internal structural object changes.  The serial number can now be reset, and the chain ID information is no longer stored.
+        * Added a file to the test suite shared data to help implement the PCA structural analysis.  This is the N-domain of the CaM-IQ complex used in a frame order analysis.  It is the first 5 structures from a call to the frame_order.distribute user function, with the different rigid-bodies merged back together into a single molecule.
+        * Created the structure.pca user function front end.  This is currently modelled on the structure.rmsd user function framework.
+        * Basic implementation of the structure.pca user function back end.  This is the new pca() function of the pipe_control.structure.main module.  It simply performs some checks, assembles the atomic coordinates, and the passes control to the relax library pca_analysis() function of the currently unimplemented lib.structure.pca module.
+        * Partial implemented of the PCA analysis in the relax library.  This is for the new structure.pca user function.  The lib.structure.pca module has been created, and the pca_analysis() function created to calculate the structure covariance matrix, via the covariance() function, and then calculate the eigenvalues and eigenvectors of the covariance matrix, sorting them and truncating to the desired number of PCA modes.
+        * Added the 'algorithm' and 'num_modes' arguments to the structure.pca user function.  These are passed all the way into the relax library backend.
+        * Implemented the SVD algorithm for the PCA analysis in the relax library.  This simply calls numpy.linalg.svd().
+        * The PCA analysis in the relax library now calculates the per structure projections along the PCs.
+        * The PCA analysis function in the relax library is now returning data.  This includes the PCA values and vectors, and the per structure projections.
+        * The PCA values and vectors, and the per structure projections are now being stored.  This is in the structure.pca user function backend in the pipe_control.structure.main module.
+        * Added the 'format' and 'dir' arguments to the structure.pca user function.  This is to the front and back ends.
+        * Modified the assemble_structural_coordinates() method to return more information.  This is from the pipe_control.structure.main module.  The 'lists' boolean argument is now accepted which will cause the function to additionally return the object ID list per molecule, the model number list per molecule, and the molecule name list per molecule.
+        * The structure.pca user function now creates graphs of the PC projections.  This includes PC1 vs. PC2, PC2 vs. PC3, etc.
+        * Added the Gromacs PCA results for the distribution.pdb file.  This includes a script used to execute all parts of Gromacs and all output files.
+        * Updated the Gromacs PCA results for the newest Gromacs version (5.1.1).
+        * Created an initial Structure.test_pca system test.  This executes the new structure.pca user function, and checks if data is stored in cdp.structure.
+        * Improved the graphs in the backend of the structure.pca user function.  The graphs are now clustered so that different models of the same structure in the same data pipe are within one graph set.  The graph header has also been improved.
+        * Expanded the Structure.test_pca system test checks to compare to the values from Gromacs.
+        * A weighted mean structure can now be calculated.  This is for the calc_mean_structure() function of the relax library module lib.structure.statistics.  Weights can now be supplied for each structure to allow for a weighted mean to be calculated and returned.
+        * Added support for 'observer' structures in the structure.pca user function.  This allows a subset of the structures used in the PC analysis to have zero weight so that these structures can be used for comparison purposes.  The obs_pipes, obs_models, and obs_molecules arguments have been added to the user function front end.  The backend uses this to create an array of weights for each structure.  And the lib.structure.pca functions use the zero weights to remove the observer structures from the PC mode calculations.
+        * Created the Structure.test_pca_observers system test.  This is for testing the new observer structures concept of the structure.pca user function.
+        * Improved the printouts from the relax library principle component analysis.  This is in the pca_analysis() function of the lib.structure.pca module.
+        * Fixes and improvements for the graphs produced by the structure.pca user function.  The different sets are now correctly created, and are now labelled in the plots.
+        * Adding a testing deploy script, for rapid deployment on Google Cloud Computing.  This is for an intended install in Ubuntu 14.04 LTS.
+        * Expanding script for installation.
+        * Putting installation into functions in deploy script.
+        * Splitting deploy script into several small functions.
+        * Adding checking statements to install script.
+        * When sourcing the scripts, several functions can be performed instead.
+        * Added spaces to install script for better printing.
+        * Adding a tutorial script.
+        * Adding 2 tutorial scripts.
+        * Fix for small spin ID error in tutorial script.
+        * Created a system test for catching bug #24131.  This is the BMRB export failure when the SpinContainer object has no s2 attribute, as reported by Martin Ballaschk at https://gna.org/bugs/?24131.
+        * Modified the Mf.test_bug_24131_bmrb_deposition system test to check for the RelaxError.  The test results in a RelaxError, as the results file contains no selected spins.
+        * Added the Mf.test_bug_24131_missing_interaction system test to catch another problem.  This is part of bug #24131 (https://gna.org/bugs/?24131), the BMRB export failure with the SpinContainer object having no s2 value.  However the previous fix of skipping deselected spins introduced a new problem of relax still searching for the interatomic interactions for that deselected spin.
+
+
+    Bugfixes:
+        * Replicated titles in the HTML version of the relax manual (http://www.nmr-relax.com/manual/index.html), and hence replicated HTML file names overwriting earlier sections, have been eliminated.
+        * Fix for bug #23933 (https://gna.org/bugs/?23933).  This is the "NameError: global name 'ids' is not defined" problem when loading relaxation data.  The bug was introduced back in November 2014, and is due to some incomplete error handling code.  The problem is that the spin type that the relaxation data belongs to (@N vs. @H) has not been specified.  Now the correct RelaxMultiSpinIDError is raised.  The 'ids' variable did not exist - it was code that was planned to be added, but never was and was forgotten.
+        * Fix for the CSA constant equation in the model-free chapter of the manual.  This was spotted by Christina Möller and reported on the relax-users mailing list at https://mail-archive.com/relax-users%40gna.org/msg01776.html .
+        * Bug fix for the storage of the XML structural object in the state and results files.  Previously any objects added to cdp.structure (or any structure object) would not be saved by the structural object to_xml() method unless the function is explicitly modified to store that object.  Now all objects present will be converted to XML.
+        * Fix for the relaxation dispersion analysis in the GUI, as caught by the Relax_disp.test_paul_schanda_nov_2015 GUI test.  When loading from a script state file, the value of "None" can be present.  This is now set to the standard values.
+        * Fix for running relax at a server with no graphical display and using matplotlib.  The error was found with the Relax_disp.test_repeat_cpmg system test.  And the error generated was: "QXcbConnection: Could not connect to display. Aborted (core dumped)".  The backend of matplotlib has to be changed.  This is for example described in: http://stackoverflow.com/questions/2766149/possible-to-use-pyplot-without-display http://stackoverflow.com/questions/8257385/automatic-detection-of-display-availability-with-matplotlib.
+        * Modified the behaviour of the bmrb.write user function backend for a model-free analysis (fix for bug #24131, https://gna.org/bugs/?24131).  This is in the bmrb_write() method of the model-free analysis API.  Deselected spins are now skipped and a check has been added to be sure that spin data has been assembled.
+        * Another fix for bug #24131 (https://gna.org/bugs/?24131).  This is the BMRB export failure when the SpinContainer object has no s2 attribute.  Now no data is stored in the BMRB file if a model-free model has not been set up for the spin.  This allows the test suite to pass.
+        * Bug fix to allow the Mf.test_bug_24131_missing_interaction system test to pass.  This is part of bug #24131 (https://gna.org/bugs/?24131), the BMRB export failure with the SpinContainer object having no s2 value.  The problem was when assembling the diffusion tensor data.  The spin_loop() function was being called, as the diffusion tensor is reported for all residues.  Therefore the skip_desel=True has been added to match the model-free part.
+
+
+
 Version 4.0.0
 (7 October 2015, from /trunk)
 http://svn.gna.org/svn/relax/tags/4.0.0
