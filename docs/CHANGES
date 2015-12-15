@@ -4,7 +4,7 @@ http://svn.gna.org/svn/relax/tags/4.0.1
 
     Features:
         * Many improvements for the compilation of the HTML version of the relax manual (http://www.nmr-relax.com/manual/index.html).
-        * Updated relax to eliminate all FutureWarnings from numpy >= 1.9, to future-proof relax against upcoming numpy behaviour changes.
+        * Updated relax to eliminate all FutureWarnings from numpy ≥ 1.9, to future-proof relax against upcoming numpy behaviour changes.
         * Ability to handle replicated R2eff data points by the relax_disp.r2eff_read user function, but adding 0.001 to the frequency value for the replicated point.
         * A new sample script for loading a model-free results file and back-calculating relaxation data.
         * Improvements for the handling of PDB structural data.
@@ -15,12 +15,12 @@ http://svn.gna.org/svn/relax/tags/4.0.1
     Changes:
         * Fix for the rigid frame order model 2nd degree frame order matrix in the manual.  The wrong symbol was being used.
         * Removed the newparagraph and newsubparagraph definitions from the LaTeX manual.  These were causing conflicts with latex2html, preventing the HTML version of the manual at http://www.nmr-relax.com/manual/index.html from being compiled.  These definitions are unnecessary for the current set up of the sectioning in the manual.
-        * Modified the short captions in the new frame models chapter of the manual.  The runic Daeg character has been replaced simply by 'Daeg'.  This is due to incompatibilities with latex2html which prevents the HTML manual at http://www.nmr-relax.com/manual/index.html from being compiled.
+        * Modified the short captions in the new frame models chapter of the manual.  The runic ᛞ character has been replaced simply by 'Daeg'.  This is due to incompatibilities with latex2html which prevents the HTML manual at http://www.nmr-relax.com/manual/index.html from being compiled.
         * Removal of the definition of a fixed-width table column from the LaTeX manual preamble.  This is required as the definition breaks latex2html compatibility, causing a corruption in the figure numbering resulting in the images in the HTML to be essentially randomised.
         * Removal of the accents package to allow the HTML manual to be compiled.  The 'accents' LaTeX package is not compatible with latex2html, so the easiest fix is to eliminate the package.
         * Manually rotated the frame order matrix element EPS manual figures, for latex2html compatibility.  The '90 rotate' command has been deleted and the bounding box permuted as 'a b c d' -> 'b -c d -a'.  This allows the angle argument in the \includegraphics{} command to be dropped, as latex2html does not recognise this.  It allows the figures to be visible in the HTML version of the manual at http://www.nmr-relax.com/manual/index.html .
         * Redesign of the frame order parameter nesting table in the manual for latex2html compatibility.  The table uses the tikz package, which is fatal for latex2html, even if not used.  Therefore the table in the docs/latex/frame_order/parameter_nesting.tex file has been converted into a standalone LaTeX document to create a cropped postscript version of the tikz formatted table.  A compilation script has been added as well.  The resultant *.ps file is now included into the PCS numerical integration section, rather than this section creating the tikz table.  All tikz preamble text has been removed to allow latex2html to run.
-        * Workaround for latex2html not being able to handle the allrunes package or associated font.  In the preamble 'htmlonly' environment, the frame order symbols are redefined using the text 'Daeg' instead of the runic character.
+        * Workaround for latex2html not being able to handle the allrunes package or associated font.  In the preamble 'htmlonly' environment, the frame order symbols are redefined using the text 'Daeg' instead of the runic character ᛞ.
         * Fixes for sub and superscripts throughout the manual.  This introduces {} around all sub and superscripted \textrm{} instances.  This is not needed for the PDF version of the manual as the missing bracket problem is avoided, but it affects the HTML version of the manual compiled by latex2html, which requires the correct notation.  The fixes are for both the new frame order chapter as well as the relaxation dispersion chapter.
         * Editing and fixes for the relax 4.0.0 part of the CHANGES file.
         * Updated and improved the wiki instructions in the relax release checklist document.
