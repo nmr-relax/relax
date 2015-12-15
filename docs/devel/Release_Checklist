@@ -188,7 +188,7 @@ Compose and edit the message on the relax wiki, then post the release message to
 Wiki
 ----
 
-Create a new release page at the URL http://wiki.nmr-relax.com/Relax_x.y.z.  Use, for example, http://wiki.nmr-relax.com/Relax_3.3.0 as a guide.  The basic page structure is as follows:
+Create a new release page at the URL http://wiki.nmr-relax.com/Relax_x.y.z.  Use, for example, http://wiki.nmr-relax.com/Relax_4.0.1 as a guide.  The basic page structure is as follows:
 
     {{lowercase title}} - Start with this to allow the title to be in lowercase.  The URL on a wiki always starts with a capital, but the title can be changed to lowercase in this way.
     = Description = - Create this section by writing a detailed and full description of the release.  Add internal wiki links and external links, for example to the relax manual web pages for the user functions.
@@ -205,10 +205,12 @@ For the changes file text, make the following conversions:
         - Vim register:  "v/[ ,\r\n]^M<80>kl<80>kDi[http://www.nmr-relax.com/manual/^[pa.html ^[pa]^[/user function^M",
         - Vim register:  "v/[ ,\r\n]^M<80>kl<80>kDi[http://www.nmr-relax.com/manual/^[pa.html ^[p/user function^M2cwuser function]^[",
         - Then search for "www.nmr-relax.com\/manual\/[a-z0-9_]*\.\|html" and replace all '.'.
-    - Make internal links for all relax versions (search for "[1-3]\.[0-9]*\.[0-9]*").
-    - Convert all symbols/parameters to use wiki formatting.
+    - Make internal links for all relax versions (vi search for "[1-3]\.[0-9]*\.[0-9]*").
+    - Convert all symbols to use wiki formatting.
+    - Convert all model parameters to use the {{:xyz}} parameter template infrastructure.
     - Convert all model names to internal wiki links (vi search "\<m[0-9]\>\|\<tm[0-9]\>\|No Rex\|R2eff\|LM63\|LM63 3-site\|CR72\|CR72 full\|IT99\|TSMFK01\|B14\|B14 full\|NS CPMG\|MMQ CR72\|NS MMQ\|M61\|DPL94\|TP02\|TAP03\|MP05\|NS R1rho\|BK13").
     - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).  Mediawiki syntax highlighting is a significant aid (see https://en.wikipedia.org/wiki/Wikipedia:Text_editor_support#Vim).
+    - Add <code> tags for better formatting of certain elements (file and directory names, code elements, console output, GUI element, etc).
     - To avoid dead links, perform a final proof that all the links in the wiki article are correct by following the links.
 
 Update all of the release note links for the new version (http://wiki.nmr-relax.com/Category:Release_Notes).
@@ -220,7 +222,7 @@ Mailing list
 On the relax-announce mailing list (relax-announce att gna.org), write the release announcement by:
 
     - Copy the 'Description' and 'Download' text from the wiki.  Do not include the section titles and remove any wiki markup.
-    - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_3.3.1 .'.  This is to direct both users and search engines to the wiki page (the users via the release email and the search engines via the multiple archives).
+    - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_4.0.1 .'.  This is to direct both users and search engines to the wiki page (the users via the release email and the search engines via the multiple archives).
     - At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release.  Do not use the wiki text for this.
     - Include links to the trackers in the full list of changes, if not already present.
 
@@ -231,13 +233,21 @@ Gna! news item
 The steps are:
 
     - Log into Gna! and go to https://gna.org/news/submit.php?group=relax.
-    - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text, the final 'Links', 'Announcements' and 'See also' sections, and any wiki markup.
-    - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_3.3.1.'.
+    - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text and infobox, the final 'Links', 'Announcements' and 'See also' sections, and any wiki markup.
+    - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_4.0.1.'.
     - Use the Savane markup to format the text (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236).
     - As the Savane markup for sectioning is the same as the wiki, the section titles == Description ==, == Download == and == Full list of changes == do not need to be modified (except changing the text 'CHANGES file' to 'Full list of changes' and deleting the metadata).  The same for the subtitles === Features ===, === Changes === and === Bugfixes ===.
-    - Convert internal [[xyz]] wiki links into proper [http://wiki.nmr-relax.com/xyz] links.
+    - Convert internal [[xyz]] wiki links into proper [http://wiki.nmr-relax.com/xyz xyz] links.
     - Item references such as bug #7641, task #3122, etc. are automatically converted into links.  Savane will replace the links as formatted for the wiki to these links, so nothing needs to be done.
     - Remove all symbol formatting ('&', ';', '<sub>', '<sup>', etc.).
+    - Remove all {{:xyz}} parameter templates.
+    - Replace all <code> tags with quotation marks.
+
+
+Softpedia
+---------
+
+Inform Softpedia of the new release.  Use text such at "I would like to inform you of a new relax version announced at http://wiki.nmr-relax.com/Relax_4.0.1.".
 
 
 Cross-linking
@@ -263,9 +273,3 @@ Softpedia also has information about the newest relax releases:
 """
 
 Not all of these links may work, as the email archives are not 100% perfect.  For the wiki, transclude the softpedia page http://wiki.nmr-relax.com/Softpedia using {{:Softpedia}}, and add a section to the table at http://wiki.nmr-relax.com/Category:Release_Notes for the release.  For the news item, reply to the item with the subject "Links to the other release announcements.".
-
-
-Softpedia
----------
-
-Inform Softpedia of the new release.  Use text such at "I would like to inform you of a new relax version announced at http://wiki.nmr-relax.com/Relax_3.3.1.".
