@@ -67,7 +67,7 @@ class Replicated_titles:
                 # Loop over the file contents.
                 for line in lines:
                     # Skip everything that is not a chapter or section.
-                    if not (search("\\\\chapter{", line) or search("\\\\section{", line) or search("\\\\subsection{", line)):
+                    if not (search("\\\\chapter", line) or search("\\\\section", line) or search("\\\\subsection", line)):
                         continue
 
                     # Strip off the newline character.
@@ -77,8 +77,13 @@ class Replicated_titles:
                     if search(' \\\\label', line):
                         line = line[:line.index(' \label')]
 
-                    # Extract the title string by finding the first '{' and chop off the final '}'.
-                    title = line[line.index('{')+1:-1]
+                    # Extract the short title string, if it exists.
+                    if '[' in line:
+                        title = line[line.index('[')+1:line.index(']')]
+
+                    # Extract the full title string by finding the first '{' and chop off the final '}'.
+                    else:
+                        title = line[line.index('{')+1:-1]
 
                     # Is the title new?
                     if not title in self.titles:
