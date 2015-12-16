@@ -213,7 +213,10 @@ For the changes file text, make the following conversions:
     - Add <code> tags for better formatting of certain elements (file and directory names, code elements, console output, GUI element, etc).
     - To avoid dead links, perform a final proof that all the links in the wiki article are correct by following the links.
 
-Update all of the release note links for the new version (http://wiki.nmr-relax.com/Category:Release_Notes).
+Also:
+
+    - Update all of the release note links for the new version (http://wiki.nmr-relax.com/Category:Release_Notes).
+    - Update the version number at http://wiki.nmr-relax.com/Template:Current_version_relax.
 
 
 Mailing list
