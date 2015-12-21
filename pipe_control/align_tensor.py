@@ -1055,18 +1055,27 @@ def matrix_angles(basis_set='matrix', tensors=None, angle_units='deg', precision
     # The table header.
     table.append([''])
     for i in range(tensor_num):
-        if cdp.align_tensors[i].name == None:
-            table[0].append(repr(i))
+        # All tensors.
+        if not tensors:
+            if cdp.align_tensors[i].name == None:
+                table[0].append(repr(i))
+            else:
+                table[0].append(cdp.align_tensors[i].name)
+
+        # Subset.
         else:
-            table[0].append(cdp.align_tensors[i].name)
+            table[0].append(tensors[i])
 
     # First loop over the rows.
     for i in range(tensor_num):
         # Add the tensor name.
-        if cdp.align_tensors[i].name == None:
-            table.append([repr(i)])
+        if not tensors:
+            if cdp.align_tensors[i].name == None:
+                table.append([repr(i)])
+            else:
+                table.append([cdp.align_tensors[i].name])
         else:
-            table.append([cdp.align_tensors[i].name])
+            table.append([tensors[i]])
 
         # Second loop over the columns.
         for j in range(tensor_num):
