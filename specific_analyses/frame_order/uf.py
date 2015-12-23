@@ -68,6 +68,10 @@ def distribute(file="distribution.pdb.bz2", dir=None, atom_id=None, total=1000, 
     # Printout.
     print("Uniform distribution of structures representing the frame order motions.")
 
+    # Check the total.
+    if total > 9999:
+        raise RelaxError("A maximum of 9999 models is allowed in the PDB format.")
+
     # Checks.
     check_pipe()
     check_model()
