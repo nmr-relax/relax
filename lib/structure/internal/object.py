@@ -1779,6 +1779,18 @@ class Internal:
                     self.sheets.pop(i)
 
 
+    def delete_ss(self, verbosity=1):
+        """Deletion of all secondary structure information.
+
+        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:    int
+        """
+
+        # Reset the structures.
+        self.helices = []
+        self.sheets = []
+
+
     def empty(self):
         """Report if the structural data structure is empty or not.
 

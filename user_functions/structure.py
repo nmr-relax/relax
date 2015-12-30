@@ -615,6 +615,25 @@ uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
+# The structure.delete_ss user function.
+uf = uf_info.add_uf('structure.delete_ss')
+uf.title = "Delete secondary structure information."
+uf.title_short = "Secondary structure deletion."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will delete all secondary structure information from the current data pipe.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To delete all secondary structure, simply type:")
+uf.desc[-1].add_prompt("relax> structure.delete_ss()")
+uf.backend = pipe_control.structure.main.delete_ss
+uf.menu_text = "&delete_ss"
+uf.gui_icon = "oxygen.actions.list-remove"
+uf.wizard_size = (600, 400)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.displacement user function.
 uf = uf_info.add_uf('structure.displacement')
 uf.title = "Determine the rotational and translational displacement between a set of models or molecules."

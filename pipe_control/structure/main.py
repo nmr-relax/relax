@@ -610,6 +610,26 @@ def delete(atom_id=None, model=None, verbosity=1, spin_info=True):
             del interatom.vector
 
 
+def delete_ss(verbosity=1):
+    """Delete all secondary structure information.
+
+    @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+    @type verbosity:    int
+    """
+
+    # Test if the current data pipe exists.
+    check_pipe()
+
+    # Run the object method.
+    if hasattr(cdp, 'structure'):
+        if verbosity:
+            print("Deleting secondary structure information from the current pipe.")
+        cdp.structure.delete_ss(verbosity=verbosity)
+    elif verbosity:
+        print("No structures are present.")
+
+
+
 def displacement(pipes=None, models=None, molecules=None, atom_id=None, centroid=None):
     """Calculate the rotational and translational displacement between structures or models.
 
