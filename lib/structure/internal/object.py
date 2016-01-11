@@ -2506,6 +2506,7 @@ class Internal:
                 for k in range(len(model.mol)):
                     if model.mol[k].mol_name == set_mol_name[j]:
                         found = True
+                        index = k
                 if not found:
                     merge_new = False
 
@@ -2530,9 +2531,8 @@ class Internal:
                         print("Adding molecule '%s'%s (from the original molecule number %s%s)." % (set_mol_name[j], new_model_text, orig_mol_num[i][j], orig_model_text))
 
                 # The index of the new molecule to add or merge.
-                index = len(model.mol)
-                if merge_new:
-                    index -= 1
+                if not merge_new:
+                    index = len(model.mol)
 
                 # Store the index+1 as the new molecule number, and store the original molecule number.
                 store_mol_num_new[i].append(index+1)
