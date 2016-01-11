@@ -96,6 +96,7 @@ class Info_box(object):
         self.copyright = []
         self.copyright.append("Copyright (C) 2001-2006 Edward d'Auvergne")
         self.copyright.append("Copyright (C) 2006-2016 the relax development team")
+        self.copyright_short = "Copyright (C) 2001-2016 the relax development team"
 
         # Program licence and help.
         self.licence = "This is free software which you are welcome to modify and redistribute under the conditions of the GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt."
