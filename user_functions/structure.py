@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -795,6 +795,13 @@ uf.add_keyarg(
     py_type = "bool",
     desc_short = "average position flag",
     desc = "A flag specifying if the position of the atom is to be averaged across models."
+)
+uf.add_keyarg(
+    name = "spin_num",
+    default = True,
+    py_type = "bool",
+    desc_short = "spin number loading flag",
+    desc = "A flag specifying if the spin number should be loaded."
 )
 # Description.
 uf.desc.append(Desc_container())
