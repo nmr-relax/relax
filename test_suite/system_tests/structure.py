@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -4498,7 +4498,7 @@ class Structure(SystemTestCase):
         self.assertEqual(len(cdp.mol[0].res[0].spin[0].pos), 2)
 
         # And now all the rest of the atoms.
-        self.interpreter.structure.load_spins()
+        self.interpreter.structure.load_spins(ave_pos=False)
 
 
     def test_read_pdb_internal4(self):
