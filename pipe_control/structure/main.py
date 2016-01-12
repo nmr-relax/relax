@@ -21,7 +21,7 @@
 
 # Python module imports.
 from minfx.generic import generic_minimise
-from numpy import array, average, dot, float64, mean, ones, std, zeros
+from numpy import array, average, concatenate, dot, float64, mean, ones, std, zeros
 from numpy.linalg import norm
 from os import F_OK, access, getcwd
 from re import search
@@ -893,7 +893,11 @@ def load_spins(spin_id=None, str_id=None, from_mols=None, mol_name_target=None, 
         spin_names.append(atom_name)
 
         # Position vector.
-        spin_cont.pos = pos
+        if hasattr(spin_cont, 'pos') and spin_cont.pos != None and (spin_cont.pos.shape != pos.shape or (spin_cont.pos != pos).any()):
+            warn(RelaxWarning("Positional information already exists for the spin %s, appending the new positions." % id))
+            spin_cont.pos = concatenate((spin_cont.pos, pos))
+        else:
+            spin_cont.pos = pos
 
         # Add the element.
         spin_cont.element = element
