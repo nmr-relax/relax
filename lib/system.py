@@ -50,3 +50,19 @@ def cd(path):
 
     # Print current working directory.
     print("The current working directory is now changed to: %s"%getcwd())
+
+
+def pwd():
+    """Print and return string of the current working directory.  Equivalent of python module os.getcwd(). 
+
+    @return:            Path to the current working directory.
+    @rtype:             str
+    """
+
+    # Get the current working directory.
+    cwd = getcwd()
+
+    # Print previous current working directory.
+    print("The current working directory is: %s"%cwd)
+
+    return cwd
