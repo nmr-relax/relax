@@ -180,6 +180,7 @@ class Main(wx.Frame):
 
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('status bar', self.update_status_bar, method_name='update_status_bar')
+        status.observers.system_cwd_path.register('status bar', self.update_status_bar, method_name='update_status_bar')
         status.observers.result_file.register('gui', self.show_results_viewer_no_warn, method_name='show_results_viewer_no_warn')
         status.observers.exec_lock.register('gui', self.enable, method_name='enab')
 
@@ -919,6 +920,9 @@ class Main(wx.Frame):
         # Call the get_path function to get the directory name and change path.
         self.system_cwd_path = dialog.get_path()
 
+        # Update the status bar.
+        self.update_status_bar()
+
         # Change the directory
         try:
             wx.BeginBusyCursor()
@@ -959,10 +963,13 @@ class Main(wx.Frame):
         if pipe == None:
             pipe = ''
 
+        # Get the current working directory
+        system_cwd_path = pwd(verbose=False)
+
         # The relax information box.
         info = Info_box()
 
         # Set the status.
-        wx.CallAfter(self.status_bar.SetStatusText, info.copyright_short, 0)
+        wx.CallAfter(self.status_bar.SetStatusText, "%s \t %s"%(info.copyright_short, system_cwd_path), 0)
         wx.CallAfter(self.status_bar.SetStatusText, "Current data pipe:", 1)
         wx.CallAfter(self.status_bar.SetStatusText, pipe, 2)
