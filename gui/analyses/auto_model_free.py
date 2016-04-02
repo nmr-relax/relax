@@ -208,7 +208,7 @@ class Auto_model_free(Base_analysis):
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].diff_tensor_grid_inc = {'sphere': 11, 'prolate': 11, 'oblate': 11, 'ellipsoid': 6}
             ds.relax_gui.analyses[data_index].mc_sim_num = None
-            ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].save_dir = self.gui.system_cwd_path
             ds.relax_gui.analyses[data_index].local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
             ds.relax_gui.analyses[data_index].mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
             ds.relax_gui.analyses[data_index].max_iter = 30

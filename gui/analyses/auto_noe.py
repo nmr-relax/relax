@@ -111,7 +111,7 @@ class Auto_noe(Base_analysis):
 
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].frq = ''
-            ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].save_dir = self.gui.system_cwd_path
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]

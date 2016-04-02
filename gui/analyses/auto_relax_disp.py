@@ -128,7 +128,7 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].pre_run_dir = None
             ds.relax_gui.analyses[data_index].mc_sim_all_models = False
             ds.relax_gui.analyses[data_index].insignificance = 1.0
-            ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].save_dir = self.gui.system_cwd_path
 
             # Set the default dispersion models based on the experiment type.
             ds.relax_gui.analyses[data_index].disp_models = [

@@ -112,7 +112,7 @@ class Auto_rx(Base_analysis):
             ds.relax_gui.analyses[data_index].frq = ''
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
-            ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
+            ds.relax_gui.analyses[data_index].save_dir = self.gui.system_cwd_path
 
         # Alias the data.
         self.data = ds.relax_gui.analyses[data_index]
