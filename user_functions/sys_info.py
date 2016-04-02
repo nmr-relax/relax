@@ -24,6 +24,7 @@
 
 # relax module imports.
 from info import print_sys_info
+from lib.system import cd
 from lib.timing import print_time
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -34,6 +35,29 @@ uf_class = uf_info.add_class('system')
 uf_class.title = "Class containing the OS system related functions."
 uf_class.menu_text = "&system"
 uf_class.gui_icon = "oxygen.actions.help-about"
+
+
+# The cd user function.
+uf = uf_info.add_uf('system.cd')
+uf.title = "Change the current working directory to the specified path."
+uf.title_short = "Change current working directory."
+uf.display = True
+uf.add_keyarg(
+    name = "path",
+    py_type = "str",
+    desc_short = "path",
+    desc = "The path to the new current working directory."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The equivalent of python module os.chdir(path).  Change the current working directory to the specified path.")
+uf.desc[-1].add_paragraph("To change the current working directory, type:")
+uf.desc[-1].add_prompt("relax> system.cd(\"/path/to/dir\")")
+uf.backend = cd
+uf.menu_text = "&cd"
+uf.gui_icon = "oxygen.places.folder-favorites"
+uf.wizard_size = (700, 400)
+uf.wizard_apply_button = False
 
 
 # The sys_info user function.
