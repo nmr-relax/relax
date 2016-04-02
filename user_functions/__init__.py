@@ -184,5 +184,7 @@ uf_translation_table = {
     'relax_fit.read': 'spectrum.read_intensities',
     'structure.align': 'structure.superimpose',
     'structure.vectors': 'interatom.unit_vectors',
-    'temperature': 'spectrometer.temperature'
+    'sys_info': 'system.sys_info',
+    'temperature': 'spectrometer.temperature',
+    'time': 'system.time'
 }
