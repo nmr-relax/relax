@@ -66,6 +66,7 @@ uf.desc[-1].add_paragraph("The equivalent of python module os.chdir(path).  Chan
 uf.desc[-1].add_paragraph("To change the current working directory, type:")
 uf.desc[-1].add_prompt("relax> system.cd(\"/path/to/dir\")")
 uf.backend = cd
+uf.display = False
 uf.menu_text = "&cd"
 uf.gui_icon = "oxygen.places.folder-favorites"
 uf.wizard_size = (700, 400)
