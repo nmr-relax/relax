@@ -29,9 +29,11 @@ from os import chdir, getcwd
 import lib.arg_check
 
 
-def cd(path):
+def cd(path, verbose=False):
     """The equivalent of python module os.chdir(path).  Change the current working directory to the specified path.
 
+    @keyword verbose:  A flag which if True will cause the previous directory to be printed.
+    @type verbose:     bool
     @param path:       The path to the directory for the current working directory.
     @type  path:       str
     """
@@ -43,7 +45,8 @@ def cd(path):
     path = path.replace('"', '').replace("'", "")
 
     # Print previous current working directory.
-    print("The current working directory was: %s"%getcwd())
+    if verbose:
+        print("The current working directory was: %s"%getcwd())
 
     # Change the current working directory.
     chdir(path)
