@@ -68,3 +68,6 @@ def script(file=None, dir=None):
 
     # Return the function intro flag to the original value.
     status.uf_intro = orig_intro_state
+
+    # Make a notification of pipe_alteration, so the GUI will update.
+    status.observers.pipe_alteration.notify()
