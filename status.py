@@ -169,6 +169,9 @@ class Status(object):
         # The observer object for state loading.
         self.observers.state_load = Observer('state_load')
 
+        # The observer object for current working directory change.
+        self.observers.system_cwd_path = Observer('system_cwd_path')
+
 
     def init_auto_analysis(self, name, type):
         """Initialise a status container for an auto-analysis.
