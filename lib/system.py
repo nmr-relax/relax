@@ -52,9 +52,11 @@ def cd(path):
     print("The current working directory is now changed to: %s"%getcwd())
 
 
-def pwd():
+def pwd(verbose=True):
     """Print and return string of the current working directory.  Equivalent of python module os.getcwd(). 
 
+    @keyword verbose:   A flag which if True will cause the current directory to be printed.
+    @type verbose:      bool
     @return:            Path to the current working directory.
     @rtype:             str
     """
@@ -63,6 +65,7 @@ def pwd():
     cwd = getcwd()
 
     # Print previous current working directory.
-    print("The current working directory is: %s"%cwd)
+    if verbose:
+        print("The current working directory is: %s"%cwd)
 
     return cwd
