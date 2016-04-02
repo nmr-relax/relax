@@ -41,7 +41,7 @@ from gui.analyses import Analysis_controller
 from gui.spin_viewer.frame import Spin_view_window
 from gui.controller import Controller
 from gui.export_bmrb import Export_bmrb_window
-from gui.filedialog import RelaxFileDialog
+from gui.filedialog import RelaxDirDialog, RelaxFileDialog
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.interpreter import Interpreter
@@ -891,6 +891,37 @@ class Main(wx.Frame):
             # Execute the analysis page specific update methods.
             if hasattr(page, 'sync_ds'):
                 page.sync_ds(upload)
+
+
+    def system_cwd(self, event=None):
+        """Change the system current working directory.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # The dialog.
+        dialog = RelaxDirDialog(parent=self, message="Select working directory", defaultPath=wx.EmptyString, style=wx.DD_CHANGE_DIR)
+
+        # Show the dialog and catch if no directory has been selected.
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
+            return
+
+        # Call the get_path function to get the directory name and change path.
+        path_name = dialog.get_path()
+
+        # Change the directory
+        try:
+            wx.BeginBusyCursor()
+
+            # Sleep a little so the user sees the busy cursor and knows that the directory changes has occurred.
+            sleep(1)
+
+        # Turn off the user feedback.
+        finally:
+            if wx.IsBusy():
+                wx.EndBusyCursor()
 
 
     def uf_call(self, event=None):
