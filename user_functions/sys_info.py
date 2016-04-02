@@ -23,6 +23,11 @@
 """The sys_info user function definitions."""
 
 # Python module imports.
+import dep_check
+if dep_check.wx_module:
+    from wx import FD_CHANGE_DIR
+else:
+    FD_CHANGE_DIR = -1
 from os import sep
 
 # relax module imports.
@@ -49,8 +54,11 @@ uf.display = True
 uf.add_keyarg(
     name = "path",
     py_type = "str",
+    arg_type = "dir sel",
     desc_short = "path",
-    desc = "The path to the new current working directory."
+    desc = "The path to the new current working directory.",
+    can_be_none = False,
+    wiz_filesel_style = FD_CHANGE_DIR
 )
 # Description.
 uf.desc.append(Desc_container())
