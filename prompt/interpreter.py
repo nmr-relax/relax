@@ -464,7 +464,7 @@ def interact_script(self, intro=None, local={}, script_file=None, show_script=Tr
         sys.stdout.write("script = " + repr(script_file) + "\n")
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         sys.stdout.write(file.read())
-        sys.stdout.write("----------------------------------------------------------------------------------------------------")
+        sys.stdout.write("\n----------------------------------------------------------------------------------------------------")
 
         # End coloured text.
         if ansi.enable_control_chars(stream=1) and not status.show_gui:
