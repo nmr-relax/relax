@@ -33,6 +33,7 @@ from status import Status; status = Status()
 ANALYSIS_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'analyses' + sep
 IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'misc' + sep
 WIZARD_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'wizards' + sep
+WIZARD_OXYGEN_PATH = status.install_path + sep + 'graphics' + sep + 'oxygen_icons' + sep + '200x' + sep 
 
 
 def fetch_icon(icon=None, size='16x16', format='png', sep=sep, full_path=True):
