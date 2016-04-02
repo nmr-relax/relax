@@ -70,6 +70,7 @@ from version import version
 TB_FILE_NEW = wx.NewId()
 TB_FILE_CLOSE = wx.NewId()
 TB_FILE_CLOSE_ALL = wx.NewId()
+TB_FILE_CWD = wx.NewId()
 TB_FILE_OPEN = wx.NewId()
 TB_FILE_SAVE = wx.NewId()
 TB_FILE_SAVE_AS = wx.NewId()
@@ -299,6 +300,10 @@ class Main(wx.Frame):
         # A separator.
         self.toolbar.AddSeparator()
 
+        # The change working directory button.
+        self.toolbar.AddLabelTool(TB_FILE_CWD, "Change working directory", wx.Bitmap(fetch_icon('oxygen.places.folder-favorites', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Change working directory")
+        self.Bind(wx.EVT_TOOL, self.system_cwd, id=TB_FILE_CWD)
+
         # The open state button.
         self.toolbar.AddLabelTool(TB_FILE_OPEN, "Open relax state", wx.Bitmap(fetch_icon('oxygen.actions.document-open', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Open relax state")
         self.Bind(wx.EVT_TOOL, self.state_load, id=TB_FILE_OPEN)
@@ -401,6 +406,7 @@ class Main(wx.Frame):
         wx.CallAfter(self.toolbar.EnableTool, TB_FILE_NEW, enable)
         wx.CallAfter(self.toolbar.EnableTool, TB_FILE_CLOSE, enable)
         wx.CallAfter(self.toolbar.EnableTool, TB_FILE_CLOSE_ALL, enable)
+        wx.CallAfter(self.toolbar.EnableTool, TB_FILE_CWD, enable)
         wx.CallAfter(self.toolbar.EnableTool, TB_FILE_OPEN, enable)
         wx.CallAfter(self.toolbar.EnableTool, TB_FILE_SAVE, enable)
         wx.CallAfter(self.toolbar.EnableTool, TB_FILE_SAVE_AS, enable)
