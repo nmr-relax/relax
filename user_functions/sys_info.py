@@ -28,7 +28,7 @@ from os import sep
 # relax module imports.
 from graphics import WIZARD_OXYGEN_PATH
 from info import print_sys_info
-from lib.system import cd
+from lib.system import cd, pwd
 from lib.timing import print_time
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -62,6 +62,25 @@ uf.menu_text = "&cd"
 uf.gui_icon = "oxygen.places.folder-favorites"
 uf.wizard_size = (700, 400)
 uf.wizard_image = WIZARD_OXYGEN_PATH + 'places' + sep + 'folder-favorites.png'
+uf.wizard_apply_button = False
+
+
+# The system.pwd user function.
+uf = uf_info.add_uf('system.pwd')
+uf.title = "Display the current working directory."
+uf.title_short = "Display working directory."
+uf.display = True
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will display the current working directory.")
+uf.desc[-1].add_paragraph("The directory can be changed with the system.cd(path) user function.")
+uf.desc[-1].add_prompt("relax> system.pwd()")
+uf.desc[-1].add_prompt("relax> system.cd(\"/path/to/dir\")")
+uf.backend = pwd
+uf.menu_text = "&pwd"
+uf.gui_icon = "oxygen.places.folder-development"
+uf.wizard_size = (700, 400)
+uf.wizard_image = WIZARD_OXYGEN_PATH + 'places' + sep + 'folder-development.png'
 uf.wizard_apply_button = False
 
 
