@@ -27,6 +27,7 @@ from os import chdir, getcwd
 
 # relax module imports.
 import lib.arg_check
+from status import Status; status = Status()
 
 
 def cd(path, verbose=False):
@@ -53,6 +54,9 @@ def cd(path, verbose=False):
 
     # Print current working directory.
     print("The current working directory is now changed to: %s"%getcwd())
+
+    # Notify observers that the current working directory has changed.
+    status.observers.system_cwd_path.notify()
 
 
 def pwd(verbose=True):
