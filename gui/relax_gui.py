@@ -964,12 +964,12 @@ class Main(wx.Frame):
             pipe = ''
 
         # Get the current working directory
-        system_cwd_path = pwd(verbose=False)
+        self.system_cwd_path = pwd(verbose=False)
 
         # The relax information box.
         info = Info_box()
 
         # Set the status.
-        wx.CallAfter(self.status_bar.SetStatusText, "%s \t %s"%(info.copyright_short, system_cwd_path), 0)
+        wx.CallAfter(self.status_bar.SetStatusText, "%s \t %s"%(info.copyright_short, self.system_cwd_path), 0)
         wx.CallAfter(self.status_bar.SetStatusText, "Current data pipe:", 1)
         wx.CallAfter(self.status_bar.SetStatusText, pipe, 2)
