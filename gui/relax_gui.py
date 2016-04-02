@@ -58,6 +58,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from info import Info_box
 from lib.errors import RelaxNoPipeError
 from lib.io import io_streams_restore
+from lib.system import pwd
 from pipe_control import state
 from pipe_control.pipes import cdp_name
 from pipe_control.reset import reset
@@ -448,6 +449,7 @@ class Main(wx.Frame):
 
         # Temporary data:  the save file.
         self.save_file = None
+        self.system_cwd_path = pwd(verbose=False)
 
         # Add the GUI object to the data store, if not present.
         if not hasattr(ds, 'relax_gui'):
@@ -909,7 +911,7 @@ class Main(wx.Frame):
             return
 
         # Call the get_path function to get the directory name and change path.
-        path_name = dialog.get_path()
+        self.system_cwd_path = dialog.get_path()
 
         # Change the directory
         try:
