@@ -88,7 +88,7 @@ class Interpreter:
         self.__intro_string = info.intro_text()
 
         # The prompts (change the Python prompt, as well as the function printouts).
-        if ansi.enable_control_chars(stream=1):
+        if ansi.enable_control_chars(stream=1) and not status.show_gui:
             self.prompt_colour_on()
         else:
             self.prompt_colour_off()
@@ -457,7 +457,7 @@ def interact_script(self, intro=None, local={}, script_file=None, show_script=Tr
                 return
 
         # Coloured text.
-        if ansi.enable_control_chars(stream=1):
+        if ansi.enable_control_chars(stream=1) and not status.show_gui:
             sys.stdout.write(ansi.script)
 
         # Print the script.
@@ -467,7 +467,7 @@ def interact_script(self, intro=None, local={}, script_file=None, show_script=Tr
         sys.stdout.write("----------------------------------------------------------------------------------------------------")
 
         # End coloured text.
-        if ansi.enable_control_chars(stream=1):
+        if ansi.enable_control_chars(stream=1) and not status.show_gui:
             sys.stdout.write(ansi.end)
 
         # Terminating newline.
