@@ -165,8 +165,8 @@ class Main(wx.Frame):
         self.SetTitle("relax " + version)
 
         # Set up the status bar.
-        self.status_bar = self.CreateStatusBar(3, 0)
-        self.status_bar.SetStatusWidths([-4, -1, -2])
+        self.status_bar = self.CreateStatusBar(4, 0)
+        self.status_bar.SetStatusWidths([292, -1, 59, 250])
         self.update_status_bar()
 
         # Add the start screen.
@@ -970,6 +970,7 @@ class Main(wx.Frame):
         info = Info_box()
 
         # Set the status.
-        wx.CallAfter(self.status_bar.SetStatusText, "%s \t %s"%(info.copyright_short, self.system_cwd_path), 0)
-        wx.CallAfter(self.status_bar.SetStatusText, "Current data pipe:", 1)
-        wx.CallAfter(self.status_bar.SetStatusText, pipe, 2)
+        wx.CallAfter(self.status_bar.SetStatusText, info.copyright_short, 0)
+        wx.CallAfter(self.status_bar.SetStatusText, self.system_cwd_path, 1)
+        wx.CallAfter(self.status_bar.SetStatusText, "Data pipe:", 2)
+        wx.CallAfter(self.status_bar.SetStatusText, pipe, 3)
