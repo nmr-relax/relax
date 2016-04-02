@@ -29,8 +29,15 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
 
+# The user function class.
+uf_class = uf_info.add_class('system')
+uf_class.title = "Class containing the OS system related functions."
+uf_class.menu_text = "&system"
+uf_class.gui_icon = "oxygen.actions.help-about"
+
+
 # The sys_info user function.
-uf = uf_info.add_uf('sys_info')
+uf = uf_info.add_uf('system.sys_info')
 uf.title = "Display all system information relating to this version of relax."
 uf.title_short = "Display system information."
 uf.display = True
@@ -45,7 +52,7 @@ uf.wizard_apply_button = False
 
 
 # The time user function.
-uf = uf_info.add_uf('time')
+uf = uf_info.add_uf('system.time')
 uf.title = "Display the current time."
 uf.title_short = "Current time."
 uf.display = True
