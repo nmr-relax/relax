@@ -83,7 +83,7 @@ class Menu:
         menu.AppendItem(build_menu_item(menu, id=MENU_FILE_CLOSE, text="&Close analysis", icon=fetch_icon('oxygen.actions.document-close', "16x16")))
         menu.AppendItem(build_menu_item(menu, id=MENU_FILE_CLOSE_ALL, text="&Close all analyses", icon=fetch_icon('oxygen.actions.dialog-close', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=MENU_FILE_CWD, text="&Change directory\tCtrl+C", icon=fetch_icon('oxygen.places.folder-favorites', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=MENU_FILE_CWD, text="&Change directory\tCtrl+W", icon=fetch_icon('oxygen.places.folder-favorites', "16x16")))
         menu.AppendItem(build_menu_item(menu, id=MENU_FILE_OPEN, text="&Open relax state\tCtrl+O", icon=fetch_icon('oxygen.actions.document-open', "16x16")))
         menu.AppendItem(build_menu_item(menu, id=MENU_FILE_SAVE, text="S&ave relax state\tCtrl+S", icon=fetch_icon('oxygen.actions.document-save', "16x16")))
         menu.AppendItem(build_menu_item(menu, id=MENU_FILE_SAVE_AS, text="Save as...\tCtrl+Shift+S", icon=fetch_icon('oxygen.actions.document-save-as', "16x16")))
