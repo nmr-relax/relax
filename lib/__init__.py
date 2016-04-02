@@ -58,7 +58,6 @@ __all__ = [
     'spectrum',
     'statistics',
     'structure',
-    'system',
     'text',
     'timing',
     'warnings',
