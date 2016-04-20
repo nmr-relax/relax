@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -485,7 +485,7 @@ class Frame_order_analysis:
             self.interpreter.on(verbose=False)
 
             # Output the starting time.
-            self.interpreter.time()
+            self.interpreter.system.time()
 
             # The nested model optimisation protocol.
             self.nested_models()
@@ -519,7 +519,7 @@ class Frame_order_analysis:
                 self.results_output(model='final', dir=self.results_dir+'final', results_file=False)
 
             # Output the finishing time.
-            self.interpreter.time()
+            self.interpreter.system.time()
 
             # Final title printout.
             subtitle(file=sys.stdout, text="Summaries")
@@ -571,7 +571,7 @@ class Frame_order_analysis:
             subtitle(file=sys.stdout, text=text, prespace=5)
 
             # Output the model staring time.
-            self.interpreter.time()
+            self.interpreter.system.time()
 
             # A new model name.
             perm_model = "%s permutation %s" % (model, perm)
@@ -930,7 +930,7 @@ class Frame_order_analysis:
             subtitle(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
             # Output the model staring time.
-            self.interpreter.time()
+            self.interpreter.system.time()
 
             # The data pipe name.
             self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
@@ -1104,7 +1104,7 @@ class Frame_order_analysis:
         subtitle(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
         # Output the model staring time.
-        self.interpreter.time()
+        self.interpreter.system.time()
 
         # The data pipe name.
         self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
