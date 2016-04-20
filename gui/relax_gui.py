@@ -166,7 +166,7 @@ class Main(wx.Frame):
 
         # Set up the status bar.
         self.status_bar = self.CreateStatusBar(4, 0)
-        self.status_bar.SetStatusWidths([292, -1, 59, 250])
+        self.status_bar.SetStatusWidths([-4, -4, -1, -2])
         self.update_status_bar()
 
         # Add the start screen.
