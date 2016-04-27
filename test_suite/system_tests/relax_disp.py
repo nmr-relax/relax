@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2016 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
@@ -1572,6 +1572,13 @@ class Relax_disp(SystemTestCase):
         print("The average of this array is: %3.3f"%spin_chi2_mc_sim_ave)
 
         self.assertAlmostEqual(spin_chi2_mc, spin_chi2_mc_sim_ave, 7)
+
+
+    def test_bug_24601_r2eff_missing_data(self):
+        """Catch U{bug #24601<https://gna.org/bugs/?24601>}, the failure of optimisation of the 'R2eff' model with missing data."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r2eff_missing_data.py')
 
 
     def test_bug_9999_slow_r1rho_r2eff_error_with_mc(self):
