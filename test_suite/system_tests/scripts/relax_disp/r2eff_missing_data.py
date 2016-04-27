@@ -39,14 +39,12 @@ from status import Status; status = Status()
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'LM63', 'CR72']
+MODELS = ['R2eff']
 
 # The grid search size (the number of increments per dimension).
-GRID_INC = 11
-#GRID_INC = None
+GRID_INC = 3
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-MC_NUM = 1000
 MC_NUM = 3
 
 # A flag which if True will activate Monte Carlo simulations for all models.  Note this will hugely increase the computation time.
