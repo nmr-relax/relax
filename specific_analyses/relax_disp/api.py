@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2016 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
@@ -86,7 +86,7 @@ class Relax_disp(API_base, API_common):
         # The R2eff model data (the base data is peak intensities).
         if cdp.model_type == MODEL_R2EFF:
             # Loop over the sequence.
-            for spin in spin_loop():
+            for spin, spin_id in spin_loop(return_id=True):
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -97,7 +97,7 @@ class Relax_disp(API_base, API_common):
 
                 # Loop over each spectrometer frequency and dispersion point.
                 for exp_type, frq, offset, point in loop_exp_frq_offset_point():
-                    yield spin, exp_type, frq, offset, point
+                    yield spin, spin_id, exp_type, frq, offset, point
 
         # All other models (the base data is the R2eff/R1rho values).
         else:
@@ -318,10 +318,10 @@ class Relax_disp(API_base, API_common):
         # The R2eff model (with peak intensity base data).
         if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
-            spin, exp_type, frq, offset, point = data_id
+            spin, spin_id, exp_type, frq, offset, point = data_id
 
             # Back calculate the peak intensities.
-            values = back_calc_peak_intensities(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point)
+            values = back_calc_peak_intensities(spin=spin, spin_id=spin_id, exp_type=exp_type, frq=frq, offset=offset, point=point)
 
         # All other models (with R2eff/R1rho base data).
         else:
@@ -982,7 +982,7 @@ class Relax_disp(API_base, API_common):
         # The R2eff model.
         if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
-            spin, exp_type, frq, offset, point = data_id
+            spin, spin_id, exp_type, frq, offset, point = data_id
 
             # Return the data.
             return spin.peak_intensity
@@ -1004,7 +1004,7 @@ class Relax_disp(API_base, API_common):
         # The R2eff model.
         if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
-            spin, exp_type, frq, offset, point = data_id
+            spin, spin_id, exp_type, frq, offset, point = data_id
 
             # Generate the data structure to return.
             errors = []
@@ -1440,7 +1440,7 @@ class Relax_disp(API_base, API_common):
         # The R2eff model (with peak intensity base data).
         if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
-            spin, exp_type, frq, offset, point = data_id
+            spin, spin_id, exp_type, frq, offset, point = data_id
 
             # Initialise the data structure if needed.
             if not hasattr(spin, 'peak_intensity_sim'):

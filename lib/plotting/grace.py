@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2016 Edward d'Auvergne                                   #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -167,10 +167,16 @@ def write_xy_data(data, file=None, graph_type=None, norm_type='first', norm=None
             file.write("@target G%s.S%s\n" % (gi, si))
             file.write("@type %s\n" % graph_type)
 
+            # Catch missing data sets.
+            if len(data[gi][si]) == 0:
+                file.write("&\n")
+                continue
+
             # Normalisation (to the first data point y value!).
             norm_fact = 1.0
             if norm[gi]:
                 if norm_type == 'first':
+                    print `data[gi][si]`
                     norm_fact = data[gi][si][0][1]
                 elif norm_type == 'last':
                     norm_fact = data[gi][si][-1][1]

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2016 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -49,11 +49,13 @@ from target_functions.relax_disp import Dispersion
 from target_functions.relax_fit_wrapper import Relax_fit_opt
 
 
-def back_calc_peak_intensities(spin=None, exp_type=None, frq=None, offset=None, point=None):
+def back_calc_peak_intensities(spin=None, spin_id=None, exp_type=None, frq=None, offset=None, point=None):
     """Back-calculation of peak intensity for the given relaxation time.
 
     @keyword spin:      The specific spin data container.
     @type spin:         SpinContainer instance
+    @keyword spin_id:   The optional spin ID string for use in warning messages.
+    @type spin_id:      str or None
     @keyword exp_type:  The experiment type.
     @type exp_type:     str
     @keyword frq:       The spectrometer frequency.
@@ -81,6 +83,16 @@ def back_calc_peak_intensities(spin=None, exp_type=None, frq=None, offset=None, 
     errors = []
     times = []
     for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
+        # Check the peak intensity keys.
+        int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
+        for i in range(len(int_keys)):
+            if int_keys[i] not in spin.peak_intensity:
+                if spin_id:
+                    warn(RelaxWarning("The spin %s peak intensity key '%s' is not present, skipping the back-calculation." % (spin_id, int_keys[i])))
+                else:
+                    warn(RelaxWarning("The peak intensity key '%s' is not present, skipping the back-calculation." % int_keys[i]))
+                return
+
         # The data.
         values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
         errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
@@ -381,16 +393,31 @@ def minimise_r2eff(spins=None, spin_ids=None, min_algor=None, min_options=None, 
             values = []
             errors = []
             times = []
+            data_flag = True
             for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
-                values.append(average_intensity(spin=spins[si], exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=sim_index))
-                errors.append(average_intensity(spin=spins[si], exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
-                times.append(time)
+                # Check the peak intensity keys.
+                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
+                peak_intensities = spins[si].peak_intensity
+                if sim_index != None:
+                    peak_intensities = spins[si].peak_intensity_sim
+                for i in range(len(int_keys)):
+                    if int_keys[i] not in peak_intensities:
+                        if verbosity:
+                            warn(RelaxWarning("The spin %s peak intensity key '%s' is not present, skipping the optimisation." % (spin_ids[si], int_keys[i])))
+                        data_flag = False
+                        break
+
+                if data_flag:
+                    values.append(average_intensity(spin=spins[si], exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=sim_index))
+                    errors.append(average_intensity(spin=spins[si], exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
+                    times.append(time)
+            if not data_flag:
+                continue
 
             # Raise errors if number of time points is less than 2.
             if len(times) < 3:
                 subsection(file=sys.stdout, text="Exponential curve fitting error for point:", prespace=2)
                 point_info = "%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f, with %i time points." % (exp_type, frq/1E6, offset, point, len(times))
-                print(point_info)
                 raise RelaxError("The data setup points to exponential curve fitting, but only %i time points was found, where 3 time points is minimum.  If calculating R2eff values for fixed relaxation time period data, check that a reference intensity has been specified for each offset value."%(len(times)))
 
             # The scaling matrix in a diagonalised list form.
