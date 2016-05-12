@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2016 Edward d'Auvergne                                   #
+# Copyright (C) 2016 Troels Schwartz-Linnet                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,8 +34,8 @@ from os import sep
 # relax module imports.
 from graphics import WIZARD_OXYGEN_PATH
 from info import print_sys_info
-from lib.system import cd, pwd
 from lib.timing import print_time
+from pipe_control.system import cd, pwd
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

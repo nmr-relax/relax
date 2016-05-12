@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
 # Copyright (C) 2010-2016 Edward d'Auvergne                                   #
+# Copyright (C) 2016 Troels Schwartz-Linnet                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -58,10 +59,10 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from info import Info_box
 from lib.errors import RelaxNoPipeError
 from lib.io import io_streams_restore
-from lib.system import pwd
 from pipe_control import state
 from pipe_control.pipes import cdp_name
 from pipe_control.reset import reset
+from pipe_control.system import pwd
 from status import Status; status = Status()
 from version import version
 
