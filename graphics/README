@@ -7,3 +7,7 @@ For the compilation of the manual, 128x128 versions of the icons for user functi
 - Export to EPS.
 - Set the width and height to 6 mm each, and the offsets to 0.0.
 - Use Gzip to compress the EPS file.
+
+The final *.eps.gz file must contain the following header line:
+
+%%BoundingBox: 0 0 18 18
