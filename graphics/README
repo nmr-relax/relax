@@ -1,0 +1,9 @@
+= User function icons in the manual =
+
+For the compilation of the manual, 128x128 versions of the icons for user functions must be added.  The steps are:
+
+- Firstly copy or create the 128x128 PNG version of the icon.
+- Open the file in the Gimp.
+- Export to EPS.
+- Set the width and height to 6 mm each, and the offsets to 0.0.
+- Use Gzip to compress the EPS file.
