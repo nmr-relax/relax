@@ -21,7 +21,7 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import array, average, dot, float64, std, zeros
+from numpy import array, average, dot, float64, sign, std, zeros
 from numpy.linalg import norm
 from os import sep
 from re import search
@@ -4150,6 +4150,11 @@ class Structure(SystemTestCase):
         proj[:, 2] = -proj[:, 2]
         proj[:, 3] = -proj[:, 3]
 
+        # Are more inversion necessary?
+        for mode in range(4):
+            if sign(cdp.structure.pca_proj[mode][0]) != sign(proj[0][mode]):
+                proj[:, mode] = -proj[:, mode]
+
         # Checks.
         self.assert_(hasattr(cdp.structure, 'pca_values'))
         self.assert_(hasattr(cdp.structure, 'pca_vectors'))
@@ -4180,6 +4185,11 @@ class Structure(SystemTestCase):
         # Invert the 3rd and 4th Gromacs eigenvectors to match.
         proj[:, 2] = -proj[:, 2]
         proj[:, 3] = -proj[:, 3]
+
+        # Are more inversion necessary?
+        for mode in range(4):
+            if sign(cdp.structure.pca_proj[mode][0]) != sign(proj[0][mode]):
+                proj[:, mode] = -proj[:, mode]
 
         # Checks.
         self.assert_(hasattr(cdp.structure, 'pca_values'))
