@@ -21,7 +21,7 @@ http://svn.gna.org/svn/relax/tags/4.0.2
         * Added the spin_num boolean argument to the structure.load_spins user function.  Setting this flag to False will cause the spin number information to be ignored when creating the spin containers.  This allows for better support of homologous structures but with different PDB atom numbering.  The default flag value is True, preserving the old behaviour.
         * Added support for concatenating atomic positions in the structure.load_spins user function.  Together with the spin_num flag set to False, this allows for atomic positions to be read from multiple homologous structures with different PDB atomic numbering.  The spin containers will be created from the first structure, in which the spin is defined, and the atomic position from subsequent structures will be appended to the list of current atomic positions.
         * Fix for the Structure.test_read_pdb_internal3 system test.  With the new atomic position concatenation support, when called sequentially the structure.load_spins user function should always use the same value for the ave_pos argument.
-        * In the GUI the userfunctions sys_info() and time() are now grouped into a "system" subclass.  This is to prepare for other system related functions.
+        * In the GUI the user functions sys_info and time are now grouped into a "system" subclass.  This is to prepare for other system related functions.
         * Added a new 16x16 icon for the oxygen folder-favorites icon.
         * Adding a new file at lib/system.py.  This file will contain different functions related to python os and system related functions. For example changing directory or printing working directory.
         * In /lib/__init__.py, adding the filename for system.py.
@@ -51,7 +51,7 @@ http://svn.gna.org/svn/relax/tags/4.0.2
         * Fix for GUI prompt bug, where ANSI escape characters should not be printed when interpreter is inherited from wxPython.
         * Added a newline character after printing the script.
         * Optimising the width of the statusbar.
-        * When the user function script is called, a notification of pipe_alteration is made.  This will force the GUI to update, and make sure that it is up to-date.
+        * When the user function script is called, a notification of pipe_alteration is made.  This will force the GUI to update, and make sure that it is up to date.
         * Updated the frame order auto-analysis for the time -> system.time user function change.
         * Fix for the GUI status bar element widths.  Fixed widths in pixels causes text truncation on many systems, depending on the width of the main relax window.  Instead variable widths should be used to allow wxPython to more elegantly present the text while minimising truncation.
         * Created a system test for catching bug #24601.  This is the failure of the optimisation of the 'R2eff' dispersion model when peaks are missing from one spectrum, as reported by Petr Padrta at https://gna.org/bugs/?24601.  The test uses his data and script to trigger the bug.
