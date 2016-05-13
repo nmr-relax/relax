@@ -1,3 +1,74 @@
+Version 4.0.2
+(13 May 2016, from /trunk)
+http://svn.gna.org/svn/relax/tags/4.0.2
+
+    Features:
+        * Addition of the new user functions system.cd and system.pwd to allow the working directory to be changed and displayed.
+        * Addition of the structure.delete_ss user function to remove the helix and sheet information from the internal structural object. 
+
+
+    Changes:
+        * Improved formatting for the \yes LaTeX command for the HTML manual (www.nmr-relax.com/manual/).  This now inputs the raw HTML character for a tick.
+        * The replicate title finding script now processes short titles as well.  This shows that the Frame_order.html file will be conflicting and overwritten.
+        * Avoidance of a replicated title in the frame order chapter of the manual.
+        * Added some unicode characters for improved formatting of the CHANGES file.
+        * A number of updates for the release checklist document.  This should make it easier to replicate the full release process.
+        * Update the release checklist document.  The version number at http://wiki.nmr-relax.com/Template:Current_version_relax also needs to be updated for each release.
+        * Added a check for the total argument for the frame_order.distribute user function.  The maximum value is 9999, as the PDB format cannot accept more models.
+        * Creation of the structure.delete_ss user function.  This simply resets the helices and sheets data structures in the internal structural object to [].
+        * Updated the copyright notices for 2016.
+        * Created a short Info_box copyright string for displaying in the main GUI window.  This shows the full range of copyright dates.
+        * Added the spin_num boolean argument to the structure.load_spins user function.  Setting this flag to False will cause the spin number information to be ignored when creating the spin containers.  This allows for better support of homologous structures but with different PDB atom numbering.  The default flag value is True, preserving the old behaviour.
+        * Added support for concatenating atomic positions in the structure.load_spins user function.  Together with the spin_num flag set to False, this allows for atomic positions to be read from multiple homologous structures with different PDB atomic numbering.  The spin containers will be created from the first structure, in which the spin is defined, and the atomic position from subsequent structures will be appended to the list of current atomic positions.
+        * Fix for the Structure.test_read_pdb_internal3 system test.  With the new atomic position concatenation support, when called sequentially the structure.load_spins user function should always use the same value for the ave_pos argument.
+        * In the GUI the userfunctions sys_info() and time() are now grouped into a "system" subclass.  This is to prepare for other system related functions.
+        * Added a new 16x16 icon for the oxygen folder-favorites icon.
+        * Adding a new file at lib/system.py.  This file will contain different functions related to python os and system related functions. For example changing directory or printing working directory.
+        * In /lib/__init__.py, adding the filename for system.py.
+        * Renaming the folder-favorites icon.
+        * Deleting the old folder-favorites icon.
+        * Adding a new graphics variable: WIZARD_OXYGEN_PATH, to use oxygen icons with size of 200px.
+        * Adding the new user function system.cd.  This is to change the current working directory.
+        * Adding a new 200px of oxygen folder-favorites icon. This is to be used in the wizard image.
+        * Adding a user function translation for:  This is to catch the new naming of these functions.
+        * Adding a new lib.system.pwd() function, to print and return the current working directory.
+        * Adding a new user function system.pwd() to print/display the current working directory.
+        * Adding new 16x16 px and 200px of the oxygen icon folder-development.  This icon is used for displaying the current working directory.
+        * Adding a relax GUI menu for changing the current working directory.
+        * Adding a menu item for changing the current working directory.
+        * Adding a verbose True/False for the lib.system.pwd() function.
+        * Storing the current working directory as a GUI variable.
+        * Adding a toolbar button for changing the current working directory.
+        * Adding a verbose flag to lib.system.pwd() function.
+        * Changing to a filedialog for the user function system.cd.
+        * Adding an observer for current working directory.
+        * Modifying the user function system.cd not to show the result to STDOUT.
+        * Letting the lib.system.cd function notify the observer, when changing directory.
+        * Letting the current working directory be printed in the statusbar in the bottom.
+        * Updating self.system_cwd_path when a directory change is observed.
+        * For the four auto-analysis methods, the default results directory is now the current working directory instead of the launch directory.
+        * Changing the keyboard shortcut for changing the working directory to Ctrl+W.  Since Ctrl+C is often used for copying (from the terminal).
+        * Fix for GUI prompt bug, where ANSI escape characters should not be printed when interpreter is inherited from wxPython.
+        * Added a newline character after printing the script.
+        * Optimising the width of the statusbar.
+        * When the user function script is called, a notification of pipe_alteration is made.  This will force the GUI to update, and make sure that it is up to-date.
+        * Updated the frame order auto-analysis for the time -> system.time user function change.
+        * Fix for the GUI status bar element widths.  Fixed widths in pixels causes text truncation on many systems, depending on the width of the main relax window.  Instead variable widths should be used to allow wxPython to more elegantly present the text while minimising truncation.
+        * Created a system test for catching bug #24601.  This is the failure of the optimisation of the 'R2eff' dispersion model when peaks are missing from one spectrum, as reported by Petr Padrta at https://gna.org/bugs/?24601.  The test uses his data and script to trigger the bug.
+        * Simplified the Relax_disp.test_bug_24601_r2eff_missing_data system test.  This is to allow the test to catch bug #24601 to complete in a reasonable time (2 seconds on one system).
+        * Fix for the independence of the relax library.  As lib.system was using the status object, the library independence was broken.  To work around this, the module has simply been shifted into the pipe_control package.
+        * Added some missing oxygen icons to allow the relax manual to compile.  These are the 128x128 EPS versions of the places/folder-development.png and places/folder-favorites.png Oxygen icons recently introduced.  For completeness the 32x32, 48x48, and 128x128 PNG versions of the icons have also been added.  To help create these EPS icons in the future, the graphics/README file has been added with a description of the *.eps.gz file creation.
+        * Some more details for the *.eps.gz icon creation process.
+        * Mac OS X fixes for the Structure.test_pca and Structure.test_pca_observers system tests.  The eigenvectors on this OS are sometimes inverted.  As the sign of the eigenvector is irrelevant, the vectors hardcoded into the system tests are now inverted as required.
+
+
+    Bugfixes:
+        * Fix for bug #24218 (https://gna.org/bugs/?24218).  This is the incorrect labelling of alignment tensors by the align_tensor.matrix_angles user function when a subset of tensors is specified.  The logic for the labels was expanded from being only for all tensors to handling subsets.
+        * Bug fix for the structure.read_pdb user function (bug #24300, https://gna.org/bugs/?24300).  When the merge flag is True, and both multiple structures and multiple models are present, the structure.read_pdb user function would fail with a RelaxError.  The problem was that the molecule index was simply not being updated correctly.
+        * Fix for bug #24601.  This is the failure of the optimisation of the 'R2eff' dispersion model when peaks are missing from one spectrum, as reported by Petr Padrta at https://gna.org/bugs/?24601.  To handle the missing data, the peak intensity keys are now checked for in the spin container peak_intensities data structure.  This is both for the R2eff model optimisation as well as the data back-calculation.  A warning is given when the key is missing.  The relaxation dispersion base_data_loop() method has been modified to now yield the spin ID string, as this is used in the warnings.  In addition, the Grace plotting code in the relax library was also modified.  When peak intensity keys are missing, some of the Grace plots will have no data.  The code will now generate a plot for that data set, but detect the missing data and allow an empty plot to be created.
+
+
+
 Version 4.0.1
 (14 December 2015, from /trunk)
 http://svn.gna.org/svn/relax/tags/4.0.1
