@@ -5098,6 +5098,47 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
 
 
+    def test_rmsd_spins(self):
+        """Test the structure.rmsd user function for per-atom RMSDs."""
+
+        # Set up 3 models.
+        self.interpreter.structure.add_model(model_num=1)
+        self.interpreter.structure.add_model(model_num=2)
+        self.interpreter.structure.add_model(model_num=4)
+
+        # Check that the models were correctly created.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 3)
+
+        # Create a structure with some atoms.
+        self.interpreter.structure.add_atom(atom_name='CA', res_name='UNK', res_num=1, pos=[[1., 0., -1.], [0., 0., 0.], [-1., 0., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='CA', res_name='UNK', res_num=2, pos=[[1., 2., -1.], [0., 2., 0.], [-1., 2., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='CA', res_name='UNK', res_num=3, pos=[[1., 20., -1.], [0., 20., 0.], [-1., 20., 1.]], element='S')
+
+        # Check the internal atomic info.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x, [1., 1., 1.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z, [-1., -1., -1.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].x, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].z, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].x, [-1., -1., -1.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].z, [1., 1., 1.])
+
+        # Create the spins from the structural data.
+        self.interpreter.structure.load_spins(ave_pos=False)
+
+        # Calculate the RMSD.
+        self.interpreter.structure.rmsd(atomic=True)
+
+        # Checks.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pos_rmsd, sqrt(4.0/3.0))
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].pos_rmsd, sqrt(4.0/3.0))
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].pos_rmsd, sqrt(4.0/3.0))
+
+
     def test_rmsd_ubi(self):
         """Test the structure.rmsd user function on the truncated ubiquitin ensemble."""
 
