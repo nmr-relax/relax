@@ -44,7 +44,7 @@ from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
 from lib.structure.pca import pca_analysis
 from lib.structure.represent.diffusion_tensor import diffusion_tensor
-from lib.structure.statistics import atomic_rmsd
+from lib.structure.statistics import atomic_rmsd, per_atom_rmsd
 from lib.structure.superimpose import fit_to_first, fit_to_mean
 from lib.warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 from pipe_control import molmol, pipes
@@ -1308,7 +1308,7 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     cdp.structure.load_xyz(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
 
 
-def rmsd(pipes=None, models=None, molecules=None, atom_id=None):
+def rmsd(pipes=None, models=None, molecules=None, atom_id=None, atomic=False):
     """Calculate the RMSD between the loaded models.
 
     The RMSD value will be placed into the current data pipe cdp.structure.rmsd data structure.
@@ -1322,6 +1322,8 @@ def rmsd(pipes=None, models=None, molecules=None, atom_id=None):
     @type molecules:    None or list of lists of str
     @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:      str or None
+    @keyword atomic:    A flag which if True will allow for per-atom RMSDs to be additionally calculated.
+    @type atomic:       bool
     @return:            The RMSD value.
     @rtype:             float
     """
@@ -1332,10 +1334,34 @@ def rmsd(pipes=None, models=None, molecules=None, atom_id=None):
     # Assemble the structural coordinates.
     coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
+    # Per-atom RMSDs.
+    if atomic:
+        # Printout.
+        print("\nCalculating the atomic-level RMSDs.")
+
+        # Calculate the per-atom RMSDs.
+        rmsd = per_atom_rmsd(coord, verbosity=0)
+
+        # Loop over the atoms.
+        for i in range(len(res_nums)):
+            # The spin identification string.
+            id = generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_num=i, spin_name=atom_names[i])
+
+            # Get the spin container.
+            spin_cont = return_spin(id)
+
+            # Skip the spin if it doesn't exist.
+            if spin_cont == None:
+                continue
+
+            # Store the value.
+            spin_cont.pos_rmsd = rmsd[i]
+
     # Calculate the RMSD.
+    print("\nCalculating the global RMSD.")
     cdp.structure.rmsd = atomic_rmsd(coord, verbosity=1)
 
-    # Return the RMSD.
+    # Return the global RMSD.
     return cdp.structure.rmsd
 
 

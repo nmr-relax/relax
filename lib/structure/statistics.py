@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -115,3 +115,42 @@ def calc_mean_structure(coord=None, mean=None, weights=None):
 
         # Average.
         mean[i] = mean[i] / weights.sum()
+
+
+def per_atom_rmsd(coord, verbosity=0):
+    """Determine the per-atom RMSDs for the given atomic coordinates.
+
+    This is the per atom RMSD to the mean structure.
+
+
+    @keyword coord:     The array of molecular coordinates.  The first dimension corresponds to the model, the second the atom, the third the coordinate.
+    @type coord:        rank-3 numpy array
+    @return:            The list of RMSD values for each atom.
+    @rtype:             rank-1 numpy float64 array
+    """
+
+    # Init.
+    M = len(coord)
+    N = len(coord[0])
+    model_rmsd = zeros(M, float64)
+    mean_str = zeros((N, 3), float64)
+    rmsd = zeros(N, float64)
+
+    # Calculate the mean structure.
+    calc_mean_structure(coord, mean_str)
+
+    # Loop over the atoms.
+    for j in range(N):
+        # Loop over the models.
+        for i in range(M):
+            # The vector connecting the mean to model atom.
+            vect = mean_str[j] - coord[i][j]
+
+            # The atomic RMSD.
+            rmsd[j] += norm(vect)**2
+
+        # Normalise, and sqrt.
+        rmsd[j] = sqrt(rmsd[j] / M)
+
+    # Return the RMSDs.
+    return rmsd
