@@ -1284,15 +1284,26 @@ uf.add_keyarg(
     desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "atomic",
+    default = False,
+    py_type = "bool",
+    desc_short = "atomic-level RMSD flag",
+    desc = "A flag which if if True will allow for per-atom RMSDs to be additionally calculated."
+)
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all structures to be calculated.  The RMSDs for individual structures to the mean structure will be calculated and reported, and then these values averaged for the global RMSD.  This will be stored in the structural object of the current data pipe.")
+uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all structures to be calculated.  The RMSDs for individual structures to the mean structure will be calculated and reported.  These values averaged to produce a global RMSD stored in the structural object of the current data pipe.  If the 'atomic' argument is set, per-atom RMSDs will additionally be calculated stored in spin containers.")
 uf.desc[-1].add_paragraph(paragraph_multi_struct)
 uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To determine the RMSD of all models in the current data pipe, simply type:")
 uf.desc[-1].add_prompt("relax> structure.rmsd()")
+uf.desc[-1].add_paragraph("For the backbone heavy atom RMSD of all models in the current data pipe, simply type:")
+uf.desc[-1].add_prompt("relax> structure.rmsd(atom_id='@N,C,CA,O')")
+uf.desc[-1].add_paragraph("To calculate the C-alpha backbone RMSDs of all models in the current data pipe, type:")
+uf.desc[-1].add_prompt("relax> structure.rmsd(atom_id='CA', atomic=True)")
 uf.backend = pipe_control.structure.main.rmsd
 uf.menu_text = "&rmsd"
 uf.wizard_height_desc = 400
