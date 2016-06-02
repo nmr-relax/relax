@@ -21,7 +21,7 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import array, average, dot, float64, sign, std, zeros
+from numpy import array, average, dot, float64, mean, sign, std, zeros
 from numpy.linalg import norm
 from os import sep
 from re import search
@@ -5070,7 +5070,7 @@ class Structure(SystemTestCase):
 
         # Checks.
         self.assert_(hasattr(cdp.structure, 'rmsd'))
-        self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
+        self.assertAlmostEqual(cdp.structure.rmsd, sqrt(4.0/3.0))
 
 
     def test_rmsd_molecules(self):
@@ -5095,7 +5095,7 @@ class Structure(SystemTestCase):
 
         # Checks.
         self.assert_(hasattr(cdp.structure, 'rmsd'))
-        self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
+        self.assertAlmostEqual(cdp.structure.rmsd, sqrt(4.0/3.0))
 
 
     def test_rmsd_spins(self):
@@ -5149,9 +5149,13 @@ class Structure(SystemTestCase):
         # Calculate the RMSD.
         self.interpreter.structure.rmsd()
 
+        # The per-structure RMSDs, and their quadratic average.
+        all_rmsd = array([1.06994466835, 0.411387603119, 0.647768214719, 0.522216519591, 0.274450954939, 0.979817275482, 0.752817901842, 1.28956426491, 1.12979370978, 0.650514765397], float64)
+        rmsd = sqrt(mean(all_rmsd**2))
+
         # Checks (the values match the VMD 1.9.1 RMSD numbers).
         self.assert_(hasattr(cdp.structure, 'rmsd'))
-        self.assertAlmostEqual(cdp.structure.rmsd, 0.77282758781333061)
+        self.assertAlmostEqual(cdp.structure.rmsd, rmsd)
 
 
     def test_sequence_alignment_central_star_nw70_blosum62(self):
