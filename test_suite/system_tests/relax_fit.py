@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2016 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -480,7 +480,7 @@ class Relax_fit(SystemTestCase):
         # Check the curve-fitting results.
         spin = return_spin(":4@N")
         self.assertAlmostEqual(spin.rx, 1.2)
-        self.assertAlmostEqual(spin.i0, 30.0)
+        self.assertAlmostEqual(spin.i0, -30.0)
         self.assertAlmostEqual(spin.iinf, 22.0)
 
 
