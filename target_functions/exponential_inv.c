@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2014 Edward d'Auvergne
+ * Copyright (C) 2006-2016 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -30,7 +30,7 @@ void exponential_inv(double I0, double Iinf, double R, double relax_times[MAX_DA
      *
      * The function used is::
      *
-     *     I = Iinf - I0 * exp(-R.t)
+     *     I = Iinf - (Iinf - I0) * exp(-R.t)
     */
 
     /* Declarations. */
@@ -40,11 +40,11 @@ void exponential_inv(double I0, double Iinf, double R, double relax_times[MAX_DA
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value. */
         if (R == 0.0)
-            back_calc[i] = Iinf - I0;
+            back_calc[i] = I0;
 
         /* Back calculate. */
         else
-            back_calc[i] = Iinf - I0 * exp(-relax_times[i] * R);
+            back_calc[i] = Iinf - (Iinf - I0) * exp(-relax_times[i] * R);
 
     }
 }
@@ -61,11 +61,11 @@ void exponential_inv_dI0(double I0, double Iinf, double R, int param_index, doub
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value. */
         if (R == 0.0)
-            back_calc_grad[param_index][i] = -1.0;
+            back_calc_grad[param_index][i] = 1.0;
 
         /* The partial derivate. */
         else
-            back_calc_grad[param_index][i] = -exp(-relax_times[i] * R);
+            back_calc_grad[param_index][i] = exp(-relax_times[i] * R);
     }
 }
 
@@ -79,7 +79,13 @@ void exponential_inv_dIinf(double I0, double Iinf, double R, int param_index, do
 
     /* Everything is one. */
     for (i = 0; i < num_times; i++) {
-        back_calc_grad[param_index][i] = 1.0;
+        /* Zero Rx value. */
+        if (R == 0.0)
+            back_calc_grad[param_index][i] = 0.0;
+
+        /* The partial derivate. */
+        else
+            back_calc_grad[param_index][i] = 1.0 - exp(-relax_times[i] * R);
     }
 }
 
@@ -95,11 +101,11 @@ void exponential_inv_dR(double I0, double Iinf, double R, int param_index, doubl
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value. */
         if (R == 0.0)
-            back_calc_grad[param_index][i] = I0 * relax_times[i];
+            back_calc_grad[param_index][i] = (Iinf - I0) * relax_times[i];
 
         /* The partial derivate. */
         else
-            back_calc_grad[param_index][i] = I0 * relax_times[i] * exp(-relax_times[i] * R);
+            back_calc_grad[param_index][i] = (Iinf - I0) * relax_times[i] * exp(-relax_times[i] * R);
     }
 }
 
@@ -158,11 +164,11 @@ void exponential_inv_dR_dI0(double I0, double Iinf, double R, int R_index, int I
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value. */
         if (R == 0.0)
-            back_calc_hess[I0_index][R_index][i] = relax_times[i];
+            back_calc_hess[I0_index][R_index][i] = -relax_times[i];
 
         /* The second partial derivate. */
         else
-            back_calc_hess[I0_index][R_index][i] = relax_times[i] * exp(-relax_times[i] * R);
+            back_calc_hess[I0_index][R_index][i] = -relax_times[i] * exp(-relax_times[i] * R);
 
         /* Hessian symmetry. */
         back_calc_hess[R_index][I0_index][i] = back_calc_hess[I0_index][R_index][i];
@@ -177,10 +183,18 @@ void exponential_inv_dR_dIinf(double I0, double Iinf, double R, int R_index, int
     /* Declarations. */
     int i;
 
-    /* Everything is zero. */
+    /* Loop over the time points. */
     for (i = 0; i < num_times; i++) {
-        back_calc_hess[R_index][Iinf_index][i] = 0.0;
-        back_calc_hess[Iinf_index][R_index][i] = 0.0;
+        /* Zero Rx value. */
+        if (R == 0.0)
+            back_calc_hess[Iinf_index][R_index][i] = relax_times[i];
+
+        /* The second partial derivate. */
+        else
+            back_calc_hess[Iinf_index][R_index][i] = relax_times[i] * exp(-relax_times[i] * R);
+
+        /* Hessian symmetry. */
+        back_calc_hess[R_index][Iinf_index][i] = back_calc_hess[Iinf_index][R_index][i];
     }
 }
 
@@ -196,10 +210,10 @@ void exponential_inv_dR2(double I0, double Iinf, double R, int R_index, double r
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value. */
         if (R == 0.0)
-            back_calc_hess[R_index][R_index][i] = -I0 * square(relax_times[i]);
+            back_calc_hess[R_index][R_index][i] = -(Iinf - I0) * square(relax_times[i]);
 
         /* The partial derivate. */
         else
-            back_calc_hess[R_index][R_index][i] = -I0 * square(relax_times[i]) * exp(-relax_times[i] * R);
+            back_calc_hess[R_index][R_index][i] = -(Iinf - I0) * square(relax_times[i]) * exp(-relax_times[i] * R);
     }
 }
