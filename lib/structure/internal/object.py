@@ -2668,9 +2668,6 @@ class Internal:
         if atom_id:
             sel_obj = Selection(atom_id)
 
-        # Validate the models.
-        self.validate_models(verbosity=0)
-
         # Obtain all data from the first model (except the position data).
         model = self.structural_data[0]
 
