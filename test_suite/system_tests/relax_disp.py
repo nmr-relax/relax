@@ -6409,7 +6409,6 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(len(cdp.mol[0].res), 2)
 
         self.assertEqual(cdp.spectrometer_frq_count, 2)
-        print cdp.spectrometer_frq_list
         self.assertEqual(cdp.spectrometer_frq_list, [600000000.0, 950000000.0])
         self.assertEqual(cdp.exp_type_list, ['R1rho'])
 
