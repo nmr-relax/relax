@@ -176,7 +176,6 @@ def write_xy_data(data, file=None, graph_type=None, norm_type='first', norm=None
             norm_fact = 1.0
             if norm[gi]:
                 if norm_type == 'first':
-                    print `data[gi][si]`
                     norm_fact = data[gi][si][0][1]
                 elif norm_type == 'last':
                     norm_fact = data[gi][si][-1][1]
