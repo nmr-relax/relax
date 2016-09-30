@@ -133,7 +133,7 @@ function installandcheck {
   checkinstallation
 }
 
-echo "You should restart the terminal or logout and login again"
+echo "After running 'installandcheck', you should restart the terminal or logout and login again."
 
 # Do functions
 #installandcheck
