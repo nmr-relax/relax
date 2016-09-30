@@ -35,7 +35,7 @@ function getversions {
   VREL=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_relax" | grep -A 10 "Template:Current version relax" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
 
   echo "Current version of minfx is: $VMIN"
-  echo "Current version of bmrblib is: $VMBR"
+  echo "Current version of bmrblib is: $VBMR"
   echo "Current version of mpi4py is: $VMPI"
   echo "Current version of relax is: $VREL"
 }
