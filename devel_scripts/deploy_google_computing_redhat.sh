@@ -2,28 +2,37 @@
 # -*- coding: UTF-8 -*-
 # Script for deploying relax on Google Cloud Computing GCC
 
-# Install apt-get packages
+# Install yum packages
 function doaptget {
   # Install lynx
-  sudo apt-get -y install lynx
-
-  # Install for server management
-  sudo apt-get -y install htop
+  sudo yum -y install lynx
 
   # Install for running relax in multiple CPU mode
-  sudo apt-get -y install openmpi-bin openmpi-doc libopenmpi-dev
+  sudo yum -y install openmpi-devel
+  echo "module load openmpi-1.10-x86_64" >> $HOME/.bash_profile
+  #bash --init-file <(echo 'mpirun --report-bindings -np 2 echo "hello world"; exit')
+
+  # mpi4py
+  sudo yum -y install mpi4py-openmpi
+
+  # Install python pip
+  sudo easy_install pip
 
   # Install dependencies
-  sudo apt-get -y install python-numpy
-  sudo apt-get -y install python-scipy python-matplotlib python-pip
+  sudo yum -y install numpy
+  sudo yum -y install scipy python-matplotlib
 
   # For trunk checkout and graphs
-  sudo apt-get -y install subversion scons grace
+  sudo yum -y install subversion scons 
+
+  # Install xmgrace
+  wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+  sudo rpm -ivh epel-release-6-8.noarch.rpm
+  sudo yum -y install grace
 }
 
 # Install python packages
 function dopip {
-  sudo pip install mpi4py
   sudo pip install epydoc
 }
 
@@ -35,7 +44,7 @@ function getversions {
   VREL=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_relax" | grep -A 10 "Template:Current version relax" | grep -B 1 "Retrieved from" | head -n 1 | tr -d '[[:space:]]'`
 
   echo "Current version of minfx is: $VMIN"
-  echo "Current version of bmrblib is: $VMBR"
+  echo "Current version of bmrblib is: $VBMR"
   echo "Current version of mpi4py is: $VMPI"
   echo "Current version of relax is: $VREL"
 }
@@ -43,9 +52,6 @@ function getversions {
 # Make home bin
 function dobin {
   mkdir -p $HOME/bin
-  echo '' >> $HOME/.bashrc
-  echo 'export PATH=$PATH:$HOME/bin' >> $HOME/.bashrc
-  source $HOME/.bashrc
 }
 
 # Do local istallations of pip
@@ -126,6 +132,8 @@ function installandcheck {
   gettrunk
   checkinstallation
 }
+
+echo "You should restart the terminal or logout and login again"
 
 # Do functions
 #installandcheck
