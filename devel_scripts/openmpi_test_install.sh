@@ -8,8 +8,8 @@ echo ""
 echo "Shell is: $SHELL"
 echo ""
 
-echo "> which mpicc"
-which mpicc
+echo "> which mpirun"
+which mpirun
 echo ""
 
 echo "> module avail"
