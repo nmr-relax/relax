@@ -105,7 +105,7 @@ function checkinstallation {
   whoami
   lscpu
   mpirun --version
-  mpirun --report-bindings -np 4 echo "mpirun with 4 CPU echoes"
+  mpirun --report-bindings -np 2 echo "mpirun with 2 CPU echoes"
 
   # Print info
   which relax_$VREL
