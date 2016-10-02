@@ -10,10 +10,6 @@ function doyum {
   # Install for running relax in multiple CPU mode
   sudo yum -y install openmpi-devel
   echo "module load openmpi-1.10-x86_64" >> $HOME/.bash_profile
-  #bash --init-file <(echo 'mpirun --report-bindings -np 2 echo "hello world"; exit')
-
-  # mpi4py
-  sudo yum -y install mpi4py-openmpi
 
   # Install dependencies
   sudo yum -y install numpy
@@ -26,6 +22,10 @@ function doyum {
   wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
   sudo rpm -ivh epel-release-6-8.noarch.rpm
   sudo yum -y install grace
+
+  # mpi4py
+  sudo yum -y install mpi4py-openmpi
+  sudo yum info mpi4py-openmpi
 }
 
 # Install python packages

@@ -10,13 +10,8 @@ function doyum {
   # Install for running relax in multiple CPU mode
   sudo yum -y install openmpi-devel
   echo "module load openmpi-1.10-x86_64" >> $HOME/.bash_profile
-  #bash --init-file <(echo 'mpirun --report-bindings -np 2 echo "hello world"; exit')
-
-  # mpi4py
-  sudo yum -y install mpi4py-openmpi
 
   # Install dependencies
-  sudo yum -y install numpy
   sudo yum -y install scipy python-matplotlib
 
   # For trunk checkout and graphs
@@ -28,11 +23,38 @@ function doyum {
   sudo yum -y install grace
 }
 
-# Install python packages
-function dopip {
-  # Install python pip
-  sudo easy_install pip
-  sudo pip install epydoc
+# Install python
+function dopython {
+  # Install python 2.7 packages
+  sudo yum list python27\* | grep -E 'numpy|scipy|matplotlib|mpi4py' 
+  sudo yum -y install python27-numpy python27-scipy
+
+  # Python 2.7 scl (short for “Software Collection”) 
+  scl -l
+
+  # Instead of using a subshell, we will source dire  
+  #scl enable python27 bash
+  #cat /opt/rh/python27/enable
+  source scl_source enable python27
+  echo "source scl_source enable python27" >> $HOME/.bash_profile
+
+  # Test for sudo and sourcing
+  python --version
+  sudo python --version
+  sudo -- sh -c 'source scl_source enable python27; python --version'
+
+  # Pip and packages
+  sudo -- sh -c 'source scl_source enable python27; easy_install pip'
+  pip --version
+  sudo -- sh -c 'source scl_source enable python27; pip install --upgrade pip'
+  pip --version
+
+  # mpi4py
+  sudo -- sh -c 'source scl_source enable python27; env MPICC=/usr/lib64/openmpi-1.10/bin/mpicc pip install mpi4py'
+  mpirun -np 2 python -c "import mpi4py; from mpi4py import MPI; print('Mpi4py %s process %d of %d on %s.' %(mpi4py.__version__, MPI.COMM_WORLD.Get_rank(),MPI.COMM_WORLD.Get_size(), MPI.Get_processor_name()))"
+
+  # Install python epydoc
+  sudo -- sh -c 'source scl_source enable python27; pip install epydoc'
 }
 
 function getversions {
@@ -123,7 +145,7 @@ function checkinstallation {
 # Combine functions
 function installandcheck {
   doyum
-  dopip
+  dopython
   getversions
   dobin
   dopiplocal
