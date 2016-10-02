@@ -83,7 +83,7 @@ function dopiplocal {
   curl http://download.gna.org/minfx/minfx-$VMIN.tar.gz -o minfx-$VMIN.tar.gz
   tar -xzf minfx-$VMIN.tar.gz
   cd minfx-$VMIN
-  sudo pip install .
+  sudo -- sh -c 'source scl_source enable python27; pip install .'
   cd $HOME
 
   # Install bmrblib
@@ -92,7 +92,7 @@ function dopiplocal {
   curl http://download.gna.org/bmrblib/bmrblib-$VBMR.tar.gz -o bmrblib-$VBMR.tar.gz
   tar -xzf bmrblib-$VBMR.tar.gz
   cd bmrblib-$VBMR
-  sudo pip install .
+  sudo -- sh -c 'source scl_source enable python27; pip install .'
   cd $HOME
 }
 
