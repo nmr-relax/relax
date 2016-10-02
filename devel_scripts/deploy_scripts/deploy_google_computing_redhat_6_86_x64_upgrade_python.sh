@@ -55,6 +55,10 @@ function dopython {
 
   # Install python epydoc
   sudo -- sh -c 'source scl_source enable python27; pip install epydoc'
+
+  # matplotlib
+  sudo yum-builddep python-matplotlib
+  sudo -- sh -c 'source scl_source enable python27; pip install matplotlib'
 }
 
 function getversions {
