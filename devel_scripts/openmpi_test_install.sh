@@ -3,7 +3,8 @@
 # Script for deploying relax on Google Cloud Computing GCC
 
 echo 'http://svn.gna.org/viewcvs/*checkout*/relax/trunk/devel_scripts/openmpi_test_install.sh'
-echo 'Source the commands with: source test_openmpi.sh'
+echo 'Source the commands with: source openmpi_test_install.sh'
+echo 'Then do: testopenmpi'
 echo ""
 
 function testopenmpi {

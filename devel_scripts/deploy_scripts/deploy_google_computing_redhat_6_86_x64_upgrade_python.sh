@@ -57,8 +57,40 @@ function dopython {
   sudo -- sh -c 'source scl_source enable python27; pip install epydoc'
 
   # matplotlib
-  sudo yum-builddep python-matplotlib
+  sudo yum-builddep -y python-matplotlib
   sudo -- sh -c 'source scl_source enable python27; pip install matplotlib'
+}
+
+# Install wxpython
+function dowxpython {
+  # wxPython
+  sudo yum -y groupinstall 'Development Tools'
+  sudo yum-builddep -y wxPython
+
+  # Installing wxPython from source
+  #sudo yum -y install GConf2-devel
+  #sudo yum -y install gstreamer
+  #sudo yum -y install gstreamer-devel
+  sudo yum -y install gstreamer-plugins-base-devel
+
+  VERS=wxPython-src-3.0.2.0
+  wget http://downloads.sourceforge.net/wxpython/$VERS.tar.bz2
+  tar -xvf $VERS.tar.bz2
+  rm $VERS.tar.bz2
+  cd $VERS/wxPython
+  #python build-wxpython.py --build_dir=../bld
+  sudo -- sh -c 'source scl_source enable python27; python build-wxpython.py --build_dir=../bld  --install'
+
+  # Installing wxGTK from source
+  #VERS=wxWidgets-3.1.0
+  #wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/$VERS.tar.bz2
+  #tar -xvf $VERS.tar.bz2
+  #rm $VERS.tar.bz2
+  #cd $VERS
+  #./configure --with-gtk
+  #make
+  #sudo -- sh -c 'source scl_source enable python27; make install'
+  #sudo -- sh -c 'source scl_source enable python27; ldconfig'
 }
 
 function getversions {
