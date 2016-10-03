@@ -1,5 +1,5 @@
 echo 'http://svn.gna.org/viewcvs/*checkout*/relax/trunk/devel_scripts/openmpi_test_install_bash.sh'
-echo 'Source the commands with: source openmpi_test_install.sh'
+echo 'Source the commands with: source openmpi_test_install_bash.sh'
 echo 'Then do: testopenmpi'
 echo ""
 
