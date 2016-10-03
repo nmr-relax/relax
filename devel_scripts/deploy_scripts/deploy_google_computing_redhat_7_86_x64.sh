@@ -11,22 +11,21 @@ function doyum {
   sudo yum -y install openmpi-devel
   echo "module load mpi/openmpi-x86_64" >> $HOME/.bash_profile
 
-  # Install dependencies
-  sudo yum -y install numpy
-  sudo yum -y install scipy python-matplotlib
-
   # For trunk checkout and graphs
   sudo yum -y install subversion scons 
 
   # Install xmgrace. Add the EPEL repository.
-  sudo yum -y install wget curl
+  sudo yum -y install wget curl bzip2
   wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
   sudo yum -y install epel-release-latest-7.noarch.rpm
   sudo yum -y install grace
 
+  # Install dependencies
+  sudo yum -y install numpy
+  sudo yum -y install scipy python-matplotlib
+
   # mpi4py
   sudo yum -y install mpi4py-openmpi
-  sudo yum info mpi4py-openmpi
 
   # wxPython for GUI
   sudo yum -y install wxPython
@@ -80,7 +79,7 @@ function dopiplocal {
 
 # Get latest compiled version of relax
 function getlatest {
-  sudo yum -y install bzip2
+  sudo yum -y install 
   cd $HOME
   if [ ! -d "$HOME/relax-$VREL" ]; then
     curl http://download.gna.org/relax/relax-$VREL.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2

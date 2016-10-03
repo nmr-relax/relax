@@ -11,16 +11,17 @@ function doyum {
   sudo yum -y install openmpi-devel
   echo "module load openmpi-1.10-x86_64" >> $HOME/.bash_profile
 
-  # Install dependencies
-  sudo yum -y install scipy python-matplotlib
-
   # For trunk checkout and graphs
   sudo yum -y install subversion scons 
 
   # Install xmgrace. Add the EPEL repository.
+  sudo yum -y install wget curl bzip2
   wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
   sudo rpm -ivh epel-release-6-8.noarch.rpm
   sudo yum -y install grace
+
+  # wxPython for GUI
+  sudo yum -y install wxPython
 }
 
 # Install python
@@ -77,6 +78,8 @@ function dowxpython {
   cd $VERS/wxPython
   #python build-wxpython.py --build_dir=../bld
   sudo -- sh -c 'source scl_source enable python27; python build-wxpython.py --install'
+  echo 'export PYTHONPATH=${PYTHONPATH}:/opt/rh/python27/root/usr/lib64/python2.7/site-packages/wx-3.0-gtk2' >> $HOME/.bash_profile
+  echo 'export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib' >> $HOME/.bash_profile
 
   # Installing wxGTK from source
   #VERS=wxWidgets-3.1.0
@@ -131,7 +134,6 @@ function dopiplocal {
 
 # Get latest compiled version of relax
 function getlatest {
-  sudo yum -y install bzip2
   cd $HOME
   if [ ! -d "$HOME/relax-$VREL" ]; then
     curl http://download.gna.org/relax/relax-$VREL.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
