@@ -19,6 +19,7 @@ function doyum {
   sudo yum -y install subversion scons 
 
   # Install xmgrace. Add the EPEL repository.
+  sudo yum -y install wget curl
   wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
   sudo rpm -ivh epel-release-6-8.noarch.rpm
   sudo yum -y install grace
@@ -26,6 +27,9 @@ function doyum {
   # mpi4py
   sudo yum -y install mpi4py-openmpi
   sudo yum info mpi4py-openmpi
+
+  # wxPython for GUI
+  sudo yum -y install wxPython
 }
 
 # Install python packages
@@ -76,6 +80,7 @@ function dopiplocal {
 
 # Get latest compiled version of relax
 function getlatest {
+  sudo yum -y install bzip2
   cd $HOME
   if [ ! -d "$HOME/relax-$VREL" ]; then
     curl http://download.gna.org/relax/relax-$VREL.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
@@ -115,9 +120,11 @@ function checkinstallation {
   # Print info
   which relax_$VREL
   relax_$VREL -i
+  #mpirun --report-bindings --np 2 relax_$VREL --multi='mpi4py' --version
 
   which relax_trunk
   relax_trunk -i
+  #mpirun --report-bindings --np 2 relax_trunk --multi='mpi4py' --version
 }
 
 # Combine functions

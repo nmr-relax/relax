@@ -9,85 +9,34 @@ function doyum {
 
   # Install for running relax in multiple CPU mode
   sudo yum -y install openmpi-devel
-  echo "module load openmpi-1.10-x86_64" >> $HOME/.bash_profile
+  echo "module load mpi/openmpi-x86_64" >> $HOME/.bash_profile
 
   # Install dependencies
+  sudo yum -y install numpy
   sudo yum -y install scipy python-matplotlib
 
   # For trunk checkout and graphs
   sudo yum -y install subversion scons 
 
   # Install xmgrace. Add the EPEL repository.
-  wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-  sudo rpm -ivh epel-release-6-8.noarch.rpm
+  sudo yum -y install wget curl
+  wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  sudo yum -y install epel-release-latest-7.noarch.rpm
   sudo yum -y install grace
-}
-
-# Install python
-function dopython {
-  # Install python 2.7 packages
-  sudo yum list python27\* | grep -E 'numpy|scipy|matplotlib|mpi4py' 
-  sudo yum -y install python27-numpy python27-scipy
-
-  # Python 2.7 scl (short for “Software Collection”) 
-  scl -l
-
-  # Instead of using a subshell, we will source dire  
-  #scl enable python27 bash
-  #cat /opt/rh/python27/enable
-  source scl_source enable python27
-  echo "source scl_source enable python27" >> $HOME/.bash_profile
-
-  # Test for sudo and sourcing
-  python --version
-  sudo python --version
-  sudo -- sh -c 'source scl_source enable python27; python --version'
-
-  # Pip and packages
-  sudo -- sh -c 'source scl_source enable python27; easy_install pip'
-  pip --version
-  sudo -- sh -c 'source scl_source enable python27; pip install --upgrade pip'
-  pip --version
 
   # mpi4py
-  sudo -- sh -c 'source scl_source enable python27; env MPICC=/usr/lib64/openmpi-1.10/bin/mpicc pip install mpi4py'
-  mpirun -np 2 python -c "import mpi4py; from mpi4py import MPI; print('Mpi4py %s process %d of %d on %s.' %(mpi4py.__version__, MPI.COMM_WORLD.Get_rank(),MPI.COMM_WORLD.Get_size(), MPI.Get_processor_name()))"
+  sudo yum -y install mpi4py-openmpi
+  sudo yum info mpi4py-openmpi
 
-  # Install python epydoc
-  sudo -- sh -c 'source scl_source enable python27; pip install epydoc'
-
-  # matplotlib
-  sudo yum-builddep -y python-matplotlib
-  sudo -- sh -c 'source scl_source enable python27; pip install matplotlib'
+  # wxPython for GUI
+  sudo yum -y install wxPython
 }
 
-# Install wxpython
-function dowxpython {
-  # wxPython
-  sudo yum -y groupinstall 'Development Tools'
-  sudo yum-builddep -y wxPython
-
-  # Installing wxPython from source
-  sudo yum -y install gstreamer-plugins-base-devel
-
-  VERS=wxPython-src-3.0.2.0
-  wget http://downloads.sourceforge.net/wxpython/$VERS.tar.bz2
-  tar -xvf $VERS.tar.bz2
-  rm $VERS.tar.bz2
-  cd $VERS/wxPython
-  #python build-wxpython.py --build_dir=../bld
-  sudo -- sh -c 'source scl_source enable python27; python build-wxpython.py --install'
-
-  # Installing wxGTK from source
-  #VERS=wxWidgets-3.1.0
-  #wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/$VERS.tar.bz2
-  #tar -xvf $VERS.tar.bz2
-  #rm $VERS.tar.bz2
-  #cd $VERS
-  #./configure --with-gtk
-  #make
-  #sudo -- sh -c 'source scl_source enable python27; make install'
-  #sudo -- sh -c 'source scl_source enable python27; ldconfig'
+# Install python packages
+function dopip {
+  # Install python pip
+  sudo easy_install pip
+  sudo pip install epydoc
 }
 
 function getversions {
@@ -116,7 +65,7 @@ function dopiplocal {
   curl http://download.gna.org/minfx/minfx-$VMIN.tar.gz -o minfx-$VMIN.tar.gz
   tar -xzf minfx-$VMIN.tar.gz
   cd minfx-$VMIN
-  sudo -- sh -c 'source scl_source enable python27; pip install .'
+  sudo pip install .
   cd $HOME
 
   # Install bmrblib
@@ -125,7 +74,7 @@ function dopiplocal {
   curl http://download.gna.org/bmrblib/bmrblib-$VBMR.tar.gz -o bmrblib-$VBMR.tar.gz
   tar -xzf bmrblib-$VBMR.tar.gz
   cd bmrblib-$VBMR
-  sudo -- sh -c 'source scl_source enable python27; pip install .'
+  sudo pip install .
   cd $HOME
 }
 
@@ -181,7 +130,7 @@ function checkinstallation {
 # Combine functions
 function installandcheck {
   doyum
-  dopython
+  dopip
   getversions
   dobin
   dopiplocal
