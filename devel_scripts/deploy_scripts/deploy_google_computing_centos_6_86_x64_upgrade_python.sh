@@ -155,7 +155,7 @@ function gettrunk {
   fi
   cd $HOME/relax_trunk
   svn up
-  scons
+  python `which scons`
   if [ ! \( -e "$HOME/bin/relax_trunk" \) ]; then
     ln -s $HOME/relax_trunk/relax $HOME/bin/relax_trunk
   fi
