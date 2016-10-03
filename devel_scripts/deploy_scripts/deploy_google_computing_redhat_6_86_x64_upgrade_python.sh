@@ -22,6 +22,7 @@ function doyum {
 
   # wxPython for GUI
   sudo yum -y install wxPython
+  echo 'export PYTHONPATH=${PYTHONPATH}:/usr/lib64/python2.6/site-packages/wx-2.8-gtk2-unicode' >> $HOME/.bash_profile
 }
 
 # Install python
