@@ -68,9 +68,6 @@ function dowxpython {
   sudo yum-builddep -y wxPython
 
   # Installing wxPython from source
-  #sudo yum -y install GConf2-devel
-  #sudo yum -y install gstreamer
-  #sudo yum -y install gstreamer-devel
   sudo yum -y install gstreamer-plugins-base-devel
 
   VERS=wxPython-src-3.0.2.0
@@ -79,7 +76,7 @@ function dowxpython {
   rm $VERS.tar.bz2
   cd $VERS/wxPython
   #python build-wxpython.py --build_dir=../bld
-  sudo -- sh -c 'source scl_source enable python27; python build-wxpython.py --build_dir=../bld  --install'
+  sudo -- sh -c 'source scl_source enable python27; python build-wxpython.py --install'
 
   # Installing wxGTK from source
   #VERS=wxWidgets-3.1.0
