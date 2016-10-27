@@ -176,8 +176,10 @@ class Info_box(object):
         if Popen == None:
             return ''
 
-        # MS Windows (has no 'file' command or libmagic, so return nothing).
-        if hasattr(ctypes, 'windll'):
+        # Test if the 'file' program is installed.
+        pipe = Popen('file --help', shell=True, stdout=PIPE, stderr=PIPE, close_fds=False)
+        err = pipe.stderr.readlines()
+        if err:
             return ''
 
         # The command.
@@ -185,7 +187,8 @@ class Info_box(object):
 
         # Execute.
         pipe = Popen(cmd, shell=True, stdout=PIPE, close_fds=False)
-        waitpid(pipe.pid, 0)
+        if not hasattr(ctypes, 'windll'):
+            waitpid(pipe.pid, 0)
 
         # The STDOUT data.
         data = pipe.stdout.readlines()
@@ -240,7 +243,9 @@ class Info_box(object):
                 arch[i] = row[1][:-1]
                 file_type += " %s" % arch
 
-        # Return the string.
+        # Return a string value.
+        if file_type == None:
+            return ''
         return file_type
 
 
