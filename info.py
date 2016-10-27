@@ -418,6 +418,15 @@ class Info_box(object):
         try:
             version.append(dep_check.mpi4py.__version__)
             path.append(dep_check.mpi4py.__path__[0])
+
+            # MPI version.
+            try:
+                import mpi4py.MPI
+                vendor = mpi4py.MPI.get_vendor()
+                version[-1] += (" (%s %s.%s.%s)" % (vendor[0], vendor[1][0], vendor[1][1], vendor[1][2]))
+            except:
+                pass
+
         except:
             version.append('')
             path.append('')
