@@ -59,6 +59,10 @@ MACH = platform.uname()[4]
 # Symbolic link flag.
 SYMLINK_FLAG = 1
 
+# Force a different target archictecture for MS Windows, if set (as the default Python download is 32-bit).
+WIN_TARGET_OVERRIDE = True
+TARGET_ARCH = None
+
 # GNU/Linux.
 if SYSTEM == 'Linux':
     # System specific string.
@@ -73,20 +77,27 @@ elif SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
     # Set the system to 'Windows' no matter what.
     SYSTEM = 'Windows'
 
-    # Architecture.
-    arch = platform.architecture()[0]
-
-    # 32 bit.
-    if arch == '32bit':
+    # Force a default of 32-bit.
+    if WIN_TARGET_OVERRIDE:
+        TARGET_ARCH = 'x86'
         SYS = 'Win32'
 
-    # 64 bit.
-    elif arch == '64bit':
-        SYS = 'Win64'
-
-    # Unknown.
+    # Determine the architecture.
     else:
-        SYS = 'Win'
+        # Architecture.
+        arch = platform.architecture()[0]
+
+        # 32 bit.
+        if arch == '32bit':
+            SYS = 'Win32'
+
+        # 64 bit.
+        elif arch == '64bit':
+            SYS = 'Win64'
+
+        # Unknown.
+        else:
+            SYS = 'Win'
 
     # Windows installation path.
     INSTALL_PATH = 'C:\\'
@@ -601,7 +612,7 @@ class Main:
         py_bin_fullpath = py_bin_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
 
         # Relaxation curve fitting build environment.
-        env = Environment()
+        env = Environment(TARGET_ARCH=TARGET_ARCH)
 
         # Determine the cross-compilation architectures for Mac systems.
         if env['PLATFORM'] == 'darwin':
