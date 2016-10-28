@@ -1,10 +1,64 @@
+Version 4.0.3
+(28 October 2016, from /trunk)
+http://svn.gna.org/svn/relax/tags/4.0.3
+
+    Features:
+        * Per-atom RMSD calculation by the structure.rmsd user function.
+        * Much faster superimposition of structures.
+        * More relax deployment scripts for Google Cloud for different GNU/Linux distributions.
+        * Addition of OpenMPI testing scripts.
+        * Improved relax information printout.
+
+
+    Changes:
+        * Addition of the atomic boolean argument to the structure.rmsd user function front end.  This will be used to enable the calculation of per-atom RMSDs.
+        * Created the Structure.test_rmsd_spins system test for checking the per-atom RMSD calculation.  This is for the new option in the structure.rmsd user function.
+        * Implemented the per-atom RMSD calculation for the structure.rmsd user function.
+        * Fixes for the Relax_fit.test_inversion_recovery system test.  The wrong equation was used in the calc.py Python script used to calculate the peak intensities in the test_suite/shared_data/curve_fitting/inversion_recovery/*.list files.  The script and Sparky files have been updated.  And the I0 value in the script and system test has been changed from 30 to -30, so that the curves start as negative.
+        * Huge speed up for the superimposition of a large number of structures.  The internal structural object validate_models() method was being called once for each structure via the selection() method prior performing the translations, and once prior to performing the rotations, for creating the atomic selection object.  This resulted in the _translate() internal structural object method, which converts all input data to formatted strings, being called hundreds of millions of times.  Therefore selection() method no longer calls validate_models().  This may speed up quite a number of internal structure object methods when large numbers of structures are present.
+        * Copying deployment script of Ubuntu to a Fedora version.  This is a response to bug #25084 (https://gna.org/bugs/?25084).
+        * Moving fedora to redhat.  Google Cloud does not offer fedora images.
+        * Adding deploy script for RHEL 6.
+        * Added initial script for testing OpenMPI.
+        * Making a redhat 6 deploy script, which will upgrade Python from 2.6 to 2.7  The normal installation through yum will have Python 2.6 and only numpy 2.4.  This is not good.
+        * Moved deploy scripts.  There would probably have to be a deploy script for each system.
+        * Renamed the Ubuntu deploy script.
+        * Adding scripts to test OpenMPI installation and deploy in redhat.
+        * Change to pip install command, to source Python first.
+        * Adding installation of matplotlib to Redhat 6, Python 2.7.
+        * More changing to deploy scripts.
+        * Small change to deploy script to build wxPython.
+        * More changing to deployment scripts.
+        * Moving test script of OpenMPI to bash version.
+        * Made a copy of OpenMPI test script for tcsh shell.
+        * Again small changes to deployment scripts.
+        * Changed more to OpenMPI script.
+        * Altering test OpenMPI script to an alias function.
+        * Change to bash OpenMPI test script.
+        * Last changes to testing of OpenMPI.
+        * Small change to test OpenMPI script for bash
+        * Back to function in bash script for OpenMPI.
+        * Made a deployment script for CentOS 6.
+        * Scons on CentOS finds python2.6 instead of python2.7
+        * Try to make the script for tcsh and OpenMPI working on all versions of tcsh.
+        * Added the MPI version information to the mpi4py information printout.
+        * Windows scons C module compilation now defaults to 32-bit.  This is because the default Python downloads are 32-bit.  And many libraries (e.g. numpy and scipy) are only pre-compiled as 32-bit.  Hence a 64-bit relax build on Windows will require a lot of custom compilation that most users will never do.
+        * Added support in the information printout for Windows versions of the 'file' program.  This enables the C modules to be identified as 32 or 64-bit, if the 'file' program is installed.
+
+
+    Bugfixes:
+        * Fix for bug #24723 (https://gna.org/bugs/?24723).  This is the bug that the mean RMSD from the structure.rmsd user function is incorrectly calculated - it should be a quadratic mean.  The quadratic mean and quadratic standard deviation are now correctly calculated, and the structure.test_rmsd, structure.test_rmsd_molecules, and structure.test_rmsd_ubi system tests have been updated for the fix.
+        * Bug fix for the inversion recovery equations (sr #3345).  The inversion recovery experiment was incorrectly implemented as I(t) = Iinf - I0 * exp(-R1 * t) whereas it should be I(t) = Iinf - (Iinf - I0) * exp(-R1 * t).
+
+
+
 Version 4.0.2
 (13 May 2016, from /trunk)
 http://svn.gna.org/svn/relax/tags/4.0.2
 
     Features:
         * Addition of the new user functions system.cd and system.pwd to allow the working directory to be changed and displayed.
-        * Addition of the structure.delete_ss user function to remove the helix and sheet information from the internal structural object. 
+        * Addition of the structure.delete_ss user function to remove the helix and sheet information from the internal structural object.
 
 
     Changes:
