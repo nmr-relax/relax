@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -212,7 +212,7 @@ def format_table(table):
     total_width = sum(new_widths) + used
 
     # The header.
-    text += " " + "_" * (total_width - 2) + "\n\n"    # Top rule and black line.
+    text += " " + "_" * int(total_width - 2) + "\n\n"    # Top rule and black line.
     text += table_line(text=table.headings, widths=new_widths)    # The headings.
     text += table_line(widths=new_widths, bottom=True)    # Middle rule.
 
@@ -353,16 +353,16 @@ def table_line(text=None, widths=None, bottom=False):
 
         # A bottom line.
         if bottom:
-            line += "_" * widths[i]
+            line += "_" * int(widths[i])
 
         # Empty line.
         elif text == None:
-            line += " " * widths[i]
+            line += " " * int(widths[i])
 
         # The text.
         else:
             line += text[i]
-            line += " " * (widths[i] - len(text[i]))
+            line += " " * int(widths[i] - len(text[i]))
 
     # Close the line.
     if bottom:
