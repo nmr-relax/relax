@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -70,7 +70,7 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         super(Base_analysis, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
         # Determine the size of the scrollers.
-        self.width_vscroll = wx.SystemSettings_GetMetric(wx.SYS_VSCROLL_X)
+        self.width_vscroll = wx.SystemSettings.GetMetric(wx.SYS_VSCROLL_X)
 
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
