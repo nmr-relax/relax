@@ -843,7 +843,7 @@ class Selector_file_window(wx.Dialog):
         """
 
         # Destroy the last subsizer.
-        self.elements[-1].sizer.DeleteWindows()
+        self.elements[-1].sizer.Clear(True)
         self.element_sizer.Remove(self.elements[-1].sizer)
 
         # Destroy the Python structures.
@@ -866,7 +866,7 @@ class Selector_file_window(wx.Dialog):
 
         # Destroy the subsizer.
         for i in range(len(self.elements)):
-            self.elements[i].sizer.DeleteWindows()
+            self.elements[i].sizer.Clear(True)
             self.element_sizer.Remove(self.elements[i].sizer)
 
         # Destroy all Python structures.
