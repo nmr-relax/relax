@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,6 +27,7 @@ from copy import deepcopy
 import wx
 
 # relax module imports.
+import dep_check
 from gui.errors import gui_raise
 from gui.fonts import font
 from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
@@ -140,7 +141,10 @@ class Value:
 
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((divider - x, 0))
+        if dep_check.old_wx:
+            sub_sizer.AddSpacer((divider - x, 0))
+        else:
+            sub_sizer.AddSpacer(divider - x)
 
         # Initialise the text input field.
         if self.element_type == 'text':

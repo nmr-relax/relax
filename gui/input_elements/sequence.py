@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,6 +27,7 @@ import wx
 import wx.lib.mixins.listctrl
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.input_elements.combo_list import Combo_list
 from gui.fonts import font
@@ -161,7 +162,10 @@ class Sequence:
 
             # Spacing.
             x, y = text.GetSize()
-            sub_sizer.AddSpacer((divider - x, 0))
+            if dep_check.old_wx:
+                sub_sizer.AddSpacer((divider - x, 0))
+            else:
+                sub_sizer.AddSpacer(divider - x)
 
             # The input field.
             self._field = wx.TextCtrl(parent, -1, '')

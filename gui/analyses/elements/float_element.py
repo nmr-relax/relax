@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,6 +28,7 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+import dep_check
 from gui.fonts import font
 from gui.string_conv import str_to_gui
 
@@ -77,7 +78,10 @@ class Float_ctrl:
         size_horizontal = size[1] + 8
 
         # Spacer.
-        sizer.AddSpacer((spacer, -1))
+        if dep_check.old_wx:
+            sizer.AddSpacer((spacer, -1))
+        else:
+            sizer.AddSpacer(spacer)
 
         # The floating point number input field.
         self.field = wx.TextCtrl(parent, -1, str_to_gui(default))
@@ -95,10 +99,16 @@ class Float_ctrl:
         self.field.Bind(wx.EVT_KEY_UP, self.end_input)
 
         # Spacer.
-        sizer.AddSpacer((spacer, -1))
+        if dep_check.old_wx:
+            sizer.AddSpacer((spacer, -1))
+        else:
+            sizer.AddSpacer(spacer)
 
         # Empty space where buttons normally are.
-        sizer.AddSpacer((width_button, -1))
+        if dep_check.old_wx:
+            sizer.AddSpacer((width_button, -1))
+        else:
+            sizer.AddSpacer(width_button)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)

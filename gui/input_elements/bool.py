@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,6 +26,7 @@
 import wx
 
 # relax module imports.
+import dep_check
 from gui.fonts import font
 from gui.string_conv import bool_to_gui, gui_to_bool
 from lib.errors import RelaxError
@@ -84,7 +85,10 @@ class Selector_bool:
 
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((divider - x, 0))
+        if dep_check.old_wx:
+            sub_sizer.AddSpacer((divider - x, 0))
+        else:
+            sub_sizer.AddSpacer(divider - x)
 
         # The combo box element.
         style = wx.CB_DROPDOWN | wx.CB_READONLY
