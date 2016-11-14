@@ -187,9 +187,9 @@ for id, file, cpmg_frq, H_frq, delay, ndat in data:
 
 # set each spectrum noise RMSD
     if ndat == 1:
-	spectrum.baseplane_rmsd(error=24000, spectrum_id=id, spin_id=None)
+        spectrum.baseplane_rmsd(error=24000, spectrum_id=id, spin_id=None)
     elif ndat == 6:
-	spectrum.baseplane_rmsd(error=65000, spectrum_id=id, spin_id=None)
+        spectrum.baseplane_rmsd(error=65000, spectrum_id=id, spin_id=None)
 
 # Peak intensity error analysis.
 spectrum.error_analysis_per_field()
