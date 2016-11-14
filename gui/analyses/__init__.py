@@ -499,7 +499,7 @@ class Analysis_controller:
 
             # Delete the previous sizer.
             old_sizer = self.gui.GetSizer()
-            old_sizer.DeleteWindows()
+            old_sizer.Clear(True)
 
             # Add the new sizer to the main window.
             self.gui.SetSizer(sizer)
@@ -706,7 +706,7 @@ class Analysis_controller:
 
         # Delete the previous sizer.
         old_sizer = self.gui.GetSizer()
-        old_sizer.DeleteWindows()
+        old_sizer.Clear(True)
 
         # Delete the notebook.
         if hasattr(self, 'notebook'):
