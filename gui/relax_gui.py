@@ -131,10 +131,6 @@ class Main(wx.Frame):
         relax_icons.setup()
         self.SetIcons(relax_icons)
 
-        # Set up the Mac OS X task bar icon.
-        #if status.wx_info["os"] == 'darwin' and status.wx_info["build"] != 'gtk':
-        #    self.taskbar_icon = Relax_task_bar_icon(self)
-
         # Initialise some variables for the GUI.
         self.launch_dir = getcwd()
 
