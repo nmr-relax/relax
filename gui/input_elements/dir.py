@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,6 +26,7 @@
 import wx
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.filedialog import RelaxDirDialog
 from gui.fonts import font
@@ -92,7 +93,10 @@ class Selector_dir:
 
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((divider - x, 0))
+        if dep_check.old_wx:
+            sub_sizer.AddSpacer((divider - x, 0))
+        else:
+            sub_sizer.AddSpacer(divider - x)
 
         # The input field.
         self._field = wx.TextCtrl(parent, -1, default)

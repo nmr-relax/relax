@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,6 +27,7 @@ from copy import deepcopy
 import wx
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 from lib.errors import RelaxError
@@ -171,11 +172,17 @@ class Combo_list:
 
             # Spacing.
             x, y = text.GetSize()
-            sub_sizer.AddSpacer((self._divider - x, 0))
+            if dep_check.old_wx:
+                sub_sizer.AddSpacer((self._divider - x, 0))
+            else:
+                sub_sizer.AddSpacer(self._divider - x)
 
         # No description for other rows, so add a blank space.
         else:
-            sub_sizer.AddSpacer((self._divider, 0))
+            if dep_check.old_wx:
+                sub_sizer.AddSpacer((self._divider, 0))
+            else:
+                sub_sizer.AddSpacer(self._divider)
 
         # The combo box element.
         style = wx.CB_DROPDOWN
@@ -220,7 +227,10 @@ class Combo_list:
 
         # Otherwise empty spacing.
         else:
-            sub_sizer.AddSpacer((27, 0))
+            if dep_check.old_wx:
+                sub_sizer.AddSpacer((27, 0))
+            else:
+                sub_sizer.AddSpacer(27)
 
         # Right padding.
         sub_sizer.AddSpacer(self._padding)

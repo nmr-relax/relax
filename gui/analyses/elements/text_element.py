@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,6 +28,7 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.fonts import font
 from gui.string_conv import str_to_gui
@@ -90,7 +91,10 @@ class Text_ctrl:
         size_horizontal = size[1] + 8
 
         # Spacer.
-        sizer.AddSpacer((spacer, -1))
+        if dep_check.old_wx:
+            sizer.AddSpacer((spacer, -1))
+        else:
+            sizer.AddSpacer(spacer)
 
         # The text input field.
         self.field = control(parent, -1, str_to_gui(default))
@@ -103,7 +107,10 @@ class Text_ctrl:
         sizer.Add(self.field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Spacer.
-        sizer.AddSpacer((spacer, -1))
+        if dep_check.old_wx:
+            sizer.AddSpacer((spacer, -1))
+        else:
+            sizer.AddSpacer(spacer)
 
         # The button.
         if button:
@@ -122,7 +129,10 @@ class Text_ctrl:
 
         # No button, so add a spacer.
         else:
-            sizer.AddSpacer((width_button, -1))
+            if dep_check.old_wx:
+                sizer.AddSpacer((width_button, -1))
+            else:
+                sizer.AddSpacer(width_button)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,6 +28,7 @@ from wx.lib import scrolledpanel
 import wx.lib.mixins.listctrl
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.fonts import font
 from gui.message import Question
@@ -101,13 +102,19 @@ class Model_list:
         label = self.parent.add_static_text(sizer, self.parent, text=self.desc, width=self.parent.width_text)
 
         # Spacer.
-        sizer.AddSpacer((self.parent.spacer_horizontal, -1))
+        if dep_check.old_wx:
+            sizer.AddSpacer((self.parent.spacer_horizontal, -1))
+        else:
+            sizer.AddSpacer(self.parent.spacer_horizontal)
 
         # The text input field.
         self.field = self.parent.add_text_control(sizer, self.parent, text=list_to_gui(self.GetValue()), editable=False)
 
         # Spacer.
-        sizer.AddSpacer((self.parent.spacer_horizontal, -1))
+        if dep_check.old_wx:
+            sizer.AddSpacer((self.parent.spacer_horizontal, -1))
+        else:
+            sizer.AddSpacer(self.parent.spacer_horizontal)
 
         # Add the button.
         self.button = self.parent.add_button_open(sizer, self.parent, icon=fetch_icon("oxygen.actions.flag-blue", "16x16"), text="Modify", fn=self.modify, width=self.parent.width_button, height=label.GetSize()[1]+8)
