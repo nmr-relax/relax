@@ -27,6 +27,7 @@ from copy import deepcopy
 import wx
 
 # relax module imports.
+import dep_check
 from gui.fonts import font
 from gui.string_conv import gui_to_str, str_to_gui
 from lib.errors import RelaxError
@@ -102,7 +103,10 @@ class Spin_id:
 
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((divider - x, 0))
+        if dep_check.old_wx:
+            sub_sizer.AddSpacer((divider - x, 0))
+        else:
+            sub_sizer.AddSpacer(divider - x)
 
         # The input field.
         style = wx.CB_DROPDOWN

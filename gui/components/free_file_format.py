@@ -26,6 +26,7 @@ from wx.lib import buttons
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from graphics import IMAGE_PATH, fetch_icon
 from gui.fonts import font
 from gui.icons import Relax_icons
@@ -201,7 +202,10 @@ class Free_file_format:
 
         # Spacing.
         x, y = text.GetSize()
-        sub_sizer.AddSpacer((self.divider - x, 0))
+        if dep_check.old_wx:
+            sub_sizer.AddSpacer((self.divider - x, 0))
+        else:
+            sub_sizer.AddSpacer(self.divider - x)
 
         # Initialise the text input field.
         self.field = wx.TextCtrl(self.parent, -1, '')
