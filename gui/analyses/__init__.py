@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,7 +26,6 @@
 import inspect
 import sys
 import wx
-from types import ListType
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
