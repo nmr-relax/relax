@@ -70,7 +70,7 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         super(Base_analysis, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
         # Determine the size of the scrollers.
-        self.width_vscroll = wx.SystemSettings_GetMetric(wx.SYS_VSCROLL_X)
+        self.width_vscroll = wx.SystemSettings.GetMetric(wx.SYS_VSCROLL_X)
 
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)

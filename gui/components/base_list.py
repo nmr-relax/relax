@@ -226,7 +226,7 @@ class Base_list(object):
             centre = (self.height_char + 6) * n 
 
             # Size of the scrollbar for the end of the table.
-            foot = wx.SystemSettings_GetMetric(wx.SYS_HSCROLL_Y)
+            foot = wx.SystemSettings.GetMetric(wx.SYS_HSCROLL_Y)
 
             # Sum.
             height = head + centre + foot
