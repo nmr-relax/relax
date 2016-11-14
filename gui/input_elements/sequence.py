@@ -212,6 +212,10 @@ class Sequence:
             if read_only == None:
                 read_only = False
 
+            # Correct the min_length argument.
+            if combo_list_min == None:
+                combo_list_min = 1
+
             # Set up the Combo_list object.
             self._field = Combo_list(parent, sizer, desc, value_type=value_type, min_length=combo_list_min, choices=combo_choices, data=combo_data, default=default, tooltip=tooltip, read_only=read_only, can_be_none=can_be_none)
 
