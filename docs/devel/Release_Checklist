@@ -151,7 +151,9 @@ Create the HTML version of the manual with the command:
 
 $ scons user_manual_html
 
-Replace the old manual with the new in the http://www.nmr-relax.com/manual SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new manual.
+Replace the old manual with the new in the http://www.nmr-relax.com/manual SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new manual.  To restore any missing redirects, in the website repository checkout run:
+
+$ python .setup_redirects.py
 
 
 API documentation
@@ -202,8 +204,8 @@ For the changes file text, make the following conversions:
 
     - For all bugs, support requests, and tasks, make links to the trackers including the full description in the link.  (for vim, go to the start of the text and use the register: "3dwr[/)^Mi ^[pxr]").
     - Make links to the relax manual for all user functions:
-        - Vim register:  "v/[ ,\r\n]^M<80>kl<80>kDi[http://www.nmr-relax.com/manual/^[pa.html ^[pa]^[/user function^M",
-        - Vim register:  "v/[ ,\r\n]^M<80>kl<80>kDi[http://www.nmr-relax.com/manual/^[pa.html ^[p/user function^M2cwuser function]^[",
+        - Vim register:  "v/[ ,\r\n]hxi[http://www.nmr-relax.com/manual/pa.html pa]/user function",
+        - Vim register:  "v/[ ,\r\n]hxi[http://www.nmr-relax.com/manual/pa.html p/user function2cwuser function]",
         - Then search for "www.nmr-relax.com\/manual\/[a-z0-9_]*\.\|html" and replace all '.'.
     - Make internal links for all relax versions (vi search for "[1-3]\.[0-9]*\.[0-9]*").
     - Convert all symbols to use wiki formatting.
