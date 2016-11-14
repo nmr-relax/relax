@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -511,16 +511,16 @@ class Pcs(SystemTestCase):
 
         # The simulated data (from 1,000,000 randomisations of 0.2 Angstrom RMSD).
         pcs_struct_err = {
-            'Dy N-dom': 0.014643633242475744,
-            'Er N-dom': 0.0047594540182391868,
-            'Tm N-dom': 0.010454580925459261,
-            'Tb N-dom': 0.01613972832580988
+            'Dy N-dom': 0.0253,
+            'Er N-dom': 0.0081,
+            'Tm N-dom': 0.0181,
+            'Tb N-dom': 0.0280
         }
         pcs_err = {
-            'Dy N-dom': 0.1010664929367797,
-            'Er N-dom': 0.10011319794388618,
-            'Tm N-dom': 0.1005450061531003,
-            'Tb N-dom': 0.10129408092495312
+            'Dy N-dom': 0.1031,
+            'Er N-dom': 0.1001,
+            'Tm N-dom': 0.1016,
+            'Tb N-dom': 0.1038
         }
 
         # Alias the single spin.
