@@ -264,7 +264,7 @@ class Combo_list:
 
         # Destroy the subsizer.
         sub_sizer = self._sub_sizers.pop()
-        sub_sizer.DeleteWindows()
+        sub_sizer.Clear(True)
         self._main_sizer.Remove(sub_sizer)
 
         # Re-perform the window layout.
