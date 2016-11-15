@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,6 +33,8 @@ import sys
 from time import sleep
 if dep_check.wx_module:
     import wx
+    if not dep_check.old_wx:
+        import wx.adv
 
 # relax module imports.
 from graphics import IMAGE_PATH
@@ -127,4 +129,7 @@ class App(wx.App):
         timeout = 2500
 
         # The splash screen.
-        screen = wx.SplashScreen(bmp, wx.SPLASH_CENTRE_ON_PARENT | wx.SPLASH_TIMEOUT, timeout, None, -1)
+        if dep_check.old_wx:
+            screen = wx.SplashScreen(bmp, wx.SPLASH_CENTRE_ON_PARENT | wx.SPLASH_TIMEOUT, timeout, None, -1)
+        else:
+            screen = wx.adv.SplashScreen(bmp, wx.adv.SPLASH_CENTRE_ON_PARENT | wx.adv.SPLASH_TIMEOUT, timeout, None, -1)
