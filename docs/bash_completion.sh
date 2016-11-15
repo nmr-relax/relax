@@ -25,7 +25,7 @@
 
 _relax() {
     # Define the variables.
-    local cur prev dir py_scripts opts
+    local cur prev opts
 
     # Initialise the COMPREPLY array.
     COMPREPLY=()
