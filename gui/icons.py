@@ -28,6 +28,7 @@ import sys
 import wx
 
 # relax module imports.
+import dep_check
 from status import Status; status = Status()
 
 
@@ -39,4 +40,7 @@ class Relax_icons(wx.IconBundle):
 
         # This is disabled on Macs.
         if not 'darwin' in sys.platform:
-            self.AddIconFromFile(status.install_path + sep + 'graphics' + sep + 'ulysses.ico', wx.BITMAP_TYPE_ANY)
+            if dep_check.old_wx:
+                self.AddIconFromFile(status.install_path + sep + 'graphics' + sep + 'ulysses.ico', wx.BITMAP_TYPE_ANY)
+            else:
+                self.AddIcon(status.install_path + sep + 'graphics' + sep + 'ulysses.ico', wx.BITMAP_TYPE_ANY)
