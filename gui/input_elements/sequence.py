@@ -519,7 +519,8 @@ class Sequence_window(wx.Dialog):
 
         # Set the frame properties.
         self.SetSize(self.SIZE)
-        self.Centre()
+        if not dep_check.old_wx and status.show_gui:
+            self.Centre()
         self.SetFont(font.normal)
 
         # The main box sizer.
