@@ -34,20 +34,6 @@ _relax() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    # Multi-processor option values.
-    case "${prev}" in
-        --multi)
-            COMPREPLY=( $(compgen -W "mpi4py" -- ${cur}) )
-            return 0
-            ;;
-        --processors)
-            COMPREPLY=( $(compgen -W "$(seq 2 257)" -- ${cur}) )
-            return 0
-            ;;
-        *)
-        ;;
-    esac
-
     # Handle options.
     if [[ ${cur} == -* ]] ; then
         # The help options.
@@ -73,20 +59,42 @@ _relax() {
 
         # Success.
         return 0
-
-    # Handle scripts.
-    else [[ ${cur} == * ]]
-        # Directories and Python scripts.
-        dir=$(echo .*/ */ 2> /dev/null)
-        py_scripts=$(/bin/ls *.py 2> /dev/null)
-
-        # Set COMPREPLY.
-        COMPREPLY=( $(compgen -W "${dir} ${py_scripts}" -- ${cur}) )
-
-        # Success.
-        return 0
-
     fi
+
+    # Multi-processor option values.
+    case "${prev}" in
+        --multi)
+            COMPREPLY=( $(compgen -W "mpi4py" -- ${cur}) )
+            return 0
+            ;;
+        --processors)
+            COMPREPLY=( $(compgen -W "$(seq 2 257)" -- ${cur}) )
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+    # Handle relax scripts which must end in *.py.
+    COMPREPLY=( $(compgen -f -X '!*.py' -- ${cur}) )
+
+    # Defer to _filedir for directory completion.
+    if [[ -z "${CDPATH:-}" || "$cur" == ?(.)?(.)/* ]]; then
+        _filedir -d
+        return 0
+    fi
+
+    # Append a trailing '/' for unique directory names, if missing.
+    if [[ ${#COMPREPLY[@]} -eq 1 ]]; then
+        i=${COMPREPLY[0]}
+        if [[ "$i" == "${cur}" && $i != "*/" ]]; then
+            COMPREPLY[0]="${i}/"
+        fi
+        return 0
+    fi
+
+    return 0
 }
 
-complete -F _relax relax
+# Set up the completion for relax, avoiding trailing spaces for better subdirectory completion.
+complete -o nospace -F _relax relax
