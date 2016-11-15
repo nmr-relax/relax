@@ -96,5 +96,5 @@ _relax() {
     return 0
 }
 
-# Set up the completion for relax, avoiding trailing spaces for better subdirectory completion.
-complete -o nospace -F _relax relax
+# Set up the completion for relax.
+complete -F _relax relax
