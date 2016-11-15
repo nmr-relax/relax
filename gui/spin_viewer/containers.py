@@ -139,7 +139,7 @@ class Container_base:
         obj = wx.StaticText(self.parent, -1, text)
 
         # Formatting.
-        obj.SetFont(wx.Font(pointSize=12, family=wx.FONTFAMILY_ROMAN, style=wx.ITALIC, weight=wx.NORMAL, face='Times'))
+        obj.SetFont(wx.Font(12, wx.FONTFAMILY_ROMAN, wx.ITALIC, wx.NORMAL, False, 'Times'))
 
         # Return the object.
         return obj
@@ -164,7 +164,7 @@ class Container_base:
         obj = wx.StaticText(self.parent, -1, text)
 
         # Formatting.
-        obj.SetFont(wx.Font(pointSize=16, family=wx.FONTFAMILY_ROMAN, style=wx.ITALIC, weight=wx.NORMAL, face='Times'))
+        obj.SetFont(wx.Font(16, wx.FONTFAMILY_ROMAN, wx.ITALIC, wx.NORMAL, False, 'Times'))
 
         # Return the object.
         return obj
@@ -183,7 +183,7 @@ class Container_base:
         title = wx.StaticText(self.parent, -1, text)
 
         # Formatting.
-        title.SetFont(wx.Font(pointSize=32, family=wx.FONTFAMILY_ROMAN, style=wx.ITALIC, weight=wx.NORMAL, face='Times'))
+        title.SetFont(wx.Font(32, wx.FONTFAMILY_ROMAN, wx.ITALIC, wx.NORMAL, False, 'Times'))
 
         # Return the object.
         return title
