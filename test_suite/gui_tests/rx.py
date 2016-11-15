@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -69,7 +69,7 @@ class Rx(GuiTestCase):
         self.assertEqual(len(cdp.relax_times), 10)
         cdp_relax_times = sorted(cdp.relax_times.values())
         for i in range(10):
-            self.assertEqual(cdp_relax_times[i], relax_times[i])
+            self.assertAlmostEqual(cdp_relax_times[i], relax_times[i])
 
         # Check the errors.
         for key in cdp.sigma_I:
