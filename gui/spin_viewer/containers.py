@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -90,7 +90,7 @@ class Container(wx.Window):
         """
 
         # Destroy all the original contents.
-        self.main_sizer.Clear(deleteWindows=True)
+        self.main_sizer.Clear(True)
 
         # The root window display.
         if info == 'root' or info == None:
