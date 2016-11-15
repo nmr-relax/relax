@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -235,7 +235,7 @@ class Menu:
         """
 
         # Launch the user function.
-        uf_store['sys_info']()
+        uf_store['system.sys_info']()
 
 
     def update_menus(self, event):
