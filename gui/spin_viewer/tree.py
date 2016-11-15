@@ -139,7 +139,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # The panel dimensions.
-        width, height = self.GetClientSizeTuple()
+        width, height = self.GetClientSize()
 
         # Set the tree dimensions.
         self.tree.SetDimensions(0, 0, width, height)
