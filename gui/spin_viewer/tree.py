@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -139,7 +139,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # The panel dimensions.
-        width, height = self.GetClientSizeTuple()
+        width, height = self.GetClientSize()
 
         # Set the tree dimensions.
         self.tree.SetDimensions(0, 0, width, height)
