@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -784,7 +784,8 @@ class Spectra_list(Base_list):
 
         # Delete the rows and columns.
         self.element.DeleteAllItems()
-        self.element.DeleteAllColumns()
+        for i in reversed(range(self.element.GetColumnCount())):
+            self.element.DeleteColumn(i)
 
         # Initialise to a single column.
         self.element.InsertColumn(0, str_to_gui("Spectrum ID"))
