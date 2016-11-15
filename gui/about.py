@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,6 +29,7 @@ import wx.html
 from wx.lib.wordwrap import wordwrap
 
 # relax module imports.
+import dep_check
 from graphics import IMAGE_PATH
 from gui.fonts import font
 from gui.icons import relax_icons
@@ -111,7 +112,8 @@ class About_base(wx.Frame):
         self.window.Bind(wx.EVT_LEFT_DOWN, self.process_click)
 
         # Center Window
-        self.Centre()
+        if status.show_gui:
+            self.Centre()
 
 
     def add_html(self, text):
@@ -184,7 +186,8 @@ class About_base(wx.Frame):
         self.offset(-self.virt_y)
 
         # Finish.
-        self.dc.EndDrawing()
+        if dep_check.old_wx:
+            self.dc.EndDrawing()
 
 
     def cursor_style(self, event):
