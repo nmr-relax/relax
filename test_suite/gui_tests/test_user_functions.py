@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -70,7 +70,7 @@ class User_functions(GuiTestCase):
 
         # Set the y-value of a single point, and check.
         uf.page.uf_args['point'].selection_win_show()
-        uf.page.uf_args['point'].sel_win.sequence.SetStringItem(index=0, col=2, label=int_to_gui(2))
+        uf.page.uf_args['point'].sel_win.sequence.SetStringItem(0, 2, int_to_gui(2))
         uf.page.uf_args['point'].selection_win_data()
         points = uf.page.uf_args['point'].GetValue()
         print("Points:  %s" % points)
@@ -133,8 +133,8 @@ class User_functions(GuiTestCase):
         for val in ['x']:
             uf.page.uf_args['point'].SetValue(str_to_gui(''))
             uf.page.uf_args['point'].selection_win_show()
-            uf.page.uf_args['point'].sel_win.sequence.SetStringItem(index=0, col=2, label=str_to_gui(val))
-            uf.page.uf_args['point'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(1))
+            uf.page.uf_args['point'].sel_win.sequence.SetStringItem(0, 2, str_to_gui(val))
+            uf.page.uf_args['point'].sel_win.sequence.SetStringItem(0, 1, int_to_gui(1))
             uf.page.uf_args['point'].selection_win_data()
             points = uf.page.uf_args['point'].GetValue()
             print("Points:  %s" % points)
@@ -202,7 +202,7 @@ class User_functions(GuiTestCase):
 
         # Set the y-value of a single pos, and check.
         #uf.page.uf_args['pos'].selection_win_show()
-        #uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
+        #uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(1, 1, int_to_gui(2))
         #uf.page.uf_args['pos'].selection_win_data()
         #pos = uf.page.uf_args['pos'].GetValue()
         #print("Pos:  %s" % pos)
@@ -252,8 +252,8 @@ class User_functions(GuiTestCase):
             uf.page.uf_args['pos'].SetValue(str_to_gui(''))
             uf.page.uf_args['pos'].selection_win_show()
             uf.page.uf_args['pos'].sel_win.add_element()
-            uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=1, col=1, label=str_to_gui(val))
-            uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(1))
+            uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(1, 1, str_to_gui(val))
+            uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(0, 1, int_to_gui(1))
             uf.page.uf_args['pos'].selection_win_data()
             pos = uf.page.uf_args['pos'].GetValue()
             sys.stdout.write("Return: %40s\n" % repr(pos))
@@ -282,15 +282,15 @@ class User_functions(GuiTestCase):
         uf.page.SetValue('read_model', str_to_gui('6'))
         uf.page.uf_args['read_model'].selection_win_show()
         uf.page.uf_args['read_model'].sel_win.add_element(None)
-        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(2))
-        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(4))
+        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(0, 1, int_to_gui(2))
+        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(1, 1, int_to_gui(4))
         uf.page.uf_args['read_model'].selection_win_data()
 
         # Renumber the models.
         uf.page.uf_args['set_model_num'].selection_win_show()
         uf.page.uf_args['set_model_num'].sel_win.add_element(None)
-        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(1))
-        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(3))
+        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(0, 1, int_to_gui(1))
+        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(1, 1, int_to_gui(3))
         uf.page.uf_args['set_model_num'].selection_win_data()
 
         # GUI data checks.
@@ -327,15 +327,15 @@ class User_functions(GuiTestCase):
         uf.page.SetValue('read_model', str_to_gui('6'))
         uf.page.uf_args['read_model'].selection_win_show()
         uf.page.uf_args['read_model'].sel_win.add_element(None)
-        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(2))
-        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(4))
+        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(0, 1, int_to_gui(2))
+        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(1, 1, int_to_gui(4))
         uf.page.uf_args['read_model'].selection_win_data()
 
         # Renumber the models.
         uf.page.uf_args['set_model_num'].selection_win_show()
         uf.page.uf_args['set_model_num'].sel_win.add_element(None)
-        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(1))
-        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(3))
+        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(0, 1, int_to_gui(1))
+        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(1, 1, int_to_gui(3))
         uf.page.uf_args['set_model_num'].selection_win_data()
 
         # GUI data checks.
@@ -352,7 +352,7 @@ class User_functions(GuiTestCase):
 
         # Change the rotation matrix in the Sequence_2D window, without changing anything, then check it.
         uf.page.uf_args['R'].selection_win_show()
-        uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
+        uf.page.uf_args['R'].sel_win.sequence.SetStringItem(1, 1, int_to_gui(2))
         uf.page.uf_args['R'].selection_win_data()
         R = uf.page.uf_args['R'].GetValue()
         print("Rotation matrix:\n%s" % R)
@@ -371,7 +371,7 @@ class User_functions(GuiTestCase):
         # Set the rotation matrix to nothing in the wizard, open the Sequence_2D window, set a value, close the window, and check what happens.
         uf.page.uf_args['R'].SetValue(str_to_gui(''))
         uf.page.uf_args['R'].selection_win_show()
-        uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
+        uf.page.uf_args['R'].sel_win.sequence.SetStringItem(1, 1, int_to_gui(2))
         uf.page.uf_args['R'].selection_win_data()
         R = uf.page.uf_args['R'].GetValue()
         print("Rotation matrix:\n%s" % R)
@@ -408,8 +408,8 @@ class User_functions(GuiTestCase):
         for val in ['x']:
             uf.page.uf_args['R'].SetValue(str_to_gui(''))
             uf.page.uf_args['R'].selection_win_show()
-            uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=str_to_gui(val))
-            uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=0, col=0, label=int_to_gui(1))
+            uf.page.uf_args['R'].sel_win.sequence.SetStringItem(1, 1, str_to_gui(val))
+            uf.page.uf_args['R'].sel_win.sequence.SetStringItem(0, 0, int_to_gui(1))
             uf.page.uf_args['R'].selection_win_data()
             R = uf.page.uf_args['R'].GetValue()
             print("Rotation matrix:\n%s" % R)

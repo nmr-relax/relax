@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2015 Edward d'Auvergne                                        #
+# Copyright (C) 2015-2016 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -58,7 +58,7 @@ class Frame(Testing_frame):
             # Set the parameters.
             uf.page.uf_args['params'].SetValue(str_to_gui('(0.00000, -0.00017, 0.00016, 0.00060, -0.00019)'))
             uf.page.uf_args['params'].selection_win_show()
-            uf.page.uf_args['params'].sel_win.sequence.SetStringItem(index=0, col=1, label=float_to_gui(0.00037))
+            uf.page.uf_args['params'].sel_win.sequence.SetStringItem(0, 1, float_to_gui(0.00037))
             uf.page.uf_args['params'].selection_win_data()
 
             # Set up the other tensor data.

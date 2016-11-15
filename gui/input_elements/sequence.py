@@ -611,7 +611,7 @@ class Sequence_window(wx.Dialog):
         for i in range(len(values)):
             # Fixed dimension sequences - set the values of the pre-created list.
             if not self.variable_length:
-                self.sequence.SetStringItem(index=i, col=1, label=self.convert_to_gui(values[i]))
+                self.sequence.SetStringItem(i, 1, self.convert_to_gui(values[i]))
 
             # Variable dimension sequences - append the item to the end of the blank list.
             else:
@@ -621,7 +621,7 @@ class Sequence_window(wx.Dialog):
                     self.sequence.InsertStringItem(i, int_to_gui(i+1))
 
                 # Then set the value.
-                self.sequence.SetStringItem(index=i, col=1, label=self.convert_to_gui(values[i]))
+                self.sequence.SetStringItem(i, 1, self.convert_to_gui(values[i]))
 
 
     def add_buttons(self, sizer):
