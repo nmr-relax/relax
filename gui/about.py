@@ -526,7 +526,7 @@ class About_relax(About_base):
         dim_y = self.offset() + self.border
         self.SetSize((dim_x, dim_y))
         self.window.SetVirtualSize((dim_x, dim_y))
-        self.window.EnableScrolling(x_scrolling=False, y_scrolling=False)
+        self.window.EnableScrolling(False, False)
 
         # Add space to the bottom.
         self.offset(self.border)

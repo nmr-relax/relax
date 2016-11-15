@@ -144,7 +144,7 @@ class About_window(About_base):
         virt_y = self.offset()
         self.SetSize((dim_x, self.dim_y))
         self.window.SetVirtualSize((dim_x, virt_y))
-        self.window.EnableScrolling(x_scrolling=False, y_scrolling=True)
+        self.window.EnableScrolling(False, True)
 
 
 
