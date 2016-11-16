@@ -73,8 +73,8 @@ class Rx(GuiTestCase):
 
         # Check the errors.
         for key in cdp.sigma_I:
-            self.assertEqual(cdp.sigma_I[key], 10578.039482421433)
-            self.assertEqual(cdp.var_I[key], 111894919.29166669)
+            self.assertAlmostEqual(cdp.sigma_I[key], 10578.039482421433)
+            self.assertAlmostEqual(cdp.var_I[key], 111894919.29166669)
 
         # Spin data check.
         i = 0
