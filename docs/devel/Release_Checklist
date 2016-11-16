@@ -125,13 +125,21 @@ Move the distribution files and their signatures to the mirror directory for the
 
 $ rsync -av --progress --no-perms --rsh="ssh" bugman@download.gna.org:/upload/relax/ .
 
-Then rsync the entire directory contents to download.gna.org/upload/relax/ using the command:
+Change "bugman" to your user name.  Then rsync the entire directory contents to download.gna.org/upload/relax/ using the command:
 
-$ rsync --delete -av --progress --no-perms --partial --rsh="ssh" . bugman@download.gna.org:/upload/relax/
+$ rsync --delete -rlptoDvP --progress --partial --no-perms --rsh="ssh" --numeric-ids . bugman@download.gna.org:/upload/relax/
 
 The upload script simplifies the upload process:
 
-$ ./upload
+$ ./upload bugman
+
+Upload copies to the relax SourceForge file area as well:
+
+$ rsync --delete -rlptoDvP --progress --partial --no-perms -e ssh --numeric-ids . bugman@frs.sourceforge.net:/home/frs/project/nmr-relax/
+
+Or:
+
+$ ./upload bugman sf
 
 
 
