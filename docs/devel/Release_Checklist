@@ -295,4 +295,4 @@ For the Gna! and SourceForge download area, a reStructuredText formatted README.
 
 $ html2rest --no-wrap --embedded-uri http://wiki.nmr-relax.com/Relax_4.0.3 $RELAX_DOWNLOAD_PATH/4.0.3/README.rst
 
-And rerun the upload commands as above.
+Delete all the wiki text under the main title, and everything after "Retrieved from".  Then rerun the upload commands as above.
