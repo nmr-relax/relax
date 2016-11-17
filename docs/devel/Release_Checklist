@@ -286,3 +286,13 @@ Softpedia also has information about the newest relax releases:
 """
 
 Not all of these links may work, as the email archives are not 100% perfect.  For the wiki, transclude the softpedia page http://wiki.nmr-relax.com/Softpedia using {{:Softpedia}}, and add a section to the table at http://wiki.nmr-relax.com/Category:Release_Notes for the release.  For the news item, reply to the item with the subject "Links to the other release announcements.".
+
+
+README file
+-----------
+
+For the Gna! and SourceForge download area, a reStructuredText formatted README.rst file should be created.  This is automatically generated from the wiki page using html2rest.  To have access to the --no-wrap and --embedded-uri options for 100% accurate links, install a copy of python-html2rest from https://sourceforge.net/p/nmr-relax/code-python-html2rest/.  Then type:
+
+$ html2rest --no-wrap --embedded-uri http://wiki.nmr-relax.com/Relax_4.0.3 $RELAX_DOWNLOAD_PATH/4.0.3/README.rst
+
+And rerun the upload commands as above.
