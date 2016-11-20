@@ -118,11 +118,11 @@ monte_carlo.error_analysis()
 time()
 
 # Create the PDB representation.
-frame_order.pdb_model(ave_pos='ave_pos_free_start', rep='frame_order_free_start', dist=None, compress_type=2, force=True)
+frame_order.pdb_model(ave_pos='ave_pos_free_start', rep='frame_order_free_start', compress_type=2, force=True)
 
 # Compare to the true result in PyMOL.
-pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true', dist=None)
-pymol.frame_order(ave_pos='ave_pos_free_start', rep='frame_order_free_start', dist=None)
+pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true')
+pymol.frame_order(ave_pos='ave_pos_free_start', rep='frame_order_free_start')
 
 # Save the state.
 state.save('frame_order_free_start', force=True)

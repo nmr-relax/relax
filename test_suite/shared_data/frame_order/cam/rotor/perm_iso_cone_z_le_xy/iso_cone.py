@@ -80,14 +80,14 @@ for perm in [None, 'A']:
         frame_order.permute_axes(permutation=perm)
 
     # Create a pre-optimisation PDB representation.
-    frame_order.pdb_model(ave_pos=None, rep='fo_orig'+tag, dist=None, compress_type=2, force=True)
+    frame_order.pdb_model(ave_pos=None, rep='fo_orig'+tag, compress_type=2, force=True)
 
     # High precision optimisation.
     frame_order.num_int_pts(num=10000)
     minimise.execute('simplex', func_tol=1e-4)
 
     # Create the PDB representation.
-    frame_order.pdb_model(ave_pos=None, rep='fo'+tag, dist=None, compress_type=2, force=True)
+    frame_order.pdb_model(ave_pos=None, rep='fo'+tag, compress_type=2, force=True)
 
 # Sanity check.
 pipe.display()

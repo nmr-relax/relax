@@ -133,7 +133,7 @@ value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 calc()
 
 # Create the PDB representation of the true state.
-frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)
+frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', compress_type=2, force=True)
 
 # Save the state.
 state.save('frame_order_true', force=True)
@@ -150,7 +150,7 @@ for i in range(len(num_int_pts)):
     minimise.execute('simplex', func_tol=func_tol[i])
 
 # Store the result.
-frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
+frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', compress_type=2, force=True)
 
 # Save the state.
 state.save('frame_order_fixed_piv', force=True)
@@ -184,12 +184,12 @@ eliminate()
 monte_carlo.error_analysis()
 
 # Create the PDB representation.
-frame_order.pdb_model(ave_pos='ave_pos', rep='frame_order', dist=None, compress_type=2, force=True)
+frame_order.pdb_model(ave_pos='ave_pos', rep='frame_order', compress_type=2, force=True)
 
 # PyMOL.
-pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true', dist=None)
-pymol.frame_order(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None)
-pymol.frame_order(ave_pos='ave_pos', rep='frame_order', dist=None)
+pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true')
+pymol.frame_order(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv')
+pymol.frame_order(ave_pos='ave_pos', rep='frame_order')
 
 # Save the state.
 state.save('frame_order', force=True)
