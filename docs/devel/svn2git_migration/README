@@ -1,0 +1,162 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+SVN to git migration
+====================
+
+With the shutdown of Gna!, prior to moving to a new infrastructure provider a Subversion to git repository migration was performed.  Within this documentation directory are all of the scripts used.  For the record, below is the full set of migration instructions.
+
+
+SVN repository preparation
+==========================
+
+For the migration a dedicated directory was created:
+
+$ mkdir git_migration
+$ cd !$
+
+
+SVN repository cleanup
+----------------------
+
+Firstly for preserving all commits, the branch deletion commits must be removed from the svn repository with:
+
+$ ./svn_cleanup.py 2>&1 | tee svn_cleanup.log
+
+
+Authors file
+------------
+
+The commands used were:
+
+$ cd ..
+$ svn log -q file:///data/relax/gna/repository_backup/gna.repo/ | awk -F '|' '/^r/ {sub("^ ", "", $2); sub(" $", "", $2); print $2" = "$2" <"$2">"}' | sort -u > authors-transform.txt
+$ gvim authors-transform.txt    # Fix author names + email addresses.
+
+
+Website
+=======
+
+For spinning the website component of the svn repository out into its own git repository, the commands used were:
+
+$ mkdir git_migration/website
+$ cd git_migration/website
+$ export SVN_REPO="/data/relax/gna/repository_backup/svnrepo/"
+$ mkdir repo
+$ cd repo
+$ svn2git file://$SVN_REPO --trunk website --nobranches --notags --authors ../../authors-transform.txt
+
+
+Git-svn conversion
+==================
+
+The svn to git migration was performed using git-svn within the 'git_migration' directory with:
+
+$ ./gitsvn_conversion.sh
+
+This loads the trunk renames of 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3 as branches, and the rest with the standard layout.  This process took close to 2 weeks to complete.
+
+
+Clean up
+--------
+
+The git svn repository was automatically cleaned up with the script:
+
+$ ./git_cleanup.py 2>&1 | tee git_cleanup.log
+
+Then to fix up the trunk renaming:
+
+$ ./trunk_fix.py 2>&1 | tee trunk_fix.log
+
+To check for replicated commits, for debugging:
+
+$ ./dups.py 2>&1 | tee dups.log
+
+To automatically find all svnmerge.py mergers and generate the 'svnmergepy_list.py' Python module:
+
+$ ./svnmergepy_reconstruct.py
+
+Edit the 'svnmergepy_list.py' file to fix any replicated commit first lines and dates.  Note that parent 1 and parent 2 commits might be the same - this is a problem with old versions of svnmerge.py incorrectly marking the revisions.  These can be identified with:
+
+$ ./test_svnmergepy_list.py
+
+The errors can be fixed in the auto-generated 'svnmergepy_list.py' file or the subsequent 'merge_reconstruction.py' script.  Edit the 'merge_reconstruction.py' file and add all the non svnmerge.py merge points.  Set the TEST_COMMITS flag in that script to True to test for non-matching commit first lines and dates, for replicates and for possible missed merges:
+
+$ ./merge_reconstruction.py 2>&1 | tee merge_reconstruction_test_commits.log
+
+Then to recreate the missing branch merging:
+
+$ ./merge_reconstruction.py 2>&1 | tee -a merge_reconstruction.log
+
+This 'merge_reconstruction.py' script can be run multiple times, as a '.merge_reconstruction' file is created in the new repository for tracking the history changes already performed.  Look for all references in the final repository (see below) and fix any svnmerge.py script errors whereby the back-merge commits are missed by adding these to the HISTORY_FIXES variable.  Then rerun the script.
+
+
+Checking
+--------
+
+To check the resultant repository at all points:
+
+$ GIT_PAGER="less -S" git log --all --graph --date-order --pretty=format:'%Cred%H %P%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --date=iso
+
+To search for merge points, use "/[a-f0-9]{40} [a-f0-9]{40} [a-f0-9]{40} -".  And for finding all references, use "/.* - \(.*)".
+
+
+Grafting lost commits
+---------------------
+
+For finding any lost commits, run:
+
+$ ./lost_commits.py 2>&1 | tee lost_commits.log
+
+This will create a log file listing the missing commits as well as the lost_commits.svn.log and lost_commits.git.log files containing all commits which can be compared.  If a lost commit is found add one of the earlier git repositories which still contains the commit as a remote and run 'git fetch --all', checkout the remote branch containing the commit, and remove the remote.  Then manually use 'git filter-branch' to set the correct parents, e.g.:
+
+$ git filter-branch --force --parent-filter 'test $GIT_COMMIT = b3cf9eae7bd2adc02e3b39c3aefea5f68cb9be5c && echo "-p bd06f8c7726dd3487cbd4b372c6be25f91837159" || cat' multi_processor_merge --all
+
+Here the missing commit b3cf9eae is attached to the real parent bd06f8c7.  Check the progress using 'git log' as above.  To graft the rest of the multi_processor_merge branch:
+
+$ git filter-branch --force --parent-filter 'test $GIT_COMMIT = 6a6c55ee0e32ea692a3acdbb6b64a797b176abdf && echo "-p b3cf9eae7bd2adc02e3b39c3aefea5f68cb9be5c -p 82c5853c891dd94b69de32c144a6502f5476f3dc" || cat' multi_processor_merge --all
+
+Then to clean up and remove all the non-grafted commits:
+
+$ git checkout master
+$ git for-each-ref --format="%(refname)" refs/original/ | xargs -n 1 git update-ref -d
+$ git reflog expire --expire=now --all
+$ git gc --prune=now
+
+
+Git-svn bridge branches
+-----------------------
+
+A number of branches are present in the git-svn bridge repositories used by relax.  The command used to pull these in are:
+
+$ git remote add bridge /data/relax/git/relax-trunk/
+$ git fetch --all
+$ git checkout phoenix
+$ git checkout wxPython-Phoenix/r1
+$ git checkout wxPython-Phoenix/r2
+$ git checkout master
+$ git remote remove bridge
+
+Then the 'merge_reconstruction.py' variable HISTORY_FIXES was updated to graft these branches onto 'master':
+
+$ ./merge_reconstruction.py 2>&1 | tee -a merge_reconstruction.log
+
