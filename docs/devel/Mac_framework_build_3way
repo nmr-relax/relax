@@ -1,7 +1,8 @@
 This is a set of instructions on how to set up a 3-way (i386, pcc, x86_64) Python development framework for Mac OS X.  This requires Xcode to be installed.
 
 
-# Python.
+Python
+======
 
 Unpack Python 2.7, and then run:
 
@@ -18,7 +19,8 @@ Check the Python Framework 3-way architecture using the devel_scripts/framework_
 
 
 
-# Numpy.
+Numpy
+=====
 
 Unpack numpy, and then run:
 
@@ -28,7 +30,8 @@ This should take the deployment target platform, the architectures, etc. from th
 
 
 
-# Scipy.
+Scipy
+=====
 
 Install the appropriate GNU fortran version to add to Xcode (for example gfortran-42-5664.pkg from http://r.research.att.com/tools/).  Xcode does not come with a Fortran compiler and the fink version will not be able to create Universal 3-way binaries.
 
@@ -43,7 +46,8 @@ The swig command will build the Scipy part requining the umfpack_*.h files, and 
 
 
 
-# Nose.
+Nose
+====
 
 This is needed for numpy and scipy testing via the numpy.test() and scipy.test() functions.  Download the latest version from https://pypi.python.org/pypi/nose, unpack it and type:
 
@@ -53,7 +57,8 @@ Do not use pip or easy_install!
 
 
 
-# Mpi4py.
+Mpi4py
+======
 
 The deployment target platform, SDK root, and the architectures need to be set explicitly with environmental variables:
 
@@ -69,7 +74,8 @@ The PATH change is required here just in case the non-framework Fink mpicc compi
 
 
 
-# wxPython 2.8.
+wxPython 2.8
+============
 
 Download and unpack the latest source release.  Create a build directory inside the unpacked sources and configure with:
 
@@ -110,7 +116,8 @@ make $* \
 
 
 
-# wxPython >= 2.9.
+wxPython >= 2.9
+===============
 
 Download and unpack the latest source release.  In the base directory, type:
 
@@ -119,7 +126,8 @@ $ ~/bin/python2.7 build-wxpython.py --build_dir=../bld --osx_cocoa --mac_univers
 
 
 
-# SCons.
+SCons
+=====
 
 Download and unpack the latest release, then type:
 
@@ -143,7 +151,8 @@ To:
 
 
 
-# Py2app.
+Py2app
+======
 
 This is needed to create the universal binary DMG distribution file.  Download the latest version from https://pypi.python.org/pypi/py2app/.  Then open it and:
 
@@ -151,7 +160,8 @@ $ ~/bin/python2.7 setup.py install
 
 
 
-# Matplotlib.
+Matplotlib
+==========
 
 Note that there are currently fatal bugs in matplotlib (currently 1.4.2) causing the relax universal binaries to fail.  The following dependencies (pkg-config, libpng, freetype) will be compiled as 3-way binaries and installed into /usr/local/.
 
