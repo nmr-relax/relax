@@ -1,0 +1,48 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+GPLv3+
+------
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+about.png:                                  Copyright (C) 2012 Edward d'Auvergne
+analysis_tab_full.png:                      Copyright (C) 2012 Edward d'Auvergne
+analysis_wizard1.png:                       Copyright (C) 2012 Edward d'Auvergne
+analysis_wizard2.png:                       Copyright (C) 2012 Edward d'Auvergne
+blank.png:                                  Copyright (C) 2012 Edward d'Auvergne
+bmrb_export_window.png:                     Copyright (C) 2012 Edward d'Auvergne
+csa_wizard.png:                             Copyright (C) 2012 Edward d'Auvergne
+dipole_wizard_define.png:                   Copyright (C) 2012 Edward d'Auvergne
+dipole_wizard_distance.png:                 Copyright (C) 2012 Edward d'Auvergne
+dipole_wizard_unit_vector.png:              Copyright (C) 2012 Edward d'Auvergne
+metadata.png:                               Copyright (C) 2012 Edward d'Auvergne
+protocol_mode.png:                          Copyright (C) 2012 Edward d'Auvergne
+relax_controller_executing.png:             Copyright (C) 2012 Edward d'Auvergne
+relax_data_file.png:                        Copyright (C) 2012 Edward d'Auvergne
+relax_data_intensity.png:                   Copyright (C) 2012 Edward d'Auvergne
+relax_data_temp_calibration.png:            Copyright (C) 2012 Edward d'Auvergne
+relax_data_temp_control.png:                Copyright (C) 2012 Edward d'Auvergne
+x_isotope.png:                              Copyright (C) 2012 Edward d'Auvergne
