@@ -1,0 +1,71 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These icons are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+align_tensor.png:           Copyright (C) 2012 Edward d'Auvergne
+bmrb.png:                   Copyright (C) 2012 Edward d'Auvergne
+bruker.png:                 Copyright (C) 2012-2013 Edward d'Auvergne
+bruker_add.png:             Copyright (C) 2012 Edward d'Auvergne
+chemical_shift.png:         Copyright (C) 2013 Edward d'Auvergne
+cluster.png:                Copyright (C) 2013 Edward d'Auvergne
+consistency_testing.png:    Copyright (C) 2012 Edward d'Auvergne
+diff_tensor.png:            Copyright (C) 2012 Edward d'Auvergne
+dipole_pair.png:            Copyright (C) 2012 Edward d'Auvergne
+discrepancy_curve.png:      Copyright (C) 2012 Edward d'Auvergne
+fid.png:                    Copyright (C) 2010 Edward d'Auvergne
+frame_order.png:            Copyright (C) 2012 Edward d'Auvergne
+frq.png:                    Copyright (C) 2012 Edward d'Auvergne
+gnu-head-mini.png:          Copyright (C) 2011 Edward d'Auvergne
+grid_search.png:            Copyright (C) 2012 Edward d'Auvergne
+j_coupling.png:             Copyright (C) 2013 Edward d'Auvergne
+jw_mapping.png:             Copyright (C) 2012 Edward d'Auvergne
+minimise.png:               Copyright (C) 2012 Edward d'Auvergne
+modelfree4.png:             Copyright (C) 2012 Edward d'Auvergne
+model-free.png:             Copyright (C) 2012 Edward d'Auvergne
+molecule.png:               Copyright (C) 2010 Edward d'Auvergne
+molecule_grey.png:          Copyright (C) 2011 Edward d'Auvergne
+molecule_unfolded.png:      Copyright (C) 2010 Edward d'Auvergne
+molecule_unfolded_grey.png: Copyright (C) 2011 Edward d'Auvergne
+nessy.png:                  Copyright (C) 2013 Edward d'Auvergne
+noe.png:                    Copyright (C) 2012 Edward d'Auvergne
+n_state_model.png:          Copyright (C) 2012 Edward d'Auvergne
+nuclear_symbol.png:         Copyright (C) 2012 Edward d'Auvergne
+opendx.png:                 Copyright (C) 2012 Edward d'Auvergne
+pipe_bundle.png:            Copyright (C) 2012 Edward d'Auvergne
+pipe_hybrid.png:            Copyright (C) 2011 Edward d'Auvergne
+pipe.png:                   Copyright (C) 2010 Edward d'Auvergne
+relax_fit.png:              Copyright (C) 2012 Edward d'Auvergne
+relax.png:                  Copyright (C) 2012 Edward d'Auvergne
+residue.png:                Copyright (C) 2010 Edward d'Auvergne
+residue_grey.png:           Copyright (C) 2011 Edward d'Auvergne
+rosenbrock.png:             Copyright (C) 2014 Edward d'Auvergne
+sequence.png:               Copyright (C) 2010 Edward d'Auvergne
+sherekhan.png:              Copyright (C) 2013 Edward d'Auvergne
+spectrometer.png:           Copyright (C) 2013 Edward d'Auvergne
+spin_grey.png:              Copyright (C) 2011 Edward d'Auvergne
+spin.png:                   Copyright (C) 2010 Edward d'Auvergne
+structure.png:              Copyright (C) 2011 Edward d'Auvergne
+value.png:                  Copyright (C) 2011 Edward d'Auvergne

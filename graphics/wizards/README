@@ -1,0 +1,98 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+GPLv3+
+------
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+align_tensor.png:                                   Copyright (C) 2012 Edward d'Auvergne
+bmrb.png:                                           Copyright (C) 2012 Edward d'Auvergne
+bruker.png:                                         Copyright (C) 2012-2013 Edward d'Auvergne
+deselect.png:                                       Copyright (C) 2012 Edward d'Auvergne
+deselect.xcf:                                       Copyright (C) 2012 Edward d'Auvergne
+diff_tensor.png:                                    Copyright (C) 2012 Edward d'Auvergne
+discrepancy_curve.png:                              Copyright (C) 2012 Edward d'Auvergne
+fid.png:                                            Copyright (C) 2010 Edward d'Auvergne
+frame_order.png:                                    Copyright (C) 2012 Edward d'Auvergne
+grace.png:                                          Copyright (C) 2011 Edward d'Auvergne
+j_coupling.png:                                     Copyright (C) 2013 Edward d'Auvergne
+minimise.png:                                       Copyright (C) 2012 Edward d'Auvergne
+model_elimination.png:                              Copyright (C) 2012 Edward d'Auvergne
+modelfree4.png:                                     Copyright (C) 2012 Edward d'Auvergne
+molecule_grey.png:                                  Copyright (C) 2011 Edward d'Auvergne
+molecule.png:                                       Copyright (C) 2010 Edward d'Auvergne
+molecule.xcf:                                       Copyright (C) 2010 Edward d'Auvergne
+monte_carlo.png:                                    Copyright (C) 2012 Edward d'Auvergne
+nessy.png:                                          Copyright (C) 2013 Edward d'Auvergne
+n_state_model.png:                                  Copyright (C) 2012 Edward d'Auvergne
+nuclear_symbol.png:                                 Copyright (C) 2012 Edward d'Auvergne
+opendx.png:                                         Copyright (C) 2012 Edward d'Auvergne
+pipe_200x90.png:                                    Copyright (C) 2011 Edward d'Auvergne
+pipe_bundle.png:                                    Copyright (C) 2012 Edward d'Auvergne
+pipe_hybrid.png:                                    Copyright (C) 2011 Edward d'Auvergne
+pipe.png:                                           Copyright (C) 2010 Edward d'Auvergne
+pipe_switch.png:                                    Copyright (C) 2010 Edward d'Auvergne
+pipe_switch.xcf:                                    Copyright (C) 2010 Edward d'Auvergne
+reset.png:                                          Copyright (C) 2012 Edward d'Auvergne
+reset.xcf:                                          Copyright (C) 2012 Edward d'Auvergne
+residue_grey.png:                                   Copyright (C) 2011 Edward d'Auvergne
+residue.png:                                        Copyright (C) 2010 Edward d'Auvergne
+select.png:                                         Copyright (C) 2012 Edward d'Auvergne
+select.xcf:                                         Copyright (C) 2012 Edward d'Auvergne
+sequence.png:                                       Copyright (C) 2010 Edward d'Auvergne
+sherekhan.png:                                      Copyright (C) 2013 Edward d'Auvergne
+spectrometer.png:                                   Copyright (C) 2013 Edward d'Auvergne
+spin_grey.png:                                      Copyright (C) 2011 Edward d'Auvergne
+spin.png:                                           Copyright (C) 2010 Edward d'Auvergne
+statistics.png:                                     Copyright (C) 2015 Edward d'Auvergne
+
+
+Oxygen icons
+------------
+
+These icons are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+object-locked-unlocked.png:                         Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+object-locked-unlocked.png:                         Copyright (C) 2007 David Vignoni <david@icon-king.com>
+object-locked-unlocked.png:                         Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+object-locked-unlocked.png:                         Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+object-locked-unlocked.png:                         Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+object-locked-unlocked.png:                         Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+oxygen-icon-weather-clear.png:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+oxygen-icon-weather-clear.png:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+oxygen-icon-weather-clear.png:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+oxygen-icon-weather-clear.png:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+oxygen-icon-weather-clear.png:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+oxygen-icon-weather-clear.png:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+oxygen-icon-weather-snow-scattered-night.png:       Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+oxygen-icon-weather-snow-scattered-night.png:       Copyright (C) 2007 David Vignoni <david@icon-king.com>
+oxygen-icon-weather-snow-scattered-night.png:       Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+oxygen-icon-weather-snow-scattered-night.png:       Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+oxygen-icon-weather-snow-scattered-night.png:       Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+oxygen-icon-weather-snow-scattered-night.png:       Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
