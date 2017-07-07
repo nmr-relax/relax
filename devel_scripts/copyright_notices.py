@@ -169,6 +169,10 @@ COMMITTER_ALT = {
 BLACKLISTED_FILES = [
     '.gitignore',                                               # Trivial file list.
     'docs/COPYING',                                             # The original GPLv3 licence text.
+    'docs/latex/gpl-3.0.tex',                                   # The original GPLv3 licence text.
+    'docs/latex/nth.sty',                                       # Public domain.
+    'docs/latex/relax_version.tex',                             # Single line auto-generated file.
+    'docs/latex/frame_order/compile_param_nesting',             # Trivial script.
 ]
 
 # Directories to skip.
@@ -204,10 +208,13 @@ START_DATE = {
     'docs/devel/README': [2017, "Edward d'Auvergne"],
     'docs/devel/svn2git_migration/dups.py': [2017, "Edward d'Auvergne"],
     'docs/devel/svn2git_migration/gitsvn_conversion.sh': [2017, "Edward d'Auvergne"],
+    'docs/latex/__init__.py': [2004, "Edward d'Auvergne"],
+    'docs/latex/licence.tex': [2005, "Edward d'Auvergne"],
 }
 
 # Additional copyrights that are not present in the git log.
 ADDITIONAL_COPYRIGHT = {
+    'docs/latex/relax.bst' : ["Copyright (C) 1988, all rights reserved."],
 }
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
