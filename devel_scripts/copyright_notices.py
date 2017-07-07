@@ -174,6 +174,10 @@ COMMITTER_ALT = {
 BLACKLISTED_FILES = [
     '.gitignore',                                               # Trivial file list.
     'docs/COPYING',                                             # The original GPLv3 licence text.
+    'docs/latex/gpl-3.0.tex',                                   # The original GPLv3 licence text.
+    'docs/latex/nth.sty',                                       # Public domain.
+    'docs/latex/relax_version.tex',                             # Single line auto-generated file.
+    'docs/latex/frame_order/compile_param_nesting',             # Trivial script.
 ]
 
 # Directories to skip.
@@ -226,10 +230,15 @@ GIT_START = {
         "Documented the svn to git repository migration. (2017-07-04 15:45:41 +0200)",
     "docs/devel/svn2git_migration/gitsvn_conversion.sh":
         "Documented the svn to git repository migration. (2017-07-04 15:45:41 +0200)",
+    "docs/latex/__init__.py":
+        "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
+    "docs/latex/licence.tex":
+        "Created the 'Licence' chapter in the manual. (2005-10-15 12:42:17 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
 ADDITIONAL_COPYRIGHT = {
+    'docs/latex/relax.bst' : ["Copyright (C) 1988, all rights reserved."],
 }
 
 # Additional copyright years and authors to add to the list.  The keys are lists of lists of the year as an int and the author name as a string.
