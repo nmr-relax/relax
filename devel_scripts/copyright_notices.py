@@ -246,6 +246,8 @@ SVN_START = {
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
 GIT_START = {
+    "docs/__init__.py":
+        "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
     "docs/devel/README":
         "FSF compliant copyright notices for all files in the documentation directory docs/devel/. (2017-07-07 09:12:47 +0200)",
     "docs/devel/svn2git_migration/dups.py":
