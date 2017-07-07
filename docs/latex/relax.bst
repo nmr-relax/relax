@@ -1,3 +1,5 @@
+% Copyright (C) 2006,2012 Edward d'Auvergne
+% 
 % This is a modification to the `apalike' bibliography style to make it more
 % like the style used by Kluwer (which most likely comes from the `apalike'
 % style itself.  The modifications have been made by Edward d'Auvergne.
