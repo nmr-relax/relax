@@ -6,6 +6,7 @@ VectorFieldPlot - plots electric and magnetic fieldlines in svg
 http://commons.wikimedia.org/wiki/User:Geek3/VectorFieldPlot
  
 Copyright (C) 2010 Geek3
+Copyright (C) 2012 Edward d'Auvergne
  
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

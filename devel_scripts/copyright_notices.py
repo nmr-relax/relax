@@ -179,10 +179,22 @@ BLACKLISTED_FILES = [
     'docs/latex/nth.sty',                                       # Public domain.
     'docs/latex/relax_version.tex',                             # Single line auto-generated file.
     'docs/latex/frame_order/compile_param_nesting',             # Trivial script.
+    'graphics/analyses/model_free/2I5O_trunc.pdb',              # Public domain.
+    'graphics/misc/Rosenbrock_function/generate.py',            # Public domain.
+    'graphics/relax_icons/png/chemical_shift/doc.aux',          # One line.
+    'graphics/relax_icons/png/chemical_shift/doc.log',          # LaTex log file.
+    'graphics/relax_icons/png/frq/doc.aux',                     # One line.
+    'graphics/relax_icons/png/frq/doc.log',                     # LaTex log file.
+    'graphics/relax_icons/png/jw_mapping/doc.aux',              # One line.
+    'graphics/relax_icons/png/jw_mapping/doc.log',              # LaTex log file.
+    'graphics/relax_icons/png/model_free/mf.aux',               # One line.
+    'graphics/relax_icons/png/model_free/mf.log',               # LaTex log file.
+    'graphics/wizards/structure/2JK4.pdb.gz',                   # Public domain.
 ]
 
 # Directories to skip.
 DIR_SKIP = [
+    'graphics/oxygen_icons',                                    # External source, copyright documented as much as possible.
 ]
 
 # Add some new mimetypes.
@@ -237,6 +249,54 @@ GIT_START = {
         "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
     "docs/latex/licence.tex":
         "Created the 'Licence' chapter in the manual. (2005-10-15 12:42:17 +0000)",
+    "graphics/__init__.py":
+        "The graphics directory has been converted into a Python package. (2012-05-04 09:13:13 +0000)",
+    "graphics/analyses/consistency_testing/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/analyses/dispersion/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/analyses/model_free/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/analyses/model_free/ellipsoid.pdb":
+        "Created some initial graphics for the model-free analysis. (2011-06-22 07:19:39 +0000)",
+    "graphics/misc/n_state_model/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/misc/pymol/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/misc/Rosenbrock_function/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/relax_icons/png/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/relax_icons/png/chemical_shift/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/relax_icons/png/frq/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/relax_icons/png/jw_mapping/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/relax_icons/png/model_free/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/relax_icons/svg/j_coupling.svg":
+        "Added some basic initial relax icons for J couplings. (2013-06-13 15:17:14 +0000)",
+    "graphics/screenshots/noe_analysis/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/screenshots/r1_analysis/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/screenshots/spin_viewer/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/wizards/dipole_pair/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/wizards/j_coupling.svg":
+        "Created some basic initial GUI wizard graphics for J couplings. (2013-06-13 15:51:44 +0000)",
+    "graphics/wizards/molmol/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/wizards/pymol/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/wizards/spectrum/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/wizards/structure/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/wizards/value/README":
+        "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
 }
 
 # Additional copyright notices that are not present in the git log.
@@ -256,10 +316,26 @@ ADDITIONAL_COPYRIGHT_YEARS = {
     'docs/html/icons/prev.png':                                         [[1993, "Nikos Drakos"]],
     'docs/html/icons/up_g.png':                                         [[1993, "Nikos Drakos"]],
     'docs/html/icons/up.png':                                           [[1993, "Nikos Drakos"]],
+    'graphics/README':                                                  [[2017, "Edward d'Auvergne"]],
+    'graphics/analyses/README':                                         [[2017, "Edward d'Auvergne"]],
+    'graphics/misc/README':                                             [[2017, "Edward d'Auvergne"]],
+    'graphics/relax_icons/128x128/README':                              [[2017, "Edward d'Auvergne"]],
+    'graphics/relax_icons/16x16/README':                                [[2017, "Edward d'Auvergne"]],
+    'graphics/relax_icons/22x22/README':                                [[2017, "Edward d'Auvergne"]],
+    'graphics/relax_icons/32x32/README':                                [[2017, "Edward d'Auvergne"]],
+    'graphics/relax_icons/48x48/README':                                [[2017, "Edward d'Auvergne"]],
+    'graphics/screenshots/README':                                      [[2017, "Edward d'Auvergne"]],
+    'graphics/screenshots/dispersion_analysis/README':                  [[2017, "Edward d'Auvergne"]],
+    'graphics/screenshots/mf_analysis/README':                          [[2017, "Edward d'Auvergne"]],
+    'graphics/wizards/README':                                          [[2017, "Edward d'Auvergne"]],
 }
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
 FALSE_POS = {
+    'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
+    'graphics/wizards/object-locked-unlocked.png':                      ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
+    'graphics/wizards/oxygen-icon-weather-clear.png':                   ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
+    'graphics/wizards/dipole_pair/VectorFieldPlot.py':                  ["Copyright (C) 2010 Geek3"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -274,6 +350,9 @@ FALSE_NEG = {
     'docs/html/icons/prev.png':                                         ["Copyright (C) 2011 Edward d'Auvergne"],
     'docs/html/icons/up_g.png':                                         ["Copyright (C) 2011 Edward d'Auvergne"],
     'docs/html/icons/up.png':                                           ["Copyright (C) 2011 Edward d'Auvergne"],
+    'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    ["Copyright (C) 2012 Edward d'Auvergne"],
+    'graphics/wizards/object-locked-unlocked.png':                      ["Copyright (C) 2012 Edward d'Auvergne"],
+    'graphics/wizards/oxygen-icon-weather-clear.png':                   ["Copyright (C) 2012 Edward d'Auvergne"],
 }
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
@@ -396,6 +475,14 @@ EXCLUDE = [
     "Updates for Python 3.0. (2012-01-24 14:24:40 +0000)",
     # r14812 - cad3aac4d7ca177c4a4129b00f9f80e92a4b26ed - 2to3 automated conversions.
     "Updates for Python 3.0 using the Python 2to3 script. (2011-10-09 11:40:36 +0000)",
+    # r13456 - 9403da5ca58d48ca56a0bc2c19da89a44efced44.
+    "Partly reverted r13453 as the coloured residue graphic was accidentally replaced with the greyscale one. (2011-07-06 15:14:24 +0000)",
+    # r13453 - 6888758caa637c256837b8fce9ebb9093d1656a2.
+    "The greyscale conversion of graphics is now better. (2011-07-06 13:36:42 +0000)",
+    # r13148 - 088087256b6960730976fccab203a45093720ad8.
+    "Removed the svn:executable and svn:mime-type properties from the consistency testing graphics. (2011-06-21 14:46:47 +0000)",
+    # r12412 - 3497eb7bdb85ea656e0f33a8b972602cc5bde6ed.
+    "Renamed the gui_bieri package to gui. (2011-01-21 11:18:47 +0000)",
     # r12202 - 5012a2b474e539d8564847f1979a98619c99a42d - 2to3 automated conversions.
     "Updates for Python 3.0. (2011-01-11 11:58:33 +0000)",
     # r10860 - 67f4a1a6cf1adb11c6837a1d1d09a26630ce35f7 - 2to3 automated conversions.
