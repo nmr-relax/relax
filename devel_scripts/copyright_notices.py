@@ -175,6 +175,7 @@ COMMITTER_ALT = {
 BLACKLISTED_FILES = [
     '.gitignore',                                               # Trivial file list.
     'docs/COPYING',                                             # The original GPLv3 licence text.
+    'docs/html/clean',                                          # Trivial script.
     'docs/latex/gpl-3.0.tex',                                   # The original GPLv3 licence text.
     'docs/latex/nth.sty',                                       # Public domain.
     'docs/latex/relax_version.tex',                             # Single line auto-generated file.
@@ -221,6 +222,8 @@ GIT_START = {
         "Documented the svn to git repository migration. (2017-07-04 15:45:41 +0200)",
     "docs/devel/svn2git_migration/gitsvn_conversion.sh":
         "Documented the svn to git repository migration. (2017-07-04 15:45:41 +0200)",
+    "docs/html/icons/README":
+        "FSF compliant copyright notices for all files in the documentation directory docs/html/. (2017-07-07 11:07:40 +0200)",
     "docs/latex/__init__.py":
         "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
     "docs/latex/licence.tex":
@@ -229,6 +232,16 @@ GIT_START = {
 
 # Additional copyrights that are not present in the git log.
 ADDITIONAL_COPYRIGHT = {
+    'docs/html/icons/contents.png': ["Copyright (C) 1993 Nikos Drakos"],
+    'docs/html/icons/crossref.png': ["Copyright (C) 1993 Nikos Drakos"],
+    'docs/html/icons/footnote.png': ["Copyright (C) 1993 Nikos Drakos"],
+    'docs/html/icons/index.png': ["Copyright (C) 1993 Nikos Drakos"],
+    'docs/html/icons/next_g.png': ["Copyright (C) 1993 Nikos Drakos"],
+    'docs/html/icons/next.png': ["Copyright (C) 1993 Nikos Drakos"],
+    'docs/html/icons/prev_g.png': ["Copyright (C) 1993 Nikos Drakos"],
+    'docs/html/icons/prev.png': ["Copyright (C) 1993 Nikos Drakos"],
+    'docs/html/icons/up_g.png': ["Copyright (C) 1993 Nikos Drakos"],
+    'docs/html/icons/up.png': ["Copyright (C) 1993 Nikos Drakos"],
     'docs/latex/relax.bst' : ["Copyright (C) 1988, all rights reserved."],
 }
 
@@ -238,6 +251,16 @@ FALSE_POS = {
 
 # False negatives (significant git log commits which do not imply copyright ownership).
 FALSE_NEG = {
+    'docs/html/icons/contents.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'docs/html/icons/crossref.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'docs/html/icons/footnote.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'docs/html/icons/index.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'docs/html/icons/next_g.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'docs/html/icons/next.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'docs/html/icons/prev_g.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'docs/html/icons/prev.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'docs/html/icons/up_g.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'docs/html/icons/up.png': ["Copyright (C) 2011 Edward d'Auvergne"],
 }
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
