@@ -201,6 +201,9 @@ BINARY_FILES = [
 
 # Real starting dates (to handle incorrect git copying histories).
 START_DATE = {
+    'docs/devel/README': [2017, "Edward d'Auvergne"],
+    'docs/devel/svn2git_migration/dups.py': [2017, "Edward d'Auvergne"],
+    'docs/devel/svn2git_migration/gitsvn_conversion.sh': [2017, "Edward d'Auvergne"],
 }
 
 # Additional copyrights that are not present in the git log.

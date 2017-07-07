@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2014,2017 Edward d'Auvergne                                   #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,24 +20,9 @@
 ###############################################################################
 
 
-The following is a command which can be used to view all edits by a certain user for the entire year.  This svn log is then parsed and all the added and modified files extracted.  Each file is then grepped from the copyright statement, and all copyright statements from the year removed.  The remaining printout lists the files which require a copyright notice update.
+Licensing
+=========
 
-svn log -v -r{"2014-01-01 00:00:00"}:{"2014-12-31 00:00:00"} \
-| sed -n '/^r..... | tlinnet | /,/-----$/ p' \
-| grep "^   [AM] " \
-| sort -u \
-| sed 's/   M //g' \
-| sed 's/   A //g' \
-| sed 's/\/trunk\///g' \
-| sed 's/ .*//g' \
-| xargs -I {} bash -c 'if [ -f {} ] ; then echo {} ; fi' \
-| xargs grep Copyright -l \
-| xargs -I {} bash -c 'if grep -Fq "2014 Troels" {}; then : ; else echo {} ; fi'
+The following files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
 
-
-To change to a different developer, for example replace 'tlinnet' with 'bugman' and 'Troels' with 'Edward'.  To check the history of one of these files, say 'lib/xyz.py', to be sure that the developer edited the file, type:
-
-svn log -v lib/xyz.py \
-| sed -n '/^r..... | tlinnet | /,/-----$/ p' \
-| less
-
+epydoc_graphvis_fix.patch:              Copyright (C) 2015 Edward d'Auvergne
