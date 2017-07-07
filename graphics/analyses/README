@@ -1,1 +1,50 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2013,2017 Edward d'Auvergne                                   #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+blank_150x150.png:                          Copyright (C) 2013 Edward d'Auvergne
+consistency_testing_100x47.png:             Copyright (C) 2011 Sebastien Morin
+consistency_testing_150x70.png:             Copyright (C) 2011 Edward d'Auvergne
+consistency_testing_200x94.png:             Copyright (C) 2011 Sebastien Morin
+custom_150x150.png:                         Copyright (C) 2011 Edward d'Auvergne
+noe_150x150.png:                            Copyright (C) 2011 Edward d'Auvergne
+noe_200x200.png:                            Copyright (C) 2011 Edward d'Auvergne
+noe_600x600.png:                            Copyright (C) 2012 Edward d'Auvergne
+r1_150x150.png:                             Copyright (C) 2011 Edward d'Auvergne
+r1_200x200.png:                             Copyright (C) 2011 Edward d'Auvergne
+r1_600x600.png:                             Copyright (C) 2012 Edward d'Auvergne
+r2_150x150.png:                             Copyright (C) 2011 Edward d'Auvergne
+r2_200x200.png:                             Copyright (C) 2011 Edward d'Auvergne
+r2_600x600.png:                             Copyright (C) 2012 Edward d'Auvergne
+relax_disp_150x150.png:                     Copyright (C) 2013 Edward d'Auvergne
+relax_disp_200x200.png:                     Copyright (C) 2013 Edward d'Auvergne
+relax_disp_600x600.png:                     Copyright (C) 2013 Edward d'Auvergne
+
+
+EPS conversion
+==============
+
 To convert from PNG to EPS, use the Gimp to export the image and set the width and height to 600 mm and both offsets to 0 mm.
