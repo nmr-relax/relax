@@ -241,6 +241,12 @@ SVN_START = {
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
 GIT_START = {
+    "docs/devel/README":
+        "FSF compliant copyright notices for all files in the documentation directory docs/devel/. (2017-07-07 09:12:47 +0200)",
+    "docs/devel/svn2git_migration/dups.py":
+        "Documented the svn to git repository migration. (2017-07-04 15:45:41 +0200)",
+    "docs/devel/svn2git_migration/gitsvn_conversion.sh":
+        "Documented the svn to git repository migration. (2017-07-04 15:45:41 +0200)",
 }
 
 # Additional copyright notices that are not present in the git log.
