@@ -1,3 +1,38 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2014,2017 Edward d'Auvergne                                   #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+The following files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+relax_no_generic_words.patch:           Copyright (C) 2014 Edward d'Auvergne
+relax_max_char.patch:                   Copyright (C) 2014 Edward d'Auvergne
+relax_lstlisting.patch:                 Copyright (C) 2014 Edward d'Auvergne
+
+
+Building latex2html
+===================
+
 The following instructions are required to build the version of latex2html for building the HTML version of the manual located at http://www.nmr-relax.com/manual/.  It includes both the Debian patches, downloaded by the setup script, and some patches specific for improving the relax documentation.
 
 To install a fixed working copy of latex2html into /usr/local, type:
