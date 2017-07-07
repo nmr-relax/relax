@@ -174,10 +174,22 @@ BLACKLISTED_FILES = [
     'docs/latex/nth.sty',                                       # Public domain.
     'docs/latex/relax_version.tex',                             # Single line auto-generated file.
     'docs/latex/frame_order/compile_param_nesting',             # Trivial script.
+    'graphics/analyses/model_free/2I5O_trunc.pdb',              # Public domain.
+    'graphics/misc/Rosenbrock_function/generate.py',            # Public domain.
+    'graphics/relax_icons/png/chemical_shift/doc.aux',          # One line.
+    'graphics/relax_icons/png/chemical_shift/doc.log',          # LaTex log file.
+    'graphics/relax_icons/png/frq/doc.aux',                     # One line.
+    'graphics/relax_icons/png/frq/doc.log',                     # LaTex log file.
+    'graphics/relax_icons/png/jw_mapping/doc.aux',              # One line.
+    'graphics/relax_icons/png/jw_mapping/doc.log',              # LaTex log file.
+    'graphics/relax_icons/png/model_free/mf.aux',               # One line.
+    'graphics/relax_icons/png/model_free/mf.log',               # LaTex log file.
+    'graphics/wizards/structure/2JK4.pdb.gz',                   # Public domain.
 ]
 
 # Directories to skip.
 DIR_SKIP = [
+    'graphics/oxygen_icons',                                    # External source, copyright documented as much as possible.
 ]
 
 # Add some new mimetypes.
@@ -213,6 +225,30 @@ START_DATE = {
     'docs/html/icons/README': [2017, "Edward d'Auvergne"],
     'docs/latex/__init__.py': [2004, "Edward d'Auvergne"],
     'docs/latex/licence.tex': [2005, "Edward d'Auvergne"],
+    'graphics/__init__.py': [2012, "Edward d'Auvergne"],
+    'graphics/analyses/consistency_testing/README': [2017, "Edward d'Auvergne"],
+    'graphics/analyses/dispersion/README': [2017, "Edward d'Auvergne"],
+    'graphics/analyses/model_free/README': [2017, "Edward d'Auvergne"],
+    'graphics/analyses/model_free/ellipsoid.pdb': [2011, "Edward d'Auvergne"],
+    'graphics/misc/n_state_model/README': [2017, "Edward d'Auvergne"],
+    'graphics/misc/pymol/README': [2017, "Edward d'Auvergne"],
+    'graphics/misc/Rosenbrock_function/README': [2017, "Edward d'Auvergne"],
+    'graphics/relax_icons/png/README': [2017, "Edward d'Auvergne"],
+    'graphics/relax_icons/png/chemical_shift/README': [2017, "Edward d'Auvergne"],
+    'graphics/relax_icons/png/frq/README': [2017, "Edward d'Auvergne"],
+    'graphics/relax_icons/png/jw_mapping/README': [2017, "Edward d'Auvergne"],
+    'graphics/relax_icons/png/model_free/README': [2017, "Edward d'Auvergne"],
+    'graphics/relax_icons/svg/j_coupling.svg': [2013, "Edward d'Auvergne"],
+    'graphics/screenshots/noe_analysis/README': [2017, "Edward d'Auvergne"],
+    'graphics/screenshots/r1_analysis/README': [2017, "Edward d'Auvergne"],
+    'graphics/screenshots/spin_viewer/README': [2017, "Edward d'Auvergne"],
+    'graphics/wizards/dipole_pair/README': [2017, "Edward d'Auvergne"],
+    'graphics/wizards/j_coupling.svg': [2013, "Edward d'Auvergne"],
+    'graphics/wizards/molmol/README': [2017, "Edward d'Auvergne"],
+    'graphics/wizards/pymol/README': [2017, "Edward d'Auvergne"],
+    'graphics/wizards/spectrum/README': [2017, "Edward d'Auvergne"],
+    'graphics/wizards/structure/README': [2017, "Edward d'Auvergne"],
+    'graphics/wizards/value/README': [2017, "Edward d'Auvergne"],
 }
 
 # Additional copyrights that are not present in the git log.
@@ -232,6 +268,10 @@ ADDITIONAL_COPYRIGHT = {
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
 FALSE_POS = {
+    'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
+    'graphics/wizards/object-locked-unlocked.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
+    'graphics/wizards/oxygen-icon-weather-clear.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
+    'graphics/wizards/dipole_pair/VectorFieldPlot.py': ["Copyright (C) 2010 Geek3"]
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -246,6 +286,11 @@ FALSE_NEG = {
     'docs/html/icons/prev.png': ["Copyright (C) 2011 Edward d'Auvergne"],
     'docs/html/icons/up_g.png': ["Copyright (C) 2011 Edward d'Auvergne"],
     'docs/html/icons/up.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'graphics/analyses/consistency_testing_100x47.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'graphics/analyses/consistency_testing_200x94.png': ["Copyright (C) 2011 Edward d'Auvergne"],
+    'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png': ["Copyright (C) 2012 Edward d'Auvergne"],
+    'graphics/wizards/object-locked-unlocked.png': ["Copyright (C) 2012 Edward d'Auvergne"],
+    'graphics/wizards/oxygen-icon-weather-clear.png': ["Copyright (C) 2012 Edward d'Auvergne"],
 }
 
 # SVN revisions and git hashes to exclude.
@@ -253,6 +298,9 @@ EXCLUDE = {
     "/data/relax/gna/repository_backup/git_migration/svn_cleanup_co": [
     ],
     '.': [
+        '3497eb7bdb85ea656e0f33a8b972602cc5bde6ed',    # Directory rename {gui_bieri/res/pics => gui/images}.
+        '9403da5ca58d48ca56a0bc2c19da89a44efced44',    # Reversion of '6888758caa637c256837b8fce9ebb9093d1656a2'.
+        '6888758caa637c256837b8fce9ebb9093d1656a2',    # Reverted by '9403da5ca58d48ca56a0bc2c19da89a44efced44'.
     ]
 }
 

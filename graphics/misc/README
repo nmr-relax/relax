@@ -1,0 +1,65 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+GPLv3+
+------
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+bmrb_100x100.png:                           Copyright (C) 2012 Edward d'Auvergne
+cluster_600x600.png:                        Copyright (C) 2013 Edward d'Auvergne
+dx-logo.gif:                                Copyright (C) 2012 Edward d'Auvergne
+dx-logo-shd.jpg:                            Copyright (C) 2012 Edward d'Auvergne
+ellipsoid.jpg:                              Copyright (C) 2010,2012 Edward d'Auvergne
+ellipsoid.png:                              Copyright (C) 2011-2012 Edward d'Auvergne
+minimise.xcf:                               Copyright (C) 2012 Edward d'Auvergne
+model_elimination_s2_te.png:                Copyright (C) 2012 Edward d'Auvergne
+modelfree.png:                              Copyright (C) 2009-2010,2012 Edward d'Auvergne
+molecule_600x600.png:                       Copyright (C) 2012 Edward d'Auvergne
+noe.gif:                                    Copyright (C) 2009-2010,2012 Edward d'Auvergne
+noe.png:                                    Copyright (C) 2009-2010,2012 Edward d'Auvergne
+noe.png:                                    Copyright (C) 2010 Michael Bieri
+oblate.jpg:                                 Copyright (C) 2010,2012 Edward d'Auvergne
+oblate.png:                                 Copyright (C) 2011-2012 Edward d'Auvergne
+pipe_600x600.png:                           Copyright (C) 2012 Edward d'Auvergne
+pipe_bundle.xcf:                            Copyright (C) 2012 Edward d'Auvergne
+pipe_bundle_600x600.png:                    Copyright (C) 2012 Edward d'Auvergne
+prolate.jpg:                                Copyright (C) 2010,2012 Edward d'Auvergne
+prolate.png:                                Copyright (C) 2011-2012 Edward d'Auvergne
+r1.png:                                     Copyright (C) 2009-2010,2012 Edward d'Auvergne
+r2.png:                                     Copyright (C) 2009-2010,2012 Edward d'Auvergne
+relax.gif:                                  Copyright (C) 2009-2010,2012 Edward d'Auvergne
+relax_start.gif:                            Copyright (C) 2009-2010,2012 Edward d'Auvergne
+relaxGUI_splash.xcf:                        Copyright (C) 2010 Michael Bieri
+relaxGUI_splash.xcf:                        Copyright (C) 2012-2016 Edward d'Auvergne
+relaxGUI_splash.png:                        Copyright (C) 2012-2016 Edward d'Auvergne
+residue_600x600.png:                        Copyright (C) 2012 Edward d'Auvergne
+sequence_600x600.png:                       Copyright (C) 2012 Edward d'Auvergne
+sphere.jpg:                                 Copyright (C) 2010,2012 Edward d'Auvergne
+sphere.png:                                 Copyright (C) 2011-2012 Edward d'Auvergne
+spin_600x600.png:                           Copyright (C) 2012 Edward d'Auvergne
+structure.png:                              Copyright (C) 2011-2012 Edward d'Auvergne
+ulysses_shadowless_400x168.png:             Copyright (C) 2010,2012 Edward d'Auvergne
+ulysses_shadowless.png:                     Copyright (C) 2010,2012 Edward d'Auvergne
