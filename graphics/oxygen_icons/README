@@ -1,4 +1,19 @@
-= relax versions =
+Origin
+======
+
+The oxygen icons:
+
+    https://api.kde.org/frameworks/oxygen-icons5/html/index.html
+
+were obtained from r1421027 of the SVN repository:
+
+    svn://anonsvn.kde.org/home/kde/trunk/kdesupport/oxygen-icons
+
+prior to the conversion to git.
+
+
+relax versions
+==============
 
 The following changes (performed in the GIMP) were used to create the *-relax-blue.png versions of the oxygen icons:
 
