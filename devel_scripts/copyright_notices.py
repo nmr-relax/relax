@@ -239,6 +239,10 @@ SVN_START = {
 GIT_START = {
     "auto_analyses/__init__.py":
         "Spun out the automatic model-free protocol code from the full_analysis.py script. (2010-01-25 10:13:06 +0000)",
+    "data_store/exp_info.py":
+        "Created a data container for storing experimental details. (2009-10-09 18:24:11 +0000)",
+    "data_store/gui.py":
+        "Created some data structures for holding all the GUI specific information. (2010-01-26 16:27:29 +0000)",
     "docs/__init__.py":
         "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
     "docs/devel/README":
@@ -421,6 +425,14 @@ EXCLUDE = [
     "Python 3 fixes. (2013-06-06 21:19:36 +0000)",
     # r19079 - 1e3e93331a17e1bc34bf5c491e9fd48727de0f2e.
     "Renamed the generic_fns package to pipe_control. (2013-03-23 19:25:55 +0000)",
+    # r19068 - 642e56bafa3c519413842d200a58c46922da2d21.
+    "Reverted revisions r19065, r19066 and r19067. (2013-03-23 17:00:41 +0000)",
+    # r19067 - 1eceee2b1b80f081805798aef140aa89305d04b1.
+    "Renamed data_store.lib to data_store.control. (2013-03-23 16:55:11 +0000)",
+    # r19066 - 0d7e7199493c16a3dca0af316c44aefca1504046.
+    "Shifted most of the modules containing data store objects into data_store.objects. (2013-03-23 13:00:16 +0000)",
+    # r19065 - 4d3f2f346ea81b89e1645a0d08cdce5d9a3e5b14.
+    "Created two new empty packages data_store.lib and data_store.objects. (2013-03-23 12:52:00 +0000)",
     # r19028 - 5b8fb0ffdc9ee7e37c75fb067f155496ea733ccb.
     "Renamed the data package to data_store. (2013-03-22 23:25:25 +0000)",
     # r19026 - fa10d72942af42e328ee0952f841f1d78fbe5c66.
