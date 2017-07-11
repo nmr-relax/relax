@@ -217,6 +217,8 @@ BLACKLISTED_FILES = [
 DIR_SKIP = [
     '.git',
     '.svn',
+    'extern/numdifftools',                                      # External packages distributed with relax.
+    'extern/sobol',                                             # External packages distributed with relax.
     'graphics/oxygen_icons',                                    # External source, copyright documented as much as possible.
 ]
 
@@ -272,6 +274,8 @@ GIT_START = {
         "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
     "docs/latex/licence.tex":
         "Created the 'Licence' chapter in the manual. (2005-10-15 12:42:17 +0000)",
+    "extern/__init__.py":
+        "The 'extern' package is now a proper package - the __init__.py file has been added! (2011-06-03 15:54:51 +0000)",
     "graphics/__init__.py":
         "The graphics directory has been converted into a Python package. (2012-05-04 09:13:13 +0000)",
     "graphics/analyses/consistency_testing/README":
