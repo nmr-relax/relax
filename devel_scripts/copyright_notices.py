@@ -313,6 +313,36 @@ GIT_START = {
         "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
     "graphics/wizards/value/README":
         "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "gui/__init__.py":
+        "Converted the relaxGUI code into a Python package. (2009-11-19 10:18:50 +0000)",
+    "gui/analyses/__init__.py":
+        "Converted the analyses/ and execution/ directories into Python packages by adding __init__.py files. (2010-01-22 16:07:11 +0000)",
+    "gui/analyses/auto_r1.py":
+        "Create the Auto_r1 class for building the automatic R1 analysis frame. (2010-01-28 16:28:19 +0000)",
+    "gui/analyses/auto_r2.py":
+        "Created the new automatic R2 analysis frame. (2010-01-29 09:34:02 +0000)",
+    "gui/analyses/base.py":
+        "Shifted the title and subtitle creation for the NOE frame into a base class for all frames to use. (2011-06-09 10:29:21 +0000)",
+    "gui/analyses/elements/__init__.py":
+        "Rearrangements of the gui.analyses package. (2013-04-20 17:00:28 +0000)",
+    "gui/base_classes.py":
+        "Added a module for the GUI base classes. (2010-01-28 11:36:42 +0000)",
+    "gui/components/__init__.py":
+        "Shifted the peak list selection GUI component used in the R1 and R2 into its own class. (2010-01-29 14:46:04 +0000)",
+    "gui/components/menu.py":
+        "Converted the menu build_menu_item() method into a function of gui.components.menu. (2011-07-20 20:08:19 +0000)",
+    "gui/input_elements/__init__.py":
+        "Split up the gui.wizard_elements into a number of modules in the new gui.input_elements package. (2012-05-16 16:21:24 +0000)",
+    "gui/spin_viewer/__init__.py":
+        "Shifted the spin viewer window code into its own package. (2011-07-06 10:40:02 +0000)",
+    "gui/spin_viewer/splitter.py":
+        "Split up the spin viewer code into many more modules. (2011-07-06 12:26:24 +0000)",
+    "gui/uf_objects.py":
+        "Created a base class for the user function GUI elements. (2010-12-07 00:04:46 +0000)",
+    "gui/wizards/__init__.py":
+        "Created the gui.wizards package for holding all of the relax wizards. (2013-04-21 14:36:02 +0000)",
+    "gui/wizards/wiz_objects.py":
+        "Created a base class for the user function GUI elements. (2010-12-07 00:04:46 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
@@ -514,6 +544,8 @@ EXCLUDE = [
     "A python 3.0 fix for the grace module. (2010-02-23 15:06:48 +0000)",
     # r9890  - ab69727887d0d5b006894b44583675d6b6306901 - Pure whitespace changes.
     "Converted tab characters to 8 spaces... (2009-11-19 19:05:50 +0000)",
+    # r9885 - d5d1314a8a26e5f2f669450376f458e4e83b4412.
+    "Renamed the relaxGUI module to match the relax naming conventions. (2009-11-19 10:22:18 +0000)",
     # r9456  - 3d46a3a94f8fcd95a22fabb1c418dd4f00fcfebb - 2to3 automated conversions.
     "More updates for Python3k. (2009-09-03 13:52:50 +0000)",
     # r9455  - 5ce17a589766fa238ed4588ebf4874e65684b681 - 2to3 automated conversions.
