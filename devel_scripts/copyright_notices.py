@@ -189,6 +189,8 @@ BLACKLISTED_FILES = [
 
 # Directories to skip.
 DIR_SKIP = [
+    'extern/numdifftools',                                      # External packages distributed with relax.
+    'extern/sobol',                                             # External packages distributed with relax.
     'graphics/oxygen_icons',                                    # External source, copyright documented as much as possible.
 ]
 
@@ -225,6 +227,7 @@ START_DATE = {
     'docs/html/icons/README': [2017, "Edward d'Auvergne"],
     'docs/latex/__init__.py': [2004, "Edward d'Auvergne"],
     'docs/latex/licence.tex': [2005, "Edward d'Auvergne"],
+    'extern/__init__.py': [2011, "Edward d'Auvergne"],
     'graphics/__init__.py': [2012, "Edward d'Auvergne"],
     'graphics/analyses/consistency_testing/README': [2017, "Edward d'Auvergne"],
     'graphics/analyses/dispersion/README': [2017, "Edward d'Auvergne"],
