@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2001-2004,2006-2015 Edward d'Auvergne                         #
+# Copyright (C) 2006 Chris MacRaild                                           #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
