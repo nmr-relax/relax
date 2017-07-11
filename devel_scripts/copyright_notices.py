@@ -260,6 +260,8 @@ SVN_START = {
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
 GIT_START = {
+    "auto_analyses/__init__.py":
+        "Spun out the automatic model-free protocol code from the full_analysis.py script. (2010-01-25 10:13:06 +0000)",
     "docs/__init__.py":
         "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
     "docs/devel/README":
