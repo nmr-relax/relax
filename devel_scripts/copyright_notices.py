@@ -168,6 +168,8 @@ COMMITTER_ALT = {
 # Blacklisted files.
 BLACKLISTED_FILES = [
     '.gitignore',                                               # Trivial file list.
+    'devel_scripts/byte_compile',                               # Trivial script.
+    'devel_scripts/grep_tree',                                  # Trivial script.
     'docs/COPYING',                                             # The original GPLv3 licence text.
     'docs/html/clean',                                          # Trivial script.
     'docs/latex/gpl-3.0.tex',                                   # The original GPLv3 licence text.
@@ -224,6 +226,10 @@ START_DATE = {
     'auto_analyses/relax_disp.py': [2013, "Edward d'Auvergne"],
     'data_store/exp_info.py': [2009, "Edward d'Auvergne"],
     'data_store/gui.py': [2010, "Edward d'Auvergne"],
+    'devel_scripts/memory_management/GUI_base.py': [2013, "Edward d'Auvergne"],
+    'devel_scripts/memory_management/GUI_uf_align_tensor_init.py': [2015, "Edward d'Auvergne"],
+    'devel_scripts/memory_management/GUI_uf_minimise_execute.py': [2013, "Edward d'Auvergne"],
+    'devel_scripts/memory_management/GUI_uf_time.py': [2015, "Edward d'Auvergne"],
     'docs/__init__.py': [2004, "Edward d'Auvergne"],
     'docs/devel/README': [2017, "Edward d'Auvergne"],
     'docs/devel/svn2git_migration/dups.py': [2017, "Edward d'Auvergne"],
@@ -275,6 +281,9 @@ ADDITIONAL_COPYRIGHT = {
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
 FALSE_POS = {
+    'devel_scripts/copyright_notices.py': ["Copyright (C) year1, year2, year3 copyright-holder"],
+    'devel_scripts/wiki_ftpdump.sh': ["Copyright (C) 2013 Troels E. Linnet"],
+    'devel_scripts/wiki_mysqldump.sh': ["Copyright (C) 2013 Troels E. Linnet"],
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/object-locked-unlocked.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/oxygen-icon-weather-clear.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
@@ -283,6 +292,16 @@ FALSE_POS = {
 
 # False negatives (significant git log commits which do not imply copyright ownership).
 FALSE_NEG = {
+    'devel_scripts/deploy_scripts/deploy_google_computing_centos_6_86_x64_upgrade_python.sh': ["Copyright (C) 2017 Edward d'Auvergne"],
+    'devel_scripts/deploy_scripts/deploy_google_computing_redhat_6_86_x64.sh': ["Copyright (C) 2017 Edward d'Auvergne"],
+    'devel_scripts/deploy_scripts/deploy_google_computing_redhat_6_86_x64_upgrade_python.sh': ["Copyright (C) 2017 Edward d'Auvergne"],
+    'devel_scripts/deploy_scripts/deploy_google_computing_redhat_7_86_x64.sh': ["Copyright (C) 2017 Edward d'Auvergne"],
+    'devel_scripts/deploy_scripts/deploy_google_computing_ubuntu_14-04_86_x64.sh': ["Copyright (C) 2017 Edward d'Auvergne"],
+    'devel_scripts/openmpi_test_install_bash.sh': ["Copyright (C) 2017 Edward d'Auvergne"],
+    'devel_scripts/openmpi_test_install_tcsh.sh': ["Copyright (C) 2017 Edward d'Auvergne"],
+    'devel_scripts/oxygen_icon_size_convert.py': ["Copyright (C) 2017 Edward d'Auvergne"],
+    'devel_scripts/wiki_ftpdump.sh': ["Copyright (C) 2013,2017 Edward d'Auvergne"],
+    'devel_scripts/wiki_mysqldump.sh': ["Copyright (C) 2013,2017 Edward d'Auvergne"],
     'docs/html/icons/contents.png': ["Copyright (C) 2011 Edward d'Auvergne"],
     'docs/html/icons/crossref.png': ["Copyright (C) 2011 Edward d'Auvergne"],
     'docs/html/icons/footnote.png': ["Copyright (C) 2011 Edward d'Auvergne"],
