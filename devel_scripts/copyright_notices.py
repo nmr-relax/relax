@@ -107,6 +107,7 @@ of previous major versions, but that is optional.
 """
 
 # Python module imports.
+from datetime import date, datetime
 import mimetypes
 from os import getcwd, path, sep, walk
 from re import search
@@ -123,6 +124,18 @@ from lib.io import open_read_file
 # The significant number of new lines of code added.
 SIG_CODE = 8
 
+# The repository checkout copies, to allow for repository migrations, ordered by date from oldest to newest.
+# The data consists of:
+#       0 - The repository path.
+#       1 - The repository type (either "svn" or "git").
+#       2 - The start date.
+#       3 - The end date.
+#       4 - The optional HEAD directory for svn.
+REPOS = [
+    ["/data/relax/gna/repository_backup/git_migration/svn_cleanup_co", "svn", 2001, 2016, "trunk"],
+    [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
+]
+
 # The committer name translation table.
 COMMITTERS = {
     "Michael Bieri": "Michael Bieri",
@@ -132,6 +145,19 @@ COMMITTERS = {
     "Sébastien Morin": "Sebastien Morin",
     "Han Sun": "Han Sun",
     "Gary Thompson": "Gary Thompson",
+}
+
+# The svn committer name translation table.
+SVN_COMMITTERS = {
+    "michaelbieri": "Michael Bieri",
+    "bugman": "Edward d'Auvergne",
+    "edward": "Edward d'Auvergne",
+    "root": "Edward d'Auvergne",
+    "tlinnet": "Troels Emtekær Linnet",
+    "macraild": "Chris MacRaild",
+    "semor": "Sébastien Morin",
+    "han87": "Han Sun",
+    "varioustoxins": "Gary Thompson",
 }
 
 # Alternative names for the committers.
@@ -189,11 +215,15 @@ FALSE_POS = {
 FALSE_NEG = {
 }
 
-# Git hashes to exclude.
-EXCLUDE_HASHES = [
-]
+# SVN revisions and git hashes to exclude.
+EXCLUDE = {
+    "/data/relax/gna/repository_backup/git_migration/svn_cleanup_co": [
+    ],
+    '.': [
+    ]
+}
 
-# Git hashes to switch authorship of (e.g. if someone commits someone else's code).
+# SVN revisions and git hashes to switch authorship of (e.g. if someone commits someone else's code).
 # The data consists of:
 #       0 - The commit key, consisting of the first line of the commit message followed by the ISO date in brackets.
 #       1 - The comitter's name.
@@ -643,23 +673,39 @@ def format_years(years):
     return year_string
 
 
-def git_log_data(file_path, exclude_hashes=None, author_switch=None, committer_info=None):
+def git_log_data(file_path, repo_path=None, exclude_hashes=None, author_switch=None, committer_info=None, after=None, before=None, init=False):
     """Get the committers and years of significant commits from the git log.
 
     @param file_path:           The full file path to obtain the git info for.
     @type file_path:            str
+    @keyword repo_path:         The path to the local copy of the git repository.
+    @type repo_path:            str
     @keyword exclude_hashes:    A list of commit hashes to exclude from the search.  For example directory renames with binary files present.
     @type exclude_hashes:       list of str
     @keyword author_switch:     List of commit hashes and authors to switch the authorship of.  The first element should be the commit hash, the second the comitter, and the third the real comitter.
     @type author_switch:        list of list of str
     @keyword committer_info:    The committer info data structure, listing the committers and years of significant commits.  This is a dictionary with the committer's name as a key with the value as the list of years.
     @type committer_info:       dict of lists of str
+    @keyword after:             Show commits more recent than a specific date.
+    @type after:                int or None
+    @keyword before:            Show commits older than a specific date.
+    @type before:               int or None
+    @keyword init:              A flag which if True means that the current repository is the starting repository.
+    @type init:                 bool
     @return:                    The committers and years of significant commits.  This is a dictionary with the committer's name as a key with the value as the list of years.
     @rtype:                     dict of lists of str
     """
 
+    # Date restrictions.
+    after_opt = ''
+    before_opt = ''
+    if after:
+        after_opt = '--after=%i-01-01' % after
+    if before:
+        before_opt = '--before=%i-12-31' % before
+
     # Exec.
-    pipe = Popen("git log --numstat --follow --pretty='%%cn xxx %%cd xxx %%H xxx %%s' --date=iso %s" % file_path, shell=True, stdout=PIPE, close_fds=False)
+    pipe = Popen("git log %s %s --numstat --follow --pretty='%%cn xxx %%cd xxx %%H xxx %%s' --date=iso %s/%s" % (after_opt, before_opt, repo_path, file_path), shell=True, stdout=PIPE, close_fds=False)
 
     # Get the data.
     lines = pipe.stdout.readlines()
@@ -724,10 +770,182 @@ def git_log_data(file_path, exclude_hashes=None, author_switch=None, committer_i
         i += 3
 
     # Always include the very first commit.
-    if committer and committer not in committer_info:
-        committer_info[committer] = []
-    if committer and year not in committer_info[committer]:
+    if init:
+        if committer and committer not in committer_info:
+            committer_info[committer] = []
+        if committer and year not in committer_info[committer]:
+            committer_info[committer].append(year)
+
+
+def svn_log_data(file_path, repo_path=None, exclude_rev=None, author_switch=None, svn_head=None, committer_info=None, after=None, before=None, init=False):
+    """Get the committers and years of significant commits from the svn log.
+
+    @param file_path:           The full file path to obtain the git info for.
+    @type file_path:            str
+    @keyword repo_path:         The path to the local copy of the svn repository.
+    @type repo_path:            str
+    @keyword exclude_rev:       A list of revisions to exclude from the search.  For example commit reversions.
+    @type exclude_rev:          list of str
+    @keyword author_switch:     List of revisions and authors to switch the authorship of.  The first element should be the commit revision number (e.g. "r200"), the second the comitter, and the third the real comitter.
+    @type author_switch:        list of list of str
+    @keyword svn_head:          The HEAD directory, e.g. "trunk".
+    @type svn_head:             str
+    @keyword committer_info:    The committer info data structure, listing the committers and years of significant commits.  This is a dictionary with the committer's name as a key with the value as the list of years.
+    @type committer_info:       dict of lists of str
+    @keyword after:             Show commits more recent than a specific date.
+    @type after:                int or None
+    @keyword before:            Show commits older than a specific date.
+    @type before:               int or None
+    @keyword init:              A flag which if True means that the current repository is the starting repository.
+    @type init:                 bool
+    @return:                    The committers and years of significant commits.  This is a dictionary with the committer's name as a key with the value as the list of years.
+    @rtype:                     dict of lists of str
+    """
+
+    # Date restrictions.
+    date_range = ''
+    if after or before:
+        date_range += "-r"
+    if before:
+        date_range += '{%i-12-31}:' % before
+    else:
+        date_range += '{3000-01-01}:'
+    if after:
+        date_range += '{%i-01-01}' % after
+    else:
+        date_range += '{1000-01-01}'
+
+    # Exec.
+    pipe = Popen("svn log --diff %s %s/%s/%s" % (date_range, repo_path, svn_head, file_path), shell=True, stdout=PIPE, close_fds=False)
+
+    # Get the data.
+    lines = pipe.stdout.readlines()
+    for i in range(len(lines)):
+        try:
+            lines[i] = lines[i].decode()[:-1]
+        except UnicodeError:
+            # Catch the ascii character 43 ("+").
+            if lines[i][0] == 43:
+                lines[i] = "+binary diff"
+            else:
+                lines[i] = ""
+    i = 0
+    committer = None
+    while 1:
+        # Termination.
+        if i >= len(lines)-1:
+            break
+
+        # A new commit.
+        if search('^------------------------------------------------------------------------', lines[i]) and lines[i+1][0] == 'r':
+            # Move to the summary line.
+            i += 1
+
+            # Extract the committer and year.
+            rev, svn_committer, date, length = lines[i].split(' | ')
+            committer = SVN_COMMITTERS[svn_committer]
+            year = date.split()[0].split('-')[0]
+            date = date.split(" (")[0]
+            date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
+
+            # Find the diff.
+            in_diff = False
+            newlines = 0
+            svnmerge_py = False
+            msg = ""
+            msg_flag = True
+            while 1:
+                # Walk down the lines.
+                i += 1
+
+                # Store the first line of the commit message.
+                if msg_flag and search("^[A-Za-z]", lines[i]):
+                    # Store the line.
+                    msg += lines[i]
+                    msg_flag = False
+
+                    # Search for additional first lines.
+                    while 1:
+                        # Walk down the lines.
+                        i += 1
+
+                        # Termination.
+                        if not len(lines[i]):
+                            break
+
+                        # Add the line.
+                        else:
+                            msg += " %s" % lines[i]
+
+                # Mark svnmerge.py merges as these do not imply copyright ownership for the comitter.
+                if search("^Merged revisions .* via svnmerge from", lines[i]):
+                    svnmerge_py = True
+
+                # End of the diff.
+                if i >= len(lines) or search('^------------------------------------------------------------------------', lines[i]):
+                    break
+
+                # Inside the diff.
+                if search('^===================================================================', lines[i]):
+                    in_diff = True
+                    i += 1
+                if not in_diff:
+                    continue
+
+                # Binary diff.
+                if "Cannot display: file marked as a binary type." in lines[i]:
+                    newlines = 1000000
+                    break
+
+                # Count the added lines.
+                if len(lines[i]) and lines[i][0] == "+" and lines[i][0:3] != "+++":
+                    newlines += 1
+
+        # Not a new commit.
+        else:
+            i += 1
+            continue
+
+        # Revisions to exclude.
+        if rev.strip() in exclude_rev:
+            continue
+
+        # No diff found.
+        if not in_diff:
+            continue
+
+        # Not significant.
+        if newlines < SIG_CODE:
+            continue
+
+        # Author switch.
+        commit_key = "%s (%s +0000)" % (msg.strip(), date.strftime("%Y-%m-%d %H:%M:%S"))
+        for j in range(len(author_switch)):
+            if author_switch[j][0] == commit_key:
+                committer = author_switch[j][2]
+
+        # Date already exists.
+        if committer in committer_info and year in committer_info[committer]:
+            continue
+
+        # Skip svnmerge commits.
+        if svnmerge_py:
+            svnmerge_py = False
+            continue
+
+        # A new committer.
+        if committer not in committer_info:
+            committer_info[committer] = []
+
+        # Store the info.
         committer_info[committer].append(year)
+
+    # Always include the very first commit.
+    if init:
+        if committer and committer not in committer_info:
+            committer_info[committer] = []
+        if committer and year not in committer_info[committer]:
+            committer_info[committer].append(year)
 
 
 def validate_copyright(expected_copyright, recorded_copyright):
@@ -843,14 +1061,23 @@ if __name__ == '__main__':
                 continue
 
             # Check for untracked files.
-            pipe = Popen("git ls-files %s --error-unmatch; echo $?" % file_path, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
+            if REPOS[-1][1] == 'git':
+                pipe = Popen("git ls-files %s --error-unmatch; echo $?" % file_path, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
+            else:
+                pipe = Popen("svn info %s/%s/%s" % (REPOS[-1][0], REPOS[-1][4], file_path), shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
             err = pipe.stderr.readlines()
             if err:
                 continue
 
-            # Get the committer and year information from the git log.
+            # Get the committer and year information from the repository logs.
             committer_info = {}
-            git_log_data(file_path, exclude_hashes=EXCLUDE_HASHES, author_switch=AUTHOR_SWITCH, committer_info=committer_info)
+            init = True
+            for repo_path, repo_type, repo_start, repo_end, repo_head in REPOS:
+                if repo_type == 'git':
+                    git_log_data(file_path, repo_path=repo_path, exclude_hashes=EXCLUDE[repo_path], author_switch=AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+                else:
+                    svn_log_data(file_path, repo_path=repo_path, exclude_rev=EXCLUDE[repo_path], author_switch=AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+                init = False
             committer_info_cleanup(file_path, committer_info)
 
             # Format the data as copyright statements.
