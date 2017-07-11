@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2001,2003-2004,2006-2009,2011-2012,2014 Edward d'Auvergne     #
+# Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
