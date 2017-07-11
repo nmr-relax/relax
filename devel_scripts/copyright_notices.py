@@ -262,6 +262,23 @@ START_DATE = {
     'graphics/wizards/spectrum/README': [2017, "Edward d'Auvergne"],
     'graphics/wizards/structure/README': [2017, "Edward d'Auvergne"],
     'graphics/wizards/value/README': [2017, "Edward d'Auvergne"],
+    'gui/__init__.py': [2009, "Edward d'Auvergne"],
+    'gui/analyses/__init__.py': [2010, "Edward d'Auvergne"],
+    'gui/analyses/auto_r1.py': [2010, "Edward d'Auvergne"],
+    'gui/analyses/auto_r2.py': [2010, "Edward d'Auvergne"],
+    'gui/analyses/auto_relax_disp.py': [2013, "Edward d'Auvergne"],
+    'gui/analyses/base.py': [2009, "Michael Bieri"],
+    'gui/analyses/elements/__init__.py': [2013, "Edward d'Auvergne"],
+    'gui/analyses/elements/model_list.py': [2010, "Edward d'Auvergne"],
+    'gui/base_classes.py': [2010, "Edward d'Auvergne"],
+    'gui/components/__init__.py': [2010, "Edward d'Auvergne"],
+    'gui/components/menu.py': [2009, "Michael Bieri"],
+    'gui/input_elements/__init__.py': [2012, "Edward d'Auvergne"],
+    'gui/spin_viewer/__init__.py': [2011, "Edward d'Auvergne"],
+    'gui/spin_viewer/splitter.py': [2010, "Edward d'Auvergne"],
+    'gui/uf_objects.py': [2012, "Edward d'Auvergne"],
+    'gui/wizards/__init__.py': [2013, "Edward d'Auvergne"],
+    'gui/wizards/wiz_objects.py': [2010, "Edward d'Auvergne"],
 }
 
 # Additional copyrights that are not present in the git log.
@@ -287,7 +304,7 @@ FALSE_POS = {
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/object-locked-unlocked.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/oxygen-icon-weather-clear.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
-    'graphics/wizards/dipole_pair/VectorFieldPlot.py': ["Copyright (C) 2010 Geek3"]
+    'graphics/wizards/dipole_pair/VectorFieldPlot.py': ["Copyright (C) 2010 Geek3"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -326,11 +343,15 @@ EXCLUDE = {
         'r19067',   # The reverted commit.
         'r19066',   # The reverted commit.
         'r19065',   # The reverted commit.
+        'r14419',   # Svnmerge.py merge back.
+        'r9890',    # Tab to space conversion.
+        'r9885',    # A file rename showing as a full diff?!
     ],
     '.': [
         '3497eb7bdb85ea656e0f33a8b972602cc5bde6ed',    # Directory rename {gui_bieri/res/pics => gui/images}.
         '9403da5ca58d48ca56a0bc2c19da89a44efced44',    # Reversion of '6888758caa637c256837b8fce9ebb9093d1656a2'.
         '6888758caa637c256837b8fce9ebb9093d1656a2',    # Reverted by '9403da5ca58d48ca56a0bc2c19da89a44efced44'.
+        'ab69727887d0d5b006894b44583675d6b6306901',    # Tab to space conversion.
     ]
 }
 
