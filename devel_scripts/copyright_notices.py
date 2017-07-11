@@ -343,6 +343,132 @@ GIT_START = {
         "Created the gui.wizards package for holding all of the relax wizards. (2013-04-21 14:36:02 +0000)",
     "gui/wizards/wiz_objects.py":
         "Created a base class for the user function GUI elements. (2010-12-07 00:04:46 +0000)",
+    "lib/__init__.py":
+        "Initialised a new package called 'lib'. (2013-03-01 22:44:16 +0000)",
+    "lib/alignment/__init__.py":
+        "Created the empty lib.nmr package of the relax library. (2013-03-22 21:58:18 +0000)",
+    "lib/alignment/paramag_centre.py":
+        "Preparation for the optimisation of the paramagnetic centre in the N-state model. (2010-07-02 15:39:21 +0000)",
+    "lib/alignment/rdc.py":
+        "Created an empty module to dump RDC related computational functions into. (2008-07-09 13:49:39 +0000)",
+    "lib/ansi.py":
+        "Shifted the terminal colouring ANSI escape sequences into their own 'ansi' module. (2012-04-17 16:49:22 +0000)",
+    "lib/auto_relaxation/__init__.py":
+        "Created the empty packages lib.auto_relaxation and lib.spectral_densities. (2013-03-23 08:14:51 +0000)",
+    "lib/checks.py":
+        "Created a special Check class based on the strategy design pattern. (2014-09-26 09:31:29 +0000)",
+    "lib/chemical_shift/__init__.py":
+        "Created the empty lib.chemical_shift package. (2013-03-23 10:08:22 +0000)",
+    "lib/compat.py":
+        "Created a new module for simultaneous Python 2 and 3 support in relax called 'compat'. (2012-10-02 08:35:22 +0000)",
+    "lib/curve_fit/__init__.py":
+        "Created the lib.curve_fit package and associated unit tests. (2013-04-04 14:40:15 +0000)",
+    "lib/curve_fit/exponential.py":
+        "Created the new lib.curve_fit.exponential module for exponential curve-fitting. (2013-04-04 15:15:33 +0000)",
+    "lib/diffusion/__init__.py":
+        "Created the empty lib.diffusion package. (2013-03-23 08:28:12 +0000)",
+    "lib/diffusion/correlation_time.py":
+        "Updating to the archive 'backup_relax_2004-03-05.tar.bz2'. (2004-03-04 15:22:38 +0000)",
+    "lib/diffusion/direction_cosine.py":
+        "Updating to the archive 'backup_relax_2004-03-09.tar.bz2'. (2004-03-08 15:24:39 +0000)",
+    "lib/diffusion/weights.py":
+        "Updating to the archive 'backup_relax_2004-03-05.tar.bz2'. (2004-03-04 15:22:38 +0000)",
+    "lib/dispersion/__init__.py":
+        "Created the empty lib.dispersion package. (2013-03-23 10:06:19 +0000)",
+    "lib/dispersion/b14.py":
+        "Added empty b14.py to relax library lib/dispersion/b14.py. (2014-05-01 07:20:32 +0000)",
+    "lib/dispersion/matrix_exponential.py":
+        "Implemented the lib.linear_algebra.matrix_exponential.matrix_exponential() function. (2013-10-15 09:07:54 +0000)",
+    "lib/dispersion/two_point.py":
+        "Created the lib.dispersion.equations module. (2013-03-27 16:49:33 +0000)",
+    "lib/float.py":
+        "Added a skeleton for the isnan() and isinf() functions.  Two dummy functions have been created and the code in 'specific_fns/model_free.py' now points to these. (2006-09-03 06:06:12 +0000)",
+    "lib/frame_order/__init__.py":
+        "Created the empty lib.frame_order package. (2013-03-23 08:18:10 +0000)",
+    "lib/frame_order/format.py":
+        "Added a stub package for Frame Order related calculation code. (2009-06-17 17:36:36 +0000)",
+    "lib/frame_order/free_rotor.py":
+        "Spun out all of the frame order model specific code in frame_order_matrix_ops to separate modules. (2012-07-27 10:41:26 +0000)",
+    "lib/frame_order/matrix_ops.py":
+        "Added a stub package for Frame Order related calculation code. (2009-06-17 17:36:36 +0000)",
+    "lib/frame_order/variables.py":
+        "Created the new specific_analyses.frame_order.variables module. (2014-07-09 08:03:17 +0000)",
+    "lib/geometry/__init__.py":
+        "Initialised the lib.geometry package. (2013-03-01 22:46:56 +0000)",
+    "lib/geometry/coord_transform.py":
+        "Created a new module for performing coordinate transformations. (2010-08-06 09:29:23 +0000)",
+    "lib/geometry/lines.py":
+        "Created the lib.geometry.lines module for performing geometric operations with lines. (2013-03-07 14:46:56 +0000)",
+    "lib/geometry/vectors.py":
+        "Spun out the maths_fns.rotation_matrix.random_rot_axis() function into its own module. (2013-01-10 14:15:55 +0000)",
+    "lib/linear_algebra/__init__.py":
+        "Created the empty lib.algebra package - this is for advanced linear algebra not present in numpy. (2013-03-23 08:41:28 +0000)",
+    "lib/linear_algebra/matrix_exponential.py":
+        "Implemented the lib.linear_algebra.matrix_exponential.matrix_exponential() function. (2013-10-15 09:07:54 +0000)",
+    "lib/linear_algebra/matrix_power.py":
+        "Added the missing mpower() function as lib.linear_algebra.matrix_power.square_matrix_power(). (2013-07-12 15:12:38 +0000)",
+    "lib/list.py":
+        "Created the new lib.list module with the function count_unique_elements(). (2013-04-03 14:42:32 +0000)",
+    "lib/mathematics.py":
+        "Created the lib.mathematics relax library module. (2013-05-02 10:15:04 +0000)",
+    "lib/order/__init__.py":
+        "Created the empty lib.order package. (2013-03-23 09:07:42 +0000)",
+    "lib/order/order_parameters.py":
+        "Added the stub function maths_fns.order_parameters.iso_cone_S_to_cos_theta(). (2010-02-03 10:22:00 +0000)",
+    "lib/physical_constants.py":
+        "Shifted the physical constants h, hbar, and mu0 from the PipeContainer class to their own module. (2007-03-08 05:40:11 +0000)",
+    "lib/plotting/__init__.py":
+        "Created the empty lib.plotting package. (2014-12-18 10:05:44 +0000)",
+    "lib/plotting/api.py":
+        "Created the lib.plotting API function correlation_matrix(). (2014-12-18 11:05:07 +0000)",
+    "lib/plotting/gnuplot.py":
+        "Implemented a very basic gnuplot backend for the correlation_matrix() plotting API function. (2014-12-18 11:07:24 +0000)",
+    "lib/plotting/text.py":
+        "Shifted the matrix output of the structure.atomic_fluctuations user function into lib.plotting.text. (2014-12-18 11:23:42 +0000)",
+    "lib/plotting/veusz.py":
+        "Created the empty lib.plotting.veusz module for graphing using Veusz (http://home.gna.org/veusz/). (2015-02-06 11:05:31 +0000)",
+    "lib/sequence_alignment/__init__.py":
+        "Created an empty lib.sequence_alignment relax library package. (2015-01-21 09:07:23 +0000)",
+    "lib/software/__init__.py":
+        "Created the empty lib.software package. (2013-03-26 11:36:55 +0000)",
+    "lib/software/opendx/__init__.py":
+        "Created the empty lib.opendx package. (2013-03-23 20:29:03 +0000)",
+    "lib/spectral_densities/__init__.py":
+        "Created the empty packages lib.auto_relaxation and lib.spectral_densities. (2013-03-23 08:14:51 +0000)",
+    "lib/spectrum/__init__.py":
+        "Shifted code from pipe_control.spectrum to the new lib.spectrum.peak_list relax library module. (2013-08-09 12:58:32 +0000)",
+    "lib/spectrum/nmrpipe.py":
+        "Adding a NMRPipe function file in the folder lib\software\\nmrpipe.py. (2013-06-21 16:33:03 +0000)",
+    "lib/structure/__init__.py":
+        "Initialised the lib.structure package - this is currently empty. (2013-03-20 16:09:55 +0000)",
+    "lib/structure/cones.py":
+        "Added a new module for holding class objects defining different cone types. (2010-03-09 10:44:48 +0000)",
+    "lib/structure/files.py":
+        "Created the new lib.structure.files module. (2014-07-02 12:42:51 +0000)",
+    "lib/structure/internal/__init__.py":
+        "Created the empty lib.structure.internal package for holding the internal structural object. (2013-03-24 15:34:53 +0000)",
+    "lib/structure/internal/displacements.py":
+        "Started to create the structural object and the API for accessing, creating, modifying info. (2008-04-04 10:01:52 +0000)",
+    "lib/structure/internal/selection.py":
+        "Created a special internal structural object selection object. (2014-09-23 16:02:05 +0000)",
+    "lib/structure/represent/__init__.py":
+        "Created the empty lib.structure.represent package. (2013-03-24 15:56:29 +0000)",
+    "lib/text/__init__.py":
+        "Created the lib.text package for text manipulation. (2013-03-07 14:39:38 +0000)",
+    "lib/text/gui.py":
+        "Created the new gui.text module for holding all of the unicode text for the GUI. (2013-09-06 16:39:56 +0000)",
+    "lib/text/progress.py":
+        "Created a basic text based progress meter in the new lib.text.progress module. (2014-09-22 09:15:17 +0000)",
+    "lib/text/sectioning.py":
+        "Created the new lib.text.sectioning module for formatting titles, subtitles and other sectioning text. (2013-03-20 13:13:27 +0000)",
+    "lib/text/string.py":
+        "The script user function GUI element is now functional. (2010-12-06 23:10:30 +0000)",
+    "lib/text/table.py":
+        "Created a base class for the user function classes. (2009-08-21 15:23:56 +0000)",
+    "lib/timing.py":
+        "Created the time user function. (2014-07-15 10:36:47 +0000)",
+    "lib/xml.py":
+        "Added a module for the creation and parsing of XML documents representing a data pipe. (2008-06-22 11:21:23 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
@@ -383,6 +509,27 @@ FALSE_POS = {
     'graphics/wizards/object-locked-unlocked.png':                      ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/oxygen-icon-weather-clear.png':                   ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/dipole_pair/VectorFieldPlot.py':                  ["Copyright (C) 2010 Geek3"],
+    'lib/dispersion/b14.py':                                            ["Copyright (C) 2014 Andrew Baldwin"],
+    'lib/dispersion/cr72.py':                                           ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/dpl94.py':                                          ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/it99.py':                                           ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/lm63.py':                                           ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/lm63_3site.py':                                     ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/m61.py':                                            ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/m61b.py':                                           ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/mp05.py':                                           ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/ns_mmq_2site.py':                                   ["Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_mmq_3site.py':                                   ["Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_cpmg_2site_3d.py':                               ["Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_cpmg_2site_expanded.py':                         ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger", "Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_cpmg_2site_star.py':                             ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger", "Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_matrices.py':                                    ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger", "Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_r1rho_2site.py':                                 ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/ns_r1rho_3site.py':                                 ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/tap03.py':                                          ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/tp02.py':                                           ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/tsmfk01.py':                                        ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/two_point.py':                                      ["Copyright (C) 2009 Sebastien Morin"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).

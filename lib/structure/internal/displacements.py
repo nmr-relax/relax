@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2011 Han Sun                                                  #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
