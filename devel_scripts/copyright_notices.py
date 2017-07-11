@@ -279,6 +279,68 @@ START_DATE = {
     'gui/uf_objects.py': [2012, "Edward d'Auvergne"],
     'gui/wizards/__init__.py': [2013, "Edward d'Auvergne"],
     'gui/wizards/wiz_objects.py': [2010, "Edward d'Auvergne"],
+    'lib/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/alignment/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/alignment/paramag_centre.py': [2010, "Edward d'Auvergne"],
+    'lib/alignment/rdc.py': [2008, "Edward d'Auvergne"],
+    'lib/ansi.py': [2012, "Edward d'Auvergne"],
+    'lib/checks.py': [2014, "Edward d'Auvergne"],
+    'lib/chemical_shift/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/compat.py': [2012, "Edward d'Auvergne"],
+    'lib/curve_fit/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/curve_fit/exponential.py': [2013, "Edward d'Auvergne"],
+    'lib/diffusion/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/diffusion/correlation_time.py': [2004, "Edward d'Auvergne"],
+    'lib/diffusion/direction_cosine.py': [2004, "Edward d'Auvergne"],
+    'lib/diffusion/weights.py': [2004, "Edward d'Auvergne"],
+    'lib/dispersion/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/dispersion/matrix_exponential.py': [2013, "Edward d'Auvergne"],
+    'lib/dispersion/dpl94.py': [2009, "Sébastien Morin"],
+    'lib/dispersion/it99.py': [2009, "Sébastien Morin"],
+    'lib/dispersion/lm63.py': [2009, "Sébastien Morin"],
+    'lib/dispersion/m61.py': [2009, "Sébastien Morin"],
+    'lib/dispersion/m61b.py': [2009, "Sébastien Morin"],
+    'lib/dispersion/tsmfk01.py': [2009, "Sébastien Morin"],
+    'lib/dispersion/two_point.py': [2009, "Sébastien Morin"],
+    'lib/float.py': [2006, "Gary Thompson"],
+    'lib/frame_order/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/frame_order/format.py': [2009, "Edward d'Auvergne"],
+    'lib/frame_order/free_rotor.py': [2009, "Edward d'Auvergne"],
+    'lib/frame_order/matrix_ops.py': [2009, "Edward d'Auvergne"],
+    'lib/frame_order/variables.py': [2014, "Edward d'Auvergne"],
+    'lib/geometry/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/geometry/coord_transform.py': [2010, "Edward d'Auvergne"],
+    'lib/geometry/lines.py': [2013, "Edward d'Auvergne"],
+    'lib/geometry/vectors.py': [2004, "Edward d'Auvergne"],
+    'lib/linear_algebra/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/linear_algebra/matrix_exponential.py': [2013, "Edward d'Auvergne"],
+    'lib/linear_algebra/matrix_power.py': [2013, "Edward d'Auvergne"],
+    'lib/list.py': [2013, "Edward d'Auvergne"],
+    'lib/mathematics.py': [2013, "Edward d'Auvergne"],
+    'lib/order/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/order/order_parameters.py': [2010, "Edward d'Auvergne"],
+    'lib/physical_constants.py': [2007, "Edward d'Auvergne"],
+    'lib/plotting/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/plotting/api.py': [2014, "Edward d'Auvergne"],
+    'lib/plotting/gnuplot.py': [2014, "Edward d'Auvergne"],
+    'lib/plotting/text.py': [2014, "Edward d'Auvergne"],
+    'lib/plotting/veusz.py': [2015, "Edward d'Auvergne"],
+    'lib/sequence_alignment/__init__.py': [2015, "Edward d'Auvergne"],
+    'lib/software/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/software/opendx/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/spectral_densities/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/spectrum/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/spectrum/nmrpipe.py': [2013, "Troels Emtekær Linnet"],
+    'lib/spectrum/sparky.py': [2003, "Edward d'Auvergne"],
+    'lib/structure/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/structure/cones.py': [2010, "Edward d'Auvergne"],
+    'lib/structure/files.py': [2014, "Edward d'Auvergne"],
+    'lib/structure/internal/__init__.py':  [2013, "Edward d'Auvergne"],
+    'lib/structure/internal/displacements.py': [2008, "Edward d'Auvergne"],
+    'lib/structure/internal/selection.py': [2014, "Edward d'Auvergne"],
+    'lib/structure/represent/__init__.py': [2013, "Edward d'Auvergne"],
+    'lib/timing.py': [2014, "Edward d'Auvergne"],
+    'lib/xml.py': [2008, "Edward d'Auvergne"],
 }
 
 # Additional copyrights that are not present in the git log.
@@ -305,6 +367,18 @@ FALSE_POS = {
     'graphics/wizards/object-locked-unlocked.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/oxygen-icon-weather-clear.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/dipole_pair/VectorFieldPlot.py': ["Copyright (C) 2010 Geek3"],
+    'lib/dispersion/b14.py': ["Copyright (C) 2014 Andrew Baldwin"],
+    'lib/dispersion/mp05.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/ns_mmq_2site.py': ["Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_mmq_3site.py': ["Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_cpmg_2site_3d.py': ["Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_cpmg_2site_expanded.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger", "Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_cpmg_2site_star.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger", "Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_matrices.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger", "Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_r1rho_2site.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/ns_r1rho_3site.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/tap03.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/tp02.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -334,15 +408,61 @@ FALSE_NEG = {
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png': ["Copyright (C) 2012 Edward d'Auvergne"],
     'graphics/wizards/object-locked-unlocked.png': ["Copyright (C) 2012 Edward d'Auvergne"],
     'graphics/wizards/oxygen-icon-weather-clear.png': ["Copyright (C) 2012 Edward d'Auvergne"],
+    'lib/dispersion/b14.py': ["Copyright (C) 2014 Edward d'Auvergne"],
 }
 
 # SVN revisions and git hashes to exclude.
 EXCLUDE = {
     "/data/relax/gna/repository_backup/git_migration/svn_cleanup_co": [
+        'r20659',   # Mainly file renames, no significant changes.
+        'r20624',   # Svnmerge.py merge back.
+        'r20441',   # A reversion commit.
+        'r20439',   # The reverted commit.
+        'r20438',   # The reverted commit.
+        'r19111',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19110',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19108',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19107',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19083',   # Mainly file renames for the new lib package, no significant changes.
+        'r19082',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19081',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19079',   # Package rename, no significant changes.
+        'r19073',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19069',   # Mainly a file rename for the new lib package, no significant changes.
         'r19068',   # A reversion commit.
         'r19067',   # The reverted commit.
         'r19066',   # The reverted commit.
         'r19065',   # The reverted commit.
+        'r19061',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19060',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19059',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19058',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19057',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19056',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19053',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19052',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19051',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19049',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19048',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19046',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19044',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19041',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19035',   # Package rename for the new lib package, no significant changes.
+        'r19032',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19028',   # Package rename, no significant changes.
+        'r19027',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19026',   # Package rename, no significant changes.
+        'r19025',   # Package rename, no significant changes.
+        'r19024',   # Package rename, no significant changes.
+        'r19023',   # Mainly file renames for the new lib package, no significant changes.
+        'r19022',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19018',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19017',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19016',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19011',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19009',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19008',   # Mainly a file rename for the new lib package, no significant changes.
+        'r19007',   # Mainly a file rename for the new lib package, no significant changes.
         'r14419',   # Svnmerge.py merge back.
         'r9890',    # Tab to space conversion.
         'r9885',    # A file rename showing as a full diff?!
