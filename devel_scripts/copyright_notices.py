@@ -220,6 +220,8 @@ BINARY_FILES = [
 
 # Real starting dates (to handle incorrect git copying histories).
 START_DATE = {
+    'auto_analyses/__init__.py': [2004, "Edward d'Auvergne"],
+    'auto_analyses/relax_disp.py': [2013, "Edward d'Auvergne"],
     'docs/__init__.py': [2004, "Edward d'Auvergne"],
     'docs/devel/README': [2017, "Edward d'Auvergne"],
     'docs/devel/svn2git_migration/dups.py': [2017, "Edward d'Auvergne"],
