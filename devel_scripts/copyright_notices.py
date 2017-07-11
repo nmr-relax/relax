@@ -222,6 +222,8 @@ BINARY_FILES = [
 START_DATE = {
     'auto_analyses/__init__.py': [2004, "Edward d'Auvergne"],
     'auto_analyses/relax_disp.py': [2013, "Edward d'Auvergne"],
+    'data_store/exp_info.py': [2009, "Edward d'Auvergne"],
+    'data_store/gui.py': [2010, "Edward d'Auvergne"],
     'docs/__init__.py': [2004, "Edward d'Auvergne"],
     'docs/devel/README': [2017, "Edward d'Auvergne"],
     'docs/devel/svn2git_migration/dups.py': [2017, "Edward d'Auvergne"],
@@ -301,6 +303,10 @@ FALSE_NEG = {
 # SVN revisions and git hashes to exclude.
 EXCLUDE = {
     "/data/relax/gna/repository_backup/git_migration/svn_cleanup_co": [
+        'r19068',   # A reversion commit.
+        'r19067',   # The reverted commit.
+        'r19066',   # The reverted commit.
+        'r19065',   # The reverted commit.
     ],
     '.': [
         '3497eb7bdb85ea656e0f33a8b972602cc5bde6ed',    # Directory rename {gui_bieri/res/pics => gui/images}.
