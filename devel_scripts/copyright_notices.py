@@ -336,6 +336,132 @@ GIT_START = {
         "Created the gui.wizards package for holding all of the relax wizards. (2013-04-21 14:36:02 +0000)",
     "gui/wizards/wiz_objects.py":
         "Created a base class for the user function GUI elements. (2010-12-07 00:04:46 +0000)",
+    "lib/__init__.py":
+        "Initialised a new package called 'lib'. (2013-03-01 22:44:16 +0000)",
+    "lib/alignment/__init__.py":
+        "Created the empty lib.nmr package of the relax library. (2013-03-22 21:58:18 +0000)",
+    "lib/alignment/paramag_centre.py":
+        "Preparation for the optimisation of the paramagnetic centre in the N-state model. (2010-07-02 15:39:21 +0000)",
+    "lib/alignment/rdc.py":
+        "Created an empty module to dump RDC related computational functions into. (2008-07-09 13:49:39 +0000)",
+    "lib/ansi.py":
+        "Shifted the terminal colouring ANSI escape sequences into their own 'ansi' module. (2012-04-17 16:49:22 +0000)",
+    "lib/auto_relaxation/__init__.py":
+        "Created the empty packages lib.auto_relaxation and lib.spectral_densities. (2013-03-23 08:14:51 +0000)",
+    "lib/checks.py":
+        "Created a special Check class based on the strategy design pattern. (2014-09-26 09:31:29 +0000)",
+    "lib/chemical_shift/__init__.py":
+        "Created the empty lib.chemical_shift package. (2013-03-23 10:08:22 +0000)",
+    "lib/compat.py":
+        "Created a new module for simultaneous Python 2 and 3 support in relax called 'compat'. (2012-10-02 08:35:22 +0000)",
+    "lib/curve_fit/__init__.py":
+        "Created the lib.curve_fit package and associated unit tests. (2013-04-04 14:40:15 +0000)",
+    "lib/curve_fit/exponential.py":
+        "Created the new lib.curve_fit.exponential module for exponential curve-fitting. (2013-04-04 15:15:33 +0000)",
+    "lib/diffusion/__init__.py":
+        "Created the empty lib.diffusion package. (2013-03-23 08:28:12 +0000)",
+    "lib/diffusion/correlation_time.py":
+        "Updating to the archive 'backup_relax_2004-03-05.tar.bz2'. (2004-03-04 15:22:38 +0000)",
+    "lib/diffusion/direction_cosine.py":
+        "Updating to the archive 'backup_relax_2004-03-09.tar.bz2'. (2004-03-08 15:24:39 +0000)",
+    "lib/diffusion/weights.py":
+        "Updating to the archive 'backup_relax_2004-03-05.tar.bz2'. (2004-03-04 15:22:38 +0000)",
+    "lib/dispersion/__init__.py":
+        "Created the empty lib.dispersion package. (2013-03-23 10:06:19 +0000)",
+    "lib/dispersion/b14.py":
+        "Added empty b14.py to relax library lib/dispersion/b14.py. (2014-05-01 07:20:32 +0000)",
+    "lib/dispersion/matrix_exponential.py":
+        "Implemented the lib.linear_algebra.matrix_exponential.matrix_exponential() function. (2013-10-15 09:07:54 +0000)",
+    "lib/dispersion/two_point.py":
+        "Created the lib.dispersion.equations module. (2013-03-27 16:49:33 +0000)",
+    "lib/float.py":
+        "Added a skeleton for the isnan() and isinf() functions.  Two dummy functions have been created and the code in 'specific_fns/model_free.py' now points to these. (2006-09-03 06:06:12 +0000)",
+    "lib/frame_order/__init__.py":
+        "Created the empty lib.frame_order package. (2013-03-23 08:18:10 +0000)",
+    "lib/frame_order/format.py":
+        "Added a stub package for Frame Order related calculation code. (2009-06-17 17:36:36 +0000)",
+    "lib/frame_order/free_rotor.py":
+        "Spun out all of the frame order model specific code in frame_order_matrix_ops to separate modules. (2012-07-27 10:41:26 +0000)",
+    "lib/frame_order/matrix_ops.py":
+        "Added a stub package for Frame Order related calculation code. (2009-06-17 17:36:36 +0000)",
+    "lib/frame_order/variables.py":
+        "Created the new specific_analyses.frame_order.variables module. (2014-07-09 08:03:17 +0000)",
+    "lib/geometry/__init__.py":
+        "Initialised the lib.geometry package. (2013-03-01 22:46:56 +0000)",
+    "lib/geometry/coord_transform.py":
+        "Created a new module for performing coordinate transformations. (2010-08-06 09:29:23 +0000)",
+    "lib/geometry/lines.py":
+        "Created the lib.geometry.lines module for performing geometric operations with lines. (2013-03-07 14:46:56 +0000)",
+    "lib/geometry/vectors.py":
+        "Spun out the maths_fns.rotation_matrix.random_rot_axis() function into its own module. (2013-01-10 14:15:55 +0000)",
+    "lib/linear_algebra/__init__.py":
+        "Created the empty lib.algebra package - this is for advanced linear algebra not present in numpy. (2013-03-23 08:41:28 +0000)",
+    "lib/linear_algebra/matrix_exponential.py":
+        "Implemented the lib.linear_algebra.matrix_exponential.matrix_exponential() function. (2013-10-15 09:07:54 +0000)",
+    "lib/linear_algebra/matrix_power.py":
+        "Added the missing mpower() function as lib.linear_algebra.matrix_power.square_matrix_power(). (2013-07-12 15:12:38 +0000)",
+    "lib/list.py":
+        "Created the new lib.list module with the function count_unique_elements(). (2013-04-03 14:42:32 +0000)",
+    "lib/mathematics.py":
+        "Created the lib.mathematics relax library module. (2013-05-02 10:15:04 +0000)",
+    "lib/order/__init__.py":
+        "Created the empty lib.order package. (2013-03-23 09:07:42 +0000)",
+    "lib/order/order_parameters.py":
+        "Added the stub function maths_fns.order_parameters.iso_cone_S_to_cos_theta(). (2010-02-03 10:22:00 +0000)",
+    "lib/physical_constants.py":
+        "Shifted the physical constants h, hbar, and mu0 from the PipeContainer class to their own module. (2007-03-08 05:40:11 +0000)",
+    "lib/plotting/__init__.py":
+        "Created the empty lib.plotting package. (2014-12-18 10:05:44 +0000)",
+    "lib/plotting/api.py":
+        "Created the lib.plotting API function correlation_matrix(). (2014-12-18 11:05:07 +0000)",
+    "lib/plotting/gnuplot.py":
+        "Implemented a very basic gnuplot backend for the correlation_matrix() plotting API function. (2014-12-18 11:07:24 +0000)",
+    "lib/plotting/text.py":
+        "Shifted the matrix output of the structure.atomic_fluctuations user function into lib.plotting.text. (2014-12-18 11:23:42 +0000)",
+    "lib/plotting/veusz.py":
+        "Created the empty lib.plotting.veusz module for graphing using Veusz (http://home.gna.org/veusz/). (2015-02-06 11:05:31 +0000)",
+    "lib/sequence_alignment/__init__.py":
+        "Created an empty lib.sequence_alignment relax library package. (2015-01-21 09:07:23 +0000)",
+    "lib/software/__init__.py":
+        "Created the empty lib.software package. (2013-03-26 11:36:55 +0000)",
+    "lib/software/opendx/__init__.py":
+        "Created the empty lib.opendx package. (2013-03-23 20:29:03 +0000)",
+    "lib/spectral_densities/__init__.py":
+        "Created the empty packages lib.auto_relaxation and lib.spectral_densities. (2013-03-23 08:14:51 +0000)",
+    "lib/spectrum/__init__.py":
+        "Shifted code from pipe_control.spectrum to the new lib.spectrum.peak_list relax library module. (2013-08-09 12:58:32 +0000)",
+    "lib/spectrum/nmrpipe.py":
+        "Adding a NMRPipe function file in the folder lib\software\\nmrpipe.py. (2013-06-21 16:33:03 +0000)",
+    "lib/structure/__init__.py":
+        "Initialised the lib.structure package - this is currently empty. (2013-03-20 16:09:55 +0000)",
+    "lib/structure/cones.py":
+        "Added a new module for holding class objects defining different cone types. (2010-03-09 10:44:48 +0000)",
+    "lib/structure/files.py":
+        "Created the new lib.structure.files module. (2014-07-02 12:42:51 +0000)",
+    "lib/structure/internal/__init__.py":
+        "Created the empty lib.structure.internal package for holding the internal structural object. (2013-03-24 15:34:53 +0000)",
+    "lib/structure/internal/displacements.py":
+        "Started to create the structural object and the API for accessing, creating, modifying info. (2008-04-04 10:01:52 +0000)",
+    "lib/structure/internal/selection.py":
+        "Created a special internal structural object selection object. (2014-09-23 16:02:05 +0000)",
+    "lib/structure/represent/__init__.py":
+        "Created the empty lib.structure.represent package. (2013-03-24 15:56:29 +0000)",
+    "lib/text/__init__.py":
+        "Created the lib.text package for text manipulation. (2013-03-07 14:39:38 +0000)",
+    "lib/text/gui.py":
+        "Created the new gui.text module for holding all of the unicode text for the GUI. (2013-09-06 16:39:56 +0000)",
+    "lib/text/progress.py":
+        "Created a basic text based progress meter in the new lib.text.progress module. (2014-09-22 09:15:17 +0000)",
+    "lib/text/sectioning.py":
+        "Created the new lib.text.sectioning module for formatting titles, subtitles and other sectioning text. (2013-03-20 13:13:27 +0000)",
+    "lib/text/string.py":
+        "The script user function GUI element is now functional. (2010-12-06 23:10:30 +0000)",
+    "lib/text/table.py":
+        "Created a base class for the user function classes. (2009-08-21 15:23:56 +0000)",
+    "lib/timing.py":
+        "Created the time user function. (2014-07-15 10:36:47 +0000)",
+    "lib/xml.py":
+        "Added a module for the creation and parsing of XML documents representing a data pipe. (2008-06-22 11:21:23 +0000)",
 }
 
 # Additional copyrights that are not present in the git log.
@@ -360,6 +486,27 @@ FALSE_POS = {
     'graphics/wizards/object-locked-unlocked.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/oxygen-icon-weather-clear.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/dipole_pair/VectorFieldPlot.py': ["Copyright (C) 2010 Geek3"],
+    'lib/dispersion/b14.py': ["Copyright (C) 2014 Andrew Baldwin"],
+    'lib/dispersion/cr72.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/dpl94.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/it99.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/lm63.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/lm63_3site.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/m61.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/m61b.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/mp05.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/ns_mmq_2site.py': ["Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_mmq_3site.py': ["Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_cpmg_2site_3d.py': ["Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_cpmg_2site_expanded.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger", "Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_cpmg_2site_star.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger", "Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_matrices.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger", "Copyright (C) 2010-2013 Paul Schanda", "Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
+    'lib/dispersion/ns_r1rho_2site.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/ns_r1rho_3site.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/tap03.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/tp02.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/tsmfk01.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/two_point.py': ["Copyright (C) 2009 Sebastien Morin"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -443,12 +590,38 @@ EXCLUDE = [
     "A number of Python 3 fixes. (2013-10-17 09:09:48 +0000)",
     # r20785 - d4372c6612d94f2957df246b30ae0e69f9bd73a3 - 2to3 automated conversions.
     "Python 3 fixes. (2013-09-04 07:29:14 +0000)",
+    # r20659 - 16399fd3ad31573dc3ab0084a88c05ffc2a6ebed.
+    "Shifted all the modules from lib.software to do with peak lists to lib.spectrum. (2013-08-21 12:21:51 +0000)",
+    # r20441 - 423abd67f91cfbe0d7a4111cd2d46eacaf7ea802.
+    "Reverted r20438 and r20439 as the commit messages were incomplete!!! (2013-07-22 06:36:56 +0000)",
+    # r20439 - 8767b75cd29ca83bba8f642e4a017b1ad82ad20f.
+    "Progress sr #3043: (https://gna.org/support/index.php?3043)",
+    # r20438 - ab5a48ba1d6f3566b3f7b567ac3ce9a094cfb0fe.
+    "Fix for the dispersion auto-analysis for when only the single R2eff model is optimised. (2013-07-20 15:51:47 +0000)",
     # r20291 - 521787f4e4cefb4a1d7e343d873c75d617a88585 - 2to3 automated conversions.
     "Spacing fixes for the lib.dispersion.ns_2site_star module as determined by the 2to3 program. (2013-07-15 08:03:08 +0000)",
     # r19926 - 8cee1be0ce60f6e6356e2cca58eddb322117721f - 2to3 automated conversions.
     "Python 3 fixes. (2013-06-06 21:19:36 +0000)",
+    # r19111 - d0366e24397ac94dbba04403784da9f5d0b237d0.
+    "Shifted the pipe_control.structure.cones module to lib.structure.cones. (2013-03-24 15:02:11 +0000)",
+    # r19110 - b8ce38698eaeb3f03617b3d35978dcd46201d73f.
+    "Shifted the pipe_control.structure.pdb_read and pipe_control.structure.pdb_write modules to lib.structure. (2013-03-24 14:59:13 +0000)",
+    # r19108 - dabbcf24ba79ca656dfba89ae3a543ca8cf8bf03.
+    "Shifted the pipe_control.structure.statistics module to lib.structure.statistics. (2013-03-24 14:54:57 +0000)",
+    # r19107 - c5fea9401ff064bb5d614c58d04ff2629ab004ec.
+    "Shifted the pipe_control.structure.superimpose module to lib.structure.superimpose. (2013-03-24 14:53:19 +0000)",
+    # r19083 - 27128548bbffadc390927272fcdd847b89f3be81.
+    "Shifted most of the modules of target_functions.frame_order to lib.frame_order. (2013-03-23 20:02:52 +0000)",
+    # r19082 - 7f7862c5084a9bacb9388c2c5468b5dd94fd60d3.
+    "Shifted the target_functions.frame_order.pec module to lib.geometry.pec. (2013-03-23 19:56:32 +0000)",
+    # r19081 - 10d9922ecc700a8f1cea4a1ceef8e65b95f75e10.
+    "Renamed the pipe_control.frame_order module to lib.frame_order.format. (2013-03-23 19:51:12 +0000)",
     # r19079 - 1e3e93331a17e1bc34bf5c491e9fd48727de0f2e.
     "Renamed the generic_fns package to pipe_control. (2013-03-23 19:25:55 +0000)",
+    # r19073 - eb58eb2c62901f6fd19a81ea5253895b6ca19768.
+    "Renamed the generic_fns.relax_re module to lib.regex. (2013-03-23 17:27:27 +0000)",
+    # r19069 - d1da49abf152a9dffd899022a47e655d676d227b.
+    "Shifted the generic_fns.xplor module to lib.xplor. (2013-03-23 17:08:56 +0000)",
     # r19068 - 642e56bafa3c519413842d200a58c46922da2d21.
     "Reverted revisions r19065, r19066 and r19067. (2013-03-23 17:00:41 +0000)",
     # r19067 - 1eceee2b1b80f081805798aef140aa89305d04b1.
@@ -457,14 +630,66 @@ EXCLUDE = [
     "Shifted most of the modules containing data store objects into data_store.objects. (2013-03-23 13:00:16 +0000)",
     # r19065 - 4d3f2f346ea81b89e1645a0d08cdce5d9a3e5b14.
     "Created two new empty packages data_store.lib and data_store.objects. (2013-03-23 12:52:00 +0000)",
+    # r19061 - 234bd7ec51cb4a13485380e542299deb7ccf08e3.
+    "Moved the check_types module into the lib package. (2013-03-23 09:46:51 +0000)",
+    # r19060 - 0d0eaaaa2ffb679cbeaf4f07f85effc276258a68.
+    "Shifted the arg_check module to lib.arg_check. (2013-03-23 09:43:57 +0000)",
+    # r19059 - 3761e2ed0f96117e9e16360080e3b0978b1e33ba.
+    "Shifted the target_functions.paramag_centre module to lib.alignment.paramag_centre. (2013-03-23 09:38:28 +0000)",
+    # r19058 - 0bbfb5a2e7f23f1506d72860ee83efde36cbd08d.
+    "Shifted the target_functions.correlation_time module to lib.diffusion.correlation_time. (2013-03-23 09:35:51 +0000)",
+    # r19057 - 94bdca7305ca378d280cd8bbe6791f1f69cf722e.
+    "Moved the target_functions.weights module to lib.diffusion.weights. (2013-03-23 09:33:30 +0000)",
+    # r19056 - 6e252adab42be9431bc835620579fa52eb5d7e89.
+    "Moved the target_functions.ri_comps module to lib.auto_relaxation.ri_comps. (2013-03-23 09:29:45 +0000)",
+    # r19053 - 674c47326fa3cfde57a98ed05729f7ad3a547a93.
+    "Shifted the target_functions.ri_prime module to lib.auto_relaxation.ri_prime. (2013-03-23 09:20:58 +0000)",
+    # r19052 - 46a66d852c7d6744c2786a21775ff273c414e262.
+    "Shifted the target_functions.ri module to lib.auto_relaxation.ri. (2013-03-23 09:17:04 +0000)",
+    # r19051 - 075587609e6f42c59b2ea7045d9e2aec2e61e553.
+    "Shifted the target_functions.order_parameters module to lib.order.order_parameters. (2013-03-23 09:11:02 +0000)",
+    # r19049 - 64901802278e3d051af55f4bbce41129c4b56d08.
+    "Shifted the target_functions.jw_mf_comps module to lib.pectral_densities.model_free_components. (2013-03-23 09:04:57 +0000)",
+    # r19048 - b881a39bd2cb8d0b2d9f40bb1160ca106dde663e.
+    "Shifted the target_functions.jw_mf module to lib.spectral_densities.model_free. (2013-03-23 09:00:36 +0000)",
+    # r19046 - 6794f60fb367403f6c7094f17ad049b1f17809b2.
+    "Moved the target_functions.kronecker_product module to lib.algebra.kronecker_product. (2013-03-23 08:44:52 +0000)",
+    # r19044 - a850a9a1de747d124718de6b264e5af382586544.
+    "Shifted the target_functions.direction_cosine module to lib.diffusion.direction_cosine. (2013-03-23 08:37:15 +0000)",
+    # r19041 - 2cc0901c74e3364c57f820e63e564274ebc8ffa0.
+    "Shifted the target_functions.coord_transform module to lib.geometry.coord_transform. (2013-03-23 08:26:06 +0000)",
+    # r19035 - 366711903f05eb34a2508bf00a1e2148f4700b95.
+    "Renamed the lib.nmr package to lib.alignment. (2013-03-23 08:06:15 +0000)",
+    # r19032 - d61b9a5e7701b8fb2d58002d7436505070b51995.
+    "Shifted the target_functions.vectors module to lib.geometry.vectors. (2013-03-23 07:59:15 +0000)",
     # r19028 - 5b8fb0ffdc9ee7e37c75fb067f155496ea733ccb.
     "Renamed the data package to data_store. (2013-03-22 23:25:25 +0000)",
+    # r19027 - 1fd705d9785609da6be242c864cb1272dbd43ded.
+    "Shifted the float module into the lib package. (2013-03-22 23:04:33 +0000)",
     # r19026 - fa10d72942af42e328ee0952f841f1d78fbe5c66.
     "Renamed the maths_fns package to target_functions. (2013-03-22 23:00:31 +0000)",
     # r19025 - e4d289130c47e9b7cde3e4d4bcedf90a11543212.
     "Copyright updates which should have gone into r19024. (2013-03-22 22:51:05 +0000)",
     # r19024 - 44ac4a86559d295788a0f48815546cfa51bbed21.
     "Renamed the specific_fns package to specific_analyses. (2013-03-22 22:32:08 +0000)",
+    # r19023 - 87786ffc6b29958c7040b9209f07bcb24a88fc0e.
+    "Shifted the maths_fns.rdc and maths_fns.pcs modules to lib.nmr. (2013-03-22 22:14:21 +0000)",
+    # r19022 - 53a506e4c44f5726e48d53ec2225076c39fb8607.
+    "Shifted the maths_fns.alignment_tensor module to lib.nmr.alignment_tensor. (2013-03-22 22:10:32 +0000)",
+    # r19018 - d9a2205ebebaf21def77e07b80dec43b8e2da03d.
+    "Renamed the maths_fns.rotation_matrix module to lib.geometry.rotations. (2013-03-22 21:54:54 +0000)",
+    # r19017 - c64679b818e2a31b3d8fb469f96a68046177cfb3.
+    "Shifted the physical_constants module into the lib package. (2013-03-22 21:45:30 +0000)",
+    # r19016 - cb142fb14dfa85b79421d1fa6b69a59ad2729524.
+    "Renamed the ansi module to lib.ansi. (2013-03-22 21:39:49 +0000)",
+    # r19011 - b696e5c9f021b3fc485ea7b2f60cbfd709071fce.
+    "Renamed the relax_warnings module to lib.warnings. (2013-03-22 20:58:13 +0000)",
+    # r19009 - 6f4e33c64d64ccdd6bb775b2ec9420b985bceacd.
+    "Renamed the relax_io module to lib.io. (2013-03-22 20:51:55 +0000)",
+    # r19008 - be26f8de5507246dcf372238e0150bf250f60476.
+    "Renamed the relax_string module to lib.text.string. (2013-03-22 20:44:59 +0000)",
+    # r19007 - 491f276d2265184c14ac0d97aea25b43a12804c2.
+    "Renamed the relax_errors module to lib.errors. (2013-03-22 20:41:29 +0000)",
     # r18804 - 43a4e4daa855bfe80a748cd8cefdfab4e5e638e7 - 2to3 automated conversions.
     "Python 3 updates for the frame_order_testing branch. (2013-03-12 16:30:51 +0000)",
     # r18795 - 253b93e88e45a1dece6e84785dba4ec400a3a592 - 2to3 automated conversions.
