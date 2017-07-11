@@ -241,6 +241,10 @@ SVN_START = {
 GIT_START = {
     "auto_analyses/__init__.py":
         "Spun out the automatic model-free protocol code from the full_analysis.py script. (2010-01-25 10:13:06 +0000)",
+    "data_store/exp_info.py":
+        "Created a data container for storing experimental details. (2009-10-09 18:24:11 +0000)",
+    "data_store/gui.py":
+        "Created some data structures for holding all the GUI specific information. (2010-01-26 16:27:29 +0000)",
     "docs/__init__.py":
         "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
     "docs/devel/README":
