@@ -1,2 +1,6 @@
 .sconsign.dblite
+docs/latex/docstring.tex
+docs/latex/relax_version.tex
+docs/latex/script_definition.tex
+docs/relax.pdf
 target_functions/relax_fit.so
