@@ -173,6 +173,8 @@ COMMITTER_ALT = {
 # Blacklisted files.
 BLACKLISTED_FILES = [
     '.gitignore',                                               # Trivial file list.
+    'devel_scripts/byte_compile',                               # Trivial script.
+    'devel_scripts/grep_tree',                                  # Trivial script.
     'docs/COPYING',                                             # The original GPLv3 licence text.
     'docs/html/clean',                                          # Trivial script.
     'docs/latex/gpl-3.0.tex',                                   # The original GPLv3 licence text.
@@ -243,6 +245,10 @@ GIT_START = {
         "Created a data container for storing experimental details. (2009-10-09 18:24:11 +0000)",
     "data_store/gui.py":
         "Created some data structures for holding all the GUI specific information. (2010-01-26 16:27:29 +0000)",
+    "devel_scripts/memory_management/GUI_uf_align_tensor_init.py":
+        "Created a script for testing the memory management when calling the time GUI user function. (2015-02-04 13:18:26 +0000)",
+    "devel_scripts/memory_management/GUI_uf_time.py":
+        "Created a script for testing the memory management when calling the time GUI user function. (2015-02-04 13:18:26 +0000)",
     "docs/__init__.py":
         "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
     "docs/devel/README":
@@ -342,6 +348,7 @@ ADDITIONAL_COPYRIGHT_YEARS = {
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
 FALSE_POS = {
+    'devel_scripts/copyright_notices.py':                               ["Copyright (C) year1, year2, year3 copyright-holder"],
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/object-locked-unlocked.png':                      ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/oxygen-icon-weather-clear.png':                   ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
