@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2016 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2011 Michael Bieri                                       #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2016 Troels Schwartz-Linnet                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
