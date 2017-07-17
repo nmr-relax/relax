@@ -294,6 +294,16 @@ EXCLUDE = [
     "Spacing fixes for the lib.dispersion.ns_2site_star module as determined by the 2to3 program. (2013-07-15 08:03:08 +0000)",
     # r19926 - 8cee1be0ce60f6e6356e2cca58eddb322117721f - 2to3 automated conversions.
     "Python 3 fixes. (2013-06-06 21:19:36 +0000)",
+    # r19079 - 1e3e93331a17e1bc34bf5c491e9fd48727de0f2e.
+    "Renamed the generic_fns package to pipe_control. (2013-03-23 19:25:55 +0000)",
+    # r19028 - 5b8fb0ffdc9ee7e37c75fb067f155496ea733ccb.
+    "Renamed the data package to data_store. (2013-03-22 23:25:25 +0000)",
+    # r19026 - fa10d72942af42e328ee0952f841f1d78fbe5c66.
+    "Renamed the maths_fns package to target_functions. (2013-03-22 23:00:31 +0000)",
+    # r19025 - e4d289130c47e9b7cde3e4d4bcedf90a11543212.
+    "Copyright updates which should have gone into r19024. (2013-03-22 22:51:05 +0000)",
+    # r19024 - 44ac4a86559d295788a0f48815546cfa51bbed21.
+    "Renamed the specific_fns package to specific_analyses. (2013-03-22 22:32:08 +0000)",
     # r18804 - 43a4e4daa855bfe80a748cd8cefdfab4e5e638e7 - 2to3 automated conversions.
     "Python 3 updates for the frame_order_testing branch. (2013-03-12 16:30:51 +0000)",
     # r18795 - 253b93e88e45a1dece6e84785dba4ec400a3a592 - 2to3 automated conversions.
@@ -386,6 +396,8 @@ EXCLUDE = [
     "Replaced all instances of `x` with repr(x). (2009-08-19 13:37:09 +0000)",
     # r8224 - 2210c04e8dd7e10b53ff7060add85b1ff64a5e91 - Whitespace cleanup.
     "Many corrections of formatting. (2008-12-23 16:04:48 +0000)",
+    # r894, r895, etc. - 41775d02748d251373dff182ec220c34cbcd8cf0, 358f9909ed75b71a9262e261e6f0eeb86ca9d814, etc.
+    "Updating to the archive 'backup_relax_2004-02-24a.tar.bz2'. (2004-02-24 06:45:20 +0000)"
 ]
 
 # Commits to switch authorship of (e.g. if someone commits someone else's code).
