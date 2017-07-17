@@ -110,6 +110,7 @@ of previous major versions, but that is optional.
 from datetime import date, datetime
 import mimetypes
 from os import getcwd, path, sep, walk
+from pytz import utc
 from re import search
 from subprocess import PIPE, Popen
 import sys
@@ -120,6 +121,10 @@ sys.path.append('.')
 # relax module imports.
 from lib.io import open_read_file
 
+
+# Debugging modes.
+DEBUG = False
+DEBUG_FILE_NAME = ''
 
 # The significant number of new lines of code added.
 SIG_CODE = 8
@@ -222,6 +227,8 @@ BINARY_FILES = [
 
 # Real starting dates (to handle incorrect git copying histories).
 START_DATE = {
+}
+X = {
     'auto_analyses/__init__.py': [2004, "Edward d'Auvergne"],
     'auto_analyses/relax_disp.py': [2013, "Edward d'Auvergne"],
     'data_store/exp_info.py': [2009, "Edward d'Auvergne"],
@@ -279,68 +286,79 @@ START_DATE = {
     'gui/uf_objects.py': [2012, "Edward d'Auvergne"],
     'gui/wizards/__init__.py': [2013, "Edward d'Auvergne"],
     'gui/wizards/wiz_objects.py': [2010, "Edward d'Auvergne"],
-    'lib/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/alignment/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/alignment/paramag_centre.py': [2010, "Edward d'Auvergne"],
-    'lib/alignment/rdc.py': [2008, "Edward d'Auvergne"],
-    'lib/ansi.py': [2012, "Edward d'Auvergne"],
-    'lib/checks.py': [2014, "Edward d'Auvergne"],
-    'lib/chemical_shift/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/compat.py': [2012, "Edward d'Auvergne"],
-    'lib/curve_fit/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/curve_fit/exponential.py': [2013, "Edward d'Auvergne"],
-    'lib/diffusion/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/diffusion/correlation_time.py': [2004, "Edward d'Auvergne"],
-    'lib/diffusion/direction_cosine.py': [2004, "Edward d'Auvergne"],
-    'lib/diffusion/weights.py': [2004, "Edward d'Auvergne"],
-    'lib/dispersion/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/dispersion/matrix_exponential.py': [2013, "Edward d'Auvergne"],
-    'lib/dispersion/dpl94.py': [2009, "Sébastien Morin"],
-    'lib/dispersion/it99.py': [2009, "Sébastien Morin"],
-    'lib/dispersion/lm63.py': [2009, "Sébastien Morin"],
-    'lib/dispersion/m61.py': [2009, "Sébastien Morin"],
-    'lib/dispersion/m61b.py': [2009, "Sébastien Morin"],
-    'lib/dispersion/tsmfk01.py': [2009, "Sébastien Morin"],
-    'lib/dispersion/two_point.py': [2009, "Sébastien Morin"],
-    'lib/float.py': [2006, "Gary Thompson"],
-    'lib/frame_order/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/frame_order/format.py': [2009, "Edward d'Auvergne"],
-    'lib/frame_order/free_rotor.py': [2009, "Edward d'Auvergne"],
-    'lib/frame_order/matrix_ops.py': [2009, "Edward d'Auvergne"],
-    'lib/frame_order/variables.py': [2014, "Edward d'Auvergne"],
-    'lib/geometry/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/geometry/coord_transform.py': [2010, "Edward d'Auvergne"],
-    'lib/geometry/lines.py': [2013, "Edward d'Auvergne"],
-    'lib/geometry/vectors.py': [2004, "Edward d'Auvergne"],
-    'lib/linear_algebra/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/linear_algebra/matrix_exponential.py': [2013, "Edward d'Auvergne"],
-    'lib/linear_algebra/matrix_power.py': [2013, "Edward d'Auvergne"],
-    'lib/list.py': [2013, "Edward d'Auvergne"],
-    'lib/mathematics.py': [2013, "Edward d'Auvergne"],
-    'lib/order/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/order/order_parameters.py': [2010, "Edward d'Auvergne"],
-    'lib/physical_constants.py': [2007, "Edward d'Auvergne"],
-    'lib/plotting/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/plotting/api.py': [2014, "Edward d'Auvergne"],
-    'lib/plotting/gnuplot.py': [2014, "Edward d'Auvergne"],
-    'lib/plotting/text.py': [2014, "Edward d'Auvergne"],
-    'lib/plotting/veusz.py': [2015, "Edward d'Auvergne"],
-    'lib/sequence_alignment/__init__.py': [2015, "Edward d'Auvergne"],
-    'lib/software/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/software/opendx/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/spectral_densities/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/spectrum/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/spectrum/nmrpipe.py': [2013, "Troels Emtekær Linnet"],
-    'lib/spectrum/sparky.py': [2003, "Edward d'Auvergne"],
-    'lib/structure/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/structure/cones.py': [2010, "Edward d'Auvergne"],
-    'lib/structure/files.py': [2014, "Edward d'Auvergne"],
-    'lib/structure/internal/__init__.py':  [2013, "Edward d'Auvergne"],
-    'lib/structure/internal/displacements.py': [2008, "Edward d'Auvergne"],
-    'lib/structure/internal/selection.py': [2014, "Edward d'Auvergne"],
-    'lib/structure/represent/__init__.py': [2013, "Edward d'Auvergne"],
-    'lib/timing.py': [2014, "Edward d'Auvergne"],
-    'lib/xml.py': [2008, "Edward d'Auvergne"],
+}
+
+# Stop incorrect git history by specifying the first commit hash of a misidentified file.
+GIT_START = {
+    'lib/__init__.py':                                      '8519632b42322aef0bd2f7c4a068d13b1e6b22a9',
+    'lib/alignment/__init__.py':                            '63eeb4eff1d74ce155f2d4c45b6ba6857b19196f',
+    'lib/alignment/paramag_centre.py':                      '20b5e11b1c300722c0e36c0d29f1a9ad156935c9',
+    'lib/alignment/rdc.py':                                 '53aecf9e8ca53c6ecb751f1830ac7491e210cf86',
+    'lib/ansi.py':                                          '76e70baa45c050ec8dc36460269b9ddf4f32ef91',
+    'lib/auto_relaxation/__init__.py':                      '885bdd92f10e0504a96330e4895c27bce760566f',
+    'lib/checks.py':                                        '749bea8558b91f6fdbc29b1c1282f519235cdaeb',
+    'lib/chemical_shift/__init__.py':                       'ed4c992e80e5989de84983e5f9e843688015aa53',
+    'lib/compat.py':                                        '3282a189ac3a38b5ee5cc9e0bc2b3f86ce88dd71',
+    'lib/curve_fit/__init__.py':                            '238e0b9c27fa5c5f3b2c4b56577667a8a84db291',
+    'lib/curve_fit/exponential.py':                         '200db1147a36073a3e6936f1ea1ce446974015d4',
+    'lib/diffusion/__init__.py':                            '262ce10d4e796da496a35e34c7e8e735c9af68d1',
+    'lib/diffusion/correlation_time.py':                    'a4504bd93879735bb58be26ef25a61775deb7ef4',
+    'lib/diffusion/direction_cosine.py':                    'c626ba0ae9b650f9b39a37c351330dc3c3908151',
+    'lib/diffusion/weights.py':                             'a4504bd93879735bb58be26ef25a61775deb7ef4',
+    'lib/dispersion/__init__.py':                           '74350d0c379f22ed1c1bb1609a2936a5534e3c8b',
+    'lib/dispersion/b14.py':                                '39914de010bd4ebee944ecf4422c38674e041ca5',
+    'lib/dispersion/matrix_exponential.py':                 '276279d32f684e52ee417decd2a39778f838fe75',
+    #'lib/dispersion/dpl94.py':                              '6d848aa618a814e554bbadb73fe2f4de32c26b04',
+    #'lib/dispersion/it99.py':                               '4c4c3277cd175db9250748e235a7d43d88897896',
+    #'lib/dispersion/m61.py':                                '',
+    #'lib/dispersion/m61b.py':                               '',
+    #'lib/dispersion/tsmfk01.py':                            '',
+    'lib/dispersion/two_point.py':                          'a578259d0c0a9cfdfb49cb6c9a15b7b0b72230f8',
+    'lib/float.py':                                         '5e177bfcf80bb7b7b5059814db6c01e4dd0d5821',
+    'lib/frame_order/__init__.py':                          '8a5188cd6a8a88c36d3f4b9ffd17a598a37f21ff',
+    'lib/frame_order/format.py':                            '52eca18c9b9c0a845f5e34fff26748a11fe2fa46',
+    'lib/frame_order/free_rotor.py':                        'eeea2d14a17db835f8bb3d9bb6224000b676648f',
+    'lib/frame_order/matrix_ops.py':                        '52eca18c9b9c0a845f5e34fff26748a11fe2fa46',
+    'lib/frame_order/variables.py':                         '7639902e20c507b4524d4ed082725968b9e585ce',
+    'lib/geometry/__init__.py':                             'e79e5be6b17bca719d57cc1f928aa21cf9753e91',
+    'lib/geometry/coord_transform.py':                      '8d96502febad97643c7b7a0fe868924c49cda17c',
+    'lib/geometry/lines.py':                                '6f6f40707a080d9b84df220ec6147aafc7364669',
+    'lib/geometry/vectors.py':                              '46bbaf61b5c7756aab3fdeb1ef86bb3ac170cf49',
+    'lib/linear_algebra/__init__.py':                       '4295b8ebced4d0e3201499fd9deb9bc3bccac3a8',
+    'lib/linear_algebra/matrix_exponential.py':             '276279d32f684e52ee417decd2a39778f838fe75',
+    'lib/linear_algebra/matrix_power.py':                   'fdccf295cabe59ecaed6397ad3690b05283047ec',
+    'lib/list.py':                                          'ae46b32dc7a9d86607d663440261bdfe53aac318',
+    'lib/mathematics.py':                                   '820ed7f7256af2147024b8d9764750bf8f095e12',
+    'lib/order/__init__.py':                                '65eb1e23b41a2dfab014a67423a72f54f5f46bcd',
+    'lib/order/order_parameters.py':                        '3034173bb0a1cc5b68a1f20c10e6c3f71713898f',
+    'lib/physical_constants.py':                            'd1e0b5acd72fc4121b47b71f0b2c507082309039',
+    'lib/plotting/__init__.py':                             '1a8b004d131967363d57f7e16e4238f153bee4b6',
+    'lib/plotting/api.py':                                  'e3078693b753a98b663bcd18a2d6802dd052ca7b',
+    'lib/plotting/gnuplot.py':                              'e45e8297622d77b95fe01ec2a3c88457ee54c090',
+    'lib/plotting/text.py':                                 '51242a29d529ae746b579220015d815393c9d921',
+    'lib/plotting/veusz.py':                                '2ab8a161bf583dff43943735477df0342d5f5bfe',
+    'lib/sequence_alignment/__init__.py':                   'c096c0c5994ae84784b86b4eb9b13c8a7a20ae42',
+    'lib/software/__init__.py':                             'a7f5f87573191e1643fb8bd59eb6797e7303ea4e',
+    'lib/software/opendx/__init__.py':                      '3a58dae773b4afe3ac843d9f32f7027b9bdec58f',
+    'lib/spectral_densities/__init__.py':                   '885bdd92f10e0504a96330e4895c27bce760566f',
+    'lib/spectrum/__init__.py':                             '98442bfa0fe433a9841e6f781d054fb172acf522',
+    'lib/spectrum/nmrpipe.py':                              '8ddee0172e11b02c6c7393a2e4df8c23ba9dfcbb',
+    #'lib/spectrum/sparky.py':                               '',
+    'lib/structure/__init__.py':                            'f3c8194dcbca01fd375f997529f8301398f925bb',
+    'lib/structure/cones.py':                               '29285334ee9c9b0d5c8c4d9a5b11e01c8b93ba3a',
+    'lib/structure/files.py':                               '3ba2efdfcdadf26b87cc161708ede979c4543388',
+    'lib/structure/internal/__init__.py':                   'ce1dde17e02c9748dab64ee71cf5a133ded1e5e7',
+    'lib/structure/internal/displacements.py':              '5226b233091cfa7ab644a6ff181401f84a757cd4',
+    'lib/structure/internal/selection.py':                  '25ff4594dd7f7cb95cb85fd701609e66668da023',
+    'lib/structure/represent/__init__.py':                  '2e24d8233dfbdcd8b6bfdf0756429df53a439742',
+    'lib/text/__init__.py':                                 '80abee7bec9a92c5580a51fba6f6528e4408e3ef',
+    'lib/text/gui.py':                                      '0b2047577ded97f685038f0c3596e158f9c148f6',
+    'lib/text/progress.py':                                 '4e7649535ec1738b7a8fbe24fc74995591ce3642',
+    'lib/text/sectioning.py':                               'e77be3db7864a9692036127b7172af339d58cefa',
+    'lib/text/string.py':                                   '48b3573e28fe2aa1e04fa492d149829aa43b6f07',
+    'lib/text/table.py':                                    '4c7f52c7a583433ee8c57435c8ece88ea001bd88',
+    'lib/timing.py':                                        'abf6951c0a3472d848b6ebc7148093864d870635',
+    'lib/xml.py':                                           'af2299790e0b8b81e29d8c41c0c606919e96dac2',
 }
 
 # Additional copyrights that are not present in the git log.
@@ -368,6 +386,11 @@ FALSE_POS = {
     'graphics/wizards/oxygen-icon-weather-clear.png': ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/dipole_pair/VectorFieldPlot.py': ["Copyright (C) 2010 Geek3"],
     'lib/dispersion/b14.py': ["Copyright (C) 2014 Andrew Baldwin"],
+    'lib/dispersion/dpl94.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/it99.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/lm63.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/m61.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/m61b.py': ["Copyright (C) 2009 Sebastien Morin"],
     'lib/dispersion/mp05.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
     'lib/dispersion/ns_mmq_2site.py': ["Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
     'lib/dispersion/ns_mmq_3site.py': ["Copyright (C) 2013 Mathilde Lescanne", "Copyright (C) 2013 Dominique Marion"],
@@ -379,6 +402,8 @@ FALSE_POS = {
     'lib/dispersion/ns_r1rho_3site.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
     'lib/dispersion/tap03.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
     'lib/dispersion/tp02.py': ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
+    'lib/dispersion/tsmfk01.py': ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/dispersion/two_point.py': ["Copyright (C) 2009 Sebastien Morin"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -412,68 +437,115 @@ FALSE_NEG = {
 }
 
 # SVN revisions and git hashes to exclude.
-EXCLUDE = {
-    "/data/relax/gna/repository_backup/git_migration/svn_cleanup_co": [
-        'r20659',   # Mainly file renames, no significant changes.
-        'r20624',   # Svnmerge.py merge back.
-        'r20441',   # A reversion commit.
-        'r20439',   # The reverted commit.
-        'r20438',   # The reverted commit.
-        'r19111',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19110',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19108',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19107',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19083',   # Mainly file renames for the new lib package, no significant changes.
-        'r19082',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19081',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19079',   # Package rename, no significant changes.
-        'r19073',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19069',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19068',   # A reversion commit.
-        'r19067',   # The reverted commit.
-        'r19066',   # The reverted commit.
-        'r19065',   # The reverted commit.
-        'r19061',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19060',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19059',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19058',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19057',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19056',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19053',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19052',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19051',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19049',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19048',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19046',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19044',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19041',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19035',   # Package rename for the new lib package, no significant changes.
-        'r19032',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19028',   # Package rename, no significant changes.
-        'r19027',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19026',   # Package rename, no significant changes.
-        'r19025',   # Package rename, no significant changes.
-        'r19024',   # Package rename, no significant changes.
-        'r19023',   # Mainly file renames for the new lib package, no significant changes.
-        'r19022',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19018',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19017',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19016',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19011',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19009',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19008',   # Mainly a file rename for the new lib package, no significant changes.
-        'r19007',   # Mainly a file rename for the new lib package, no significant changes.
-        'r14419',   # Svnmerge.py merge back.
-        'r9890',    # Tab to space conversion.
-        'r9885',    # A file rename showing as a full diff?!
-    ],
-    '.': [
-        '3497eb7bdb85ea656e0f33a8b972602cc5bde6ed',    # Directory rename {gui_bieri/res/pics => gui/images}.
-        '9403da5ca58d48ca56a0bc2c19da89a44efced44',    # Reversion of '6888758caa637c256837b8fce9ebb9093d1656a2'.
-        '6888758caa637c256837b8fce9ebb9093d1656a2',    # Reverted by '9403da5ca58d48ca56a0bc2c19da89a44efced44'.
-        'ab69727887d0d5b006894b44583675d6b6306901',    # Tab to space conversion.
-    ]
-}
+EXCLUDE = [
+    # r20659 - 16399fd3ad31573dc3ab0084a88c05ffc2a6ebed.
+    "Shifted all the modules from lib.software to do with peak lists to lib.spectrum. (2013-08-21 12:21:51 +0000)",
+    # r20441 - 423abd67f91cfbe0d7a4111cd2d46eacaf7ea802.
+    "Reverted r20438 and r20439 as the commit messages were incomplete!!! (2013-07-22 06:36:56 +0000)",
+    # r20439 - 8767b75cd29ca83bba8f642e4a017b1ad82ad20f.
+    "Progress sr #3043: (https://gna.org/support/index.php?3043)",
+    # r20438 - ab5a48ba1d6f3566b3f7b567ac3ce9a094cfb0fe.
+    "Fix for the dispersion auto-analysis for when only the single R2eff model is optimised. (2013-07-20 15:51:47 +0000)",
+    # r19111 - d0366e24397ac94dbba04403784da9f5d0b237d0.
+    "Shifted the pipe_control.structure.cones module to lib.structure.cones. (2013-03-24 15:02:11 +0000)",
+    # r19110 - b8ce38698eaeb3f03617b3d35978dcd46201d73f.
+    "Shifted the pipe_control.structure.pdb_read and pipe_control.structure.pdb_write modules to lib.structure. (2013-03-24 14:59:13 +0000)",
+    # r19108 - dabbcf24ba79ca656dfba89ae3a543ca8cf8bf03.
+    "Shifted the pipe_control.structure.statistics module to lib.structure.statistics. (2013-03-24 14:54:57 +0000)",
+    # r19107 - c5fea9401ff064bb5d614c58d04ff2629ab004ec.
+    "Shifted the pipe_control.structure.superimpose module to lib.structure.superimpose. (2013-03-24 14:53:19 +0000)",
+    # r19083 - 27128548bbffadc390927272fcdd847b89f3be81.
+    "Shifted most of the modules of target_functions.frame_order to lib.frame_order. (2013-03-23 20:02:52 +0000)",
+    # r19082 - 7f7862c5084a9bacb9388c2c5468b5dd94fd60d3.
+    "Shifted the target_functions.frame_order.pec module to lib.geometry.pec. (2013-03-23 19:56:32 +0000)",
+    # r19081 - 10d9922ecc700a8f1cea4a1ceef8e65b95f75e10.
+    "Renamed the pipe_control.frame_order module to lib.frame_order.format. (2013-03-23 19:51:12 +0000)",
+    # r19079 - 1e3e93331a17e1bc34bf5c491e9fd48727de0f2e.
+    "Renamed the generic_fns package to pipe_control. (2013-03-23 19:25:55 +0000)",
+    # r19073 - eb58eb2c62901f6fd19a81ea5253895b6ca19768.
+    "Renamed the generic_fns.relax_re module to lib.regex. (2013-03-23 17:27:27 +0000)",
+    # r19069 - d1da49abf152a9dffd899022a47e655d676d227b.
+    "Shifted the generic_fns.xplor module to lib.xplor. (2013-03-23 17:08:56 +0000)",
+    # r19068 - 642e56bafa3c519413842d200a58c46922da2d21.
+    "Reverted revisions r19065, r19066 and r19067. (2013-03-23 17:00:41 +0000)",
+    # r19067 - 1eceee2b1b80f081805798aef140aa89305d04b1.
+    "Renamed data_store.lib to data_store.control. (2013-03-23 16:55:11 +0000)",
+    # r19066 - 0d7e7199493c16a3dca0af316c44aefca1504046.
+    "Shifted most of the modules containing data store objects into data_store.objects. (2013-03-23 13:00:16 +0000)",
+    # r19065 - 4d3f2f346ea81b89e1645a0d08cdce5d9a3e5b14.
+    "Created two new empty packages data_store.lib and data_store.objects. (2013-03-23 12:52:00 +0000)",
+    # r19061 - 234bd7ec51cb4a13485380e542299deb7ccf08e3.
+    "Moved the check_types module into the lib package. (2013-03-23 09:46:51 +0000)",
+    # r19060 - 0d0eaaaa2ffb679cbeaf4f07f85effc276258a68.
+    "Shifted the arg_check module to lib.arg_check. (2013-03-23 09:43:57 +0000)",
+    # r19059 - 3761e2ed0f96117e9e16360080e3b0978b1e33ba.
+    "Shifted the target_functions.paramag_centre module to lib.alignment.paramag_centre. (2013-03-23 09:38:28 +0000)",
+    # r19058 - 0bbfb5a2e7f23f1506d72860ee83efde36cbd08d.
+    "Shifted the target_functions.correlation_time module to lib.diffusion.correlation_time. (2013-03-23 09:35:51 +0000)",
+    # r19057 - 94bdca7305ca378d280cd8bbe6791f1f69cf722e.
+    "Moved the target_functions.weights module to lib.diffusion.weights. (2013-03-23 09:33:30 +0000)",
+    # r19056 - 6e252adab42be9431bc835620579fa52eb5d7e89.
+    "Moved the target_functions.ri_comps module to lib.auto_relaxation.ri_comps. (2013-03-23 09:29:45 +0000)",
+    # r19053 - 674c47326fa3cfde57a98ed05729f7ad3a547a93.
+    "Shifted the target_functions.ri_prime module to lib.auto_relaxation.ri_prime. (2013-03-23 09:20:58 +0000)",
+    # r19052 - 46a66d852c7d6744c2786a21775ff273c414e262.
+    "Shifted the target_functions.ri module to lib.auto_relaxation.ri. (2013-03-23 09:17:04 +0000)",
+    # r19051 - 075587609e6f42c59b2ea7045d9e2aec2e61e553.
+    "Shifted the target_functions.order_parameters module to lib.order.order_parameters. (2013-03-23 09:11:02 +0000)",
+    # r19049 - 64901802278e3d051af55f4bbce41129c4b56d08.
+    "Shifted the target_functions.jw_mf_comps module to lib.pectral_densities.model_free_components. (2013-03-23 09:04:57 +0000)",
+    # r19048 - b881a39bd2cb8d0b2d9f40bb1160ca106dde663e.
+    "Shifted the target_functions.jw_mf module to lib.spectral_densities.model_free. (2013-03-23 09:00:36 +0000)",
+    # r19046 - 6794f60fb367403f6c7094f17ad049b1f17809b2.
+    "Moved the target_functions.kronecker_product module to lib.algebra.kronecker_product. (2013-03-23 08:44:52 +0000)",
+    # r19044 - a850a9a1de747d124718de6b264e5af382586544.
+    "Shifted the target_functions.direction_cosine module to lib.diffusion.direction_cosine. (2013-03-23 08:37:15 +0000)",
+    # r19041 - 2cc0901c74e3364c57f820e63e564274ebc8ffa0.
+    "Shifted the target_functions.coord_transform module to lib.geometry.coord_transform. (2013-03-23 08:26:06 +0000)",
+    # r19035 - 366711903f05eb34a2508bf00a1e2148f4700b95.
+    "Renamed the lib.nmr package to lib.alignment. (2013-03-23 08:06:15 +0000)",
+    # r19032 - d61b9a5e7701b8fb2d58002d7436505070b51995.
+    "Shifted the target_functions.vectors module to lib.geometry.vectors. (2013-03-23 07:59:15 +0000)",
+    # r19028 - 5b8fb0ffdc9ee7e37c75fb067f155496ea733ccb.
+    "Renamed the data package to data_store. (2013-03-22 23:25:25 +0000)",
+    # r19027 - 1fd705d9785609da6be242c864cb1272dbd43ded.
+    "Shifted the float module into the lib package. (2013-03-22 23:04:33 +0000)",
+    # r19026 - fa10d72942af42e328ee0952f841f1d78fbe5c66.
+    "Renamed the maths_fns package to target_functions. (2013-03-22 23:00:31 +0000)",
+    # r19025 - e4d289130c47e9b7cde3e4d4bcedf90a11543212.
+    "Copyright updates which should have gone into r19024. (2013-03-22 22:51:05 +0000)",
+    # r19024 - 44ac4a86559d295788a0f48815546cfa51bbed21.
+    "Renamed the specific_fns package to specific_analyses. (2013-03-22 22:32:08 +0000)",
+    # r19023 - 87786ffc6b29958c7040b9209f07bcb24a88fc0e.
+    "Shifted the maths_fns.rdc and maths_fns.pcs modules to lib.nmr. (2013-03-22 22:14:21 +0000)",
+    # r19022 - 53a506e4c44f5726e48d53ec2225076c39fb8607.
+    "Shifted the maths_fns.alignment_tensor module to lib.nmr.alignment_tensor. (2013-03-22 22:10:32 +0000)",
+    # r19018 - d9a2205ebebaf21def77e07b80dec43b8e2da03d.
+    "Renamed the maths_fns.rotation_matrix module to lib.geometry.rotations. (2013-03-22 21:54:54 +0000)",
+    # r19017 - c64679b818e2a31b3d8fb469f96a68046177cfb3.
+    "Shifted the physical_constants module into the lib package. (2013-03-22 21:45:30 +0000)",
+    # r19016 - cb142fb14dfa85b79421d1fa6b69a59ad2729524.
+    "Renamed the ansi module to lib.ansi. (2013-03-22 21:39:49 +0000)",
+    # r19011 - b696e5c9f021b3fc485ea7b2f60cbfd709071fce.
+    "Renamed the relax_warnings module to lib.warnings. (2013-03-22 20:58:13 +0000)",
+    # r19009 - 6f4e33c64d64ccdd6bb775b2ec9420b985bceacd.
+    "Renamed the relax_io module to lib.io. (2013-03-22 20:51:55 +0000)",
+    # r19008 - be26f8de5507246dcf372238e0150bf250f60476.
+    "Renamed the relax_string module to lib.text.string. (2013-03-22 20:44:59 +0000)",
+    # r19007 - 491f276d2265184c14ac0d97aea25b43a12804c2.
+    "Renamed the relax_errors module to lib.errors. (2013-03-22 20:41:29 +0000)",
+    # r13456 - 9403da5ca58d48ca56a0bc2c19da89a44efced44.
+    "Partly reverted r13453 as the coloured residue graphic was accidentally replaced with the greyscale one. (2011-07-06 15:14:24 +0000)",
+    # r13453 - 6888758caa637c256837b8fce9ebb9093d1656a2.
+    "The greyscale conversion of graphics is now better. (2011-07-06 13:36:42 +0000)",
+    # r12412 - 3497eb7bdb85ea656e0f33a8b972602cc5bde6ed.
+    "Renamed the gui_bieri package to gui. (2011-01-21 11:18:47 +0000)",
+    # r9890 - ab69727887d0d5b006894b44583675d6b6306901.
+    "Converted tab characters to 8 spaces... (2009-11-19 19:05:50 +0000)",
+    # r9885 - d5d1314a8a26e5f2f669450376f458e4e83b4412.
+    "Renamed the relaxGUI module to match the relax naming conventions. (2009-11-19 10:22:18 +0000)",
+]
+
 
 # SVN revisions and git hashes to switch authorship of (e.g. if someone commits someone else's code).
 # The data consists of:
@@ -925,16 +997,18 @@ def format_years(years):
     return year_string
 
 
-def git_log_data(file_path, repo_path=None, exclude_hashes=None, author_switch=None, committer_info=None, after=None, before=None, init=False):
+def git_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], committer_info={}, after=None, before=None, init=False):
     """Get the committers and years of significant commits from the git log.
 
     @param file_path:           The full file path to obtain the git info for.
     @type file_path:            str
     @keyword repo_path:         The path to the local copy of the git repository.
     @type repo_path:            str
-    @keyword exclude_hashes:    A list of commit hashes to exclude from the search.  For example directory renames with binary files present.
-    @type exclude_hashes:       list of str
-    @keyword author_switch:     List of commit hashes and authors to switch the authorship of.  The first element should be the commit hash, the second the comitter, and the third the real comitter.
+    @keyword exclude:           A list of commit keys to exclude from the search.  The commit key consists of the first line of the commit message followed by the ISO date in brackets.
+    @type exclude:              list of str
+    @keyword start_commit:      The starting commit for each file, where 'git log' identifies an incorrect history path.
+    @type start_commit:         dict of str
+    @keyword author_switch:     List of commit keys and authors to switch the authorship of.  The first element should be the commit key, the second the comitter, and the third the real comitter.  The commit key consists of the first line of the commit message followed by the ISO date in brackets.
     @type author_switch:        list of list of str
     @keyword committer_info:    The committer info data structure, listing the committers and years of significant commits.  This is a dictionary with the committer's name as a key with the value as the list of years.
     @type committer_info:       dict of lists of str
@@ -956,8 +1030,13 @@ def git_log_data(file_path, repo_path=None, exclude_hashes=None, author_switch=N
     if before:
         before_opt = '--before=%i-12-31' % before
 
+    # History fix up.
+    history_fix = ''
+    if file_path in start_commit:
+        history_fix = '%s^..HEAD' % start_commit[file_path]
+
     # Exec.
-    pipe = Popen("git log %s %s --numstat --follow --pretty='%%cn xxx %%cd xxx %%H xxx %%s' --date=iso %s/%s" % (after_opt, before_opt, repo_path, file_path), shell=True, stdout=PIPE, close_fds=False)
+    pipe = Popen("git log %s %s --numstat --follow --pretty='%%cn xxx %%cd xxx %%H xxx %%s' --date=iso %s %s/%s" % (after_opt, before_opt, history_fix, repo_path, file_path), shell=True, stdout=PIPE, close_fds=False)
 
     # Get the data.
     lines = pipe.stdout.readlines()
@@ -972,14 +1051,15 @@ def git_log_data(file_path, repo_path=None, exclude_hashes=None, author_switch=N
         committer, date, commit_hash, subject = lines[i].decode().split(' xxx ')
         year = date.split('-')[0]
         date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
+        commit_key = "%s (%s +0000)" % (subject.strip(), date.strftime("%Y-%m-%d %H:%M:%S"))
 
         # The next line is a committer, so skip the current line.
         if search(' xxx ', lines[i+1].decode()):
             i += 1
             continue
 
-        # Hashes to exclude.
-        if commit_hash.strip() in exclude_hashes:
+        # Commits to exclude.
+        if commit_key in exclude:
             i += 3
             continue
 
@@ -1001,7 +1081,6 @@ def git_log_data(file_path, repo_path=None, exclude_hashes=None, author_switch=N
             continue
 
         # Author switch.
-        commit_key = "%s (%s +0000)" % (subject.strip(), date.strftime("%Y-%m-%d %H:%M:%S"))
         for j in range(len(author_switch)):
             if author_switch[j][0] == commit_key:
                 committer = author_switch[j][2]
@@ -1010,6 +1089,10 @@ def git_log_data(file_path, repo_path=None, exclude_hashes=None, author_switch=N
         if committer in committer_info and year in committer_info[committer]:
             i += 3
             continue
+
+        # Debugging printout.
+        if DEBUG:
+            print("git commit: %s" % commit_key)
 
         # A new committer.
         if committer not in committer_info:
@@ -1029,16 +1112,16 @@ def git_log_data(file_path, repo_path=None, exclude_hashes=None, author_switch=N
             committer_info[committer].append(year)
 
 
-def svn_log_data(file_path, repo_path=None, exclude_rev=None, author_switch=None, svn_head=None, committer_info=None, after=None, before=None, init=False):
+def svn_log_data(file_path, repo_path=None, exclude=[], author_switch=[], svn_head=None, committer_info={}, after=None, before=None, init=False):
     """Get the committers and years of significant commits from the svn log.
 
     @param file_path:           The full file path to obtain the git info for.
     @type file_path:            str
     @keyword repo_path:         The path to the local copy of the svn repository.
     @type repo_path:            str
-    @keyword exclude_rev:       A list of revisions to exclude from the search.  For example commit reversions.
-    @type exclude_rev:          list of str
-    @keyword author_switch:     List of revisions and authors to switch the authorship of.  The first element should be the commit revision number (e.g. "r200"), the second the comitter, and the third the real comitter.
+    @keyword exclude:           A list of commit keys to exclude from the search.  The commit key consists of the first line of the commit message followed by the ISO date in brackets.
+    @type exclude:              list of str
+    @keyword author_switch:     List of commit keys and authors to switch the authorship of.  The first element should be the commit key, the second the comitter, and the third the real comitter.  The commit key consists of the first line of the commit message followed by the ISO date in brackets.
     @type author_switch:        list of list of str
     @keyword svn_head:          The HEAD directory, e.g. "trunk".
     @type svn_head:             str
@@ -1099,11 +1182,11 @@ def svn_log_data(file_path, repo_path=None, exclude_rev=None, author_switch=None
             year = date.split()[0].split('-')[0]
             date = date.split(" (")[0]
             date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
+            date = date.astimezone(tz=utc)
 
             # Find the diff.
             in_diff = False
             newlines = 0
-            svnmerge_py = False
             msg = ""
             msg_flag = True
             while 1:
@@ -1129,10 +1212,6 @@ def svn_log_data(file_path, repo_path=None, exclude_rev=None, author_switch=None
                         else:
                             msg += " %s" % lines[i]
 
-                # Mark svnmerge.py merges as these do not imply copyright ownership for the comitter.
-                if search("^Merged revisions .* via svnmerge from", lines[i]):
-                    svnmerge_py = True
-
                 # End of the diff.
                 if i >= len(lines) or search('^------------------------------------------------------------------------', lines[i]):
                     break
@@ -1153,13 +1232,16 @@ def svn_log_data(file_path, repo_path=None, exclude_rev=None, author_switch=None
                 if len(lines[i]) and lines[i][0] == "+" and lines[i][0:3] != "+++":
                     newlines += 1
 
+            # Create the commit key.
+            commit_key = "%s (%s +0000)" % (msg.strip(), date.strftime("%Y-%m-%d %H:%M:%S"))
+
         # Not a new commit.
         else:
             i += 1
             continue
 
-        # Revisions to exclude.
-        if rev.strip() in exclude_rev:
+        # Commits to exclude.
+        if commit_key in exclude:
             continue
 
         # No diff found.
@@ -1171,7 +1253,6 @@ def svn_log_data(file_path, repo_path=None, exclude_rev=None, author_switch=None
             continue
 
         # Author switch.
-        commit_key = "%s (%s +0000)" % (msg.strip(), date.strftime("%Y-%m-%d %H:%M:%S"))
         for j in range(len(author_switch)):
             if author_switch[j][0] == commit_key:
                 committer = author_switch[j][2]
@@ -1181,9 +1262,12 @@ def svn_log_data(file_path, repo_path=None, exclude_rev=None, author_switch=None
             continue
 
         # Skip svnmerge commits.
-        if svnmerge_py:
-            svnmerge_py = False
+        if search("^Merged revisions .* via svnmerge from", msg):
             continue
+
+        # Debugging printout.
+        if DEBUG:
+            print("git commit: %s" % commit_key)
 
         # A new committer.
         if committer not in committer_info:
@@ -1298,6 +1382,10 @@ if __name__ == '__main__':
 
         # Loop over the files.
         for file_name in files:
+            # Debugging.
+            if DEBUG and DEBUG_FILE_NAME and file_name != DEBUG_FILE_NAME:
+                continue
+
             # Full path to the file.
             if root[-1] == sep:
                 file_path = root + file_name
@@ -1326,9 +1414,9 @@ if __name__ == '__main__':
             init = True
             for repo_path, repo_type, repo_start, repo_end, repo_head in REPOS:
                 if repo_type == 'git':
-                    git_log_data(file_path, repo_path=repo_path, exclude_hashes=EXCLUDE[repo_path], author_switch=AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+                    git_log_data(file_path, repo_path=repo_path, exclude=EXCLUDE, start_commit=GIT_START, author_switch=AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
                 else:
-                    svn_log_data(file_path, repo_path=repo_path, exclude_rev=EXCLUDE[repo_path], author_switch=AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+                    svn_log_data(file_path, repo_path=repo_path, exclude=EXCLUDE, author_switch=AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
                 init = False
             committer_info_cleanup(file_path, committer_info)
 
