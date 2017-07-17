@@ -240,6 +240,154 @@ FALSE_NEG_YEARS = {
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
 EXCLUDE = [
+    # r26537 - b792617f1685700d2c6b8445c0be6c4bed9b7646 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the xrange() function has been replaced by range(). (2014-11-11 16:37:03 +0000)",
+    # r26536 - 1f5679337742d7910efde47e2efb5965e79ee48d - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the spacing around commas has been fixed. (2014-11-11 16:28:08 +0000)",
+    # r26535 - 42f4ddd479bf98f58541ff54244c1f61e14a9ea1 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the \"while 1\" construct has been replaces with \"while True\". (2014-11-11 15:51:21 +0000)",
+    # r26531 - e42d086d1995b936ad550979db134a13957e2e00 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the filter() function in Python 3 now returns an iterator. (2014-11-11 15:37:13 +0000)",
+    # r26523 - d1a81cfcf6cc024405e7e20733a2ed82cd9c7a07 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the execfile() function does not exist in Python 3. (2014-11-11 13:55:38 +0000)",
+    # r26522 - 88ad7a3f70c2d439d74fa30882fbc5352d82fe30 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - proper handling of the dict.items() and dict.values() functions. (2014-11-11 13:43:25 +0000)",
+    # r26520 - 3e4b40da2a4de8797a54fa2c181aa3882e42c8b2 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - elimination of all apply() calls. (2014-11-11 13:34:12 +0000)",
+    # r26512 - 4c92a001fc36980f58aff7254acdaf1b52abc74e - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - replacement of all `x` with repr(x). (2014-11-11 09:43:30 +0000)",
+    # r26511 - c64eb50966737265f3894d4ffe1c188280abf943 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - elimination of all map and lambda usage in relax. (2014-11-11 09:26:07 +0000)",
+    # r26506 - d6d4002cc383a80c684ccc94821abd51f36245a3 - 2to3 automated conversions.
+    "Python 3 fixes using 2to3 for the extern.numdifftools package. (2014-11-11 09:04:21 +0000)",
+    # r26505 - a8c0b3c3c6b413d484b01c37e975851738436537 - 2to3 automated conversions.
+    "Python 3 fixes using 2to3 for the extern.numdifftools package (mainly spacing fixes). (2014-11-11 09:03:19 +0000)",
+    # r26502 - ab450172433405c59dbcb573e78cb99bf0f58bfb - 2to3 automated conversions.
+    "Python 3 fixes throughout relax, as identified by the 2to3 script. (2014-11-11 08:19:53 +0000)",
+    # r26501 - 2f09a2789a54800c7b2105818bbc1115d92d5cb1 - 2to3 automated conversions.
+    "Python 3 fixes for the relax codebase. (2014-11-10 22:43:15 +0000)",
+    # r25631 - cacf9d2737248d8c73fbf01551068bd6936efab5 - 2to3 automated conversions.
+    "Ported r25629 from the 3.3.0 tag. (2014-09-04 14:35:35 +0000)",
+    # r25629 - 318236f3a43e9632c0ecdbfa6db190c7e51c3fe3 - 2to3 automated conversions.
+    "Python 3 fixes via the 2to3 compatibility script. (2014-09-04 14:31:00 +0000)",
+    # r25628 - d9a77ab316518c9474f232dcfd7cb1df069665b5 - 2to3 automated conversions.
+    "Ported r25627 from the 3.3.0 tag. (2014-09-04 14:25:48 +0000)",
+    # r25627 - 26179f3b1f8074393c5f0b737d331efcab435d04 - 2to3 automated conversions.
+    "Python 3 fixes via the 2to3 compatibility script. (2014-09-04 14:24:20 +0000)",
+    # r24757 - eb0193edf9a98c5e4f290446b15203121cd57662 - 2to3 automated conversions.
+    "Some Python 3 fixes as identified by the 2to3 script. (2014-07-25 15:12:32 +0000)",
+    # r24756 - 92ade3b7dd895af8e3f5df3d5af2792e79ba4e6d - 2to3 automated conversions.
+    "Some changes as identified by the Python 2 to 3 upgrade script /usr/bin/2to3. (2014-07-25 14:59:22 +0000)",
+    # r24397 - 1611ebaa00802a02116c4876b0ea3cbaefe9be2d - 2to3 automated conversions.
+    "Python 3 fixes using the 2to3 script. (2014-07-02 07:54:00 +0000)",
+    # r24396 - 66c72852005730f46371496151240f0a028ff7cd - 2to3 automated conversions.
+    "Python 3 fixes for the entire codebase using the 2to3 script. (2014-07-02 07:50:36 +0000)",
+    # r24390 - 91d4d0984148c2a3351df0c3a8b9a0a626e5ac79 - 2to3 automated conversions.
+    "General Python 3 fixes via the 2to3 script. (2014-07-02 07:37:42 +0000)",
+    # r23263 - 806fa231aaf12222045311dc8d17d44cfd9cca33 - 2to3 automated conversions.
+    "Python 3 fixes for all of the relax code base. (2014-05-20 16:02:55 +0000)",
+    # r22816 - 89c302bba91132115ca23e213b59a894e21db539 - 2to3 automated conversions.
+    "Python 3 fixes throughout the codebase. (2014-04-22 15:49:39 +0000)",
+    # r21155 - a6af21049e0cbe825c9609ede890cab76269ed99 - 2to3 automated conversions.
+    "A number of Python 3 fixes. (2013-10-17 09:09:48 +0000)",
+    # r20785 - d4372c6612d94f2957df246b30ae0e69f9bd73a3 - 2to3 automated conversions.
+    "Python 3 fixes. (2013-09-04 07:29:14 +0000)",
+    # r20291 - 521787f4e4cefb4a1d7e343d873c75d617a88585 - 2to3 automated conversions.
+    "Spacing fixes for the lib.dispersion.ns_2site_star module as determined by the 2to3 program. (2013-07-15 08:03:08 +0000)",
+    # r19926 - 8cee1be0ce60f6e6356e2cca58eddb322117721f - 2to3 automated conversions.
+    "Python 3 fixes. (2013-06-06 21:19:36 +0000)",
+    # r18804 - 43a4e4daa855bfe80a748cd8cefdfab4e5e638e7 - 2to3 automated conversions.
+    "Python 3 updates for the frame_order_testing branch. (2013-03-12 16:30:51 +0000)",
+    # r18795 - 253b93e88e45a1dece6e84785dba4ec400a3a592 - 2to3 automated conversions.
+    "Python 3 updates and fixes. (2013-03-12 13:27:01 +0000)",
+    # r18437 - 480fcd7aaefc77c23e46b2aa9553a5354b6820c6 - 2to3 automated conversions.
+    "Spacing fixes as identified by the Python 2to3 conversion program. (2013-02-07 15:49:20 +0000)",
+    # r18345 - 8d4ead89d1e5114ede7306dad72a17b1a6adc185 - 2to3 automated conversions.
+    "Python 3 fixes for the newly included Geometry.Transformation ScientificPython module. (2013-02-01 11:39:47 +0000)",
+    # r17869 - 707467cc9d292a033d8042f5aac279da7a2fed26 - 2to3 automated conversions.
+    "Fixes for weird print statements with double brackets generated by the 2to3 Python conversion script. (2012-10-16 16:07:12 +0000)",
+    # r17863 - 100ebda169ef3a22a9bd3ac89db593d595fa1737 - 2to3 automated conversions.
+    "Python 3 fixes for the script for generating plots of magnetic field lines. (2012-10-16 12:58:50 +0000)",
+    # r17855 - c3782248bc420d1e045df389ac6a335db3717212 - 2to3 automated conversions.
+    "Converted the branch specific Frame order code to be Python 3 compatible. (2012-10-16 11:31:32 +0000)",
+    # r17851 - 43c7e95dc5a48bb7c46a2e9427ffdda73a5b6a00 - 2to3 automated conversions.
+    "Python 3 update for the external Sobol library. (2012-10-16 09:38:17 +0000)",
+    # r17849 - 6edf77be3bdd2ed8c371ed7a7a2aef3365f32d58 - 2to3 automated conversions.
+    "Python 3 fix for the structural API. (2012-10-16 09:30:03 +0000)",
+    # r17705 - df158daae9de2b3f8981bf31402830ff86bdcb6b - 2to3 automated conversions.
+    "The relax_fit specific analysis module now supports both Python 2 and 3. (2012-10-05 17:48:03 +0000)",
+    # r17674 - 1833765c56c4a5ac14be4782609552ee322ec121 - 2to3 automated conversions.
+    "Python 2 and 3 support in the generic_fns.relax_data module using 2to3. (2012-10-02 14:12:01 +0000)",
+    # r17665 - 759beb06a24f179bf25d876f80e4bff35135757c - 2to3 automated conversions.
+    "Better support for both Python 2 and 3 in the relax data store. (2012-10-02 12:25:52 +0000)",
+    # r17664 - 8bb164a47b36dbd420adaccf775726aca7d572f2 - 2to3 automated conversions.
+    "Python 3 preparation - the relax data store (the data package) now supports both Python 2 and 3. (2012-10-02 12:23:43 +0000)",
+    # r17656 - 6a3d5f636ad18d09c2302a300916cefbcbf2cdbd - 2to3 automated conversions.
+    "Automatically converted the generic_fns.mol_res_spin module to support both Python 2 and 3. (2012-10-02 09:47:15 +0000)",
+    # r17648 - 4c5d80dfb57014195223d8851851162744e7b699 - 2to3 automated conversions.
+    "Converted the ScientificPython PDB reader to support both Python 2 and 3. (2012-10-02 08:45:46 +0000)",
+    # r17598 - 98ce974c919ded9ea5d5aa83ab45564893d78c3b - 2to3 automated conversions.
+    "Python 3 conversions using 2to3. (2012-09-28 14:40:50 +0000)",
+    # r17596 - 324105295af06fffe6afe8b081ccd3efdd839f22 - 2to3 automated conversions.
+    "Python 3 preparations - removed all usage of the xrange() in the generic_fns package as none are needed. (2012-09-28 11:36:50 +0000)",
+    # r17593 - 3be3992ee15693d9f883a11dcac48bbb8ac19a9b - 2to3 automated conversions.
+    "Python 3 preparations - the auto_analyses package is now fully Python 2 and 3 compatible. (2012-09-28 09:50:34 +0000)",
+    # r17590 - 9bb16c08e49f8b24d997976dbae0f3852d44ab1a - 2to3 automated conversions.
+    "Python 3 preparations - the GUI tests are now fully Python 2 and 3 compatible. (2012-09-28 09:43:29 +0000)",
+    # r17585 - f9619e67fd4170e96c9be87bf9e6d7f9528baf15 - 2to3 automated conversions.
+    "Python 3 preparations - the unit tests are now fully Python 2 and 3 compatible. (2012-09-28 09:09:41 +0000)",
+    # r17581 - 7f3444d7db4a25e90edad4a93220abb8396c5c3e - 2to3 automated conversions.
+    "Last Python 3 compatibility update for the system tests - they are now both Python 2 and 3 compatible! (2012-09-28 08:58:47 +0000)",
+    # r16879 - bd05ab2c14a8c10b399da92a405ce81f2736e476 - 2to3 automated conversions.
+    "Reverted the 2to3 changes of r16837 as these are deadly for Python 2.6! (2012-06-12 09:34:42 +0000)",
+    # r16837 - 4c5a0d2a1d43aa98142ef3bed85d4e71e6327d7d - 2to3 automated conversions.
+    "Python 3 updates for the entire relax code base. (2012-06-11 08:15:21 +0000)",
+    # r16534 - 570a7076b71a33b8667a5c4e99decd01ecac4548 - 2to3 automated conversions.
+    "Print statement conversions to function calls for Python 3.x. (2012-05-30 15:41:17 +0000)",
+    # r15228 - 09f4391582c9ab826e7de192a835e1a7a39209f5 - 2to3 automated conversions.
+    "Updates for Python 3.0. (2012-01-24 14:24:40 +0000)",
+    # r14812 - cad3aac4d7ca177c4a4129b00f9f80e92a4b26ed - 2to3 automated conversions.
+    "Updates for Python 3.0 using the Python 2to3 script. (2011-10-09 11:40:36 +0000)",
+    # r12202 - 5012a2b474e539d8564847f1979a98619c99a42d - 2to3 automated conversions.
+    "Updates for Python 3.0. (2011-01-11 11:58:33 +0000)",
+    # r10860 - 67f4a1a6cf1adb11c6837a1d1d09a26630ce35f7 - 2to3 automated conversions.
+    "A python 3.0 fix for the grace module. (2010-02-23 15:06:48 +0000)",
+    # r9890  - ab69727887d0d5b006894b44583675d6b6306901 - Pure whitespace changes.
+    "Converted tab characters to 8 spaces... (2009-11-19 19:05:50 +0000)",
+    # r9456  - 3d46a3a94f8fcd95a22fabb1c418dd4f00fcfebb - 2to3 automated conversions.
+    "More updates for Python3k. (2009-09-03 13:52:50 +0000)",
+    # r9455  - 5ce17a589766fa238ed4588ebf4874e65684b681 - 2to3 automated conversions.
+    "More updates for Python3k. (2009-09-03 13:24:48 +0000)",
+    # r9453  - df67bbb6d3d4ff07d4852f513754ab05f9febaa0 - 2to3 automated conversions.
+    "Updates for Python3k. (2009-09-03 13:20:11 +0000)",
+    # r9452  - c1dc8cdbd7c71f597f3e8b97f866c71131f596c0 - 2to3 automated conversions.
+    "Updates for Python3k. (2009-09-03 13:13:50 +0000)",
+    # r9443  - 1b85d31298e0fddb5f0497f05b517b53b30ced7b - 2to3 automated conversions.
+    "Updates for Python3k. (2009-09-03 12:30:10 +0000)",
+    # r9442  - fb87350627c09dfb8ff40d89105c256ac96fb93f - 2to3 automated conversions.
+    "Updates for Python3k. (2009-09-03 12:29:19 +0000)",
+    # r9439  - d321897bcd64a59b0a957a985203ebabc11d988a - 2to3 automated conversions.
+    "Some more print statement updates for Python 3.x. (2009-09-03 12:06:49 +0000)",
+    # r9437  - 49096b29bb9de4d01b21abf858fecbcd1ea81138 - 2to3 automated conversions.
+    "The whitespace after commas has been enforced (for Python 3.x). (2009-09-03 11:42:16 +0000)",
+    # r9350  - 83361abda390570bcd9b98b30aaefed5880acdd2 - 2to3 automated conversions.
+    "The Python 2.x idioms have been removed. (2009-08-21 10:07:01 +0000)",
+    # r9348  - fdf873ca879f82125b201e584b4198be06c6812c - 2to3 automated conversions.
+    "The execfile statement has been replaced with a call to the exec(compile()) function. (2009-08-21 08:50:08 +0000)",
+    # r9347  - 18246323e5f762ec5ee21f0165f45b88071add01 - 2to3 automated conversions.
+    "The exec statement has been replaced with a call to the exec() function. (2009-08-20 15:48:36 +0000)",
+    # r9346  - 48143bb4b9cc97d5cbf50ed2827bb6d3184f4c6a - 2to3 automated conversions.
+    "The dictionary keys() return value is now converted into a list. (2009-08-19 16:47:50 +0000)",
+    # r9344  - 0d49ff5f482130641892a3930571b548c9a4e9d2 - 2to3 automated conversions.
+    "Modified the behaviour of raise statements according to http://www.python.org/dev/peps/pep-3109/. (2009-08-19 15:31:11 +0000)",
+    # r9343  - 6c4a44558c3436a8f362b7674428234f42c98c72 - 2to3 automated conversions.
+    "Converted all print statements into print() function calls. (2009-08-19 15:18:47 +0000)",
+    # r9342  - dc08433c02e77b35cd947b2f7575f08dba5c7ff3 - 2to3 automated conversions.
+    "Removed all usages of the has_attr() dictionary method. (2009-08-19 14:09:33 +0000)",
+    # r9340  - 25d0d36294f3cc9132d5eb548042d8c688b37792 - 2to3 automated conversions.
+    "Replaced all instances of `x` with repr(x). (2009-08-19 13:37:09 +0000)",
+    # r8224 - 2210c04e8dd7e10b53ff7060add85b1ff64a5e91 - Whitespace cleanup.
+    "Many corrections of formatting. (2008-12-23 16:04:48 +0000)",
 ]
 
 # Commits to switch authorship of (e.g. if someone commits someone else's code).
