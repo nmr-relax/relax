@@ -242,6 +242,701 @@ FALSE_NEG_YEARS = {
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
 EXCLUDE = [
+    # r27848 - 8cea9e80ccc4cfe9f80a4c31e7a4d11464c0ffb8.
+    "Reverted r27840-r27845, related to Bug #23618, queuing system for multi processors is not well designed. (2015-06-11 11:15:54 +0000)",
+    # r27845 - 8284128b7e65604fd7fd581353339074b2c1cd44.
+    "Suggestion for fix 2, where jobs are continously replenished when other jobs are finished. (2015-05-27 01:09:59 +0000)",
+    # r27844 - 9d4bbdd0e58947e9e38ba79afb1ce4e19446f2f3.
+    "Suggestion Fix 1, in multi.processor.run_queue(). (2015-05-27 01:09:57 +0000)",
+    # r27843 - 130ce65f4cd1f509ec62589284f1ff7122ca422b.
+    "In pipe_control of minimise, adding the possibility to control verbosity in multi processor mode. (2015-05-27 01:09:55 +0000)",
+    # r27842 - 229d7d3d7df69e5344080ae5769f25e0194ae0f1.
+    "In multi.processor(), moving up the debugging print-out of running sets of calculatation. (2015-05-27 01:09:52 +0000)",
+    # r27841 - da852d05b0f3fdf03a59cea9437e46a36e30cb32.
+    "Adding to user function minimise.execute() the keyword \"mp_verbosity\", to control the amount of information to print when running multi processors. (2015-05-27 01:09:50 +0000)",
+    # r27840 - e06d116f17a9f3978a655940d50c4e3d47f3ebaf.
+    "Adding keyword for verbosity for multi processor mode. (2015-05-27 01:09:48 +0000)",
+    # r27214 - 25ba046c14486d55ce33be611458e48d79371a74.
+    "Reverted range of commits r27213:r27202 as this was a bad implementation. (2015-01-17 13:16:50 +0000)",
+    # r27213 - 689e2403d8b85190e29eba67be352202fbaf1ac9.
+    "Added 'sos' and 'sos_std' as parameter object in relaxation dispersion. (2015-01-16 22:20:13 +0000)",
+    # r27212 - 54f60bb436ca61d4c3bcc5e7aa113fd60663862c.
+    "Implemented in the relaxation dispersion API, the function to return errors as the standard deviation of sums squared residuals. (2015-01-16 22:20:11 +0000)",
+    # r27211 - 5b08a8691f1fc06c9e022819db0474f6e68483a6.
+"Implemented the api_base method of return_error_sum_squares(), as raising an error if not defined for the api for the pipe_type. (2015-01-16 22:20:08 +0000)",
+    # r27210 - 1797025ef590c937ed6334407aacf2c8bb92336a.
+    "Extended backend in pipe_control.error_analysis.monte_carlo_create_data() to return errors as the standard deviation of the sum of squares of the residual. (2015-01-16 22:20:06 +0000)",
+    # r27209 - 20e70867b9c7fb11782b8a248bbee279a3f3f253.
+    "Extended user function monte_carlo.create_data() to accept 'method=\"sum_squares\"', to create Monte-Carlo data. (2015-01-16 22:20:04 +0000)",
+    # r27208 - 4cb9ace10a6ad9db69f8f565a723de228174e922.
+    "Speed-up of systemtest Relax_disp.test_task_7882_monte_carlo_std_residual() by copying pipe instead of reading results 3 times. (2015-01-16 22:20:01 +0000)",
+    # r27207 - dce94e688605a61efc882999cedf7db82e7e2a2c.
+    "In systemtest Relax_disp.test_task_7882_monte_carlo_std_residual() inserted sanity checks of calculation of degrees of freedom. (2015-01-16 22:19:58 +0000)",
+    # r27206 - 378db59919058b2d64b1c4e8f2499d1e4c1c02d9.
+    "Extracted \"sos\" and \"sos_std\" after grid search. (2015-01-16 22:19:56 +0000)",
+    # r27205 - 7c90802c2f916d3e0817089f57a568b9db184492."Added to systemtest Relax_disp.test_task_7882_monte_carlo_std_residual() that spin.sos and spin.sos_std is stored after grid search. (2015-01-16 22:19:54 +0000)",
+    # r27204 - ca9a8ef3a005207e0971a08fec571ac3607048e8.
+    "Stored the sums of squares of the residuals \"sos\" and standard deviation of this \"sos_std\" per spin after optimisation. (2015-01-16 22:19:51 +0000)",
+    # r27203 - 51c596b2b7ef471081543e032cd6e3266c0fb36b.
+    "Implemented storing of sum of squares and the standard deviation of these for relaxation dispersion, when doing a point calculation. (2015-01-16 22:19:50 +0000)",
+    # r27202 - c75faf5b589f69733c93c6669357046f20f13907.
+    "Implemented target function for relaxation dispersion, which calculate the sum of squares of residuals and the standard deviation of these. (2015-01-16 22:19:47 +0000)",
+    # r26537 - b792617f1685700d2c6b8445c0be6c4bed9b7646 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the xrange() function has been replaced by range(). (2014-11-11 16:37:03 +0000)",
+    # r26536 - 1f5679337742d7910efde47e2efb5965e79ee48d - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the spacing around commas has been fixed. (2014-11-11 16:28:08 +0000)",
+    # r26535 - 42f4ddd479bf98f58541ff54244c1f61e14a9ea1 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the \"while 1\" construct has been replaces with \"while True\". (2014-11-11 15:51:21 +0000)",
+    # r26531 - e42d086d1995b936ad550979db134a13957e2e00 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the filter() function in Python 3 now returns an iterator. (2014-11-11 15:37:13 +0000)",
+    # r26523 - d1a81cfcf6cc024405e7e20733a2ed82cd9c7a07 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - the execfile() function does not exist in Python 3. (2014-11-11 13:55:38 +0000)",
+    # r26522 - 88ad7a3f70c2d439d74fa30882fbc5352d82fe30 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - proper handling of the dict.items() and dict.values() functions. (2014-11-11 13:43:25 +0000)",
+    # r26520 - 3e4b40da2a4de8797a54fa2c181aa3882e42c8b2 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - elimination of all apply() calls. (2014-11-11 13:34:12 +0000)",
+    # r26512 - 4c92a001fc36980f58aff7254acdaf1b52abc74e - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - replacement of all `x` with repr(x). (2014-11-11 09:43:30 +0000)",
+    # r26511 - c64eb50966737265f3894d4ffe1c188280abf943 - 2to3 automated conversions.
+    "Python 3 fixes via 2to3 - elimination of all map and lambda usage in relax. (2014-11-11 09:26:07 +0000)",
+    # r26506 - d6d4002cc383a80c684ccc94821abd51f36245a3 - 2to3 automated conversions.
+    "Python 3 fixes using 2to3 for the extern.numdifftools package. (2014-11-11 09:04:21 +0000)",
+    # r26505 - a8c0b3c3c6b413d484b01c37e975851738436537 - 2to3 automated conversions.
+    "Python 3 fixes using 2to3 for the extern.numdifftools package (mainly spacing fixes). (2014-11-11 09:03:19 +0000)",
+    # r26502 - ab450172433405c59dbcb573e78cb99bf0f58bfb - 2to3 automated conversions.
+    "Python 3 fixes throughout relax, as identified by the 2to3 script. (2014-11-11 08:19:53 +0000)",
+    # r26501 - 2f09a2789a54800c7b2105818bbc1115d92d5cb1 - 2to3 automated conversions.
+    "Python 3 fixes for the relax codebase. (2014-11-10 22:43:15 +0000)",
+    # r25631 - cacf9d2737248d8c73fbf01551068bd6936efab5 - 2to3 automated conversions.
+    "Ported r25629 from the 3.3.0 tag. (2014-09-04 14:35:35 +0000)",
+    # r25629 - 318236f3a43e9632c0ecdbfa6db190c7e51c3fe3 - 2to3 automated conversions.
+    "Python 3 fixes via the 2to3 compatibility script. (2014-09-04 14:31:00 +0000)",
+    # r25628 - d9a77ab316518c9474f232dcfd7cb1df069665b5 - 2to3 automated conversions.
+    "Ported r25627 from the 3.3.0 tag. (2014-09-04 14:25:48 +0000)",
+    # r25627 - 26179f3b1f8074393c5f0b737d331efcab435d04 - 2to3 automated conversions.
+    "Python 3 fixes via the 2to3 compatibility script. (2014-09-04 14:24:20 +0000)",
+    # r25132 - fd718a0780136324085b28da3359b6ab35f8a472.
+    "Replaced that folder names for writing out results should be with replaced with underscores \"_\". (2014-08-20 21:03:53 +0000)",
+    # r24757 - eb0193edf9a98c5e4f290446b15203121cd57662 - 2to3 automated conversions.
+    "Some Python 3 fixes as identified by the 2to3 script. (2014-07-25 15:12:32 +0000)",
+    # r24756 - 92ade3b7dd895af8e3f5df3d5af2792e79ba4e6d - 2to3 automated conversions.
+    "Some changes as identified by the Python 2 to 3 upgrade script /usr/bin/2to3. (2014-07-25 14:59:22 +0000)",
+    # r24397 - 1611ebaa00802a02116c4876b0ea3cbaefe9be2d - 2to3 automated conversions.
+    "Python 3 fixes using the 2to3 script. (2014-07-02 07:54:00 +0000)",
+    # r24396 - 66c72852005730f46371496151240f0a028ff7cd - 2to3 automated conversions.
+    "Python 3 fixes for the entire codebase using the 2to3 script. (2014-07-02 07:50:36 +0000)",
+    # r24390 - 91d4d0984148c2a3351df0c3a8b9a0a626e5ac79 - 2to3 automated conversions.
+    "General Python 3 fixes via the 2to3 script. (2014-07-02 07:37:42 +0000)",
+    # r23263 - 806fa231aaf12222045311dc8d17d44cfd9cca33 - 2to3 automated conversions.
+    "Python 3 fixes for all of the relax code base. (2014-05-20 16:02:55 +0000)",
+    # r23546 - efddab673939e10c72c5dea09320b2700fa2ad1d.
+    "Reverted r23531-23526 as this would prevent a clean merge back into the trunk. (2014-05-28 15:55:10 +0000)",
+    # r23531 - dc6a093be1ebf83616b34583b10b5ff9419d8ad3.
+    "Added 9th and 10th unit test case for model B14. (2014-05-28 14:49:08 +0000)",
+    # r23530 - 389d04a2e6517b7456769d2ebefbe4ce432ccc96.
+    "Added all the default values for the lower/upper bounds which is set for the parameters in the grid search. (2014-05-28 14:49:06 +0000)",
+    # r23529 - 68e37f55859129d2afaa894190def81dde8db5a7.
+    "Added grid_upper to be handled in specific_analyses/parameter_object.py. (2014-05-28 14:49:05 +0000)",
+    # r23528 - 8e6d4e22ecfc9aa59dbbb167ee34c5fb73088cdf.
+    "Added the default value upper grid value to be set for the pA parameter. (2014-05-28 14:49:03 +0000)",
+    # r23527 - ce38d703eb75caadef368b1fc1f6e741a68f073e.
+    "Added grid_lower to be handled in specific_analyses/parameter_object.py. (2014-05-28 14:49:02 +0000)",
+    # r23526 - da5b41770b1d2fff19d91f1f4b6ef9ff5ec04eaf.
+    "Added the default value lower grid value to be set for the pA parameter. (2014-05-28 14:49:00 +0000)",
+    # r22919 - f9a3794208e0395b53ec59ded24913a6da2a0463.
+    "Replaced Copyright notice for the Baldwin.py script. (2014-05-02 09:57:09 +0000)",
+    # r22816 - 89c302bba91132115ca23e213b59a894e21db539 - 2to3 automated conversions.
+    "Python 3 fixes throughout the codebase. (2014-04-22 15:49:39 +0000)",
+    # r21770 - 209ff73223c70d3920df367a631f9bd4c4d77c0c.
+    "Renamed the 'ns_mmq_3site_branched' dispersion test data directory to 'ns_mmq_3site'. (2013-12-04 11:21:09 +0000)",
+    # r21155 - a6af21049e0cbe825c9609ede890cab76269ed99 - 2to3 automated conversions.
+    "A number of Python 3 fixes. (2013-10-17 09:09:48 +0000)",
+    # r20785 - d4372c6612d94f2957df246b30ae0e69f9bd73a3 - 2to3 automated conversions.
+    "Python 3 fixes. (2013-09-04 07:29:14 +0000)",
+    # r20659 - 16399fd3ad31573dc3ab0084a88c05ffc2a6ebed.
+    "Shifted all the modules from lib.software to do with peak lists to lib.spectrum. (2013-08-21 12:21:51 +0000)",
+    # r20441 - 423abd67f91cfbe0d7a4111cd2d46eacaf7ea802.
+    "Reverted r20438 and r20439 as the commit messages were incomplete!!! (2013-07-22 06:36:56 +0000)",
+    # r20439 - 8767b75cd29ca83bba8f642e4a017b1ad82ad20f.
+    "Progress sr #3043: (https://gna.org/support/index.php?3043)",
+    # r20438 - ab5a48ba1d6f3566b3f7b567ac3ce9a094cfb0fe.
+    "Fix for the dispersion auto-analysis for when only the single R2eff model is optimised. (2013-07-20 15:51:47 +0000)",
+    # r20291 - 521787f4e4cefb4a1d7e343d873c75d617a88585 - 2to3 automated conversions.
+    "Spacing fixes for the lib.dispersion.ns_2site_star module as determined by the 2to3 program. (2013-07-15 08:03:08 +0000)",
+    # r19926 - 8cee1be0ce60f6e6356e2cca58eddb322117721f - 2to3 automated conversions.
+    "Python 3 fixes. (2013-06-06 21:19:36 +0000)",
+    # r19477 - 9053d23b5594ab07bd7942d447183d80717656f1.
+    "Renamed the relaxation dispersion test suite data directory to 'dispersion'. (2013-04-13 16:54:46 +0000)",
+    # r19255 - 9b77cc6b8d51b2830dca0dd452f33c7629c5929c.
+    "Ported r17253 from the old relax_disp branch into the new branch. (2013-03-27 14:56:09 +0000)",
+    # ca07a9a44bb5a2f6a97a9d8d205f08f7fd9adc91.
+    "Ported r12837 from the old relax_disp branch into the new branch. (2013-03-27 14:53:41 +0000)",
+    # fb2aca15d54a530a767258701c4ac837cacbed48.
+    "Ported r11698 from the old relax_disp branch into the new branch. (2013-03-27 14:53:01 +0000)",
+    # 537b6d6b7f62ff39b5a7c0e632e8ec7b2e317afb.
+    "Ported r9864 from the old relax_disp branch into the new branch. (2013-03-27 14:49:13 +0000)",
+    # b0411f41b2ce4e6b0bf737b78c48ffe45d162220.
+    "Ported r8733 from the old relax_disp branch into the new branch. (2013-03-27 14:45:35 +0000)",
+    # 7459e0a9a42e9c8d48531901d8582f16e7bd47e6.
+    "Ported r8724 from the old relax_disp branch into the new branch. (2013-03-27 14:44:59 +0000)",
+    # b17a2e502ce4f1fa89333400c7006e2c09b6fb4b.
+    "Ported r8722 from the old relax_disp branch into the new branch. (2013-03-27 14:44:25 +0000)",
+    # 7f27850aba40db5f570e8113094e0b5a2e089568.
+    "Ported r8720 from the old relax_disp branch into the new branch. (2013-03-27 14:40:18 +0000)",
+    # 4427e6cc9ce89d97521d5feeb5076fc2c3bb7c7d.
+    "Ported r8719 from the old relax_disp branch into the new branch. (2013-03-27 14:39:15 +0000)",
+    # 391ccf74e332a3a7b17a1778f6a7f3a4bbc91c47.
+    "Ported r8709 from the old relax_disp branch into the new branch. (2013-03-27 14:37:36 +0000)",
+    # 8ec6e2a22551338435582204fd6341cfa7f9b302.
+    "Ported r8703 from the old relax_disp branch into the new branch. (2013-03-27 14:35:20 +0000)",
+    # cdbc7b4d21b6befa055d2f8bbee7530760628afb.
+    "Ported r8702 from the old relax_disp branch into the new branch. (2013-03-27 14:30:02 +0000)",
+    # 37752ed226ac8561b98d98854c8c00d19a497cd7.
+    "Ported r8699 from the old relax_disp branch into the new branch. (2013-03-27 14:29:18 +0000)",
+    # c76b4c33f51bc45e3e17b6cd57a3626e652f2194.
+    "Ported r8697 from the old relax_disp branch into the new branch. (2013-03-27 14:27:10 +0000)",
+    # f4dd6107233b5a6b838b2a97a1c4e5938f0a1903.
+    "Ported r8696 from the old relax_disp branch into the new branch. (2013-03-27 14:26:18 +0000)",
+    # 1226aeda8ce95957ab0821dec86def1edec55e97.
+    "Ported r8688 from the old relax_disp branch into the new branch. (2013-03-27 14:25:23 +0000)",
+    # a40e0a76a80ef8d3555f9ee54113fb24e38f01cd.
+    "Ported r8687 from the old relax_disp branch into the new branch. (2013-03-27 14:24:08 +0000)",
+    # e488fd7e71f41c50a3530a21cb7767c0031775ac.
+    "Ported r8686 from the old relax_disp branch into the new branch. (2013-03-27 14:22:11 +0000)",
+    # adcccf986d39a4133119c76e19e054d071adf13f.
+    "Ported r8678 from the old relax_disp branch into the new branch. (2013-03-27 14:18:03 +0000)",
+    # 880a3759e6512d3408016be26535f8cba040e21b.
+    "Ported r8676 from the old relax_disp branch into the new branch. (2013-03-27 14:17:19 +0000)",
+    # 63c8996580c00076a164c8d653e8465ee0b20ea2.
+    "Ported r8675 from the old relax_disp branch into the new branch. (2013-03-27 14:16:44 +0000)",
+    # 25578deaf671b10cea17d0233ef725fc1062526e.
+    "Ported r8673 from the old relax_disp branch into the new branch. (2013-03-27 14:16:16 +0000)",
+    # 01c1407a0ab47f3dff280a4e1b811ab370db45e3.
+    "Ported r8670 from the old relax_disp branch into the new branch. (2013-03-27 14:15:46 +0000)",
+    # c60a077f996134d96d700f5ab37a148ed73c7c41.
+    "Ported r8669 from the old relax_disp branch into the new branch. (2013-03-27 14:14:25 +0000)",
+    # 7844bec9aa6b4c3312072c2b8e6764c47ed540f2.
+    "Ported r8656 from the old relax_disp branch into the new branch. (2013-03-27 14:13:42 +0000)",
+    # 2bd679040b8bbecd647e193559dac1906be5b08a.
+    "Ported r8491 from the old relax_disp branch into the new branch. (2013-03-27 14:04:40 +0000)",
+    # a320ad6e652a22578ac2e2d07d9643a71ba8f181.
+    "Ported r8490 from the old relax_disp branch into the new branch. (2013-03-27 14:04:02 +0000)",
+    # a2ae1991f0fe523f22ad607dc7c170f4f0319b0a.
+    "Ported r8472 from the old relax_disp branch into the new branch. (2013-03-27 13:49:26 +0000)",
+    # e84cec011f740b63d808352f265477913269ff49.
+    "Ported r8435 from the old relax_disp branch into the new branch. (2013-03-27 13:45:40 +0000)",
+    # 000833f63e324e9d0bd3f57819183c9bf5c219e7.
+    "Ported r8430 from the old relax_disp branch into the new branch. (2013-03-27 13:42:37 +0000)",
+    # e8f5151fa9f8a2c0258d832954075a32fc3ef98c.
+    "Ported r8429 from the old relax_disp branch into the new branch. (2013-03-27 13:42:05 +0000)",
+    # 5898a33d44175e73e72777fd0fb3f4290e647e18.
+    "Ported r8428 from the old relax_disp branch into the new branch. (2013-03-27 13:41:32 +0000)",
+    # 532a69e3e4ca969abcf6bb49be4759abc1ad0e4a.
+    "Ported r8426 from the old relax_disp branch into the new branch. (2013-03-27 13:40:58 +0000)",
+    # 1b11dad6f0e093c26e528c7404547c68ae74d88b.
+    "Ported r8417 from the old relax_disp branch into the new branch. (2013-03-27 13:33:37 +0000)",
+    # a66a770d32efc7a1d709c1da1b706331f4aa334b.
+    "Ported r8415 from the old relax_disp branch into the new branch. (2013-03-27 13:32:54 +0000)",
+    # 1658b90a6f2c65331063bb16db1b597ff4cd46b2.
+    "Ported r8399 from the old relax_disp branch into the new branch. (2013-03-27 13:32:24 +0000)",
+    # db09e9bf50d2d3957ecee46fbdf748cfed8e60f4.
+    "Ported r8398 from the old relax_disp branch into the new branch. (2013-03-27 13:31:30 +0000)",
+    # 2e122b4cabee9f4b1b3151295166a8273f336005.
+    "Ported r8397 from the old relax_disp branch into the new branch. (2013-03-27 13:30:35 +0000)",
+    # dc0fd62e181d1b08ed09be7b819b8fe19349be96.
+    "Ported r8396 from the old relax_disp branch into the new branch. (2013-03-27 13:29:34 +0000)",
+    # 5f26a11cef48253bff224e584fde3dd8d9a04cdf.
+    "Ported r8395 from the old relax_disp branch into the new branch. (2013-03-27 13:28:24 +0000)",
+    # e93e1fddce2baa8d50c7d48f497f238f1832e842.
+    "Ported r8394 from the old relax_disp branch into the new branch. (2013-03-27 13:27:31 +0000)",
+    # 6876fe2c396634cbb32e014b8056380e544c61b5.
+    "Ported r8391 from the old relax_disp branch into the new branch. (2013-03-27 13:25:51 +0000)",
+    # d6965fb29389f93b7b00c2da37b7909ce3b2ecd5.
+    "Ported r8390 from the old relax_disp branch into the new branch. (2013-03-27 13:24:55 +0000)",
+    # dc0fbdffa1666609072b1ff4d1a4a3c13edd9b31.
+    "Ported r8389 from the old relax_disp branch into the new branch. (2013-03-27 13:24:05 +0000)",
+    # 65e9fdf03686f31b2aea3742b2469965cb322b62.
+    "Ported r8367 from the old relax_disp branch into the new branch. (2013-03-27 13:22:17 +0000)",
+    # f0c9e429d0e5adb98f77c774bcfb124d4a5e06aa.
+    "Ported r8366 from the old relax_disp branch into the new branch. (2013-03-27 13:21:09 +0000)",
+    # 48802df6b71c3ae8773a1ac9ba75db8275f7f487.
+    "Ported r8365 from the old relax_disp branch into the new branch. (2013-03-27 13:20:28 +0000)",
+    # dce985be655be937eae57c3fcf36dbf7a58c6bd7.
+    "Ported r8364 from the old relax_disp branch into the new branch. (2013-03-27 13:19:40 +0000)",
+    # f3a60c2633073834260c046de3beaaa54a82d1ed.
+    "Ported r8363 from the old relax_disp branch into the new branch. (2013-03-27 13:17:17 +0000)",
+    # 984eed2c987044cd73128a5663a39e563690d95e.
+    "Ported r8362 from the old relax_disp branch into the new branch. (2013-03-27 13:16:22 +0000)",
+    # 9c537d568dafd2d36d146213671bdd8396bbd8ba.
+    "Ported r8361 from the old relax_disp branch into the new branch. (2013-03-27 13:15:01 +0000)",
+    # f164d0037e645bc7ecc1844b636fc6ab9b5dfb9f.
+    "Ported r8360 from the old relax_disp branch into the new branch. (2013-03-27 13:13:02 +0000)",
+    # 9535fff698dc11b389982c95302cc5f6b6edaa47.
+    "Ported r8359 from the old relax_disp branch into the new branch. (2013-03-27 13:12:27 +0000)",
+    # 48089eab6869056dc714a207f739b4edbba24362.
+    "Ported r8358 from the old relax_disp branch into the new branch. (2013-03-27 13:11:50 +0000)",
+    # 6eb71642cc1a36a4658d5386a20b90e849f4ed16.
+    "Ported r8357 from the old relax_disp branch into the new branch. (2013-03-27 13:11:14 +0000)",
+    # 2034925209aa9901677514650ad6c2e71edde734.
+    "Ported r8355 from the old relax_disp branch into the new branch. (2013-03-27 13:10:15 +0000)",
+    # 1ae426e4699dc5e4d20bf364c3ac65bf83bc96dc.
+    "Ported r8354 from the old relax_disp branch into the new branch. (2013-03-27 13:09:39 +0000)",
+    # 10e22ef9d30be03ce6b010f5db8732731a947eed.
+    "Ported r8353 from the old relax_disp branch into the new branch. (2013-03-27 13:08:59 +0000)",
+    # 16e6064333eea7637c0d931c6318a9048a06ed85.
+    "Ported r8352 from the old relax_disp branch into the new branch. (2013-03-27 13:08:20 +0000)",
+    # 2948c1b81d2dc33ecc90c2fe0cfe15d4d8630b82.
+    "Ported r8351 from the old relax_disp branch into the new branch. (2013-03-27 13:07:46 +0000)",
+    # ba75cf90300351ab20f07dbf911aa06ad1eb476c.
+    "Ported r from the old relax_disp branch into the new branch. (2013-03-27 13:03:10 +0000)",
+    # 098d0ef28dba97bfdec4d5dc41b0bd46ba22faf9.
+    "Ported r8343 from the old relax_disp branch into the new branch. (2013-03-27 12:58:48 +0000)",
+    # 51a3e2e426a261d7c893c36ba896c59b326e1b4b.
+    "Ported r8342 from the old relax_disp branch into the new branch. (2013-03-27 12:51:22 +0000)",
+    # 57a69f3e46be9735428ac8b96a37b6a1ad69cb07.
+    "Ported r8340 from the old relax_disp branch into the new branch. (2013-03-27 12:49:27 +0000)",
+    # 2e9674c51e07481c1892bad7e4512d9d57fd9532.
+    "Ported r8339 from the old relax_disp branch into the new branch. (2013-03-27 12:47:48 +0000)",
+    # 985829bcfb65a57f860bd07356b8ed0d99681a7b.
+    "Ported r8337 from the old relax_disp branch into the new branch. (2013-03-27 12:06:34 +0000)",
+    # cc79ed19f7ebce0b16b7356b38088b654fbdeffe.
+    "Ported r8335 from the old relax_disp branch into the new branch. (2013-03-27 12:05:12 +0000)",
+    # 1e355306a0a29e93470824ee6ee91bac6e200b2b.
+    "Ported r8331 from the old relax_disp branch into the new branch. (2013-03-27 12:04:25 +0000)",
+    # 23b4961f0f15377e69873b4601eea86930331bfc.
+    "Ported r8330 from the old relax_disp branch into the new branch. (2013-03-27 12:03:48 +0000)",
+    # 4cc1839fc4439ac9f7882813709f3201c22026fa.
+    "Ported r8329 from the old relax_disp branch into the new branch. (2013-03-27 12:03:12 +0000)",
+    # f39aaa3998f64842e1a54fd23a48cf2baef4d70d.
+    "Ported r8328 from the old relax_disp branch into the new branch. (2013-03-27 12:02:20 +0000)",
+    # 85659fe5d644ebed00d3a5912ae6f29bf4d2973e.
+    "Ported r8327 from the old relax_disp branch into the new branch. (2013-03-27 12:01:18 +0000)",
+    # b5c30ea3208e2e21b35b29b7cd87f32c0f1fc785.
+    "Ported r8326 from the old relax_disp branch into the new branch. (2013-03-27 11:59:17 +0000)",
+    # e295439144df8b6d14a76e2aeda0a59a4310d9a3.
+    "Ported r8325 from the old relax_disp branch into the new branch. (2013-03-27 11:57:14 +0000)",
+    # a454dc065fd73bb068e0159bc8542ed032b3fc00.
+    "Ported r8324 from the old relax_disp branch into the new branch. (2013-03-27 11:56:08 +0000)",
+    # 429a638bdf435b1c22522212cea75c20c9461fa7.
+    "Ported r8323 from the old relax_disp branch into the new branch. (2013-03-27 11:55:14 +0000)",
+    # b988d337af59769849225da1a3e045b745d44250.
+    "Ported r8248 from the old relax_disp branch into the new branch. (2013-03-27 11:14:58 +0000)",
+    # 10bd33cd25eca2786e56429d628681c4df0629de.
+    "Ported r8247 from the old relax_disp branch into the new branch. (2013-03-27 11:14:09 +0000)",
+    # r19169 - e5bbdc00d0d89247c74be7d61dfcb5d90868dba0.
+    "Ported r8246 from the old relax_disp branch into the new branch. (2013-03-27 11:12:45 +0000)",
+    # r19111 - d0366e24397ac94dbba04403784da9f5d0b237d0.
+    "Shifted the pipe_control.structure.cones module to lib.structure.cones. (2013-03-24 15:02:11 +0000)",
+    # r19110 - b8ce38698eaeb3f03617b3d35978dcd46201d73f.
+    "Shifted the pipe_control.structure.pdb_read and pipe_control.structure.pdb_write modules to lib.structure. (2013-03-24 14:59:13 +0000)",
+    # r19108 - dabbcf24ba79ca656dfba89ae3a543ca8cf8bf03.
+    "Shifted the pipe_control.structure.statistics module to lib.structure.statistics. (2013-03-24 14:54:57 +0000)",
+    # r19107 - c5fea9401ff064bb5d614c58d04ff2629ab004ec.
+    "Shifted the pipe_control.structure.superimpose module to lib.structure.superimpose. (2013-03-24 14:53:19 +0000)",
+    # r19083 - 27128548bbffadc390927272fcdd847b89f3be81.
+    "Shifted most of the modules of target_functions.frame_order to lib.frame_order. (2013-03-23 20:02:52 +0000)",
+    # r19082 - 7f7862c5084a9bacb9388c2c5468b5dd94fd60d3.
+    "Shifted the target_functions.frame_order.pec module to lib.geometry.pec. (2013-03-23 19:56:32 +0000)",
+    # r19081 - 10d9922ecc700a8f1cea4a1ceef8e65b95f75e10.
+    "Renamed the pipe_control.frame_order module to lib.frame_order.format. (2013-03-23 19:51:12 +0000)",
+    # r19079 - 1e3e93331a17e1bc34bf5c491e9fd48727de0f2e.
+    "Renamed the generic_fns package to pipe_control. (2013-03-23 19:25:55 +0000)",
+    # r19073 - eb58eb2c62901f6fd19a81ea5253895b6ca19768.
+    "Renamed the generic_fns.relax_re module to lib.regex. (2013-03-23 17:27:27 +0000)",
+    # r19069 - d1da49abf152a9dffd899022a47e655d676d227b.
+    "Shifted the generic_fns.xplor module to lib.xplor. (2013-03-23 17:08:56 +0000)",
+    # r19068 - 642e56bafa3c519413842d200a58c46922da2d21.
+    "Reverted revisions r19065, r19066 and r19067. (2013-03-23 17:00:41 +0000)",
+    # r19067 - 1eceee2b1b80f081805798aef140aa89305d04b1.
+    "Renamed data_store.lib to data_store.control. (2013-03-23 16:55:11 +0000)",
+    # r19066 - 0d7e7199493c16a3dca0af316c44aefca1504046.
+    "Shifted most of the modules containing data store objects into data_store.objects. (2013-03-23 13:00:16 +0000)",
+    # r19065 - 4d3f2f346ea81b89e1645a0d08cdce5d9a3e5b14.
+    "Created two new empty packages data_store.lib and data_store.objects. (2013-03-23 12:52:00 +0000)",
+    # r19061 - 234bd7ec51cb4a13485380e542299deb7ccf08e3.
+    "Moved the check_types module into the lib package. (2013-03-23 09:46:51 +0000)",
+    # r19060 - 0d0eaaaa2ffb679cbeaf4f07f85effc276258a68.
+    "Shifted the arg_check module to lib.arg_check. (2013-03-23 09:43:57 +0000)",
+    # r19059 - 3761e2ed0f96117e9e16360080e3b0978b1e33ba.
+    "Shifted the target_functions.paramag_centre module to lib.alignment.paramag_centre. (2013-03-23 09:38:28 +0000)",
+    # r19058 - 0bbfb5a2e7f23f1506d72860ee83efde36cbd08d.
+    "Shifted the target_functions.correlation_time module to lib.diffusion.correlation_time. (2013-03-23 09:35:51 +0000)",
+    # r19057 - 94bdca7305ca378d280cd8bbe6791f1f69cf722e.
+    "Moved the target_functions.weights module to lib.diffusion.weights. (2013-03-23 09:33:30 +0000)",
+    # r19056 - 6e252adab42be9431bc835620579fa52eb5d7e89.
+    "Moved the target_functions.ri_comps module to lib.auto_relaxation.ri_comps. (2013-03-23 09:29:45 +0000)",
+    # r19053 - 674c47326fa3cfde57a98ed05729f7ad3a547a93.
+    "Shifted the target_functions.ri_prime module to lib.auto_relaxation.ri_prime. (2013-03-23 09:20:58 +0000)",
+    # r19052 - 46a66d852c7d6744c2786a21775ff273c414e262.
+    "Shifted the target_functions.ri module to lib.auto_relaxation.ri. (2013-03-23 09:17:04 +0000)",
+    # r19051 - 075587609e6f42c59b2ea7045d9e2aec2e61e553.
+    "Shifted the target_functions.order_parameters module to lib.order.order_parameters. (2013-03-23 09:11:02 +0000)",
+    # r19049 - 64901802278e3d051af55f4bbce41129c4b56d08.
+    "Shifted the target_functions.jw_mf_comps module to lib.pectral_densities.model_free_components. (2013-03-23 09:04:57 +0000)",
+    # r19048 - b881a39bd2cb8d0b2d9f40bb1160ca106dde663e.
+    "Shifted the target_functions.jw_mf module to lib.spectral_densities.model_free. (2013-03-23 09:00:36 +0000)",
+    # r19046 - 6794f60fb367403f6c7094f17ad049b1f17809b2.
+    "Moved the target_functions.kronecker_product module to lib.algebra.kronecker_product. (2013-03-23 08:44:52 +0000)",
+    # r19044 - a850a9a1de747d124718de6b264e5af382586544.
+    "Shifted the target_functions.direction_cosine module to lib.diffusion.direction_cosine. (2013-03-23 08:37:15 +0000)",
+    # r19041 - 2cc0901c74e3364c57f820e63e564274ebc8ffa0.
+    "Shifted the target_functions.coord_transform module to lib.geometry.coord_transform. (2013-03-23 08:26:06 +0000)",
+    # r19035 - 366711903f05eb34a2508bf00a1e2148f4700b95.
+    "Renamed the lib.nmr package to lib.alignment. (2013-03-23 08:06:15 +0000)",
+    # r19032 - d61b9a5e7701b8fb2d58002d7436505070b51995.
+    "Shifted the target_functions.vectors module to lib.geometry.vectors. (2013-03-23 07:59:15 +0000)",
+    # r19028 - 5b8fb0ffdc9ee7e37c75fb067f155496ea733ccb.
+    "Renamed the data package to data_store. (2013-03-22 23:25:25 +0000)",
+    # r19027 - 1fd705d9785609da6be242c864cb1272dbd43ded.
+    "Shifted the float module into the lib package. (2013-03-22 23:04:33 +0000)",
+    # r19026 - fa10d72942af42e328ee0952f841f1d78fbe5c66.
+    "Renamed the maths_fns package to target_functions. (2013-03-22 23:00:31 +0000)",
+    # r19025 - e4d289130c47e9b7cde3e4d4bcedf90a11543212.
+    "Copyright updates which should have gone into r19024. (2013-03-22 22:51:05 +0000)",
+    # r19024 - 44ac4a86559d295788a0f48815546cfa51bbed21.
+    "Renamed the specific_fns package to specific_analyses. (2013-03-22 22:32:08 +0000)",
+    # r19023 - 87786ffc6b29958c7040b9209f07bcb24a88fc0e.
+    "Shifted the maths_fns.rdc and maths_fns.pcs modules to lib.nmr. (2013-03-22 22:14:21 +0000)",
+    # r19022 - 53a506e4c44f5726e48d53ec2225076c39fb8607.
+    "Shifted the maths_fns.alignment_tensor module to lib.nmr.alignment_tensor. (2013-03-22 22:10:32 +0000)",
+    # r19018 - d9a2205ebebaf21def77e07b80dec43b8e2da03d.
+    "Renamed the maths_fns.rotation_matrix module to lib.geometry.rotations. (2013-03-22 21:54:54 +0000)",
+    # r19017 - c64679b818e2a31b3d8fb469f96a68046177cfb3.
+    "Shifted the physical_constants module into the lib package. (2013-03-22 21:45:30 +0000)",
+    # r19016 - cb142fb14dfa85b79421d1fa6b69a59ad2729524.
+    "Renamed the ansi module to lib.ansi. (2013-03-22 21:39:49 +0000)",
+    # r19011 - b696e5c9f021b3fc485ea7b2f60cbfd709071fce.
+    "Renamed the relax_warnings module to lib.warnings. (2013-03-22 20:58:13 +0000)",
+    # r19009 - 6f4e33c64d64ccdd6bb775b2ec9420b985bceacd.
+    "Renamed the relax_io module to lib.io. (2013-03-22 20:51:55 +0000)",
+    # r19008 - be26f8de5507246dcf372238e0150bf250f60476.
+    "Renamed the relax_string module to lib.text.string. (2013-03-22 20:44:59 +0000)",
+    # r19007 - 491f276d2265184c14ac0d97aea25b43a12804c2.
+    "Renamed the relax_errors module to lib.errors. (2013-03-22 20:41:29 +0000)",
+    # r19004 - 75c236a76a79b3fe9b43a59da673db10f1a10090.
+    "Final synchronisation of all the frame_order_testing branch files back to trunk for the merger. (2013-03-22 16:49:23 +0000)",
+    # r19003 - ef17cc187446e4eda7e7383e3d56d5b1c36f39f4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:35:56 +0000)",
+    # r19002 - f4f82f892272130d0dc7ecad4b35bc9dc9bf2fbf.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:34:27 +0000)",
+    # r19001 - e9c27cd39ab4dfca5156cd6cf0b8356e43de5e2b.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:31:38 +0000)",
+    # r19000 - d09da10c48560af77ecdfce04c8a0da1e5a68263.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:27:57 +0000)",
+    # r18999 - 12fd5a040a5f10233fd3d093740a7bc7cdf08558.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:27:05 +0000)",
+    # r18998 - 71e2e87f33b3b4a071dced80a24d0a3d5ed1540e.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:26:16 +0000)",
+    # r18997 - d01167edeb7cebef06003ae3041444616f501850.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:24:22 +0000)",
+    # r18996 - 0c691ec49cdb6f3c8acf98a8d9bc47d0d1c4cdc0.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:23:00 +0000)",
+    # r18995 - 3b25f71b2d5eb2738607d011f6f0c2614b0f675d.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:18:31 +0000)",
+    # r18994 - d02ec8b2c4f52ff9a5c4be821fa9a2799b0d7de1.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:15:19 +0000)",
+    # r18993 - cb27367c85de3e4a8603433822d50a04320d13be.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:14:20 +0000)",
+    # r18992 - 2020fd0cc7aedd1c14f7ba87abfba686ec0745d4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:12:07 +0000)",
+    # r18991 - bdf80b55c35fa8f228fa4d6fce60721c6c453784.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:08:33 +0000)",
+    # r18990 - fda5fbbb96a3ff1b7bb4fa58f4130a6ed27e5112.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:05:42 +0000)",
+    # r18989 - 47dad1d00b7b3f7697a0f893043227ef46997607.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:03:52 +0000)",
+    # r18988 - d46917bd2333bd48e1fea33425287b1c53cd9d97.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:02:35 +0000)",
+    # r18987 - a34fcdf97e218883d2014d3dcad1bbb516613e1b.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:01:22 +0000)",
+    # r18986 - 268f7269fdc7a7e6ee5a0a036ce21d54f6117ebd.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:56:08 +0000)",
+    # r18985 - a98e5bf34408d6046faa70dc4dc3da7323486664.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:55:10 +0000)",
+    # r18984 - e38db07d61a8cbd77621db4740191b42f9850922.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:54:21 +0000)",
+    # r18983 - 6552fc1b190f01d4d53ccbcc7dcd66da4fef1627.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:51:35 +0000)",
+    # r18982 - e3cfc834a2230bc14e3ee294cb70ad92189ad338.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:49:43 +0000)",
+    # r18981 - 164504cd38b553264fa958f15e9e0108217d4df0.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:47:10 +0000)",
+    # r18980 - 4b93870ad309776d6022fb1641ed1bdfc87cf694.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:45:57 +0000)",
+    # r18979 - a8d7f011308ad927b1627e6a5c36545c2f28de49.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:44:07 +0000)",
+    # r18978 - a553320e401e96cb085d84c3f92e34237473e67f.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:42:12 +0000)",
+    # r18977 - 63aa683a9a040ea2c6f4fa5324fabd5fbfe1ac12.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:40:06 +0000)",
+    # r18976 - 5f72b074caccc357bae14abd102cb392473cd134.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:37:50 +0000)",
+    # r18975 - a0c07835413a927262eccdd556b2b1abba5d98b5.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:36:30 +0000)",
+    # r18974 - cbd3da28098dbb096c6007189a9d7f3af67cc364.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:31:24 +0000)",
+    # r18973 - cbc8f6caec122b16a33f2133b8c8df3e195c5441.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:27:35 +0000)",
+    # r18972 - 6eaa40323f5373b969b6b08cd0ffe841c70ceb1c.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:24:53 +0000)",
+    # r18971 - e5a809c9a466048a4cd0d83c63f979785e611be0.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:23:24 +0000)",
+    # r18970 - 9e145350ff0bfa48bad572ca9f5bb0976dfde2ab.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:21:05 +0000)",
+    # r18969 - a304e88d8949a72ba2649b50ee2ab745b8960222.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:19:53 +0000)",
+    # r18968 - e77e67909b9f19e5fe56f82996419fb25f153953.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:18:26 +0000)",
+    # r18967 - 8289a9bcc14c11e5794b62898aa5de744964f7a6.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:43:19 +0000)",
+    # r18966 - 1dec4b16003bd9727ffa5f263d106d5d1f17fc25.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:37:30 +0000)",
+    # r18965 - 370b45b18f6ffc36d0a3822410c493913d93e2b8.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:36:09 +0000)",
+    # r18964 - 90254744ecd53b38c4c7399cd7686e9319915a85.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:33:31 +0000)",
+    # r18963 - 525f68335d5e423e579c10a3c33d3113bd96d052.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:32:31 +0000)",
+    # r18962 - 017b681c4cefffd0f886f1a0417cbfaa6cb6ec29.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:30:59 +0000)",
+    # r18961 - 87f532b53e27914ad068c86f89b56ad67b07b64e.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:29:40 +0000)",
+    # r18960 - 72ade78839113e26c99f648aad5cb3c7854c5515.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:28:26 +0000)",
+    # r18959 - 0258e88b2071a6e83e8859d7ea224a16d6280532.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:54:25 +0000)",
+    # r18958 - deb34da3b605d4133a56807a6d358465ab9106c4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:49:41 +0000)",
+    # r18957 - 77fd77f22062fb67d18901864c5aac3602ce1d5b.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:47:52 +0000)",
+    # r18956 - 285dd6be2310c34ce05d2abbf8bcaa2f8f7122eb.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:44:20 +0000)",
+    # r18955 - fffa41de539d225388e6d20dd463292eb2167837.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:34:25 +0000)",
+    # r18954 - fa6d56dfbf5c417d4130f7d630b1cd8113c5fa9a.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:33:01 +0000)",
+    # r18953 - 65b373440618bf574e449974b8ae5c11872c7e07.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:28:51 +0000)",
+    # r18952 - 244853ac49b85364cc10c1fbb3407f4848e16995.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:21:56 +0000)",
+    # r18951 - 58c6b39c4b454829ad43daa768f0da8d83c1758f.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:14:53 +0000)",
+    # r18950 - 9d4927cc23f24cb6f2e5217b28df1220d37cbfb4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:06:56 +0000)",
+    # r18949 - b1e2161747c74d44f9375e8d3a56253b70583db0.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:05:23 +0000)",
+    # r18948 - 34070e7dd310328ca709eab6c387d90d8ff173a2.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:01:21 +0000)",
+    # r18947 - 40de7ccfc24912166fe700f9dba2bb3b0b03aae8.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:59:41 +0000)",
+    # r18946 - 7688bf7bca6f3d126bf110257a59bb30464bfa5c.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:56:17 +0000)",
+    # r18945 - cad69a4f697fc41a7d9cf01d05e464f7e08d78f4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:52:14 +0000)",
+    # r18944 - 5a53667f70e6f631bcdc4beaee4184886dda9e42.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:49:43 +0000)",
+    # r18943 - e6522db9e7a56dafafb6d2856d4bf628716b1c05.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:47:48 +0000)",
+    # r18942 - 48699182fa170203a69655c23b2123065608935a.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:46:15 +0000)",
+    # r18941 - ccff03c397e69f62ea2a3104a38132a3ee5f1f41.
+    "Started the manual merger of the frame_order_testing branch back to trunk. (2013-03-22 10:41:32 +0000)",
+    # r18804 - 43a4e4daa855bfe80a748cd8cefdfab4e5e638e7 - 2to3 automated conversions.
+    "Python 3 updates for the frame_order_testing branch. (2013-03-12 16:30:51 +0000)",
+    # r18795 - 253b93e88e45a1dece6e84785dba4ec400a3a592 - 2to3 automated conversions.
+    "Python 3 updates and fixes. (2013-03-12 13:27:01 +0000)",
+    # r18437 - 480fcd7aaefc77c23e46b2aa9553a5354b6820c6 - 2to3 automated conversions.
+    "Spacing fixes as identified by the Python 2to3 conversion program. (2013-02-07 15:49:20 +0000)",
+    # r18345 - 8d4ead89d1e5114ede7306dad72a17b1a6adc185 - 2to3 automated conversions.
+    "Python 3 fixes for the newly included Geometry.Transformation ScientificPython module. (2013-02-01 11:39:47 +0000)",
+    # r17869 - 707467cc9d292a033d8042f5aac279da7a2fed26 - 2to3 automated conversions.
+    "Fixes for weird print statements with double brackets generated by the 2to3 Python conversion script. (2012-10-16 16:07:12 +0000)",
+    # r17863 - 100ebda169ef3a22a9bd3ac89db593d595fa1737 - 2to3 automated conversions.
+    "Python 3 fixes for the script for generating plots of magnetic field lines. (2012-10-16 12:58:50 +0000)",
+    # r17855 - c3782248bc420d1e045df389ac6a335db3717212 - 2to3 automated conversions.
+    "Converted the branch specific Frame order code to be Python 3 compatible. (2012-10-16 11:31:32 +0000)",
+    # r17851 - 43c7e95dc5a48bb7c46a2e9427ffdda73a5b6a00 - 2to3 automated conversions.
+    "Python 3 update for the external Sobol library. (2012-10-16 09:38:17 +0000)",
+    # r17849 - 6edf77be3bdd2ed8c371ed7a7a2aef3365f32d58 - 2to3 automated conversions.
+    "Python 3 fix for the structural API. (2012-10-16 09:30:03 +0000)",
+    # r17705 - df158daae9de2b3f8981bf31402830ff86bdcb6b - 2to3 automated conversions.
+    "The relax_fit specific analysis module now supports both Python 2 and 3. (2012-10-05 17:48:03 +0000)",
+    # r17674 - 1833765c56c4a5ac14be4782609552ee322ec121 - 2to3 automated conversions.
+    "Python 2 and 3 support in the generic_fns.relax_data module using 2to3. (2012-10-02 14:12:01 +0000)",
+    # r17665 - 759beb06a24f179bf25d876f80e4bff35135757c - 2to3 automated conversions.
+    "Better support for both Python 2 and 3 in the relax data store. (2012-10-02 12:25:52 +0000)",
+    # r17664 - 8bb164a47b36dbd420adaccf775726aca7d572f2 - 2to3 automated conversions.
+    "Python 3 preparation - the relax data store (the data package) now supports both Python 2 and 3. (2012-10-02 12:23:43 +0000)",
+    # r17656 - 6a3d5f636ad18d09c2302a300916cefbcbf2cdbd - 2to3 automated conversions.
+    "Automatically converted the generic_fns.mol_res_spin module to support both Python 2 and 3. (2012-10-02 09:47:15 +0000)",
+    # r17648 - 4c5d80dfb57014195223d8851851162744e7b699 - 2to3 automated conversions.
+    "Converted the ScientificPython PDB reader to support both Python 2 and 3. (2012-10-02 08:45:46 +0000)",
+    # r17598 - 98ce974c919ded9ea5d5aa83ab45564893d78c3b - 2to3 automated conversions.
+    "Python 3 conversions using 2to3. (2012-09-28 14:40:50 +0000)",
+    # r17596 - 324105295af06fffe6afe8b081ccd3efdd839f22 - 2to3 automated conversions.
+    "Python 3 preparations - removed all usage of the xrange() in the generic_fns package as none are needed. (2012-09-28 11:36:50 +0000)",
+    # r17593 - 3be3992ee15693d9f883a11dcac48bbb8ac19a9b - 2to3 automated conversions.
+    "Python 3 preparations - the auto_analyses package is now fully Python 2 and 3 compatible. (2012-09-28 09:50:34 +0000)",
+    # r17590 - 9bb16c08e49f8b24d997976dbae0f3852d44ab1a - 2to3 automated conversions.
+    "Python 3 preparations - the GUI tests are now fully Python 2 and 3 compatible. (2012-09-28 09:43:29 +0000)",
+    # r17585 - f9619e67fd4170e96c9be87bf9e6d7f9528baf15 - 2to3 automated conversions.
+    "Python 3 preparations - the unit tests are now fully Python 2 and 3 compatible. (2012-09-28 09:09:41 +0000)",
+    # r17581 - 7f3444d7db4a25e90edad4a93220abb8396c5c3e - 2to3 automated conversions.
+    "Last Python 3 compatibility update for the system tests - they are now both Python 2 and 3 compatible! (2012-09-28 08:58:47 +0000)",
+    # r17089 - 44447548a0ca6901ec17ea9fd88a70926fc3b5c3.
+    "Reverted the CaM synthetic randomised data change of r17071, as the data randomisation shouldn't change. (2012-06-28 10:15:51 +0000)",
+    # r17071 - f8aebcb685ef46acf62ad00291f5c1b05f843c89.
+    "Converted all RDC data and generations scripts used by the N-state model to the interatom design. (2012-06-27 14:03:17 +0000)",
+    # r16879 - bd05ab2c14a8c10b399da92a405ce81f2736e476 - 2to3 automated conversions.
+    "Reverted the 2to3 changes of r16837 as these are deadly for Python 2.6! (2012-06-12 09:34:42 +0000)",
+    # r16837 - 4c5a0d2a1d43aa98142ef3bed85d4e71e6327d7d - 2to3 automated conversions.
+    "Python 3 updates for the entire relax code base. (2012-06-11 08:15:21 +0000)",
+    # r16534 - 570a7076b71a33b8667a5c4e99decd01ecac4548 - 2to3 automated conversions.
+    "Print statement conversions to function calls for Python 3.x. (2012-05-30 15:41:17 +0000)",
+    # r15849 - c2244dad9c29130d4560dce6906cf6332a385828.
+    "Renamed the PDC to Bruker DC in the test suite. (2012-04-30 10:43:05 +0000)",
+    # r15228 - 09f4391582c9ab826e7de192a835e1a7a39209f5 - 2to3 automated conversions.
+    "Updates for Python 3.0. (2012-01-24 14:24:40 +0000)",
+    # r14812 - cad3aac4d7ca177c4a4129b00f9f80e92a4b26ed - 2to3 automated conversions.
+    "Updates for Python 3.0 using the Python 2to3 script. (2011-10-09 11:40:36 +0000)",
+    # r14069 - b53f99f555ae895e416802f3c16c314db9558733.
+    "Reverted r14068 as this svnmerge commit breaks the branch. (2011-08-02 14:26:05 +0000)",
+    # r13456 - 9403da5ca58d48ca56a0bc2c19da89a44efced44.
+    "Partly reverted r13453 as the coloured residue graphic was accidentally replaced with the greyscale one. (2011-07-06 15:14:24 +0000)",
+    # r13453 - 6888758caa637c256837b8fce9ebb9093d1656a2.
+    "The greyscale conversion of graphics is now better. (2011-07-06 13:36:42 +0000)",
+    # r13148 - 088087256b6960730976fccab203a45093720ad8.
+    "Removed the svn:executable and svn:mime-type properties from the consistency testing graphics. (2011-06-21 14:46:47 +0000)",
+    # r12792 - e0d3226dccbe8590a9295ab586896aad0d39a0cb.
+    "Shifted all of the model-free sample scripts into the new subdirectory sample_scripts/model_free. (2011-03-04 13:14:44 +0000)",
+    # r12412 - 3497eb7bdb85ea656e0f33a8b972602cc5bde6ed.
+    "Renamed the gui_bieri package to gui. (2011-01-21 11:18:47 +0000)",
+    # r12202 - 5012a2b474e539d8564847f1979a98619c99a42d - 2to3 automated conversions.
+    "Updates for Python 3.0. (2011-01-11 11:58:33 +0000)",
+    # r12087 - a53a2164a8fb91d6d0304b28586839033c6e1ab6.
+    "Shifted the location of the truncated PSE-4 data for the relax 1.2 results reading system test. (2011-01-03 09:26:24 +0000)",
+    # r11914 - 73d6afd501eef48159ec7d48d69839000c6de023.
+    "Reverted r11913 as this was completely wrong and broke the reading of results files. (2010-12-20 15:28:56 +0000)",
+    # r11913 - 44b3298effc90d6ba03df0ea5f10ea9a5bf12579.
+    "Added a check to make sure the relax save states can not be loaded by results.read(). (2010-12-20 15:15:56 +0000)",
+    # r10860 - 67f4a1a6cf1adb11c6837a1d1d09a26630ce35f7 - 2to3 automated conversions.
+    "A python 3.0 fix for the grace module. (2010-02-23 15:06:48 +0000)",
+    # r10737 - ddc552bd3042775c5f24409473c849c771c32731.
+    "Shifted the Gromacs phthalic acid structure. (2010-02-18 14:57:22 +0000)",
+    # r9890  - ab69727887d0d5b006894b44583675d6b6306901 - Pure whitespace changes.
+    "Converted tab characters to 8 spaces... (2009-11-19 19:05:50 +0000)",
+    # r9885 - d5d1314a8a26e5f2f669450376f458e4e83b4412.
+    "Renamed the relaxGUI module to match the relax naming conventions. (2009-11-19 10:22:18 +0000)",
+    # r9456  - 3d46a3a94f8fcd95a22fabb1c418dd4f00fcfebb - 2to3 automated conversions.
+    "More updates for Python3k. (2009-09-03 13:52:50 +0000)",
+    # r9455  - 5ce17a589766fa238ed4588ebf4874e65684b681 - 2to3 automated conversions.
+    "More updates for Python3k. (2009-09-03 13:24:48 +0000)",
+    # r9453  - df67bbb6d3d4ff07d4852f513754ab05f9febaa0 - 2to3 automated conversions.
+    "Updates for Python3k. (2009-09-03 13:20:11 +0000)",
+    # r9452  - c1dc8cdbd7c71f597f3e8b97f866c71131f596c0 - 2to3 automated conversions.
+    "Updates for Python3k. (2009-09-03 13:13:50 +0000)",
+    # r9443  - 1b85d31298e0fddb5f0497f05b517b53b30ced7b - 2to3 automated conversions.
+    "Updates for Python3k. (2009-09-03 12:30:10 +0000)",
+    # r9442  - fb87350627c09dfb8ff40d89105c256ac96fb93f - 2to3 automated conversions.
+    "Updates for Python3k. (2009-09-03 12:29:19 +0000)",
+    # r9439  - d321897bcd64a59b0a957a985203ebabc11d988a - 2to3 automated conversions.
+    "Some more print statement updates for Python 3.x. (2009-09-03 12:06:49 +0000)",
+    # r9437  - 49096b29bb9de4d01b21abf858fecbcd1ea81138 - 2to3 automated conversions.
+    "The whitespace after commas has been enforced (for Python 3.x). (2009-09-03 11:42:16 +0000)",
+    # r9350  - 83361abda390570bcd9b98b30aaefed5880acdd2 - 2to3 automated conversions.
+    "The Python 2.x idioms have been removed. (2009-08-21 10:07:01 +0000)",
+    # r9348  - fdf873ca879f82125b201e584b4198be06c6812c - 2to3 automated conversions.
+    "The execfile statement has been replaced with a call to the exec(compile()) function. (2009-08-21 08:50:08 +0000)",
+    # r9347  - 18246323e5f762ec5ee21f0165f45b88071add01 - 2to3 automated conversions.
+    "The exec statement has been replaced with a call to the exec() function. (2009-08-20 15:48:36 +0000)",
+    # r9346  - 48143bb4b9cc97d5cbf50ed2827bb6d3184f4c6a - 2to3 automated conversions.
+    "The dictionary keys() return value is now converted into a list. (2009-08-19 16:47:50 +0000)",
+    # r9344  - 0d49ff5f482130641892a3930571b548c9a4e9d2 - 2to3 automated conversions.
+    "Modified the behaviour of raise statements according to http://www.python.org/dev/peps/pep-3109/. (2009-08-19 15:31:11 +0000)",
+    # r9343  - 6c4a44558c3436a8f362b7674428234f42c98c72 - 2to3 automated conversions.
+    "Converted all print statements into print() function calls. (2009-08-19 15:18:47 +0000)",
+    # r9342  - dc08433c02e77b35cd947b2f7575f08dba5c7ff3 - 2to3 automated conversions.
+    "Removed all usages of the has_attr() dictionary method. (2009-08-19 14:09:33 +0000)",
+    # r9340  - 25d0d36294f3cc9132d5eb548042d8c688b37792 - 2to3 automated conversions.
+    "Replaced all instances of `x` with repr(x). (2009-08-19 13:37:09 +0000)",
+    # r8705 - c539aa91dbf320d423eb11dab8913990dc7eaf04.
+    "Corrected an error introduced in r8704 where the __init__.py file for system tests was modified for the purpose of fast testing while coding... (2009-02-01 19:35:57 +0000)",
+    # r8704 - 39d106407a1a57bd953c124fa6b9c3974458d0fe.
+    "Copied C files for Rx curve fitting for adapting as the code for dispersion curve fitting. (2009-02-01 19:33:20 +0000)",
+    # r8224 - 2210c04e8dd7e10b53ff7060add85b1ff64a5e91 - Whitespace cleanup.
+    "Many corrections of formatting. (2008-12-23 16:04:48 +0000)",
+    # r7857 - 425c0e9f57a207ccda8e6a1130eb3ca16eb79c7c.
+    "Alphabetical sorting of class methods. (2008-10-20 19:27:28 +0000)",
+    # r7856 - 0844466e3b086eadc34c1e86130ec643db877a3c.
+    "A large number of spacing fixes. (2008-10-20 19:25:25 +0000)",
+    # r7855 - ea3843a6b73938d5f2a3f1345a80177afb9956b9.
+    "Added the copyright statement. (2008-10-20 19:21:44 +0000)",
+    # r7845 - 289107393a33918401c94ea78858270a6dd99f41.
+    "Shifted a class out of order to allow for subclassing. (2008-10-19 19:36:13 +0000)",
+    # r7738 - 0af9485b3ad9f1b284a7a7d9e4d09123c0bb8704.
+    "Manually merged the last of the multi_processor branch. (2008-10-15 22:33:21 +0000)",
+    # r7737 - fd065c9eeba07781002f527ba0b9c9adb63bc7e2.
+    "Manually ported r3274 from the multi_processor branch. (2008-10-15 22:26:21 +0000)",
+    # r7736 - 7b1324f9ae9b5c970b57fa63c1ccc724772f2cd6.
+    "Manually ported r3269, r3270, and r3271 from the multi_processor branch. (2008-10-15 22:24:12 +0000)",
+    # r7735 - 41800082875933346c23fe3febbc1f9c981c8aa4.
+    "Manually ported r3268 from the multi_processor branch. (2008-10-15 22:21:57 +0000)",
+    # r7734 - a4e0489be506de6f5dea73086cc1e67130721455.
+    "Merged all that could be merged from r3267. (2008-10-15 22:17:30 +0000)",
+    # r7732 - 4d430bc6c099842b691ddd47be927c74240da2cd.
+    "Merged all that could be merged from r3266. (2008-10-15 22:15:01 +0000)",
+    # r7729 - eb760d318fe4133fbdda2b41fc83d4c0c9cd7a65.
+    "Manually ported r3261 from the multi_processor branch. (2008-10-15 21:32:04 +0000)",
+    # r7727 - 298d3ad98c8a01850e1a6c3b2c8f8529412321b6.
+    "Manually ported r3254 from the multi_processor branch. (2008-10-15 21:12:52 +0000)",
+    # r7726 - 880bfaebb61f628a15a668965fe975745ee12987.
+    "Manually ported r3253 from the multi_processor branch. (2008-10-15 21:12:00 +0000)",
+    # r7725 - 3e1dfa4ace4ebbafc292fa1bf6ab5ec84bc39f57.
+    "Manually ported r3252 from the multi_processor branch. (2008-10-15 21:10:22 +0000)",
+    # r7724 - 625a5c8d6fb4068cdfafff91f824aacb4d37e91d.
+    "Manually ported r3251 from the multi_processor branch. (2008-10-15 21:09:28 +0000)",
+    # r7723 - 1306db0ac71de602e29e12d975acb04a9e322966.
+    "Manually ported r3250 from the multi_processor branch. (2008-10-15 21:05:57 +0000)",
+    # r7722 - f83e51870d6b919fc9e078020094ae499b7dbe9e.
+    "Manually ported r3249 from the multi_processor branch. (2008-10-15 21:04:33 +0000)",
+    # r7721 - ee3a6e01662c9e54a59e82add28e91e89519e7a3.
+    "Manually ported r3248 from the multi_processor branch. (2008-10-15 20:57:55 +0000)",
+    # r7720 - 1753fcf964c6a76df69d6f4aca9892e19b5e5a68.
+    "Manually ported r3246 from the multi_processor branch. (2008-10-15 20:55:11 +0000)",
+    # r7719 - 968d1221d835cd4b22e231c343defb47cdc188da.
+    "Manually ported r3243 from the multi_processor branch. (2008-10-15 20:53:04 +0000)",
+    # r7718 - 61ff6d48504f5b11828a48594db42c938c3e84cd.
+    "Manually ported r3242  from the multi_processor branch. (2008-10-15 20:40:20 +0000)",
+    # r7717 - 379837305a05961d8537446d1e1db2c043d27482.
+    "Partially ported r3241 from the multi_processor branch. (2008-10-15 20:10:31 +0000)",
+    # r7716 - 8595bccc89b7d1de8e9d913b3fed4c9d0af40093.
+    "Manually ported r3239 from the multi_processor branch. (2008-10-15 20:05:14 +0000)",
+    # r7715 - 2363550c85706647d706e37b7b724d57f381c438.
+    "Manually ported r3238 from the multi_processor branch. (2008-10-15 20:04:11 +0000)",
+    # r7714 - e141b0c785fe72808403d7cad3f329f66f968619.
+    "Manually ported r3237 from the multi_processor branch. (2008-10-15 19:55:41 +0000)",
+    # r7713 - 92aaac2fdd6fefaa3dc7f7ec19077c682a021443.
+    "Manually merged r3236 from the multi_processor branch. (2008-10-15 19:54:17 +0000)",
+    # r7712 - 14421d0f53fa09fcd92ef1132dd53a6348a9d8ed.
+    "Manually merge r3235 from the multi_processor branch. (2008-10-15 19:51:39 +0000)",
+    # r7711 - 4a43c5de4cd699d7f9b697e2cc3aa53a9bf0ccfb.
+    "Added a change which occurred in r3208 of the multi_processor branch but was somehow not ported. (2008-10-15 19:48:43 +0000)",
+    # r7710 - bd06f8c7726dd3487cbd4b372c6be25f91837159.
+    "Manually ported r3210 from the multi_processor branch. (2008-10-15 19:46:10 +0000)",
+    # r7709 - 0f759c3725972afefdd9ac78eccd457bdbdf6d35.
+    "Manually merged r3208 from the multi_processor branch. (2008-10-15 19:40:06 +0000)",
+    # r5977 - 6050b0be1d27af4df20b0dbf043cac3968231465.
+    "Shifted the relaxation curve fitting data into the 'test_suite/shared_data/' directory. (2008-04-24 14:51:43 +0000)",
+    # r3735 - 5dbdf89b20db84dc7ab6b88d0c9667c648ffe1a5.
+    "Renamed all the unit test directories to start with an underscore. (2007-11-20 22:41:25 +0000)",
+    # r2910 - 95982d7a7a02126d01a8d34c5aa41a12d256969f.
+    "Merged the 'test_suite' branch back into the 1.3 line. (2006-12-02 05:46:28 +0000)",
+    # r2718 - fa8eb08c3b6fc667b3f88b57ba87d8f1ee6388eb.
+    "reconfigure for new system test and unit test framework (2006-10-31 14:58:38 +0000)",
+    # r2403 - 988aa94991d3e9e5d81319fcf1d767a0818dd7be.
+    "Shifted the test suite from the directory 'testing' to 'test_suite'. (2006-03-24 02:17:11 +0000)",
+    # r894, r895, etc. - 41775d02748d251373dff182ec220c34cbcd8cf0, 358f9909ed75b71a9262e261e6f0eeb86ca9d814, etc.
+    "Updating to the archive 'backup_relax_2004-02-24a.tar.bz2'. (2004-02-24 06:45:20 +0000)"
 ]
 
 # Commits to switch authorship of (e.g. if someone commits someone else's code).
