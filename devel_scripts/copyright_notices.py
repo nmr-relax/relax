@@ -462,6 +462,8 @@ GIT_START = {
         "Created the time user function. (2014-07-15 10:36:47 +0000)",
     "lib/xml.py":
         "Added a module for the creation and parsing of XML documents representing a data pipe. (2008-06-22 11:21:23 +0000)",
+    "multi/memo.py":
+        "Shifted the Memo object into its own module. (2012-02-29 15:23:41 +0000)",
 }
 
 # Additional copyrights that are not present in the git log.
@@ -790,6 +792,66 @@ EXCLUDE = [
     "Removed all usages of the has_attr() dictionary method. (2009-08-19 14:09:33 +0000)",
     # r9340  - 25d0d36294f3cc9132d5eb548042d8c688b37792 - 2to3 automated conversions.
     "Replaced all instances of `x` with repr(x). (2009-08-19 13:37:09 +0000)",
+    # r7857 - 425c0e9f57a207ccda8e6a1130eb3ca16eb79c7c.
+    "Alphabetical sorting of class methods. (2008-10-20 19:27:28 +0000)",
+    # r7856 - 0844466e3b086eadc34c1e86130ec643db877a3c.
+    "A large number of spacing fixes. (2008-10-20 19:25:25 +0000)",
+    # r7855 - ea3843a6b73938d5f2a3f1345a80177afb9956b9.
+    "Added the copyright statement. (2008-10-20 19:21:44 +0000)",
+    # r7845 - 289107393a33918401c94ea78858270a6dd99f41.
+    "Shifted a class out of order to allow for subclassing. (2008-10-19 19:36:13 +0000)",
+    # r7738 - 0af9485b3ad9f1b284a7a7d9e4d09123c0bb8704
+    "Manually merged the last of the multi_processor branch. (2008-10-15 22:33:21 +0000)",
+    # r7737 - fd065c9eeba07781002f527ba0b9c9adb63bc7e2
+    "Manually ported r3274 from the multi_processor branch. (2008-10-15 22:26:21 +0000)",
+    # r7736 - 7b1324f9ae9b5c970b57fa63c1ccc724772f2cd6
+    "Manually ported r3269, r3270, and r3271 from the multi_processor branch. (2008-10-15 22:24:12 +0000)",
+    # r7735 - 41800082875933346c23fe3febbc1f9c981c8aa4
+    "Manually ported r3268 from the multi_processor branch. (2008-10-15 22:21:57 +0000)",
+    # r7734 - a4e0489be506de6f5dea73086cc1e67130721455
+    "Merged all that could be merged from r3267. (2008-10-15 22:17:30 +0000)",
+    # r7732 - 4d430bc6c099842b691ddd47be927c74240da2cd
+    "Merged all that could be merged from r3266. (2008-10-15 22:15:01 +0000)",
+    # r7729 - eb760d318fe4133fbdda2b41fc83d4c0c9cd7a65
+    "Manually ported r3261 from the multi_processor branch. (2008-10-15 21:32:04 +0000)",
+    # r7727 - 298d3ad98c8a01850e1a6c3b2c8f8529412321b6
+    "Manually ported r3254 from the multi_processor branch. (2008-10-15 21:12:52 +0000)",
+    # r7726 - 880bfaebb61f628a15a668965fe975745ee12987
+    "Manually ported r3253 from the multi_processor branch. (2008-10-15 21:12:00 +0000)",
+    # r7725 - 3e1dfa4ace4ebbafc292fa1bf6ab5ec84bc39f57
+    "Manually ported r3252 from the multi_processor branch. (2008-10-15 21:10:22 +0000)",
+    # r7724 - 625a5c8d6fb4068cdfafff91f824aacb4d37e91d
+    "Manually ported r3251 from the multi_processor branch. (2008-10-15 21:09:28 +0000)",
+    # r7723 - 1306db0ac71de602e29e12d975acb04a9e322966
+    "Manually ported r3250 from the multi_processor branch. (2008-10-15 21:05:57 +0000)",
+    # r7722 - f83e51870d6b919fc9e078020094ae499b7dbe9e
+    "Manually ported r3249 from the multi_processor branch. (2008-10-15 21:04:33 +0000)",
+    # r7721 - ee3a6e01662c9e54a59e82add28e91e89519e7a3
+    "Manually ported r3248 from the multi_processor branch. (2008-10-15 20:57:55 +0000)",
+    # r7720 - 1753fcf964c6a76df69d6f4aca9892e19b5e5a68
+    "Manually ported r3246 from the multi_processor branch. (2008-10-15 20:55:11 +0000)",
+    # r7719 - 968d1221d835cd4b22e231c343defb47cdc188da
+    "Manually ported r3243 from the multi_processor branch. (2008-10-15 20:53:04 +0000)",
+    # r7718 - 61ff6d48504f5b11828a48594db42c938c3e84cd
+    "Manually ported r3242  from the multi_processor branch. (2008-10-15 20:40:20 +0000)",
+    # r7717 - 379837305a05961d8537446d1e1db2c043d27482
+    "Partially ported r3241 from the multi_processor branch. (2008-10-15 20:10:31 +0000)",
+    # r7716 - 8595bccc89b7d1de8e9d913b3fed4c9d0af40093
+    "Manually ported r3239 from the multi_processor branch. (2008-10-15 20:05:14 +0000)",
+    # r7715 - 2363550c85706647d706e37b7b724d57f381c438
+    "Manually ported r3238 from the multi_processor branch. (2008-10-15 20:04:11 +0000)",
+    # r7714 - e141b0c785fe72808403d7cad3f329f66f968619
+    "Manually ported r3237 from the multi_processor branch. (2008-10-15 19:55:41 +0000)",
+    # r7713 - 92aaac2fdd6fefaa3dc7f7ec19077c682a021443
+    "Manually merged r3236 from the multi_processor branch. (2008-10-15 19:54:17 +0000)",
+    # r7712 - 14421d0f53fa09fcd92ef1132dd53a6348a9d8ed
+    "Manually merge r3235 from the multi_processor branch. (2008-10-15 19:51:39 +0000)",
+    # r7711 - 4a43c5de4cd699d7f9b697e2cc3aa53a9bf0ccfb
+    "Added a change which occurred in r3208 of the multi_processor branch but was somehow not ported. (2008-10-15 19:48:43 +0000)",
+    # r7710 - bd06f8c7726dd3487cbd4b372c6be25f91837159
+    "Manually ported r3210 from the multi_processor branch. (2008-10-15 19:46:10 +0000)",
+    # r7709 - 0f759c3725972afefdd9ac78eccd457bdbdf6d35
+    "Manually merged r3208 from the multi_processor branch. (2008-10-15 19:40:06 +0000)",
     # r894, r895, etc. - 41775d02748d251373dff182ec220c34cbcd8cf0, 358f9909ed75b71a9262e261e6f0eeb86ca9d814, etc.
     "Updating to the archive 'backup_relax_2004-02-24a.tar.bz2'. (2004-02-24 06:45:20 +0000)"
 ]
