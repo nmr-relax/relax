@@ -471,6 +471,8 @@ GIT_START = {
         "Created the time user function. (2014-07-15 10:36:47 +0000)",
     "lib/xml.py":
         "Added a module for the creation and parsing of XML documents representing a data pipe. (2008-06-22 11:21:23 +0000)",
+    "multi/memo.py":
+        "Shifted the Memo object into its own module. (2012-02-29 15:23:41 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
