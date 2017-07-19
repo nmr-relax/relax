@@ -228,6 +228,8 @@ BINARY_FILES = [
 
 # Stop incorrect svn history by specifying the first commit key of a file (i.e. svn copy but then a complete file replacement).
 SVN_START = {
+    "pipe_control/structure/__init__.py":
+        "Started to create the structure package. (2008-04-04 09:25:38 +0000)",
 }
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
@@ -464,6 +466,28 @@ GIT_START = {
         "Added a module for the creation and parsing of XML documents representing a data pipe. (2008-06-22 11:21:23 +0000)",
     "multi/memo.py":
         "Shifted the Memo object into its own module. (2012-02-29 15:23:41 +0000)",
+    "pipe_control/__init__.py":
+        "Updating to the archive 'backup_relax_2004-02-24.tar.bz2'. (2004-02-23 15:14:03 +0000)",
+    "pipe_control/domain.py":
+        "Created the domain user function back end. (2011-12-05 14:52:45 +0000)",
+    "pipe_control/error_analysis.py":
+        "Updating to the archive 'backup_relax_2004-06-18.tar.bz2'. (2004-06-17 15:45:42 +0000)",
+    "pipe_control/noesy.py":
+        "Created an empty module for NOESY data. (2008-12-08 15:48:34 +0000)",
+    "pipe_control/pipes.py":
+        "Updating to the archive 'backup_relax_2004-02-23.tar.bz2'. (2004-02-23 08:00:39 +0000)",
+    "pipe_control/plotting.py":
+        "Created the pipe_control.plotting module. (2013-04-08 13:07:50 +0000)",
+    "pipe_control/result_files.py":
+        "Created the new generic_fns.result_files for standardising the handling of results files. (2012-09-18 14:15:01 +0000)",
+    "pipe_control/spectrometer.py":
+        "Wrote the spectrometer frequency setting function generic_fns.frq.set(). (2008-08-11 11:59:01 +0000)",
+    "pipe_control/statistics.py":
+        "Created the empty pipe_control.statistics module. (2015-02-05 14:45:47 +0000)",
+    "pipe_control/structure/__init__.py":
+        "Started to create the structure package. (2008-04-04 09:25:38 +0000)",
+    "pipe_control/system.py":
+        "Adding a new file at lib/system.py. (2016-04-02 10:52:04 +0000)",
 }
 
 # Additional copyrights that are not present in the git log.
@@ -540,6 +564,20 @@ FALSE_NEG = {
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
 EXCLUDE = [
+    # r27848 - 8cea9e80ccc4cfe9f80a4c31e7a4d11464c0ffb8.
+    "Reverted r27840-r27845, related to Bug #23618, queuing system for multi processors is not well designed. (2015-06-11 11:15:54 +0000)",
+    # r27845 - 8284128b7e65604fd7fd581353339074b2c1cd44.
+    "Suggestion for fix 2, where jobs are continously replenished when other jobs are finished. (2015-05-27 01:09:59 +0000)",
+    # r27844 - 9d4bbdd0e58947e9e38ba79afb1ce4e19446f2f3.
+    "Suggestion Fix 1, in multi.processor.run_queue(). (2015-05-27 01:09:57 +0000)",
+    # r27843 - 130ce65f4cd1f509ec62589284f1ff7122ca422b.
+    "In pipe_control of minimise, adding the possibility to control verbosity in multi processor mode. (2015-05-27 01:09:55 +0000)",
+    # r27842 - 229d7d3d7df69e5344080ae5769f25e0194ae0f1.
+    "In multi.processor(), moving up the debugging print-out of running sets of calculatation. (2015-05-27 01:09:52 +0000)",
+    # r27841 - da852d05b0f3fdf03a59cea9437e46a36e30cb32.
+    "Adding to user function minimise.execute() the keyword \"mp_verbosity\", to control the amount of information to print when running multi processors. (2015-05-27 01:09:50 +0000)",
+    # r27840 - e06d116f17a9f3978a655940d50c4e3d47f3ebaf.
+    "Adding keyword for verbosity for multi processor mode. (2015-05-27 01:09:48 +0000)",
     # r26537 - b792617f1685700d2c6b8445c0be6c4bed9b7646 - 2to3 automated conversions.
     "Python 3 fixes via 2to3 - the xrange() function has been replaced by range(). (2014-11-11 16:37:03 +0000)",
     # r26536 - 1f5679337742d7910efde47e2efb5965e79ee48d - 2to3 automated conversions.
@@ -692,6 +730,134 @@ EXCLUDE = [
     "Renamed the relax_string module to lib.text.string. (2013-03-22 20:44:59 +0000)",
     # r19007 - 491f276d2265184c14ac0d97aea25b43a12804c2.
     "Renamed the relax_errors module to lib.errors. (2013-03-22 20:41:29 +0000)",
+    # r19004 - 75c236a76a79b3fe9b43a59da673db10f1a10090.
+    "Final synchronisation of all the frame_order_testing branch files back to trunk for the merger. (2013-03-22 16:49:23 +0000)",
+    # r19003 - ef17cc187446e4eda7e7383e3d56d5b1c36f39f4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:35:56 +0000)",
+    # r19002 - f4f82f892272130d0dc7ecad4b35bc9dc9bf2fbf.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:34:27 +0000)",
+    # r19001 - e9c27cd39ab4dfca5156cd6cf0b8356e43de5e2b.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:31:38 +0000)",
+    # r19000 - d09da10c48560af77ecdfce04c8a0da1e5a68263.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:27:57 +0000)",
+    # r18999 - 12fd5a040a5f10233fd3d093740a7bc7cdf08558.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:27:05 +0000)",
+    # r18998 - 71e2e87f33b3b4a071dced80a24d0a3d5ed1540e.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:26:16 +0000)",
+    # r18997 - d01167edeb7cebef06003ae3041444616f501850.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:24:22 +0000)",
+    # r18996 - 0c691ec49cdb6f3c8acf98a8d9bc47d0d1c4cdc0.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:23:00 +0000)",
+    # r18995 - 3b25f71b2d5eb2738607d011f6f0c2614b0f675d.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:18:31 +0000)",
+    # r18994 - d02ec8b2c4f52ff9a5c4be821fa9a2799b0d7de1.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:15:19 +0000)",
+    # r18993 - cb27367c85de3e4a8603433822d50a04320d13be.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:14:20 +0000)",
+    # r18992 - 2020fd0cc7aedd1c14f7ba87abfba686ec0745d4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:12:07 +0000)",
+    # r18991 - bdf80b55c35fa8f228fa4d6fce60721c6c453784.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:08:33 +0000)",
+    # r18990 - fda5fbbb96a3ff1b7bb4fa58f4130a6ed27e5112.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:05:42 +0000)",
+    # r18989 - 47dad1d00b7b3f7697a0f893043227ef46997607.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:03:52 +0000)",
+    # r18988 - d46917bd2333bd48e1fea33425287b1c53cd9d97.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:02:35 +0000)",
+    # r18987 - a34fcdf97e218883d2014d3dcad1bbb516613e1b.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 16:01:22 +0000)",
+    # r18986 - 268f7269fdc7a7e6ee5a0a036ce21d54f6117ebd.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:56:08 +0000)",
+    # r18985 - a98e5bf34408d6046faa70dc4dc3da7323486664.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:55:10 +0000)",
+    # r18984 - e38db07d61a8cbd77621db4740191b42f9850922.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:54:21 +0000)",
+    # r18983 - 6552fc1b190f01d4d53ccbcc7dcd66da4fef1627.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:51:35 +0000)",
+    # r18982 - e3cfc834a2230bc14e3ee294cb70ad92189ad338.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:49:43 +0000)",
+    # r18981 - 164504cd38b553264fa958f15e9e0108217d4df0.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:47:10 +0000)",
+    # r18980 - 4b93870ad309776d6022fb1641ed1bdfc87cf694.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:45:57 +0000)",
+    # r18979 - a8d7f011308ad927b1627e6a5c36545c2f28de49.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:44:07 +0000)",
+    # r18978 - a553320e401e96cb085d84c3f92e34237473e67f.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:42:12 +0000)",
+    # r18977 - 63aa683a9a040ea2c6f4fa5324fabd5fbfe1ac12.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:40:06 +0000)",
+    # r18976 - 5f72b074caccc357bae14abd102cb392473cd134.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:37:50 +0000)",
+    # r18975 - a0c07835413a927262eccdd556b2b1abba5d98b5.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:36:30 +0000)",
+    # r18974 - cbd3da28098dbb096c6007189a9d7f3af67cc364.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:31:24 +0000)",
+    # r18973 - cbc8f6caec122b16a33f2133b8c8df3e195c5441.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:27:35 +0000)",
+    # r18972 - 6eaa40323f5373b969b6b08cd0ffe841c70ceb1c.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:24:53 +0000)",
+    # r18971 - e5a809c9a466048a4cd0d83c63f979785e611be0.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:23:24 +0000)",
+    # r18970 - 9e145350ff0bfa48bad572ca9f5bb0976dfde2ab.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:21:05 +0000)",
+    # r18969 - a304e88d8949a72ba2649b50ee2ab745b8960222.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:19:53 +0000)",
+    # r18968 - e77e67909b9f19e5fe56f82996419fb25f153953.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 15:18:26 +0000)",
+    # r18967 - 8289a9bcc14c11e5794b62898aa5de744964f7a6.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:43:19 +0000)",
+    # r18966 - 1dec4b16003bd9727ffa5f263d106d5d1f17fc25.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:37:30 +0000)",
+    # r18965 - 370b45b18f6ffc36d0a3822410c493913d93e2b8.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:36:09 +0000)",
+    # r18964 - 90254744ecd53b38c4c7399cd7686e9319915a85.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:33:31 +0000)",
+    # r18963 - 525f68335d5e423e579c10a3c33d3113bd96d052.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:32:31 +0000)",
+    # r18962 - 017b681c4cefffd0f886f1a0417cbfaa6cb6ec29.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:30:59 +0000)",
+    # r18961 - 87f532b53e27914ad068c86f89b56ad67b07b64e.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:29:40 +0000)",
+    # r18960 - 72ade78839113e26c99f648aad5cb3c7854c5515.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 14:28:26 +0000)",
+    # r18959 - 0258e88b2071a6e83e8859d7ea224a16d6280532.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:54:25 +0000)",
+    # r18958 - deb34da3b605d4133a56807a6d358465ab9106c4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:49:41 +0000)",
+    # r18957 - 77fd77f22062fb67d18901864c5aac3602ce1d5b.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:47:52 +0000)",
+    # r18956 - 285dd6be2310c34ce05d2abbf8bcaa2f8f7122eb.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:44:20 +0000)",
+    # r18955 - fffa41de539d225388e6d20dd463292eb2167837.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:34:25 +0000)",
+    # r18954 - fa6d56dfbf5c417d4130f7d630b1cd8113c5fa9a.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:33:01 +0000)",
+    # r18953 - 65b373440618bf574e449974b8ae5c11872c7e07.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:28:51 +0000)",
+    # r18952 - 244853ac49b85364cc10c1fbb3407f4848e16995.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:21:56 +0000)",
+    # r18951 - 58c6b39c4b454829ad43daa768f0da8d83c1758f.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:14:53 +0000)",
+    # r18950 - 9d4927cc23f24cb6f2e5217b28df1220d37cbfb4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:06:56 +0000)",
+    # r18949 - b1e2161747c74d44f9375e8d3a56253b70583db0.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:05:23 +0000)",
+    # r18948 - 34070e7dd310328ca709eab6c387d90d8ff173a2.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 11:01:21 +0000)",
+    # r18947 - 40de7ccfc24912166fe700f9dba2bb3b0b03aae8.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:59:41 +0000)",
+    # r18946 - 7688bf7bca6f3d126bf110257a59bb30464bfa5c.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:56:17 +0000)",
+    # r18945 - cad69a4f697fc41a7d9cf01d05e464f7e08d78f4.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:52:14 +0000)",
+    # r18944 - 5a53667f70e6f631bcdc4beaee4184886dda9e42.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:49:43 +0000)",
+    # r18943 - e6522db9e7a56dafafb6d2856d4bf628716b1c05.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:47:48 +0000)",
+    # r18942 - 48699182fa170203a69655c23b2123065608935a.
+    "Next block of the manual merger of the frame_order_testing branch. (2013-03-22 10:46:15 +0000)",
+    # r18941 - ccff03c397e69f62ea2a3104a38132a3ee5f1f41.
+    "Started the manual merger of the frame_order_testing branch back to trunk. (2013-03-22 10:41:32 +0000)",
     # r18804 - 43a4e4daa855bfe80a748cd8cefdfab4e5e638e7 - 2to3 automated conversions.
     "Python 3 updates for the frame_order_testing branch. (2013-03-12 16:30:51 +0000)",
     # r18795 - 253b93e88e45a1dece6e84785dba4ec400a3a592 - 2to3 automated conversions.
@@ -754,6 +920,10 @@ EXCLUDE = [
     "Renamed the gui_bieri package to gui. (2011-01-21 11:18:47 +0000)",
     # r12202 - 5012a2b474e539d8564847f1979a98619c99a42d - 2to3 automated conversions.
     "Updates for Python 3.0. (2011-01-11 11:58:33 +0000)",
+    # r11914 - 73d6afd501eef48159ec7d48d69839000c6de023.
+    "Reverted r11913 as this was completely wrong and broke the reading of results files. (2010-12-20 15:28:56 +0000)",
+    # r11913 - 44b3298effc90d6ba03df0ea5f10ea9a5bf12579.
+    "Added a check to make sure the relax save states can not be loaded by results.read(). (2010-12-20 15:15:56 +0000)",
     # r10860 - 67f4a1a6cf1adb11c6837a1d1d09a26630ce35f7 - 2to3 automated conversions.
     "A python 3.0 fix for the grace module. (2010-02-23 15:06:48 +0000)",
     # r9890  - ab69727887d0d5b006894b44583675d6b6306901 - Pure whitespace changes.
