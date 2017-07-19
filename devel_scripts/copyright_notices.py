@@ -237,6 +237,8 @@ BINARY_FILES = [
 
 # Stop incorrect svn history by specifying the first commit key of a file (i.e. svn copy but then a complete file replacement).
 SVN_START = {
+    "pipe_control/structure/__init__.py":
+        "Started to create the structure package. (2008-04-04 09:25:38 +0000)",
 }
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
@@ -473,6 +475,28 @@ GIT_START = {
         "Added a module for the creation and parsing of XML documents representing a data pipe. (2008-06-22 11:21:23 +0000)",
     "multi/memo.py":
         "Shifted the Memo object into its own module. (2012-02-29 15:23:41 +0000)",
+    "pipe_control/__init__.py":
+        "Updating to the archive 'backup_relax_2004-02-24.tar.bz2'. (2004-02-23 15:14:03 +0000)",
+    "pipe_control/domain.py":
+        "Created the domain user function back end. (2011-12-05 14:52:45 +0000)",
+    "pipe_control/error_analysis.py":
+        "Updating to the archive 'backup_relax_2004-06-18.tar.bz2'. (2004-06-17 15:45:42 +0000)",
+    "pipe_control/noesy.py":
+        "Created an empty module for NOESY data. (2008-12-08 15:48:34 +0000)",
+    "pipe_control/pipes.py":
+        "Updating to the archive 'backup_relax_2004-02-23.tar.bz2'. (2004-02-23 08:00:39 +0000)",
+    "pipe_control/plotting.py":
+        "Created the pipe_control.plotting module. (2013-04-08 13:07:50 +0000)",
+    "pipe_control/result_files.py":
+        "Created the new generic_fns.result_files for standardising the handling of results files. (2012-09-18 14:15:01 +0000)",
+    "pipe_control/spectrometer.py":
+        "Wrote the spectrometer frequency setting function generic_fns.frq.set(). (2008-08-11 11:59:01 +0000)",
+    "pipe_control/statistics.py":
+        "Created the empty pipe_control.statistics module. (2015-02-05 14:45:47 +0000)",
+    "pipe_control/structure/__init__.py":
+        "Started to create the structure package. (2008-04-04 09:25:38 +0000)",
+    "pipe_control/system.py":
+        "Adding a new file at lib/system.py. (2016-04-02 10:52:04 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
