@@ -242,6 +242,32 @@ SVN_START = {
         "Started to create the structure package. (2008-04-04 09:25:38 +0000)",
     "scons/__init__.py":
         "A number of large changes to the Scons system. (2006-10-12 04:02:01 +0000)",
+    "specific_analyses/noe/__init__.py":
+        "Shifted the NOE specific analysis code into its own package. (2010-09-17 16:02:20 +0000)",
+    "specific_analyses/noe/parameter_object.py":
+        "Shifted the NOE specific analysis code into its own package. (2010-09-17 16:02:20 +0000)",
+    "specific_analyses/model_free/__init__.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/api.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/data.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/parameter_object.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/n_state_model/__init__.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/api.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/data.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/optimisation.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/parameter_object.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/parameters.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/uf.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
 }
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
@@ -512,6 +538,36 @@ GIT_START = {
         "Added a sample script for the creation of the PDB representation of the XH bond vectors. (2008-12-03 21:56:23 +0000)",
     "scons/__init__.py":
         "Ported r2618 to r2632 from the 1.2 line. (2006-10-12 07:43:25 +0000)",
+    "specific_analyses/__init__.py":
+        "Updating to the archive 'backup_relax_2004-02-24.tar.bz2'. (2004-02-23 15:14:03 +0000)",
+    "specific_analyses/frame_order/__init__.py":
+        "Converted all of the specific analysis modules into packages. (2013-05-15 15:38:19 +0000)",
+    "specific_analyses/model_free/__init__.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/api.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/bmrb.py":
+        "Added a stub bmrb_write() model-free method. (2009-01-11 13:01:28 +0000)",
+    "specific_analyses/n_state_model/__init__.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/api.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/parameter_object.py":
+        "Standardised all of the parameter list objects for the specific analyses. (2014-04-09 16:35:41 +0000)",
+    "specific_analyses/noe/__init__.py":
+        "Shifted the NOE specific analysis code into its own package. (2010-09-17 16:02:20 +0000)",
+    "specific_analyses/noe/parameter_object.py":
+        "Standardised all of the parameter list objects for the specific analyses. (2014-04-09 16:35:41 +0000)",
+    "specific_analyses/relax_disp/catia.py":
+        "Started to create the relax_disp.catia_input user function. (2013-09-12 16:39:21 +0000)",
+    "specific_analyses/relax_disp/model.py":
+        "Shifted out all of the variables and dispersion data specific code into separate modules. (2013-05-03 09:51:38 +0000)",
+    "specific_analyses/relax_disp/optimisation.py":
+        "Created the empty specific_analyses.relax_disp.optimisation module. (2013-09-11 08:34:17 +0000)",
+    "specific_analyses/relax_fit/checks.py":
+        "Created the new specific_analyses.relax_fit.checks module. (2014-11-29 17:55:20 +0000)",
+    "specific_analyses/hybrid.py":
+        "This is a file that should have been included in r2445. (2006-04-05 08:09:16 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
@@ -574,6 +630,9 @@ FALSE_POS = {
     'lib/dispersion/tsmfk01.py':                                        ["Copyright (C) 2009 Sebastien Morin"],
     'lib/dispersion/two_point.py':                                      ["Copyright (C) 2009 Sebastien Morin"],
     'sample_scripts/model_free/final_data_extraction.py':               ["Copyright (C) 2009-2011 Michael Bieri"],
+    'specific_analyses/model_free/api.py':                              ["Copyright (C) 2007 Gary S Thompson"],
+    'specific_analyses/model_free/data.py':                             ["Copyright (C) 2007 Gary S Thompson"],
+    'specific_analyses/model_free/optimisation.py':                     ["Copyright (C) 2007 Gary S Thompson"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
