@@ -192,6 +192,7 @@ BLACKLISTED_FILES = [
     'graphics/relax_icons/png/model_free/mf.aux',               # One line.
     'graphics/relax_icons/png/model_free/mf.log',               # LaTex log file.
     'graphics/wizards/structure/2JK4.pdb.gz',                   # Public domain.
+    'sample_scripts/model_free/full_analysis.py',               # Single line file pointing to its renamed location.
 ]
 
 # Directories to skip.
@@ -503,6 +504,10 @@ GIT_START = {
         "Created a base class for the user function classes. (2009-08-21 15:23:56 +0000)",
     "prompt/uf_objects.py":
         "Added the prompt.objects module which contains the user function auto-generation objects. (2012-05-03 20:12:28 +0000)",
+    "sample_scripts/model_free/back_calculate.py":
+        "Added a sample script for back-calculating relaxation data from a model-free results file. (2015-11-23 09:20:47 +0000)",
+    "sample_scripts/xh_vector_dist.py":
+        "Added a sample script for the creation of the PDB representation of the XH bond vectors. (2008-12-03 21:56:23 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
@@ -564,6 +569,7 @@ FALSE_POS = {
     'lib/dispersion/tp02.py':                                           ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
     'lib/dispersion/tsmfk01.py':                                        ["Copyright (C) 2009 Sebastien Morin"],
     'lib/dispersion/two_point.py':                                      ["Copyright (C) 2009 Sebastien Morin"],
+    'sample_scripts/model_free/final_data_extraction.py':               ["Copyright (C) 2009-2011 Michael Bieri"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -583,6 +589,7 @@ FALSE_NEG_YEARS = {
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    [[2012, "Edward d'Auvergne"]],
     'graphics/wizards/object-locked-unlocked.png':                      [[2012, "Edward d'Auvergne"]],
     'graphics/wizards/oxygen-icon-weather-clear.png':                   [[2012, "Edward d'Auvergne"]],
+    'sample_scripts/model_free/final_data_extraction.py':               [[2010, "Michael Bieri"], [2011, "Michael Bieri"]],
 }
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
