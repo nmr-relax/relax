@@ -1116,6 +1116,46 @@ FALSE_NEG = {
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
 EXCLUDE = [
+    # 0152ac6f384fb86fa082a4521d17fc3e1b8a15a4 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    # 4272a7f11dfa057d74d9b631f0ad3be1c72486a0 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all system test modules and scripts. (2017-07-27 18:12:23 +0200)",
+    # a840151f3a07267c1a38e4ca586a708ad4585d2d - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all unit test modules. (2017-07-27 16:16:16 +0200)",
+    # 668618021a79893169c66e02c3626e487ead49a5 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all modules and files in the base relax directory. (2017-07-21 13:10:55 +0200)",
+    # c2dfa522ce02ed9b88449388c58bc04f00c669af - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all scripts in the sample_scripts/ directory. (2017-07-19 12:21:25 +0200)",
+    # bfffa6fb149961244a9b8bc74b66743ed7f48fe7 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all modules in the prompt package. (2017-07-19 10:59:45 +0200)",
+    # c9c29ba6bbbe7a5636616c65e093062b5267689a - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all modules in the pipe_control package. (2017-07-19 09:08:21 +0200)",
+    # 4ae077acc40d3c00760b9074ca54e8145c6790a1 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all modules in the multi package. (2017-07-18 14:53:22 +0200)",
+    # 98e89a92c5ce2e98bcc0661cc11ac3e1c828d915 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all modules in the lib package. (2017-07-11 14:16:19 +0200)",
+    # 96766bcc37727f4449da83abee7191cef7dcfda6 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all modules in the gui package. (2017-07-11 12:42:18 +0200)",
+    # 54740b75877c76685dc986ef88f3f42ba9951019 - Copyright notice updates.
+    "FSF compliant copyright notices for the entirety of the devel_scripts/ directory. (2017-07-11 11:51:06 +0200)",
+    # f808f9bcd05844c055ee08984e3d0b0415f5af74 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all modules in the data_store package. (2017-07-11 11:31:20 +0200)",
+    # 3ec0a6f920dcf0c47208f2890f973d4e20ce1ac0 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for all modules in the auto_analyses package. (2017-07-11 11:11:08 +0200)",
+    # 2afc3b9212ddbcb037024aa32307fbd2b43e69ab - Copyright notice updates.
+    "FSF compliant copyright notices for the extern/ directory. (2017-07-11 10:48:17 +0200)",
+    # d86ae0491175ca3e6f7f5c9cacf651491d3c88df - Copyright notice updates.
+    "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    # 936698bc132fc1d029f717d2c40116deab255237 - Copyright notice updates.
+    "Added the original oxygen icon AUTHORS and COPYING files and standardised the README file titles. (2017-07-10 11:07:43 +0200)",
+    # 720e1dd29c6f62b6029048254d17af3470020915 - Copyright notice updates.
+    "FSF compliant copyright notices for all remaining files in the documentation directory. (2017-07-07 11:17:37 +0200)",
+    # 79af68053a461a79b7b1314e81c8e05f684f10e8 - Copyright notice updates.
+    "FSF compliant copyright notices for all files in the documentation directory docs/html/. (2017-07-07 11:07:40 +0200)",
+    # c30653225f37f6ee893ea481f887afb8619b9950 - Copyright notice updates.
+    "FSF compliant copyright notices for all files in the documentation directory docs/latex/. (2017-07-07 10:22:52 +0200)",
+    # 87b9acdd180f11d1e8a5c48b6269d0d5a281f015 - Copyright notice updates.
+    "FSF compliant copyright notices for all files in the documentation directory docs/devel/. (2017-07-07 09:12:47 +0200)",
     # r27848 - 8cea9e80ccc4cfe9f80a4c31e7a4d11464c0ffb8.
     "Reverted r27840-r27845, related to Bug #23618, queuing system for multi processors is not well designed. (2015-06-11 11:15:54 +0000)",
     # r27845 - 8284128b7e65604fd7fd581353339074b2c1cd44.
