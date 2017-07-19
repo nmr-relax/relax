@@ -231,6 +231,8 @@ BINARY_FILES = [
 SVN_START = {
     "pipe_control/structure/__init__.py":
         "Started to create the structure package. (2008-04-04 09:25:38 +0000)",
+    "scons/__init__.py":
+        "A number of large changes to the Scons system. (2006-10-12 04:02:01 +0000)",
 }
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
@@ -499,6 +501,8 @@ GIT_START = {
         "Added a sample script for back-calculating relaxation data from a model-free results file. (2015-11-23 09:20:47 +0000)",
     "sample_scripts/xh_vector_dist.py":
         "Added a sample script for the creation of the PDB representation of the XH bond vectors. (2008-12-03 21:56:23 +0000)",
+    "scons/__init__.py":
+        "Ported r2618 to r2632 from the 1.2 line. (2006-10-12 07:43:25 +0000)",
 }
 
 # Additional copyrights that are not present in the git log.
