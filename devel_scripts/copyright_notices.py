@@ -495,6 +495,12 @@ GIT_START = {
         "Started to create the structure package. (2008-04-04 09:25:38 +0000)",
     "pipe_control/system.py":
         "Adding a new file at lib/system.py. (2016-04-02 10:52:04 +0000)",
+    "prompt/doc_string.py":
+        "Rewrite of the Grace plotting functions. (2005-06-26 14:40:34 +0000)",
+    "prompt/uf_docstring.py":
+        "Created a base class for the user function classes. (2009-08-21 15:23:56 +0000)",
+    "prompt/uf_objects.py":
+        "Added the prompt.objects module which contains the user function auto-generation objects. (2012-05-03 20:12:28 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
