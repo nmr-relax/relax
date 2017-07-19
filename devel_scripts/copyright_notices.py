@@ -1855,7 +1855,7 @@ def svn_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
             break
 
         # A new commit.
-        if search('^------------------------------------------------------------------------', lines[i]) and lines[i+1][0] == 'r':
+        if search('^------------------------------------------------------------------------$', lines[i]) and lines[i+1][0] == 'r':
             # Move to the summary line.
             i += 1
 
@@ -1896,11 +1896,13 @@ def svn_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
                             msg += " %s" % lines[i]
 
                 # End of the diff.
-                if i >= len(lines) or search('^------------------------------------------------------------------------', lines[i]):
+                if i >= len(lines):
+                    break
+                if search('^------------------------------------------------------------------------$', lines[i]) and i < len(lines)-1 and len(lines[i+1]) and lines[i+1][0] == 'r':
                     break
 
                 # Inside the diff.
-                if search('^===================================================================', lines[i]):
+                if search('^===================================================================$', lines[i]):
                     in_diff = True
                     i += 1
                 if not in_diff:
