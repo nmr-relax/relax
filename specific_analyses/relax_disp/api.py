@@ -1,8 +1,9 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2016 Edward d'Auvergne                                   #
-# Copyright (C) 2009 Sebastien Morin                                          #
-# Copyright (C) 2013-2014 Troels E. Linnet                                    #
+# Copyright (C) 2003-2008,2013-2014,2016 Edward d'Auvergne                    #
+# Copyright (C) 2006 Chris MacRaild                                           #
+# Copyright (C) 2008-2009 Sebastien Morin                                     #
+# Copyright (C) 2013-2015 Troels E. Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #

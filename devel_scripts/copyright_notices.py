@@ -240,6 +240,32 @@ SVN_START = {
         "Started to create the structure package. (2008-04-04 09:25:38 +0000)",
     "scons/__init__.py":
         "A number of large changes to the Scons system. (2006-10-12 04:02:01 +0000)",
+    "specific_analyses/noe/__init__.py":
+        "Shifted the NOE specific analysis code into its own package. (2010-09-17 16:02:20 +0000)",
+    "specific_analyses/noe/parameter_object.py":
+        "Shifted the NOE specific analysis code into its own package. (2010-09-17 16:02:20 +0000)",
+    "specific_analyses/model_free/__init__.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/api.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/data.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/parameter_object.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/n_state_model/__init__.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/api.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/data.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/optimisation.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/parameter_object.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/parameters.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/uf.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
 }
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
@@ -510,6 +536,36 @@ GIT_START = {
         "Added a sample script for the creation of the PDB representation of the XH bond vectors. (2008-12-03 21:56:23 +0000)",
     "scons/__init__.py":
         "Ported r2618 to r2632 from the 1.2 line. (2006-10-12 07:43:25 +0000)",
+    "specific_analyses/__init__.py":
+        "Updating to the archive 'backup_relax_2004-02-24.tar.bz2'. (2004-02-23 15:14:03 +0000)",
+    "specific_analyses/frame_order/__init__.py":
+        "Converted all of the specific analysis modules into packages. (2013-05-15 15:38:19 +0000)",
+    "specific_analyses/model_free/__init__.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/api.py":
+        "Created the infrastructure for the splitting up of the 'specific_fns.model_free' module. (2007-03-07 05:56:48 +0000)",
+    "specific_analyses/model_free/bmrb.py":
+        "Added a stub bmrb_write() model-free method. (2009-01-11 13:01:28 +0000)",
+    "specific_analyses/n_state_model/__init__.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/api.py":
+        "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "specific_analyses/n_state_model/parameter_object.py":
+        "Standardised all of the parameter list objects for the specific analyses. (2014-04-09 16:35:41 +0000)",
+    "specific_analyses/noe/__init__.py":
+        "Shifted the NOE specific analysis code into its own package. (2010-09-17 16:02:20 +0000)",
+    "specific_analyses/noe/parameter_object.py":
+        "Standardised all of the parameter list objects for the specific analyses. (2014-04-09 16:35:41 +0000)",
+    "specific_analyses/relax_disp/catia.py":
+        "Started to create the relax_disp.catia_input user function. (2013-09-12 16:39:21 +0000)",
+    "specific_analyses/relax_disp/model.py":
+        "Shifted out all of the variables and dispersion data specific code into separate modules. (2013-05-03 09:51:38 +0000)",
+    "specific_analyses/relax_disp/optimisation.py":
+        "Created the empty specific_analyses.relax_disp.optimisation module. (2013-09-11 08:34:17 +0000)",
+    "specific_analyses/relax_fit/checks.py":
+        "Created the new specific_analyses.relax_fit.checks module. (2014-11-29 17:55:20 +0000)",
+    "specific_analyses/hybrid.py":
+        "This is a file that should have been included in r2445. (2006-04-05 08:09:16 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
@@ -572,6 +628,9 @@ FALSE_POS = {
     'lib/dispersion/tsmfk01.py':                                        ["Copyright (C) 2009 Sebastien Morin"],
     'lib/dispersion/two_point.py':                                      ["Copyright (C) 2009 Sebastien Morin"],
     'sample_scripts/model_free/final_data_extraction.py':               ["Copyright (C) 2009-2011 Michael Bieri"],
+    'specific_analyses/model_free/api.py':                              ["Copyright (C) 2007 Gary S Thompson"],
+    'specific_analyses/model_free/data.py':                             ["Copyright (C) 2007 Gary S Thompson"],
+    'specific_analyses/model_free/optimisation.py':                     ["Copyright (C) 2007 Gary S Thompson"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -608,6 +667,31 @@ EXCLUDE = [
     "Adding to user function minimise.execute() the keyword \"mp_verbosity\", to control the amount of information to print when running multi processors. (2015-05-27 01:09:50 +0000)",
     # r27840 - e06d116f17a9f3978a655940d50c4e3d47f3ebaf.
     "Adding keyword for verbosity for multi processor mode. (2015-05-27 01:09:48 +0000)",
+    # r27214 - 25ba046c14486d55ce33be611458e48d79371a74.
+    "Reverted range of commits r27213:r27202 as this was a bad implementation. (2015-01-17 13:16:50 +0000)",
+    # r27213 - 689e2403d8b85190e29eba67be352202fbaf1ac9.
+    "Added 'sos' and 'sos_std' as parameter object in relaxation dispersion. (2015-01-16 22:20:13 +0000)",
+    # r27212 - 54f60bb436ca61d4c3bcc5e7aa113fd60663862c.
+    "Implemented in the relaxation dispersion API, the function to return errors as the standard deviation of sums squared residuals. (2015-01-16 22:20:11 +0000)",
+    # r27211 - 5b08a8691f1fc06c9e022819db0474f6e68483a6.
+"Implemented the api_base method of return_error_sum_squares(), as raising an error if not defined for the api for the pipe_type. (2015-01-16 22:20:08 +0000)",
+    # r27210 - 1797025ef590c937ed6334407aacf2c8bb92336a.
+    "Extended backend in pipe_control.error_analysis.monte_carlo_create_data() to return errors as the standard deviation of the sum of squares of the residual. (2015-01-16 22:20:06 +0000)",
+    # r27209 - 20e70867b9c7fb11782b8a248bbee279a3f3f253.
+    "Extended user function monte_carlo.create_data() to accept 'method=\"sum_squares\"', to create Monte-Carlo data. (2015-01-16 22:20:04 +0000)",
+    # r27208 - 4cb9ace10a6ad9db69f8f565a723de228174e922.
+    "Speed-up of systemtest Relax_disp.test_task_7882_monte_carlo_std_residual() by copying pipe instead of reading results 3 times. (2015-01-16 22:20:01 +0000)",
+    # r27207 - dce94e688605a61efc882999cedf7db82e7e2a2c.
+    "In systemtest Relax_disp.test_task_7882_monte_carlo_std_residual() inserted sanity checks of calculation of degrees of freedom. (2015-01-16 22:19:58 +0000)",
+    # r27206 - 378db59919058b2d64b1c4e8f2499d1e4c1c02d9.
+    "Extracted \"sos\" and \"sos_std\" after grid search. (2015-01-16 22:19:56 +0000)",
+    # r27205 - 7c90802c2f916d3e0817089f57a568b9db184492."Added to systemtest Relax_disp.test_task_7882_monte_carlo_std_residual() that spin.sos and spin.sos_std is stored after grid search. (2015-01-16 22:19:54 +0000)",
+    # r27204 - ca9a8ef3a005207e0971a08fec571ac3607048e8.
+    "Stored the sums of squares of the residuals \"sos\" and standard deviation of this \"sos_std\" per spin after optimisation. (2015-01-16 22:19:51 +0000)",
+    # r27203 - 51c596b2b7ef471081543e032cd6e3266c0fb36b.
+    "Implemented storing of sum of squares and the standard deviation of these for relaxation dispersion, when doing a point calculation. (2015-01-16 22:19:50 +0000)",
+    # r27202 - c75faf5b589f69733c93c6669357046f20f13907.
+    "Implemented target function for relaxation dispersion, which calculate the sum of squares of residuals and the standard deviation of these. (2015-01-16 22:19:47 +0000)",
     # r26537 - b792617f1685700d2c6b8445c0be6c4bed9b7646 - 2to3 automated conversions.
     "Python 3 fixes via 2to3 - the xrange() function has been replaced by range(). (2014-11-11 16:37:03 +0000)",
     # r26536 - 1f5679337742d7910efde47e2efb5965e79ee48d - 2to3 automated conversions.
@@ -654,6 +738,20 @@ EXCLUDE = [
     "General Python 3 fixes via the 2to3 script. (2014-07-02 07:37:42 +0000)",
     # r23263 - 806fa231aaf12222045311dc8d17d44cfd9cca33 - 2to3 automated conversions.
     "Python 3 fixes for all of the relax code base. (2014-05-20 16:02:55 +0000)",
+    # r23546 - efddab673939e10c72c5dea09320b2700fa2ad1d.
+    "Reverted r23531-23526 as this would prevent a clean merge back into the trunk. (2014-05-28 15:55:10 +0000)",
+    # r23531 - dc6a093be1ebf83616b34583b10b5ff9419d8ad3.
+    "Added 9th and 10th unit test case for model B14. (2014-05-28 14:49:08 +0000)",
+    # r23530 - 389d04a2e6517b7456769d2ebefbe4ce432ccc96.
+    "Added all the default values for the lower/upper bounds which is set for the parameters in the grid search. (2014-05-28 14:49:06 +0000)",
+    # r23529 - 68e37f55859129d2afaa894190def81dde8db5a7.
+    "Added grid_upper to be handled in specific_analyses/parameter_object.py. (2014-05-28 14:49:05 +0000)",
+    # r23528 - 8e6d4e22ecfc9aa59dbbb167ee34c5fb73088cdf.
+    "Added the default value upper grid value to be set for the pA parameter. (2014-05-28 14:49:03 +0000)",
+    # r23527 - ce38d703eb75caadef368b1fc1f6e741a68f073e.
+    "Added grid_lower to be handled in specific_analyses/parameter_object.py. (2014-05-28 14:49:02 +0000)",
+    # r23526 - da5b41770b1d2fff19d91f1f4b6ef9ff5ec04eaf.
+    "Added the default value lower grid value to be set for the pA parameter. (2014-05-28 14:49:00 +0000)",
     # r22816 - 89c302bba91132115ca23e213b59a894e21db539 - 2to3 automated conversions.
     "Python 3 fixes throughout the codebase. (2014-04-22 15:49:39 +0000)",
     # r21155 - a6af21049e0cbe825c9609ede890cab76269ed99 - 2to3 automated conversions.
