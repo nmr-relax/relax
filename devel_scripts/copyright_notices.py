@@ -192,6 +192,7 @@ BLACKLISTED_FILES = [
     'graphics/relax_icons/png/model_free/mf.aux',               # One line.
     'graphics/relax_icons/png/model_free/mf.log',               # LaTex log file.
     'graphics/wizards/structure/2JK4.pdb.gz',                   # Public domain.
+    'sample_scripts/model_free/full_analysis.py',               # Single line file pointing to its renamed location.
 ]
 
 # Directories to skip.
@@ -501,6 +502,10 @@ GIT_START = {
         "Created a base class for the user function classes. (2009-08-21 15:23:56 +0000)",
     "prompt/uf_objects.py":
         "Added the prompt.objects module which contains the user function auto-generation objects. (2012-05-03 20:12:28 +0000)",
+    "sample_scripts/model_free/back_calculate.py":
+        "Added a sample script for back-calculating relaxation data from a model-free results file. (2015-11-23 09:20:47 +0000)",
+    "sample_scripts/xh_vector_dist.py":
+        "Added a sample script for the creation of the PDB representation of the XH bond vectors. (2008-12-03 21:56:23 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
@@ -562,6 +567,7 @@ FALSE_POS = {
     'lib/dispersion/tp02.py':                                           ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
     'lib/dispersion/tsmfk01.py':                                        ["Copyright (C) 2009 Sebastien Morin"],
     'lib/dispersion/two_point.py':                                      ["Copyright (C) 2009 Sebastien Morin"],
+    'sample_scripts/model_free/final_data_extraction.py':               ["Copyright (C) 2009-2011 Michael Bieri"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -579,6 +585,7 @@ FALSE_NEG = {
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    ["Copyright (C) 2012 Edward d'Auvergne"],
     'graphics/wizards/object-locked-unlocked.png':                      ["Copyright (C) 2012 Edward d'Auvergne"],
     'graphics/wizards/oxygen-icon-weather-clear.png':                   ["Copyright (C) 2012 Edward d'Auvergne"],
+    'sample_scripts/model_free/final_data_extraction.py':               ["Copyright (C) 2010-2011 Michael Bieri"],
 }
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
@@ -935,6 +942,8 @@ EXCLUDE = [
     "The greyscale conversion of graphics is now better. (2011-07-06 13:36:42 +0000)",
     # r13148 - 088087256b6960730976fccab203a45093720ad8.
     "Removed the svn:executable and svn:mime-type properties from the consistency testing graphics. (2011-06-21 14:46:47 +0000)",
+    # r12792 - e0d3226dccbe8590a9295ab586896aad0d39a0cb.
+    "Shifted all of the model-free sample scripts into the new subdirectory sample_scripts/model_free. (2011-03-04 13:14:44 +0000)",
     # r12412 - 3497eb7bdb85ea656e0f33a8b972602cc5bde6ed.
     "Renamed the gui_bieri package to gui. (2011-01-21 11:18:47 +0000)",
     # r12202 - 5012a2b474e539d8564847f1979a98619c99a42d - 2to3 automated conversions.
@@ -1371,6 +1380,9 @@ AUTHOR_SWITCH = [
     # r19895 - a1413d678d500467d8fdaff4db704a919d9ec483.
     ["Edward d'Auvergne", "Troels Emtekær Linnet",
         "Added the 'test.seq' file from bug report #20873 (http://gna.org/bugs/?20873). (2013-06-06 15:06:42 +0000)"],
+    # r12060 - c1a61d03a865e0290646ae24e9287ef3dc57cc9b.
+    ["Edward d'Auvergne", "Michael Bieri",
+        "Added Michael Bieri's model-free data extraction script. (2010-12-31 08:36:09 +0000)"],
     # r10238 - 2d0bccf99aa99c0d2b2998e4b868b727fee79e81 - End of adding Michael's GUI 1.00.
     ["Edward d'Auvergne", "Michael Bieri",
         "Bug fix for the color_code_noe() method. (2010-01-15 11:40:52 +0000)"],
