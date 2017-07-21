@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2006-2014 Edward d'Auvergne
+ * Copyright (C) 2006,2008,2011-2014 Edward d'Auvergne
+ * Copyright (C) 2006 Chris MacRaild
+ * Copyright (C) 2006 Gary Thompson
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *

@@ -568,6 +568,12 @@ GIT_START = {
         "Created the new specific_analyses.relax_fit.checks module. (2014-11-29 17:55:20 +0000)",
     "specific_analyses/hybrid.py":
         "This is a file that should have been included in r2445. (2006-04-05 08:09:16 +0000)",
+    "target_functions/dimensions.h":
+        "Standardisation of the array dimensionality in the target function C code. (2014-08-26 16:25:19 +0000)",
+    "target_functions/n_state_model.py":
+        "Added the basic framework for the N-state model target function. (2008-01-08 16:17:43 +0000)",
+    "target_functions/potential.py":
+        "Created a module for calculating different optimisation/energy potentials. (2009-01-29 15:40:07 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
@@ -633,6 +639,7 @@ FALSE_POS = {
     'specific_analyses/model_free/api.py':                              ["Copyright (C) 2007 Gary S Thompson"],
     'specific_analyses/model_free/data.py':                             ["Copyright (C) 2007 Gary S Thompson"],
     'specific_analyses/model_free/optimisation.py':                     ["Copyright (C) 2007 Gary S Thompson"],
+    'target_functions/relax_disp.py':                                   ["Copyright (C) 2009 Sebastien Morin"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
