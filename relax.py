@@ -1,19 +1,9 @@
 ###############################################################################
 #                                                                             #
-#                                    relax                                    #
-#                                                                             #
-#               Protein dynamics by NMR relaxation data analysis              #
-#                                                                             #
-#                             by Edward d'Auvergne                            #
-#                                                                             #
-###############################################################################
-#                                                                             #
-#                                   Licence                                   #
-#                                                                             #
-# relax, a program for relaxation data analysis.                              #
-#                                                                             #
-# Copyright (C) 2001-2006  Edward d'Auvergne                                  #
-# Copyright (C) 2006-2016  the relax development team                         #
+# Copyright (C) 2001-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006 Chris MacRaild                                           #
+# Copyright (C) 2007 Gary Thompson                                            #
+# Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This program is free software; you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
