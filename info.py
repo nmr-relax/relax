@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2017 Edward d'Auvergne                                   #
+# Copyright (C) 2001-2014,2016-2017 Edward d'Auvergne                         #
+# Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
