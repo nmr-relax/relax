@@ -572,6 +572,22 @@ GIT_START = {
         "Added the basic framework for the N-state model target function. (2008-01-08 16:17:43 +0000)",
     "target_functions/potential.py":
         "Created a module for calculating different optimisation/energy potentials. (2009-01-29 15:40:07 +0000)",
+    "user_functions/__init__.py":
+        "Created the empty user_functions package. (2012-05-03 16:35:51 +0000)",
+    "user_functions/bruker.py":
+        "Created the prompt/script interface to the pdc.read() user function. (2011-02-17 15:22:15 +0000)",
+    "user_functions/data.py":
+        "Created the empty user_functions package. (2012-05-03 16:35:51 +0000)",
+    "user_functions/objects.py":
+        "Created a number of special objects for the user function data storage. (2012-05-03 17:33:24 +0000)",
+    "user_functions/script.py":
+        "Added the user_functions.script module which should have been committed in r16303. (2012-05-13 17:14:49 +0000)",
+    "user_functions/spectrometer.py":
+        "Converted the frq user functions to the auto-generation design. (2012-05-08 15:26:54 +0000)",
+    "user_functions/statistics.py":
+        "Created the empty statistics user function class. (2015-02-05 13:59:36 +0000)",
+    "user_functions/sys_info.py":
+        "Converted the sys_info user function to the auto-generation design. (2012-05-11 18:52:44 +0000)",
 }
 
 # Additional copyright notices that are not present in the git log.
