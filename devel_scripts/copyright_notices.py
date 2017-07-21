@@ -270,6 +270,14 @@ SVN_START = {
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
 GIT_START = {
+    "dep_check.py":
+        "Shifted the dependency checks into a new module. (2008-06-07 22:29:50 +0000)",
+    "sconstruct":
+        "Added the shell of an Scons script. (2006-01-25 05:10:11 +0000)",
+    "setup.py":
+        "Added a script for building application packages of relax. (2011-07-28 13:57:47 +0000)",
+    "status.py":
+        "Addition of the relax status singleton object. (2010-02-25 11:36:30 +0000)",
     "auto_analyses/__init__.py":
         "Spun out the automatic model-free protocol code from the full_analysis.py script. (2010-01-25 10:13:06 +0000)",
     "data_store/exp_info.py":
@@ -623,6 +631,7 @@ ADDITIONAL_COPYRIGHT_YEARS = {
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
 FALSE_POS = {
+    'info.py':                                                          ["self.copyright.append(\"Copyright (C) 2001-2006 Edward d'Auvergne\")", "self.copyright.append(\"Copyright (C) 2006-2016 the relax development team\")", "self.copyright_short = \"Copyright (C) 2001-2016 the relax development team\""],
     'devel_scripts/copyright_notices.py':                               ["Copyright (C) year1, year2, year3 copyright-holder"],
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/object-locked-unlocked.png':                      ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
