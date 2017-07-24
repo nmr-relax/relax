@@ -266,6 +266,44 @@ SVN_START = {
         "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
     "specific_analyses/n_state_model/uf.py":
         "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "test_suite/unit_tests/__init__.py":
+        "Execution of both the system/functional tests and unit tests when using the --test-suite option. (2006-11-21 03:47:13 +0000)",
+    "test_suite/unit_tests/_lib/__init__.py":
+        "Added empty packages to the unit tests for the lib and lib.geometry packages. (2013-03-01 22:59:51 +0000)",
+    "test_suite/unit_tests/_lib/test___init__.py":
+        "Added the package checking unit tests for the lib package. (2013-03-07 14:56:54 +0000)",
+    "test_suite/unit_tests/_lib/_geometry/__init__.py":
+        "Added empty packages to the unit tests for the lib and lib.geometry packages. (2013-03-01 22:59:51 +0000)",
+    "test_suite/unit_tests/_lib/_geometry/test___init__.py":
+        "Added the package checking unit tests for the lib package. (2013-03-07 14:56:54 +0000)",
+    "test_suite/unit_tests/_lib/_text/__init__.py":
+        "Added empty packages to the unit tests for the lib and lib.geometry packages. (2013-03-01 22:59:51 +0000)",
+    "test_suite/unit_tests/_lib/_text/test___init__.py":
+        "Created the framework for the unit tests of the lib.text package. (2013-03-07 17:16:08 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_consistency_tests/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_consistency_tests/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_frame_order/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_frame_order/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_jw_mapping/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_jw_mapping/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_n_state_model/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_n_state_model/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_noe/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_noe/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_relax_fit/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_relax_fit/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
 }
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
@@ -580,6 +618,304 @@ GIT_START = {
         "Added the basic framework for the N-state model target function. (2008-01-08 16:17:43 +0000)",
     "target_functions/potential.py":
         "Created a module for calculating different optimisation/energy potentials. (2009-01-29 15:40:07 +0000)",
+    "test_suite/unit_tests/__init__.py":
+        "Execution of both the system/functional tests and unit tests when using the --test-suite option. (2006-11-21 03:47:13 +0000)",
+    "test_suite/unit_tests/align_tensor_testing_base.py":
+        "Added the shell of the alignment tensor unit test base class. (2007-11-21 13:29:08 +0000)",
+    "test_suite/unit_tests/base_classes.py":
+        "Created the SystemTestCase base class for all the system tests to use. (2010-01-25 17:04:17 +0000)",
+    "test_suite/unit_tests/diffusion_tensor_testing_base.py":
+        "Set up the base class for unit tests of the diffusion_tensor modules. (2007-11-25 14:11:49 +0000)",
+    "test_suite/unit_tests/minimisation_testing_base.py":
+        "Created the base class for the unit tests of the prompt and generic_fns minimisation functions. (2008-01-07 10:05:40 +0000)",
+    "test_suite/unit_tests/model_free_testing_base.py":
+        "Added the framework for unit tests of the model-free user function args. (2008-01-13 11:31:20 +0000)",
+    "test_suite/unit_tests/molecule_testing_base.py":
+        "Added to empty unit test modules. (2007-03-17 01:58:48 +0000)",
+    "test_suite/unit_tests/n_state_model_testing_base.py":
+        "Wrote the empty N-state model base class for the unit tests. (2008-01-09 16:45:04 +0000)",
+    "test_suite/unit_tests/package_checking.py":
+        "Shifted the test___all__() method into the PackageTestCase base class. (2009-09-02 13:37:30 +0000)",
+    "test_suite/unit_tests/relax_data_testing_base.py":
+        "Added the base class framework for testing the relaxation data modules. (2007-11-26 18:35:34 +0000)",
+    "test_suite/unit_tests/sequence_testing_base.py":
+        "Added the base class for the unit tests of the prompt.sequence and generic_fns.sequence modules. (2007-11-21 22:57:08 +0000)",
+    "test_suite/unit_tests/spin_testing_base.py":
+        "Added to empty unit test modules. (2007-03-17 01:58:48 +0000)",
+    "test_suite/unit_tests/state_testing_base.py":
+        "Added the framework for implementing unit tests for the generic_fns.state module. (2007-11-20 16:41:59 +0000)",
+    "test_suite/unit_tests/structure_testing_base.py":
+        "Wrote 16 unit tests for all args of all structure user functions. (2008-01-06 11:32:25 +0000)",
+    "test_suite/unit_tests/value_testing_base.py":
+        "Added the base class for the tests of both the 'prompt.value' and 'generic_fns.value' modules. (2007-12-09 11:17:33 +0000)",
+    "test_suite/unit_tests/_auto_analyses/__init__.py":
+        "Added a __ini__ module to the _auto_analyses unit test package. (2010-02-18 12:38:32 +0000)",
+    "test_suite/unit_tests/_auto_analyses/test___init__.py":
+        "Added a unit test checking the generic_fns.structure.__all__ list. (2009-09-02 13:15:13 +0000)",
+    "test_suite/unit_tests/_data_store/__init__.py":
+        "Added an initial unit test framework for testing of the diffusion tensor objects. (2007-01-13 05:51:55 +0000)",
+    "test_suite/unit_tests/_data_store/test___init__.py":
+        "Added an initial unit test framework for testing of the diffusion tensor objects. (2007-01-13 05:51:55 +0000)",
+    "test_suite/unit_tests/_data_store/test_diff_tensor.py":
+        "Added an initial unit test framework for testing of the diffusion tensor objects. (2007-01-13 05:51:55 +0000)",
+    "test_suite/unit_tests/_data_store/test_pipe_container.py":
+        "Added a unit test for the PipeContainer.is_empty() method. (2008-04-21 21:38:49 +0000)",
+    "test_suite/unit_tests/_lib/__init__.py":
+        "Added empty packages to the unit tests for the lib and lib.geometry packages. (2013-03-01 22:59:51 +0000)",
+    "test_suite/unit_tests/_lib/test___init__.py":
+        "Added the package checking unit tests for the lib package. (2013-03-07 14:56:54 +0000)",
+    "test_suite/unit_tests/_lib/test_io.py":
+        "Added a framework for the unit tests of the relax_io module. (2007-11-20 18:23:32 +0000)",
+    "test_suite/unit_tests/_lib/test_periodic_table.py":
+        "Created the unit test infrastructure for the lib.periodic_table module. (2014-08-28 09:24:49 +0000)",
+    "test_suite/unit_tests/_lib/test_regex.py":
+        "Added a unit test for the generic_fns.relax_re.search() function. (2008-07-07 20:44:53 +0000)",
+    "test_suite/unit_tests/_lib/test_statistics.py":
+        "Addition of the file which should have been committed in the last commit (r27863). (2015-06-26 08:36:14 +0000)",
+    "test_suite/unit_tests/_lib/_alignment/__init__.py":
+        "Set up the unit testing infrastructure for the lib.nmr package. (2013-03-22 22:08:52 +0000)",
+    "test_suite/unit_tests/_lib/_alignment/test___init__.py":
+        "Set up the unit testing infrastructure for the lib.nmr package. (2013-03-22 22:08:52 +0000)",
+    "test_suite/unit_tests/_lib/_auto_relaxation/__init__.py":
+        "Created the empty packages lib.auto_relaxation and lib.spectral_densities. (2013-03-23 08:14:51 +0000)",
+    "test_suite/unit_tests/_lib/_auto_relaxation/test___init__.py":
+        "Created the empty packages lib.auto_relaxation and lib.spectral_densities. (2013-03-23 08:14:51 +0000)",
+    "test_suite/unit_tests/_lib/_chemical_shift/__init__.py":
+        "Created the empty lib.chemical_shift package. (2013-03-23 10:08:22 +0000)",
+    "test_suite/unit_tests/_lib/_chemical_shift/test___init__.py":
+        "Created the empty lib.chemical_shift package. (2013-03-23 10:08:22 +0000)",
+    "test_suite/unit_tests/_lib/_curve_fit/__init__.py":
+        "Created the lib.curve_fit package and associated unit tests. (2013-04-04 14:40:15 +0000)",
+    "test_suite/unit_tests/_lib/_curve_fit/test___init__.py":
+        "Created the lib.curve_fit package and associated unit tests. (2013-04-04 14:40:15 +0000)",
+    "test_suite/unit_tests/_lib/_diffusion/__init__.py":
+        "Created the empty lib.diffusion package. (2013-03-23 08:28:12 +0000)",
+    "test_suite/unit_tests/_lib/_diffusion/test___init__.py":
+        "Created the empty lib.diffusion package. (2013-03-23 08:28:12 +0000)",
+    "test_suite/unit_tests/_lib/_dispersion/__init__.py":
+        "Created the empty lib.dispersion package. (2013-03-23 10:06:19 +0000)",
+    "test_suite/unit_tests/_lib/_dispersion/test___init__.py":
+        "Created the empty lib.dispersion package. (2013-03-23 10:06:19 +0000)",
+    "test_suite/unit_tests/_lib/_frame_order/__init__.py":
+        "Created the empty lib.frame_order package. (2013-03-23 08:18:10 +0000)",
+    "test_suite/unit_tests/_lib/_frame_order/test___init__.py":
+        "Created the empty lib.frame_order package. (2013-03-23 08:18:10 +0000)",
+    "test_suite/unit_tests/_lib/_geometry/__init__.py":
+        "Added empty packages to the unit tests for the lib and lib.geometry packages. (2013-03-01 22:59:51 +0000)",
+    "test_suite/unit_tests/_lib/_geometry/test___init__.py":
+        "Added the package checking unit tests for the lib package. (2013-03-07 14:56:54 +0000)",
+    "test_suite/unit_tests/_lib/_geometry/test_lines.py":
+        "Created a unit test for the lib.geometry.lines.closest_point() function. (2013-03-07 15:27:05 +0000)",
+    "test_suite/unit_tests/_lib/_geometry/test_pec.py":
+        "Added some unit tests for the pseudo-elliptic cosine function. (2010-07-15 13:46:58 +0000)",
+    "test_suite/unit_tests/_lib/_geometry/test_rotations.py":
+        "Created the new maths_fns.rotation_matrix.R_to_euler_zyz() function and associated unit test. (2009-09-01 14:02:48 +0000)",
+    "test_suite/unit_tests/_lib/_linear_algebra/__init__.py":
+        "Created the empty lib.algebra package - this is for advanced linear algebra not present in numpy. (2013-03-23 08:41:28 +0000)",
+    "test_suite/unit_tests/_lib/_linear_algebra/test___init__.py":
+        "Created the empty lib.algebra package - this is for advanced linear algebra not present in numpy. (2013-03-23 08:41:28 +0000)",
+    "test_suite/unit_tests/_lib/_linear_algebra/test_matrix_exponential.py":
+        "Created a unit test for the lib.linear_algebra.matrix_exponential module. (2013-10-15 08:43:03 +0000)",
+    "test_suite/unit_tests/_lib/_order/__init__.py":
+        "Created the empty lib.order package. (2013-03-23 09:07:42 +0000)",
+    "test_suite/unit_tests/_lib/_order/test___init__.py":
+        "Created the empty lib.order package. (2013-03-23 09:07:42 +0000)",
+    "test_suite/unit_tests/_lib/_sequence_alignment/__init__.py":
+        "Added the unit testing infrastructure for the new lib.sequence_alignment package. (2015-01-21 10:25:26 +0000)",
+    "test_suite/unit_tests/_lib/_sequence_alignment/test___init__.py":
+        "Added the unit testing infrastructure for the new lib.sequence_alignment package. (2015-01-21 10:25:26 +0000)",
+    "test_suite/unit_tests/_lib/_sequence_alignment/test_align_protein.py":
+        "Created a unit test for checking the Needleman-Wunsch sequence alignment algorithm. (2015-01-21 10:39:24 +0000)",
+    "test_suite/unit_tests/_lib/_sequence_alignment/test_needleman_wunsch.py":
+        "Created a unit test for checking the Needleman-Wunsch sequence alignment algorithm. (2015-01-21 10:39:24 +0000)",
+    "test_suite/unit_tests/_lib/_software/__init__.py":
+        "Created the empty lib.software package. (2013-03-26 11:36:55 +0000)",
+    "test_suite/unit_tests/_lib/_software/test___init__.py":
+        "Created the empty lib.software package. (2013-03-26 11:36:55 +0000)",
+    "test_suite/unit_tests/_lib/_software/_opendx/__init__.py":
+        "Created the empty lib.opendx package. (2013-03-23 20:29:03 +0000)",
+    "test_suite/unit_tests/_lib/_software/_opendx/test___init__.py":
+        "Created the empty lib.software package. (2013-03-26 11:36:55 +0000)",
+    "test_suite/unit_tests/_lib/_spectral_densities/__init__.py":
+        "Created the empty packages lib.auto_relaxation and lib.spectral_densities. (2013-03-23 08:14:51 +0000)",
+    "test_suite/unit_tests/_lib/_spectral_densities/test___init__.py":
+        "Created the empty packages lib.auto_relaxation and lib.spectral_densities. (2013-03-23 08:14:51 +0000)",
+    "test_suite/unit_tests/_lib/_spectrum/__init__.py":
+        "Created the empty lib.software package. (2013-03-26 11:36:55 +0000)",
+    "test_suite/unit_tests/_lib/_structure/__init__.py":
+        "Created the unit test infrastructure for the lib.structure package. (2013-03-24 14:57:19 +0000)",
+    "test_suite/unit_tests/_lib/_structure/test___init__.py":
+        "Created the unit test infrastructure for the lib.structure package. (2013-03-24 14:57:19 +0000)",
+    "test_suite/unit_tests/_lib/_structure/test_pdb_read.py":
+        "Fix for the unit tests of the generic_fns.structure package. (2013-02-19 16:51:06 +0000)",
+    "test_suite/unit_tests/_lib/_structure/_internal/__init__.py":
+        "Created the empty lib.structure.internal package for holding the internal structural object. (2013-03-24 15:34:53 +0000)",
+    "test_suite/unit_tests/_lib/_structure/_internal/test___init__.py":
+        "Created the empty lib.structure.internal package for holding the internal structural object. (2013-03-24 15:34:53 +0000)",
+    "test_suite/unit_tests/_lib/_structure/_internal/test_coordinates.py":
+        "Created empty unit test infrastructure for testing the lib.structure.internal.coordinates module. (2015-01-28 13:41:51 +0000)",
+    "test_suite/unit_tests/_lib/_structure/_internal/test_object.py":
+        "Created the unit test infrastructure for the lib.structure.internal.object module. (2015-02-11 08:25:58 +0000)",
+    "test_suite/unit_tests/_lib/_structure/_represent/__init__.py":
+        "Created the empty lib.structure.represent package. (2013-03-24 15:56:29 +0000)",
+    "test_suite/unit_tests/_lib/_structure/_represent/test___init__.py":
+        "Created the empty lib.structure.represent package. (2013-03-24 15:56:29 +0000)",
+    "test_suite/unit_tests/_lib/_text/__init__.py":
+        "Created the framework for the unit tests of the lib.text package. (2013-03-07 17:16:08 +0000)",
+    "test_suite/unit_tests/_lib/_text/test___init__.py":
+        "Created the framework for the unit tests of the lib.text package. (2013-03-07 17:16:08 +0000)",
+    "test_suite/unit_tests/_lib/_text/test_sectioning.py":
+        "Created unit tests for the title() and subtitle() functions of the lib.text.sectioning module. (2013-03-20 13:13:55 +0000)",
+    "test_suite/unit_tests/_lib/_text/test_table.py":
+        "Created two unit tests for the lib.text.table.format_table() function. (2013-03-07 17:23:51 +0000)",
+    "test_suite/unit_tests/_multi/__init__.py":
+        "Added a unit test for the multi package __all__ list. (2009-09-03 12:56:00 +0000)",
+    "test_suite/unit_tests/_multi/test___init__.py":
+        "Added a unit test for the multi package __all__ list. (2009-09-03 12:56:00 +0000)",
+    "test_suite/unit_tests/_pipe_control/__init__.py":
+        "Added unit tests for the functions of the module 'generic_fns.pipes'. (2007-03-13 02:58:01 +0000)",
+    "test_suite/unit_tests/_pipe_control/molecule.py":
+        "Added a dummy molecule module for the unit tests. (2008-05-04 12:13:00 +0000)",
+    "test_suite/unit_tests/_pipe_control/residue.py":
+        "Created more dummy modules. (2008-05-04 12:18:57 +0000)",
+    "test_suite/unit_tests/_pipe_control/spin.py":
+        "Created more dummy modules. (2008-05-04 12:18:57 +0000)",
+    "test_suite/unit_tests/_pipe_control/test___init__.py":
+        "Renamed the generic_fns package to pipe_control. (2013-03-23 19:25:55 +0000)",
+    "test_suite/unit_tests/_pipe_control/test_align_tensor.py":
+        "Implemented the framework for the unit tests of the generic_fns.align_tensor module. (2007-11-26 11:24:20 +0000)",
+    "test_suite/unit_tests/_pipe_control/test_diffusion_tensor.py":
+        "Fixed the initialisation of the diffusion tensor system tests. (2007-11-25 21:04:40 +0000)",
+    "test_suite/unit_tests/_pipe_control/test_molecule.py":
+        "Added the framework for the unit tests of the generic_fns.sequence module. (2007-11-22 00:14:22 +0000)",
+    "test_suite/unit_tests/_pipe_control/test_relax_data.py":
+        "Added a base class for the unit tests of the specific_fns.relax_data module. (2007-11-28 08:21:34 +0000)",
+    "test_suite/unit_tests/_pipe_control/test_residue.py":
+        "Manually reverted r6073. (2008-05-04 12:24:44 +0000)",
+    "test_suite/unit_tests/_pipe_control/test_sequence.py":
+        "Added the framework for the unit tests of the generic_fns.sequence module. (2007-11-22 00:14:22 +0000)",
+    "test_suite/unit_tests/_pipe_control/test_spin.py":
+        "Manually reverted r6073. (2008-05-04 12:24:44 +0000)",
+    "test_suite/unit_tests/_pipe_control/test_state.py":
+        "Added the framework for implementing unit tests for the generic_fns.state module. (2007-11-20 16:41:59 +0000)",
+    "test_suite/unit_tests/_pipe_control/test_value.py":
+        "Added the framework for adding unit tests of the generic_fns.value module. (2007-12-09 20:50:56 +0000)",
+    "test_suite/unit_tests/_pipe_control/_structure/__init__.py":
+        "Added the directory for the unit tests of the generic_fns.structure package. (2008-04-20 16:17:59 +0000)",
+    "test_suite/unit_tests/_pipe_control/_structure/test___init__.py":
+        "Renamed the generic_fns package to pipe_control. (2013-03-23 19:25:55 +0000)",
+    "test_suite/unit_tests/_pipe_control/_structure/test_internal.py":
+        "Added the framework for the unit tests of the Scietific Python PDB structural object. (2008-04-20 16:37:37 +0000)",
+    "test_suite/unit_tests/_prompt/__init__.py":
+        "Copied the __init__.py file. (2007-11-18 20:21:39 +0000)",
+    "test_suite/unit_tests/_prompt/container.py":
+        "Converted all of the prompt unit tests to the new auto-generated user function design. (2012-05-24 09:20:53 +0000)",
+    "test_suite/unit_tests/_prompt/test___init__.py":
+        "Added many more checks for the package __all__ lists. (2009-09-02 13:43:16 +0000)",
+    "test_suite/unit_tests/_prompt/test_align_tensor.py":
+        "Added the framework for the unit tests of the align_tensor.x() user functions. (2007-11-21 13:27:01 +0000)",
+    "test_suite/unit_tests/_prompt/test_dasha.py":
+        "Created 7 arg unit tests for all fns of the dasha user function class. (2008-10-11 16:40:20 +0000)",
+    "test_suite/unit_tests/_prompt/test_deselect.py":
+        "Added the infrastructure for the arg unit tests of the deselect user function class. (2008-05-07 12:44:11 +0000)",
+    "test_suite/unit_tests/_prompt/test_eliminate.py":
+        "Wrote the arg unit test module for the eliminate() user function, with 2 unit tests. (2008-06-29 13:55:20 +0000)",
+    "test_suite/unit_tests/_prompt/test_minimisation.py":
+        "Wrote the print_flag arg unit test of the minimise.calc() user function. (2008-01-07 10:06:06 +0000)",
+    "test_suite/unit_tests/_prompt/test_model_free.py":
+        "Added the framework for unit tests of the model-free user function args. (2008-01-13 11:31:20 +0000)",
+    "test_suite/unit_tests/_prompt/test_molecule.py":
+        "Added to empty unit test modules. (2007-03-17 01:58:48 +0000)",
+    "test_suite/unit_tests/_prompt/test_molmol.py":
+        "Wrote 5 arg unit tests for the pymol.macro_exec() user function. (2009-08-26 09:26:41 +0000)",
+    "test_suite/unit_tests/_prompt/test_n_state_model.py":
+        "Added the framework for the user function arg unit tests of the N-state model. (2008-01-09 16:34:50 +0000)",
+    "test_suite/unit_tests/_prompt/test_noe.py":
+        "Wrote 2 arg unit tests for the noe.spectrum_type() user function. (2008-12-05 14:22:33 +0000)",
+    "test_suite/unit_tests/_prompt/test_pymol.py":
+        "Wrote 5 arg unit tests for the pymol.macro_exec() user function. (2009-08-26 09:26:41 +0000)",
+    "test_suite/unit_tests/_prompt/test_relax_data.py":
+        "Added the framework for the arg unit tests of the relax_data user functions. (2007-11-26 18:39:51 +0000)",
+    "test_suite/unit_tests/_prompt/test_relax_disp.py":
+        "Added 3 arg unit tests for the relax_fit user function class. (2008-10-22 16:14:40 +0000)",
+    "test_suite/unit_tests/_prompt/test_relax_fit.py":
+        "Added 3 arg unit tests for the relax_fit user function class. (2008-10-22 16:14:40 +0000)",
+    "test_suite/unit_tests/_prompt/test_residue.py":
+        "Added to empty unit test modules. (2007-03-17 01:58:48 +0000)",
+    "test_suite/unit_tests/_prompt/test_select.py":
+        "Added the infrastructure for the arg unit tests of the deselect user function class. (2008-05-07 12:44:11 +0000)",
+    "test_suite/unit_tests/_prompt/test_sequence.py":
+        "Added the framework and TestCase class for the unit tests of the prompt.sequence module. (2007-11-21 23:00:01 +0000)",
+    "test_suite/unit_tests/_prompt/test_spectrum.py":
+        "Created the skeleton module for arg unit tests of the spectrum user function class. (2008-10-22 08:44:40 +0000)",
+    "test_suite/unit_tests/_prompt/test_spin.py":
+        "Added to empty unit test modules. (2007-03-17 01:58:48 +0000)",
+    "test_suite/unit_tests/_prompt/test_state.py":
+        "Added the framework for implementing unit tests for the generic_fns.state module. (2007-11-20 16:41:59 +0000)",
+    "test_suite/unit_tests/_prompt/test_uf_objects.py":
+        "Created two unit tests for the _build_doc() methods of the prompt user function objects. (2012-06-01 07:04:05 +0000)",
+    "test_suite/unit_tests/_prompt/test_value.py":
+        "Added the infrastructure for the user function arg unit tests of prompt.value. (2007-12-09 16:41:47 +0000)",
+    "test_suite/unit_tests/_scons/__init__.py":
+        "Added an empty package __init__ module. (2008-05-22 16:11:52 +0000)",
+    "test_suite/unit_tests/_specific_analyses/__init__.py":
+        "Turned the 2 new dirs into modules. (2007-11-27 10:07:28 +0000)",
+    "test_suite/unit_tests/_specific_analyses/test___init__.py":
+        "Added many more checks for the package __all__ lists. (2009-09-02 13:43:16 +0000)",
+    "test_suite/unit_tests/_specific_analyses/test_n_state_model.py":
+        "Created a unit test for the N-state model assemble_param_vector() method. (2008-01-17 09:55:11 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_consistency_tests/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_consistency_tests/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_frame_order/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_frame_order/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_jw_mapping/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_jw_mapping/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_model_free/__init__.py":
+        "Added an empty package __init__ module. (2008-05-22 16:15:20 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_model_free/test___init__.py":
+        "Added many more checks for the package __all__ lists. (2009-09-02 13:43:16 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_model_free/test_api.py":
+        "Wrote a unit test for the model-free duplicate_data() method. (2008-09-26 09:30:48 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_n_state_model/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_n_state_model/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_noe/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_noe/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_relax_disp/__init__.py":
+        "Added the unit test infrastructure for testing the specific_analyses.relax_disp package. (2014-02-19 12:59:52 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_relax_disp/test___init__.py":
+        "Added the unit test infrastructure for testing the specific_analyses.relax_disp package. (2014-02-19 12:59:52 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_relax_disp/test_checks.py":
+        "Split the unit test of specific_analyses.relax_disp.checks.get_times() into its own unit test file. (2014-08-18 12:21:01 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_relax_disp/test_data.py":
+        "Added the infrastructure for the unit tests of the specific_analyses.relax_disp.disp_data module. (2014-02-19 13:09:31 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_relax_disp/test_variables.py":
+        "Added initial unit test class for testing specific_analysis.relax_disp.variables. (2014-08-11 07:09:14 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_relax_fit/__init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_specific_analyses/_relax_fit/test___init__.py":
+        "Added units tests for package consistency testing for all of the remaining specific analyses. (2014-03-28 10:04:09 +0000)",
+    "test_suite/unit_tests/_target_functions/__init__.py":
+        "initial commit of maths fns unit tests and test for the unit test framework (2006-11-28 09:02:08 +0000)",
+    "test_suite/unit_tests/_target_functions/test___init__.py":
+        "Added many more checks for the package __all__ lists. (2009-09-02 13:43:16 +0000)",
+    "test_suite/unit_tests/_target_functions/test_n_state_model.py":
+        "Wrote a unit test for the maths_fns.n_state_model.func() optimisation target function. (2008-01-21 15:56:58 +0000)",
+    "test_suite/unit_tests/_target_functions/test_relax_fit.py":
+        "Created 2 unit tests for the target_functions.relax_fit relax C module. (2014-08-26 09:35:25 +0000)",
+    "test_suite/unit_tests/_user_functions/__init__.py":
+        "The unit test _user_functions package is now actually a package! (2012-05-03 17:40:36 +0000)",
+    "test_suite/unit_tests/_user_functions/test___init__.py":
+        "Added a unit test for the contents of the user_function package. (2012-05-03 17:41:45 +0000)",
     "user_functions/__init__.py":
         "Created the empty user_functions package. (2012-05-03 16:35:51 +0000)",
     "user_functions/bruker.py":
@@ -1188,6 +1524,8 @@ EXCLUDE = [
     "Manually ported r3210 from the multi_processor branch. (2008-10-15 19:46:10 +0000)",
     # r7709 - 0f759c3725972afefdd9ac78eccd457bdbdf6d35
     "Manually merged r3208 from the multi_processor branch. (2008-10-15 19:40:06 +0000)",
+    # r3735 - 5dbdf89b20db84dc7ab6b88d0c9667c648ffe1a5
+    "Renamed all the unit test directories to start with an underscore. (2007-11-20 22:41:25 +0000)",
     # r894, r895, etc. - 41775d02748d251373dff182ec220c34cbcd8cf0, 358f9909ed75b71a9262e261e6f0eeb86ca9d814, etc.
     "Updating to the archive 'backup_relax_2004-02-24a.tar.bz2'. (2004-02-24 06:45:20 +0000)"
 ]
