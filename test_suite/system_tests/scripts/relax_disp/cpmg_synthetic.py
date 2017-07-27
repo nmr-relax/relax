@@ -19,7 +19,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-# Script for calculating synthetics CPMG data.
+
+# Module docstring.
+"""Script for calculating synthetics CPMG data."""
 
 # Python module imports.
 from math import sqrt

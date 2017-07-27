@@ -1,4 +1,5 @@
-# Script for checking the loading of bond vectors in the correct order.
+# Module docstring.
+"""Script for checking the loading of bond vectors in the correct order."""
 
 # Python module imports.
 from os import sep

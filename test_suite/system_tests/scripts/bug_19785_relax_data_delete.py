@@ -1,3 +1,4 @@
+# Module docstring.
 """This system test script catches the relax_data.delete bug submitted by Martin Ballaschk.
 
 The bug is:

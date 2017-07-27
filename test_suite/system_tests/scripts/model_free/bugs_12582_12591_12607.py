@@ -1,3 +1,4 @@
+# Module docstring.
 """This system test catches 2 bugs submitted by Chris Brosey.
 
 The bugs include:
