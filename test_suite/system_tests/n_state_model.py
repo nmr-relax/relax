@@ -1,7 +1,6 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008-2015 Edward d'Auvergne                                   #
-# Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #

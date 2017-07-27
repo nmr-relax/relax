@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
-# Copyright (C) 2014 Andras Boeszoermenyi (https://gna.org/users/andras)      #
+# Copyright (C) 2004,2006-2008,2014 Edward d'Auvergne                         #
+# Copyright (C) 2014 Andras Boeszoermenyi                                     #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
