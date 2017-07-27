@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing the Monte Carlo simulations of fitting an alignment tensor to RDCs and PCSs."""
 
 # Python module imports.

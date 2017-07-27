@@ -1,4 +1,5 @@
-# Script for model-free analysis using the program 'Modelfree4'.
+# Module docstring.
+"""Script for model-free analysis using the program 'Modelfree4'."""
 
 # Python module imports.
 from os import sep

@@ -19,15 +19,14 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Script for relaxation curve fitting."""
+
 # Python module imports.
 from os import sep
 
 # relax module imports.
 from status import Status; status = Status()
-
-
-# Script for relaxation curve fitting.
-######################################
 
 
 # The path to the data files.

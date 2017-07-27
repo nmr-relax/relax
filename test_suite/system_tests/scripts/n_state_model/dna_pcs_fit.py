@@ -1,4 +1,5 @@
-# Script for performing a PCS analysis.
+# Module docstring.
+"""Script for performing a PCS analysis."""
 
 # Python module imports.
 from os import sep

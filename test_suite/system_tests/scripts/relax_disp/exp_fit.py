@@ -1,4 +1,5 @@
-# Script for exponential curve-fitting to synthetic R1rho dispersion data.
+# Module docstring.
+"""Script for exponential curve-fitting to synthetic R1rho dispersion data."""
 
 # Python module imports.
 from os import sep

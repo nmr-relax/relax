@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing the lanthanide position optimisation using RDCs and PCSs."""
 
 # Python module imports.

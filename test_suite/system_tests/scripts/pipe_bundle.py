@@ -1,4 +1,5 @@
-# Script of testing out the pipe bundle concepts.
+# Module docstring.
+"""Script of testing out the pipe bundle concepts."""
 
 # Create some data pipe with no bundle.
 self._execute_uf(uf_name='pipe.create', pipe_name='test pipe 1', pipe_type='mf', bundle=None)

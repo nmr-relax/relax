@@ -19,9 +19,8 @@
 #                                                                             #
 ###############################################################################
 
-# Script for relaxation curve fitting.
-######################################
-
+# Module docstring.
+"""Script for relaxation curve fitting."""
 
 # Python module imports.
 from os import sep

@@ -1,5 +1,5 @@
-# Script for catching bug #20464, the failure due to missing relaxation data (https://gna.org/bugs/?20464).
-
+# Module docstring.
+"""Script for catching bug #20464, the failure due to missing relaxation data (https://gna.org/bugs/?20464)."""
 
 # Python module imports.
 from os import sep

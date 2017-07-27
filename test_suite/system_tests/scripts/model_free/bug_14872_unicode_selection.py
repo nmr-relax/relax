@@ -1,3 +1,4 @@
+# Module docstring.
 """This system test catches the unicode selection bug submitted by Olivier Serve.
 
 The bug is:

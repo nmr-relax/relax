@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for demonstrating bug #21562, the failure of the NOE analysis when replicated spectra are used."""
 
 # Python module imports.
