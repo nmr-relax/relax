@@ -1,3 +1,4 @@
+# Module docstring.
 """This system test catches bug #15050 (https://gna.org/bugs/?15050) submitted by Tiago Pais."""
 
 # Python module imports.

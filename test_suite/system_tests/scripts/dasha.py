@@ -1,4 +1,5 @@
-# Script for model-free analysis using the program Dasha.
+# Module docstring.
+"""Script for model-free analysis using the program Dasha."""
 
 # Python module imports.
 from os import sep

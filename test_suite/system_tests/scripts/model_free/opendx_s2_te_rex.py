@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for mapping the {S2, te, Rex} chi2 space for visualisation using OpenDX."""
 
 # Python module imports.

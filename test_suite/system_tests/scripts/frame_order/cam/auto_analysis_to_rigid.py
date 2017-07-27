@@ -19,8 +19,8 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Script for black-box Frame Order analysis."""
-
 
 # Python module imports.
 from numpy import array

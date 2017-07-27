@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing the value.set() user function for consistency testing."""
 
 # Python module imports.

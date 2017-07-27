@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Script for back-calculating the relaxation data."""
 
 # Python module imports.
