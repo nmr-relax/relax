@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for eliminating model tm4 with parameters {local_tm, S2, te, Rex} when tm > 50 ns."""
 
 # Python module imports.

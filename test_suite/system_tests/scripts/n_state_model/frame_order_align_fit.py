@@ -1,4 +1,5 @@
-# Script for determining populations for lactose conformations using RDCs and PCSs.
+# Module docstring.
+"""Script for determining populations for lactose conformations using RDCs and PCSs."""
 
 # Python module imports.
 from os import sep
