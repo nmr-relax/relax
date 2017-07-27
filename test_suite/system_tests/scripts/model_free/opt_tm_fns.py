@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Functions for the local tm grid optimisation tests."""
 
 # Python module imports.

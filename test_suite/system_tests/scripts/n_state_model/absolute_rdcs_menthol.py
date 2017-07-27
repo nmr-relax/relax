@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing the fitting of signless RDCs using menthol data."""
 
 # Python module imports.

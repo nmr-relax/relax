@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for setting up the data pipe for testing optimisation.
 
 The data set is:

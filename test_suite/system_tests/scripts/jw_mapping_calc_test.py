@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing J(w) mapping."""
 
 # Python module imports.

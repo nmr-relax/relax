@@ -1,3 +1,4 @@
+# Module docstring.
 """A 5-state model in the xz-plane (no pivotting of alpha).
 
 The 5 states correspond to the Euler angles (z-y-z notation):

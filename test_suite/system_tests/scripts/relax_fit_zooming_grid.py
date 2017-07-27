@@ -1,4 +1,5 @@
-# Script for testing the zooming grid search in the relaxation curve fitting.
+# Module docstring.
+"""Script for testing the zooming grid search in the relaxation curve fitting."""
 
 # Python module imports.
 from os import sep

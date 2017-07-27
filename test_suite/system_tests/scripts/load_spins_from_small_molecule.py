@@ -1,3 +1,4 @@
+# Module docstring.
 """Load a number of spin systems for a small molecule."""
 
 # Python module imports.
