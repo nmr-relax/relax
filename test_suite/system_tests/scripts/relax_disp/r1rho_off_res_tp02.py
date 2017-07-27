@@ -1,5 +1,5 @@
-# Optimise the R1rho on-resonance synthetic data using the DPL94 model.
-
+# Module docstring.
+"""Optimise the R1rho on-resonance synthetic data using the DPL94 model."""
 
 # Python module imports.
 from os import sep

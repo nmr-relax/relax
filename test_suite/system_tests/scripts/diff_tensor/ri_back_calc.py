@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing diffusion tensor optimisation."""
 
 # Python module imports.

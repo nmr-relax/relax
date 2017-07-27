@@ -1,4 +1,5 @@
-# Tensor optimisation.
+# Module docstring.
+"""Tensor optimisation."""
 
 # Python imports.
 from numpy import array

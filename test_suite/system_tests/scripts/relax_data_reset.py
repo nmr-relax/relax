@@ -1,3 +1,4 @@
+# Module docstring.
 """This system test script tests out the relax_data.frq and relax_data.type user functions."""
 
 # Python module imports.

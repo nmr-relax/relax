@@ -1,4 +1,7 @@
-# Script for calculating NOEs.
+# Module docstring.
+"""Script for calculating NOEs."""
+
+# Python module imports.
 from os import sep
 
 # relax module imports.

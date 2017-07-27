@@ -1,4 +1,5 @@
-# Script for catching bug #20674 (https://gna.org/bugs/index.php?20674).
+# Module docstring.
+"""Script for catching bug #20674 (https://gna.org/bugs/index.php?20674)."""
 
 # Python module imports.
 from os import sep
