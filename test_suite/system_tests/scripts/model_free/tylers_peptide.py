@@ -1,4 +1,5 @@
-# System test constructed from Tyler Reddy's bug report at https://gna.org/bugs/?12487.
+# Module docstring.
+"""System test constructed from Tyler Reddy's bug report at https://gna.org/bugs/?12487."""
 
 # Python module imports.
 from os import sep

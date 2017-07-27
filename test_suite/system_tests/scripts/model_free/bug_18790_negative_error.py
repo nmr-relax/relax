@@ -19,8 +19,8 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """This script performs a model-free analysis for the single model 'm4'."""
-
 
 # Python module imports.
 from os import sep

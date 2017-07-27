@@ -1,4 +1,5 @@
-# System test for creating a PDB representation of the distribution of XH bond vectors.
+# Module docstring.
+"""System test for creating a PDB representation of the distribution of XH bond vectors."""
 
 # Python module imports.
 from os import sep

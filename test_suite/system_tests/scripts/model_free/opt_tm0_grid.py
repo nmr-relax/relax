@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Set up the data pipe for testing optimisation against tm0 relaxation data."""
 
 # relax module imports.

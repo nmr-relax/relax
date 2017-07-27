@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Script for relaxation curve fitting."""
 
 # Python module imports.

@@ -1,3 +1,4 @@
+# Python module imports.
 from lib.periodic_table import periodic_table
 from lib.physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant
 from pipe_control.align_tensor import calc_chi_tensor
