@@ -193,6 +193,10 @@ BLACKLISTED_FILES = [
     'graphics/relax_icons/png/model_free/mf.log',               # LaTex log file.
     'graphics/wizards/structure/2JK4.pdb.gz',                   # Public domain.
     'sample_scripts/model_free/full_analysis.py',               # Single line file pointing to its renamed location.
+    'test_suite/system_tests/scripts/nested_scripting/a.py',    # One line script.
+    'test_suite/system_tests/scripts/nested_scripting/b.py',    # One line script.
+    'test_suite/system_tests/scripts/nested_scripting/c.py',    # One line script.
+    'test_suite/system_tests/scripts/nested_scripting/d.py',    # One line script.
 ]
 
 # Directories to skip.
@@ -266,6 +270,12 @@ SVN_START = {
         "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
     "specific_analyses/n_state_model/uf.py":
         "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "test_suite/system_tests/frame_order.py":
+        "Added a system test for the frame order 'rigid' model with no tensor rotations and no motion. (2009-09-01 09:52:51 +0000)",
+    "test_suite/system_tests/scripts/bug_19785_relax_data_delete.py":
+        "Created a system test for catching bug #19785 (https://gna.org/bugs/?19785). (2012-06-05 15:52:56 +0000)",
+    "test_suite/system_tests/scripts/relax_data_reset.py":
+        "Created the Relax_data.test_reset() system test for testing relax_data.frq and relax_data.type. (2012-06-06 10:52:21 +0000)",
     "test_suite/unit_tests/__init__.py":
         "Execution of both the system/functional tests and unit tests when using the --test-suite option. (2006-11-21 03:47:13 +0000)",
     "test_suite/unit_tests/_lib/__init__.py":
@@ -618,6 +628,64 @@ GIT_START = {
         "Added the basic framework for the N-state model target function. (2008-01-08 16:17:43 +0000)",
     "target_functions/potential.py":
         "Created a module for calculating different optimisation/energy potentials. (2009-01-29 15:40:07 +0000)",
+    "test_suite/system_tests/__init__.py":
+        "Creation of a framework for a relax test suite to check for regressions and new bugs. (2006-03-24 01:41:10 +0000)",
+    "test_suite/system_tests/angles.py":
+        "Implemented a test for the test suite which catches bug #7224 (https://gna.org/bugs/?7224). (2006-09-30 08:08:59 +0000)",
+    "test_suite/system_tests/base_classes.py":
+        "Created the SystemTestCase base class for all the system tests to use. (2010-01-25 17:04:17 +0000)",
+    "test_suite/system_tests/bmrb.py":
+        "Created a system test for the writing and reading of a BRMB STAR formatted file. (2009-01-11 11:20:07 +0000)",
+    "test_suite/system_tests/chemical_shift.py":
+        "Created the Chemical_shift.test_read_sparky system test for the reading of chemical shifts. (2013-08-21 08:28:17 +0000)",
+    "test_suite/system_tests/dasha.py":
+        "Started to add system tests for model-free analysis using Modelfree4. (2008-07-28 19:36:19 +0000)",
+    "test_suite/system_tests/interatomic.py":
+        "Created the new Interatomic system test class for testing out the interatomic data containers. (2012-06-28 12:17:56 +0000)",
+    "test_suite/system_tests/load_spins.py":
+        "Added a system test for the loading of spins from a small molecule. (2008-04-23 16:44:01 +0000)",
+    "test_suite/system_tests/model_elimination.py":
+        "Created a system test for model elimination of a model-free model. (2008-10-05 08:49:03 +0000)",
+    "test_suite/system_tests/mol_res_spin.py":
+        "Created a system test Mol_res_spin.test_residue_delete() demonstrating a failure of the user function. (2012-05-16 10:25:52 +0000)",
+    "test_suite/system_tests/n_state_model.py":
+        "Created the framework for adding system/functional tests for the N-state model. (2008-01-07 16:03:27 +0000)",
+    "test_suite/system_tests/noe.py":
+        "Activated the NOE analysis system test. (2008-10-07 19:37:24 +0000)",
+    "test_suite/system_tests/noe_restraints.py":
+        "Added the system test framework for NOE restraint reading tests. (2008-12-09 09:45:58 +0000)",
+    "test_suite/system_tests/palmer.py":
+        "Started to add system tests for model-free analysis using Modelfree4. (2008-07-28 19:36:19 +0000)",
+    "test_suite/system_tests/pcs.py":
+        "Created a system test with RDC data for loading RDCs from a file with spin ID strings at the start. (2011-10-17 16:31:38 +0000)",
+    "test_suite/system_tests/peak_lists.py":
+        "Added the framework for system tests for supporting NMRView within relax. (2008-07-03 18:47:48 +0000)",
+    "test_suite/system_tests/pipes.py":
+        "Creation of a framework for a relax test suite to check for regressions and new bugs. (2006-03-24 01:41:10 +0000)",
+    "test_suite/system_tests/rdc.py":
+        "Created a system test with RDC data for loading RDCs from a file with spin ID strings at the start. (2011-10-17 16:31:38 +0000)",
+    "test_suite/system_tests/relax_data.py":
+        "Created a very basic system test for the relax_data.back_calc() user function. (2011-03-03 14:19:47 +0000)",
+    "test_suite/system_tests/results.py":
+        "Wrote a system test for writing an empty results file. (2008-07-03 22:50:37 +0000)",
+    "test_suite/system_tests/sequence.py":
+        "Creation of a framework for a relax test suite to check for regressions and new bugs. (2006-03-24 01:41:10 +0000)",
+    "test_suite/system_tests/spectrum.py":
+        "Added the framework for system tests for supporting NMRView within relax. (2008-07-03 18:47:48 +0000)",
+    "test_suite/system_tests/state.py":
+        "Created a system test for the saving, loading, saving, and loading again of the system state. (2008-10-12 09:40:43 +0000)",
+    "test_suite/system_tests/structure.py":
+        "Added a system test to check the loading of a PDB file using the information in a results file. (2008-09-26 13:47:09 +0000)",
+    "test_suite/system_tests/unit_vectors.py":
+        "Added a simple system test for the calculation of unit XH bond vectors. (2008-09-25 13:48:24 +0000)",
+    "test_suite/system_tests/value.py":
+        "Created the new Value system test class with the first test Value.test_value_copy. (2013-05-03 17:18:42 +0000)",
+    "test_suite/system_tests/scripts/__init__.py":
+        "Converted the system test scripts directory into a Python package. (2012-01-27 10:59:24 +0000)",
+    "test_suite/system_tests/scripts/frame_order/__init__.py":
+        "Converted the frame order system test scripts directory into a Python package. (2012-01-27 11:00:49 +0000)",
+    "test_suite/system_tests/scripts/frame_order/cam/__init__.py":
+        "Converted the CaM frame order system test script directory into a Python package. (2012-01-27 11:02:12 +0000)",
     "test_suite/unit_tests/__init__.py":
         "Execution of both the system/functional tests and unit tests when using the --test-suite option. (2006-11-21 03:47:13 +0000)",
     "test_suite/unit_tests/align_tensor_testing_base.py":
@@ -999,6 +1067,7 @@ FALSE_POS = {
     'specific_analyses/model_free/data.py':                             ["Copyright (C) 2007 Gary S Thompson"],
     'specific_analyses/model_free/optimisation.py':                     ["Copyright (C) 2007 Gary S Thompson"],
     'target_functions/relax_disp.py':                                   ["Copyright (C) 2009 Sebastien Morin"],
+    'test_suite/system_tests/scripts/relax_fit_saturation_recovery.py': ["Copyright (C) 2014 Andras Boeszoermenyi"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -1462,6 +1531,10 @@ EXCLUDE = [
     "Removed all usages of the has_attr() dictionary method. (2009-08-19 14:09:33 +0000)",
     # r9340  - 25d0d36294f3cc9132d5eb548042d8c688b37792 - 2to3 automated conversions.
     "Replaced all instances of `x` with repr(x). (2009-08-19 13:37:09 +0000)",
+    # r8705 - c539aa91dbf320d423eb11dab8913990dc7eaf04.
+    "Corrected an error introduced in r8704 where the __init__.py file for system tests was modified for the purpose of fast testing while coding... (2009-02-01 19:35:57 +0000)",
+    # r8704 - 39d106407a1a57bd953c124fa6b9c3974458d0fe.
+    "Copied C files for Rx curve fitting for adapting as the code for dispersion curve fitting. (2009-02-01 19:33:20 +0000)",
     # r8224 - 2210c04e8dd7e10b53ff7060add85b1ff64a5e91 - Whitespace cleanup.
     "Many corrections of formatting. (2008-12-23 16:04:48 +0000)",
     # r7857 - 425c0e9f57a207ccda8e6a1130eb3ca16eb79c7c.
@@ -1526,6 +1599,8 @@ EXCLUDE = [
     "Manually merged r3208 from the multi_processor branch. (2008-10-15 19:40:06 +0000)",
     # r3735 - 5dbdf89b20db84dc7ab6b88d0c9667c648ffe1a5
     "Renamed all the unit test directories to start with an underscore. (2007-11-20 22:41:25 +0000)",
+    # r2910 - 95982d7a7a02126d01a8d34c5aa41a12d256969f
+    "Merged the 'test_suite' branch back into the 1.3 line. (2006-12-02 05:46:28 +0000)",
     # r894, r895, etc. - 41775d02748d251373dff182ec220c34cbcd8cf0, 358f9909ed75b71a9262e261e6f0eeb86ca9d814, etc.
     "Updating to the archive 'backup_relax_2004-02-24a.tar.bz2'. (2004-02-24 06:45:20 +0000)"
 ]
