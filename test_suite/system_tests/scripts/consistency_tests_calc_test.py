@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing consistency testing."""
 
 # Python module imports.

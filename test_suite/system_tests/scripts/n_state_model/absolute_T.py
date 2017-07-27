@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing the fitting of signless T data (J+D)."""
 
 # Python module imports.

@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Script for the determination of relative stereochemistry.
 
 The analysis is preformed by using multiple ensembles of structures, randomly sampled from a given

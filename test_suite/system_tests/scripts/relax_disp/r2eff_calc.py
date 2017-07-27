@@ -1,4 +1,5 @@
-# Script for calculating R2eff values.
+# Module docstring.
+"""Script for calculating R2eff values."""
 
 # Python module imports.
 from os import sep

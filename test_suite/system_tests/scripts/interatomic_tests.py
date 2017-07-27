@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for checking operations on interatomic data containers."""
 
 # Python module imports.

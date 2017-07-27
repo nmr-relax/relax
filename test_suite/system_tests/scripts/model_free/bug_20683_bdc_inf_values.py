@@ -1,4 +1,5 @@
-# Script for catching bug #20683, the failure due to infinite values in the Bruker Dynamics Centre file (https://gna.org/bugs/?20683).
+# Module docstring.
+"""Script for catching bug #20683, the failure due to infinite values in the Bruker Dynamics Centre file (https://gna.org/bugs/?20683)."""
 
 # Python module imports.
 from os import sep

@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing the loading of phthalic acid NOEs from a generically formatted file."""
 
 # Python module imports.

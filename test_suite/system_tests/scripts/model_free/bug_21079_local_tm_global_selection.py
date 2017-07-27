@@ -1,3 +1,4 @@
+# Module docstring.
 """This system test catches the local tm global model selection bug.
 
 The bug is:

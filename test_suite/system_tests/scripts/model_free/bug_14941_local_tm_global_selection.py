@@ -1,3 +1,4 @@
+# Module docstring.
 """This system test catches the local tm global model selection bug submitted by Mikaela Stewart (mikaela dot stewart att gmail dot com).
 
 The bug is:

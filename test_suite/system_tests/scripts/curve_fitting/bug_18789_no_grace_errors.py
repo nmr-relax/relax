@@ -19,16 +19,15 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Script for relaxation curve fitting."""
+
 # Python module imports.
 from os import sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
-
-
-# Script for relaxation curve fitting.
-######################################
 
 
 # Missing temp directory (allow this script to run outside of the system test framework).

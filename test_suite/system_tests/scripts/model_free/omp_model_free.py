@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for performing a very minimal model-free analysis using the OMP relaxation data."""
 
 # Python module imports.

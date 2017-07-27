@@ -1,3 +1,4 @@
+# Module docstring.
 """This system test script catches the relaxation curve-fitting optimisation bug submitted by Romel Bobby.
 
 The bug is:

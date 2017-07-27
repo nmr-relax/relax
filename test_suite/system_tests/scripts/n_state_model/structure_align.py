@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing the alignment of 3 structures."""
 
 # Python module imports.

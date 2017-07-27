@@ -1,4 +1,5 @@
-# Script for testing the reading and writing of BMRB files.
+# Module docstring.
+"""Script for testing the reading and writing of BMRB files."""
 
 # Python module imports.
 from os import sep

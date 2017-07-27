@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for creating model m4 with parameters {S2, te, Rex}."""
 
 # Python module imports.

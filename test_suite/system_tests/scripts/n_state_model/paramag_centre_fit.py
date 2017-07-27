@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing the fitting of the paramagnetic centre of the PCSs."""
 
 # Python module imports.

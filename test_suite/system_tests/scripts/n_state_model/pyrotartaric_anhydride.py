@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing out the N-state model alignment tensor optimisation using pyrotarctic anhydride.
 
 This is for testing both the optimisation of long range RDCs (2J and 3J) to pseudo-atoms and for testing the absolute T and absolute J data type.

@@ -19,7 +19,8 @@
 #                                                                             #
 ###############################################################################
 
-r"""Script for converting the model-free results into a LaTeX table.
+# Module docstring.
+"""Script for converting the model-free results into a LaTeX table.
 
 The longtable LaTeX package is necessary to allow the table to span multiple pages.  This table also
 uses the more elegant booktable format.  The packages can be included using the LaTeX preamble
