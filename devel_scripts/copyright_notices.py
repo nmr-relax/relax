@@ -651,6 +651,20 @@ GIT_START = {
         "Added the basic framework for the N-state model target function. (2008-01-08 16:17:43 +0000)",
     "target_functions/potential.py":
         "Created a module for calculating different optimisation/energy potentials. (2009-01-29 15:40:07 +0000)",
+    "test_suite/gui_tests/base_classes.py":
+        "Shifted the GUI test check_exceptions() method into a base class for all tests to use. (2011-06-29 17:58:36 +0000)",
+    "test_suite/gui_tests/dead_uf_pages.py":
+        "Created the Dead_uf_pages.test_mol_create() GUI test demonstrating a failure in the user functions. (2012-05-29 07:14:46 +0000)",
+    "test_suite/gui_tests/model_free.py":
+        "Started to construct the model-free auto-analysis GUI test. (2011-07-26 07:31:41 +0000)",
+    "test_suite/gui_tests/n_state_model.py":
+        "Added all of the N-state model system tests as GUI tests. (2012-05-22 12:03:46 +0000)",
+    "test_suite/gui_tests/noe.py":
+        "Activated the NOE analysis system test. (2008-10-07 19:37:24 +0000)",
+    "test_suite/gui_tests/rx.py":
+        "Activated the NOE analysis system test. (2008-10-07 19:37:24 +0000)",
+    "test_suite/gui_tests/state.py":
+        "Created a GUI test for loading a relax save state file created in a non-GUI mode. (2011-07-20 13:00:05 +0000)",
     "test_suite/system_tests/__init__.py":
         "Creation of a framework for a relax test suite to check for regressions and new bugs. (2006-03-24 01:41:10 +0000)",
     "test_suite/system_tests/angles.py":
