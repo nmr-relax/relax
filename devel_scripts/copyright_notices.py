@@ -984,6 +984,8 @@ GIT_START = {
         "The unit test _user_functions package is now actually a package! (2012-05-03 17:40:36 +0000)",
     "test_suite/unit_tests/_user_functions/test___init__.py":
         "Added a unit test for the contents of the user_function package. (2012-05-03 17:41:45 +0000)",
+    "test_suite/verification_tests/status_object.py":
+        "Created the Status_object.test_install_path system verification test. (2014-05-12 19:29:47 +0000)",
     "user_functions/__init__.py":
         "Created the empty user_functions package. (2012-05-03 16:35:51 +0000)",
     "user_functions/bruker.py":
