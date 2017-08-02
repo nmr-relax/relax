@@ -651,6 +651,16 @@ GIT_START = {
         "Added the basic framework for the N-state model target function. (2008-01-08 16:17:43 +0000)",
     "target_functions/potential.py":
         "Created a module for calculating different optimisation/energy potentials. (2009-01-29 15:40:07 +0000)",
+    "test_suite/__init__.py":
+        "Creation of a framework for a relax test suite to check for regressions and new bugs. (2006-03-24 01:41:10 +0000)",
+    "test_suite/formatting.py":
+        "Changes to the output formatting functions of the test suite. (2007-01-13 10:00:17 +0000)",
+    "test_suite/relax_test_loader.py":
+        "The RelaxTestLoader has been added as a replacement for unittest.TestLoader. (2011-01-04 09:45:41 +0000)",
+    "test_suite/relax_test_runner.py":
+        "Created the framework for a new unittest runner to replace TextTestRunner. (2008-01-04 16:26:07 +0000)",
+    "test_suite/test_suite_runner.py":
+        "Execution of both the system/functional tests and unit tests when using the --test-suite option. (2006-11-21 03:47:13 +0000)",
     "test_suite/gui_tests/base_classes.py":
         "Shifted the GUI test check_exceptions() method into a base class for all tests to use. (2011-06-29 17:58:36 +0000)",
     "test_suite/gui_tests/dead_uf_pages.py":
