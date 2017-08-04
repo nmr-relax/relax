@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for performing a full relaxation dispersion analysis using off-resonance R1rho-type data."""
 
 # Python module imports.
@@ -5,6 +6,7 @@ from os import sep
 
 # relax module imports.
 from status import Status; status = Status()
+
 
 # Set up the data pipe.
 #######################

@@ -1,3 +1,4 @@
+# Module docstring.
 """Compare the cpmg_fit and relax solutions.
 
 To run this, type:

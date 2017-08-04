@@ -1,4 +1,5 @@
-# relax script for generating synthetic RDC and PCS data for the bax_C_1J7P_N_H_Ca.pdb structure.
+# Module docstring.
+"""relax script for generating synthetic RDC and PCS data for the bax_C_1J7P_N_H_Ca.pdb structure."""
 
 # Python module imports.
 from numpy import dot, float64, transpose, zeros
