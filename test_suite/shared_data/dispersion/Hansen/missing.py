@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for removing data from the truncated CPMG data for testing purposes.""" 
 
 # relax module imports.

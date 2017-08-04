@@ -1,3 +1,4 @@
+# Module docstring.
 """Script of randomising the RDC and PCS data."""
 
 from random import gauss

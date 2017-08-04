@@ -1,4 +1,5 @@
-# Script for generating Sparky peak lists for a simple exponential model set.
+# Module docstring.
+"""Script for generating Sparky peak lists for a simple exponential model set."""
 
 # Python module imports.
 from math import exp

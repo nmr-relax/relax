@@ -1,3 +1,4 @@
+# Module docstring.
 """Simulate relaxation curves for an on resonance R1rho-type experiment using the M61 model.
 
 This is the Meiboom 1961 model for on-resonance 2-site exchange with skewed populations (pA >> pB).  The equation is:
