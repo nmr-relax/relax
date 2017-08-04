@@ -270,6 +270,32 @@ SVN_START = {
         "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
     "specific_analyses/n_state_model/uf.py":
         "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "test_suite/shared_data/__init__.py":
+        "test_suite.shared_data.diffusion_tensor.generate_data is now a module and used by the ellipsoid. (2010-03-19 13:37:05 +0000)",
+    "test_suite/shared_data/diffusion_tensor/__init__.py":
+        "test_suite.shared_data.diffusion_tensor.generate_data is now a module and used by the ellipsoid. (2010-03-19 13:37:05 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/relax_disp.py":
+        "Added a directory of relax results for the truncated high-precision Hansen CPMG R2eff values. (2013-05-30 10:44:14 +0000)",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
     "test_suite/system_tests/frame_order.py":
         "Added a system test for the frame order 'rigid' model with no tensor rotations and no motion. (2009-09-01 09:52:51 +0000)",
     "test_suite/system_tests/scripts/bug_19785_relax_data_delete.py":
@@ -652,6 +678,202 @@ GIT_START = {
         "Activated the NOE analysis system test. (2008-10-07 19:37:24 +0000)",
     "test_suite/gui_tests/state.py":
         "Created a GUI test for loading a relax save state file created in a non-GUI mode. (2011-07-20 13:00:05 +0000)",
+    "test_suite/shared_data/__init__.py":
+        "test_suite.shared_data.diffusion_tensor.generate_data is now a module and used by the ellipsoid. (2010-03-19 13:37:05 +0000)",
+    "test_suite/shared_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/align_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/align_data/CaM/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/align_data/CaM_IQ/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/align_data/metal_pos_opt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/align_data/missing_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/align_data/monte_carlo_testing/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/align_data/paramagnetic/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/align_data/population_model/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/align_data/pyrotartaric_anhydride/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/bruker_files/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/curve_fitting/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/curve_fitting/bug_18789_no_grace_errors/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/curve_fitting/inversion_recovery/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/curve_fitting/numeric_topology/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/curve_fitting/numeric_topology/estimate_errors_peak_lists/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/curve_fitting/profiling/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/curve_fitting/saturation_recovery/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/diffusion_tensor/__init__.py":
+        "test_suite.shared_data.diffusion_tensor.generate_data is now a module and used by the ellipsoid. (2010-03-19 13:37:05 +0000)",
+    "test_suite/shared_data/diffusion_tensor/sphere/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/diffusion_tensor/spheroid_oblate/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/diffusion_tensor/spheroid_prolate/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Baldwin_2014/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Fyn_SH3_R1rho/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Fyn_SH3_R1rho/cpmg_fit_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Fyn_SH3_R1rho/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/HWebb_KTeilum_Proteins_Struct_Funct_Bioinf_2011/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/generate_r2eff_files.py":
+        "Added a script to the test suite shared data for analysing the truncated Hansen CPMG data. (2013-05-23 17:17:08 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/r2eff_calc.py":
+        "Added a script to the test suite shared data for analysing the truncated Hansen CPMG data. (2013-05-23 17:17:08 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_disp.py":
+        "Created a script for running a full relaxation dispersion analysis on Flemming Hansen's data. (2013-05-03 13:45:38 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_disp_trunc.py":
+        "Added a script to the test suite shared data for analysing the truncated Hansen CPMG data. (2013-05-23 17:17:08 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/catia_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/catia_results/input_r2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmg_fit_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/cpmgfit.py":
+        "Created a directory for the results of the CPMGFit program using Hansen's truncated CPMG data. (2013-05-23 17:22:07 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/cr72/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/it99/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/lm63/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/lm63_3-site/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/multi_processor/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/multi_processor/cluster_analysis.py":
+        "Created a set of scripts for testing out the multi-processor abilities of the dispersion analysis. (2013-10-08 07:15:11 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/multi_processor/precluster.py":
+        "Created a set of scripts for testing out the multi-processor abilities of the dispersion analysis. (2013-10-08 07:15:11 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/nessy_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/nessy_results/nessy_save_file.py":
+        "A script has been added to create the NESSY input for Flemming Hansen's CPMG data. (2013-05-28 15:48:45 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/nessy_results/Pymol_macros/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/analysis_mmq_cr72.py":
+        "Added a relax script for the 'MQ CR72' model optimised using Flemming Hansen's CPMG data. (2013-10-16 08:55:50 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/relax_disp.py":
+        "Added a directory of relax results for the truncated high-precision Hansen CPMG R2eff values. (2013-05-30 10:44:14 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/R2eff/grace2images.py":
+        "Updated the relax results for Flemming Hansen's CPMG data for the recent changes. (2013-10-28 08:38:04 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/sherekhan.py":
+        "Created a directory and script in preparation for the relax_disp.sherekhan_input user function. (2013-05-30 11:18:03 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster1/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster1/cr72_slow/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster1/ns/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/cr72_fast/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/cr72_slow/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/lm63/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/ns/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/cr72_fast/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/cr72_slow/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/lm63/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/ns/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_048MGuHCl_40C_041223/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_048MGuHCl_40C_041223/check_graphs/TSMFK01/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/IT99/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/TSMFK01/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/final/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/bug_neg_int_acbp_cpmg_disp_048MGuHCl_40C_041223/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/surface_chi2_clustered_fitting/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/lm63_3site/cpmgfit_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/lm63_3site/cpmgfit_results/cpmgfit.py":
+        "Added the CPMGFit results for the 'LM63 3-site' dispersion model test data. (2013-07-22 16:39:23 +0000)",
+    "test_suite/shared_data/dispersion/lm63_3site/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/lm63_3site/relax_results/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-04 09:02:16 +0200)",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
+    "":
+        "",
     "test_suite/system_tests/__init__.py":
         "Creation of a framework for a relax test suite to check for regressions and new bugs. (2006-03-24 01:41:10 +0000)",
     "test_suite/system_tests/angles.py":
@@ -1057,6 +1279,48 @@ ADDITIONAL_COPYRIGHT_YEARS = {
     'graphics/screenshots/dispersion_analysis/README':                  [[2017, "Edward d'Auvergne"]],
     'graphics/screenshots/mf_analysis/README':                          [[2017, "Edward d'Auvergne"]],
     'graphics/wizards/README':                                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/align_data/CaM_IQ/README':                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/align_data/basis_sets/README':              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/align_data/menthol/README':                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/bmrb/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/README': [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/diffusion_tensor/ellipsoid/README':         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Fyn_SH3_R1rho/README':                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/README':                                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/500_MHz/README':                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/800_MHz/README':                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/multi_processor/README':                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/multi_processor/precluster/CR72/README':  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/nessy_results/Plots/svg/README':          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/nessy_results/Text_files/README':         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/nessy_results/chi2_surface/svg/README':   [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/r2eff_data/README':                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/CR72/README':               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/IT99/README':               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/LM63/README':               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/final/README':              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster1/cr72_fast/README': [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/README': [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/lm63_3site/README':                              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site/README':                            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site/blank/README':                      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site/cpmg_fit_results/README':           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site/relax_results/README':              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site_linear/README':                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site_linear/blank/README':               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site_linear/cpmg_fit_results/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site_linear/relax_results/README':       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/1_setup_r1rho.py':         [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/1_setup_r1rho_GUI.py':     [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/2_pre_run_r2eff.py':       [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/3_analyse_models.py':      [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/4_inspect_results.py':     [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/5_clustered_analyses.py':  [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/exp_error_analysis/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/mc_2000/README':  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/mc_2000/R2eff/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/exp_error_analysis/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/peak_lists/README':        [[2017, "Edward d'Auvergne"]],
 }
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
@@ -1094,6 +1358,13 @@ FALSE_POS = {
     'specific_analyses/model_free/optimisation.py':                     ["Copyright (C) 2007 Gary S Thompson"],
     'target_functions/relax_disp.py':                                   ["Copyright (C) 2009 Sebastien Morin"],
     'test_suite/system_tests/scripts/relax_fit_saturation_recovery.py': ["Copyright (C) 2014 Andras Boeszoermenyi"],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/CR72/grace2images.py':          ["Copyright (C) 2013 Troels E. Linnet"],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/IT99/grace2images.py':          ["Copyright (C) 2013 Troels E. Linnet"],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/LM63/grace2images.py':          ["Copyright (C) 2013 Troels E. Linnet"],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/R2eff/grace2images.py':         ["Copyright (C) 2013 Troels E. Linnet"],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/final/grace2images.py':         ["Copyright (C) 2013 Troels E. Linnet"],
+    'test_suite/shared_data/dispersion/lm63_3site/relax_results/R2eff/grace2images.py':     ["Copyright (C) 2013 Troels E. Linnet"],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/R2eff/grace2images.py':   ["Copyright (C) 2013 Troels E. Linnet"],
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
@@ -1112,6 +1383,7 @@ FALSE_NEG = {
     'graphics/wizards/object-locked-unlocked.png':                      ["Copyright (C) 2012 Edward d'Auvergne"],
     'graphics/wizards/oxygen-icon-weather-clear.png':                   ["Copyright (C) 2012 Edward d'Auvergne"],
     'sample_scripts/model_free/final_data_extraction.py':               ["Copyright (C) 2010-2011 Michael Bieri"],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/R2eff/grace2images.py':   ["Copyright (C) 2014 Troels E. Linnet"]
 }
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
@@ -1255,6 +1527,8 @@ EXCLUDE = [
     "Added grid_lower to be handled in specific_analyses/parameter_object.py. (2014-05-28 14:49:02 +0000)",
     # r23526 - da5b41770b1d2fff19d91f1f4b6ef9ff5ec04eaf.
     "Added the default value lower grid value to be set for the pA parameter. (2014-05-28 14:49:00 +0000)",
+    # r22919 - f9a3794208e0395b53ec59ded24913a6da2a0463.
+    "Replaced Copyright notice for the Baldwin.py script. (2014-05-02 09:57:09 +0000)",
     # r22816 - 89c302bba91132115ca23e213b59a894e21db539 - 2to3 automated conversions.
     "Python 3 fixes throughout the codebase. (2014-04-22 15:49:39 +0000)",
     # r21155 - a6af21049e0cbe825c9609ede890cab76269ed99 - 2to3 automated conversions.
@@ -1677,6 +1951,15 @@ EXCLUDE = [
 #       1 - The real author.
 #       2 - The commit key, consisting of the first line of the commit message followed by the ISO date in brackets.
 AUTHOR_SWITCH = [
+    # r23022 - d6115145be75f30e16cc0211d32b5ac4c5f7247b.
+    ["Troels Emtekær Linnet", "Andrew Baldwin (andrew.baldwin@chem.ox.ac.uk),",
+        "Added the synthetic data for B14 model whereby the simplification R20A = R20B is assumed. (2014-05-06 15:34:04 +0000)"],
+    # r22948 - 5b1ea93924ee887041c675806fbc7b5946a015e4.
+    ["Troels Emtekær Linnet", "Andrew Baldwin (andrew.baldwin@chem.ox.ac.uk),",
+        "Added the synthetic N15 data for systemtest Relax_disp.test_baldwin_synthetic. (2014-05-04 12:49:31 +0000)"],
+    # r22906 - 01d6c4a272ed3a486f300c68820551afdd368277.
+    ["Troels Emtekær Linnet", "Andrew Baldwin (andrew.baldwin@chem.ox.ac.uk),",
+        "Added Baldwin model B14 test data. (2014-05-01 08:47:35 +0000)"],
     # r21008 - 0fa89a69d265a3e39c65c7582fa48e1634db25eb.
     ["Edward d'Auvergne", "Troels Emtekær Linnet",
         "Fixed several typo errors of \"Is it selected\"->\"It is selected\". A copy-paste error which have spreaded. (2013-10-07 13:41:55 +0000)"],
@@ -2233,10 +2516,6 @@ def format_copyright(committer_info):
         # Format the year string.
         years = format_years(committer_info[committer])
 
-        # Translate the committer name, if necessary.
-        if committer in COMMITTERS:
-            committer = COMMITTERS[committer]
-
         # Format the copyright statement.
         statements.append("Copyright (C) %s %s" % (years, committer))
 
@@ -2345,6 +2624,9 @@ def git_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
         year = date.split('-')[0]
         commit_key = "%s (%s)" % (subject.strip(), date)
 
+        # Translate the committer name, if necessary.
+        committer = translate_committer_name(committer)
+
         # The next line is a committer, so skip the current line.
         if search(' Ø ', lines[i+1].decode()):
             i += 1
@@ -2381,7 +2663,7 @@ def git_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
         # Author switch.
         for j in range(len(author_switch)):
             if author_switch[j][2] == commit_key:
-                committer = author_switch[j][1]
+                committer = translate_committer_name(author_switch[j][1])
 
         # Debugging printout.
         if DEBUG:
@@ -2500,6 +2782,9 @@ def svn_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
             date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
             date = date.astimezone(tz=utc)
 
+            # Translate the committer name, if necessary.
+            committer = translate_committer_name(committer)
+
             # Find the diff.
             in_diff = False
             newlines = 0
@@ -2579,7 +2864,7 @@ def svn_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
         # Author switch.
         for j in range(len(author_switch)):
             if author_switch[j][2] == commit_key:
-                committer = author_switch[j][1]
+                committer = translate_committer_name(author_switch[j][1])
 
         # Date already exists.
         if committer in committer_info and year in committer_info[committer]:
@@ -2613,6 +2898,23 @@ def svn_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
             committer_info[committer] = []
         if committer and year not in committer_info[committer]:
             committer_info[committer].append(year)
+
+
+def translate_committer_name(committer):
+    """Translate the committer name, if necessary.
+
+    @param committer:   The committer name to translate.
+    @type committer:    str
+    @return:            The translated name.
+    @rtype:             str
+    """
+
+    # The name is in the translation table.
+    if committer in COMMITTERS:
+        return COMMITTERS[committer]
+
+    # Or not.
+    return committer
 
 
 def validate_copyright(expected_copyright, recorded_copyright):
@@ -2774,6 +3076,7 @@ if __name__ == '__main__':
 
             # Public domain files.
             if extract_public_domain_readme(file_name, root):
+                files_valid += 1
                 continue
 
             # Get the committer and year information from the repository logs.
@@ -2792,7 +3095,8 @@ if __name__ == '__main__':
                 for year, committer in ADDITIONAL_COPYRIGHT_YEARS[file_path]:
                     if not committer in committer_info:
                         committer_info[committer] = []
-                    committer_info[committer].append(year)
+                    if year not in committer_info[committer]:
+                        committer_info[committer].append(year)
 
             # Format the data as copyright statements.
             expected_copyright = format_copyright(committer_info)

@@ -1,0 +1,35 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+Public domain
+-------------
+
+These files are public domain:
+
+1_create_surface_data_S65_dw_k_AB_FT128.txt:                                            Public domain
+1_create_surface_data_S65_dw_r2a_FT128.txt:                                             Public domain
+3_simulate_graphs_S65_dw_r2a_FT128.txt:                                                 Public domain
+coMDD_-_TSMFK01_-_min_-_32_-_free_spins.bz2:                                            Public domain
+FT_-_TSMFK01_-_min_-_128_-_free_spins.bz2:                                              Public domain

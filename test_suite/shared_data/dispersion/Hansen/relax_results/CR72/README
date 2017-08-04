@@ -1,0 +1,59 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+GPLv3+
+------
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+grace2images.py:                                                                        Copyright (C) 2013 Troels E. Linnet
+grace2images.py:                                                                        Copyright (C) 2013 Edward d'Auvergne
+
+
+Public domain
+-------------
+
+These files are public domain:
+
+chi2.agr:                                                                               Public domain
+disp_4_N.agr.bz2:                                                                       Public domain
+disp_4_N.out:                                                                           Public domain
+disp_70_N.agr.bz2:                                                                      Public domain
+disp_70_N.out:                                                                          Public domain
+disp_71_N.agr.bz2:                                                                      Public domain
+disp_71_N.out:                                                                          Public domain
+dw.agr:                                                                                 Public domain
+dw.out:                                                                                 Public domain
+k_AB.agr:                                                                               Public domain
+k_AB.out:                                                                               Public domain
+kex.agr:                                                                                Public domain
+kex.out:                                                                                Public domain
+pA.agr:                                                                                 Public domain
+pA.out:                                                                                 Public domain
+pB.agr:                                                                                 Public domain
+pB.out:                                                                                 Public domain
+results.bz2:                                                                            Public domain
+tex.agr:                                                                                Public domain
+tex.out:                                                                                Public domain

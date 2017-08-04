@@ -1,0 +1,49 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+Public domain
+-------------
+
+These files are public domain:
+
+covar2_errors.bz2:                                                                      Public domain
+covar_errors.bz2:                                                                       Public domain
+i0_correlation2.agr:                                                                    Public domain
+i0_correlation2_good.agr:                                                               Public domain
+i0_correlation.agr:                                                                     Public domain
+i0_correlation_good.agr:                                                                Public domain
+i0_correlation_head:                                                                    Public domain
+i0_covar2.txt:                                                                          Public domain
+i0_covar.txt:                                                                           Public domain
+i0_mc.txt:                                                                              Public domain
+mc_errors.bz2:                                                                          Public domain
+r2eff_correlation2.agr:                                                                 Public domain
+r2eff_correlation2_good.agr:                                                            Public domain
+r2eff_correlation.agr:                                                                  Public domain
+r2eff_correlation_good.agr:                                                             Public domain
+r2eff_correlation_head:                                                                 Public domain
+r2eff_covar2.txt:                                                                       Public domain
+r2eff_covar.txt:                                                                        Public domain
+r2eff_mc.txt:                                                                           Public domain

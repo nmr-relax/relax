@@ -1,0 +1,48 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+Public domain
+-------------
+
+These files are public domain:
+
+ellipsoid.pdb:                                                                          Public domain
+NOE.500.out:                                                                            Public domain
+NOE.600.out:                                                                            Public domain
+NOE.700.out:                                                                            Public domain
+NOE.800.out:                                                                            Public domain
+oblate.pdb:                                                                             Public domain
+prolate.pdb:                                                                            Public domain
+R1.500.out:                                                                             Public domain
+R1.600.out:                                                                             Public domain
+R1.700.out:                                                                             Public domain
+R1.800.out:                                                                             Public domain
+R2.500.out:                                                                             Public domain
+R2.600.out:                                                                             Public domain
+R2.700.out:                                                                             Public domain
+R2.800.out:                                                                             Public domain
+sphere.pdb:                                                                             Public domain
+tensor_opt.log:                                                                         Public domain
+uniform.pdb:                                                                            Public domain

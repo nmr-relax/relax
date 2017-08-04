@@ -1,0 +1,222 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+Public domain
+-------------
+
+These files are public domain:
+
+Chi2_AICc.csv:                                                                          Public domain
+Model_1_10_.csv:                                                                        Public domain
+Model_1_11_.csv:                                                                        Public domain
+Model_1_12_.csv:                                                                        Public domain
+Model_1_13_.csv:                                                                        Public domain
+Model_1_14_.csv:                                                                        Public domain
+Model_1_15_.csv:                                                                        Public domain
+Model_1_16_.csv:                                                                        Public domain
+Model_1_17_.csv:                                                                        Public domain
+Model_1_18_.csv:                                                                        Public domain
+Model_1_19_.csv:                                                                        Public domain
+Model_1_1_.csv:                                                                         Public domain
+Model_1_20_.csv:                                                                        Public domain
+Model_1_21_.csv:                                                                        Public domain
+Model_1_22_.csv:                                                                        Public domain
+Model_1_23_.csv:                                                                        Public domain
+Model_1_24_.csv:                                                                        Public domain
+Model_1_25_.csv:                                                                        Public domain
+Model_1_26_.csv:                                                                        Public domain
+Model_1_29_.csv:                                                                        Public domain
+Model_1_2_.csv:                                                                         Public domain
+Model_1_31_.csv:                                                                        Public domain
+Model_1_32_.csv:                                                                        Public domain
+Model_1_33_.csv:                                                                        Public domain
+Model_1_34_.csv:                                                                        Public domain
+Model_1_35_.csv:                                                                        Public domain
+Model_1_36_.csv:                                                                        Public domain
+Model_1_37_.csv:                                                                        Public domain
+Model_1_38_.csv:                                                                        Public domain
+Model_1_39_.csv:                                                                        Public domain
+Model_1_3_.csv:                                                                         Public domain
+Model_1_40_.csv:                                                                        Public domain
+Model_1_41_.csv:                                                                        Public domain
+Model_1_42_.csv:                                                                        Public domain
+Model_1_43_.csv:                                                                        Public domain
+Model_1_44_.csv:                                                                        Public domain
+Model_1_45_.csv:                                                                        Public domain
+Model_1_46_.csv:                                                                        Public domain
+Model_1_47_.csv:                                                                        Public domain
+Model_1_48_.csv:                                                                        Public domain
+Model_1_49_.csv:                                                                        Public domain
+Model_1_4_.csv:                                                                         Public domain
+Model_1_50_.csv:                                                                        Public domain
+Model_1_51_.csv:                                                                        Public domain
+Model_1_52_.csv:                                                                        Public domain
+Model_1_53_.csv:                                                                        Public domain
+Model_1_55_.csv:                                                                        Public domain
+Model_1_56_.csv:                                                                        Public domain
+Model_1_57_.csv:                                                                        Public domain
+Model_1_58_.csv:                                                                        Public domain
+Model_1_59_.csv:                                                                        Public domain
+Model_1_5_.csv:                                                                         Public domain
+Model_1_60_.csv:                                                                        Public domain
+Model_1_61_.csv:                                                                        Public domain
+Model_1_62_.csv:                                                                        Public domain
+Model_1_63_.csv:                                                                        Public domain
+Model_1_64_.csv:                                                                        Public domain
+Model_1_65_.csv:                                                                        Public domain
+Model_1_66_.csv:                                                                        Public domain
+Model_1_67_.csv:                                                                        Public domain
+Model_1_6_.csv:                                                                         Public domain
+Model_1_70_.csv:                                                                        Public domain
+Model_1_71_.csv:                                                                        Public domain
+Model_1_72_.csv:                                                                        Public domain
+Model_1_73_.csv:                                                                        Public domain
+Model_1_7_.csv:                                                                         Public domain
+Model_1_8_.csv:                                                                         Public domain
+Model_2_10_.csv:                                                                        Public domain
+Model_2_11_.csv:                                                                        Public domain
+Model_2_12_.csv:                                                                        Public domain
+Model_2_13_.csv:                                                                        Public domain
+Model_2_14_.csv:                                                                        Public domain
+Model_2_15_.csv:                                                                        Public domain
+Model_2_17_.csv:                                                                        Public domain
+Model_2_18_.csv:                                                                        Public domain
+Model_2_19_.csv:                                                                        Public domain
+Model_2_1_.csv:                                                                         Public domain
+Model_2_20_.csv:                                                                        Public domain
+Model_2_21_.csv:                                                                        Public domain
+Model_2_22_.csv:                                                                        Public domain
+Model_2_23_.csv:                                                                        Public domain
+Model_2_24_.csv:                                                                        Public domain
+Model_2_25_.csv:                                                                        Public domain
+Model_2_26_.csv:                                                                        Public domain
+Model_2_29_.csv:                                                                        Public domain
+Model_2_2_.csv:                                                                         Public domain
+Model_2_31_.csv:                                                                        Public domain
+Model_2_32_.csv:                                                                        Public domain
+Model_2_33_.csv:                                                                        Public domain
+Model_2_34_.csv:                                                                        Public domain
+Model_2_35_.csv:                                                                        Public domain
+Model_2_36_.csv:                                                                        Public domain
+Model_2_37_.csv:                                                                        Public domain
+Model_2_38_.csv:                                                                        Public domain
+Model_2_39_.csv:                                                                        Public domain
+Model_2_3_.csv:                                                                         Public domain
+Model_2_40_.csv:                                                                        Public domain
+Model_2_41_.csv:                                                                        Public domain
+Model_2_42_.csv:                                                                        Public domain
+Model_2_43_.csv:                                                                        Public domain
+Model_2_45_.csv:                                                                        Public domain
+Model_2_46_.csv:                                                                        Public domain
+Model_2_47_.csv:                                                                        Public domain
+Model_2_48_.csv:                                                                        Public domain
+Model_2_49_.csv:                                                                        Public domain
+Model_2_4_.csv:                                                                         Public domain
+Model_2_50_.csv:                                                                        Public domain
+Model_2_51_.csv:                                                                        Public domain
+Model_2_52_.csv:                                                                        Public domain
+Model_2_53_.csv:                                                                        Public domain
+Model_2_55_.csv:                                                                        Public domain
+Model_2_56_.csv:                                                                        Public domain
+Model_2_57_.csv:                                                                        Public domain
+Model_2_58_.csv:                                                                        Public domain
+Model_2_59_.csv:                                                                        Public domain
+Model_2_5_.csv:                                                                         Public domain
+Model_2_60_.csv:                                                                        Public domain
+Model_2_61_.csv:                                                                        Public domain
+Model_2_62_.csv:                                                                        Public domain
+Model_2_63_.csv:                                                                        Public domain
+Model_2_64_.csv:                                                                        Public domain
+Model_2_65_.csv:                                                                        Public domain
+Model_2_66_.csv:                                                                        Public domain
+Model_2_67_.csv:                                                                        Public domain
+Model_2_70_.csv:                                                                        Public domain
+Model_2_71_.csv:                                                                        Public domain
+Model_2_72_.csv:                                                                        Public domain
+Model_2_8_.csv:                                                                         Public domain
+Model_2.csv:                                                                            Public domain
+Model_3_10_.csv:                                                                        Public domain
+Model_3_11_.csv:                                                                        Public domain
+Model_3_12_.csv:                                                                        Public domain
+Model_3_13_.csv:                                                                        Public domain
+Model_3_14_.csv:                                                                        Public domain
+Model_3_15_.csv:                                                                        Public domain
+Model_3_17_.csv:                                                                        Public domain
+Model_3_18_.csv:                                                                        Public domain
+Model_3_19_.csv:                                                                        Public domain
+Model_3_1_.csv:                                                                         Public domain
+Model_3_20_.csv:                                                                        Public domain
+Model_3_21_.csv:                                                                        Public domain
+Model_3_22_.csv:                                                                        Public domain
+Model_3_23_.csv:                                                                        Public domain
+Model_3_24_.csv:                                                                        Public domain
+Model_3_25_.csv:                                                                        Public domain
+Model_3_26_.csv:                                                                        Public domain
+Model_3_29_.csv:                                                                        Public domain
+Model_3_2_.csv:                                                                         Public domain
+Model_3_31_.csv:                                                                        Public domain
+Model_3_32_.csv:                                                                        Public domain
+Model_3_33_.csv:                                                                        Public domain
+Model_3_34_.csv:                                                                        Public domain
+Model_3_35_.csv:                                                                        Public domain
+Model_3_36_.csv:                                                                        Public domain
+Model_3_37_.csv:                                                                        Public domain
+Model_3_38_.csv:                                                                        Public domain
+Model_3_39_.csv:                                                                        Public domain
+Model_3_3_.csv:                                                                         Public domain
+Model_3_40_.csv:                                                                        Public domain
+Model_3_41_.csv:                                                                        Public domain
+Model_3_42_.csv:                                                                        Public domain
+Model_3_43_.csv:                                                                        Public domain
+Model_3_45_.csv:                                                                        Public domain
+Model_3_46_.csv:                                                                        Public domain
+Model_3_47_.csv:                                                                        Public domain
+Model_3_48_.csv:                                                                        Public domain
+Model_3_49_.csv:                                                                        Public domain
+Model_3_4_.csv:                                                                         Public domain
+Model_3_50_.csv:                                                                        Public domain
+Model_3_51_.csv:                                                                        Public domain
+Model_3_52_.csv:                                                                        Public domain
+Model_3_53_.csv:                                                                        Public domain
+Model_3_55_.csv:                                                                        Public domain
+Model_3_56_.csv:                                                                        Public domain
+Model_3_57_.csv:                                                                        Public domain
+Model_3_58_.csv:                                                                        Public domain
+Model_3_59_.csv:                                                                        Public domain
+Model_3_5_.csv:                                                                         Public domain
+Model_3_60_.csv:                                                                        Public domain
+Model_3_61_.csv:                                                                        Public domain
+Model_3_62_.csv:                                                                        Public domain
+Model_3_63_.csv:                                                                        Public domain
+Model_3_64_.csv:                                                                        Public domain
+Model_3_65_.csv:                                                                        Public domain
+Model_3_66_.csv:                                                                        Public domain
+Model_3_67_.csv:                                                                        Public domain
+Model_3_70_.csv:                                                                        Public domain
+Model_3_71_.csv:                                                                        Public domain
+Model_3_72_.csv:                                                                        Public domain
+Model_3_8_.csv:                                                                         Public domain
+Model_3.csv:                                                                            Public domain
+Summary.csv:                                                                            Public domain

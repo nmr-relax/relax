@@ -1,0 +1,53 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+GPLv3+
+------
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+estimate_errors_analyse_relax_intensity_bug_fix.png:                                    Copyright (C) 2014 Troels E. Linnet
+estimate_errors_analyse_relax_intensity.png:                                            Copyright (C) 2014 Troels E. Linnet
+estimate_errors_analyse_relax_r_bug_fix.png:                                            Copyright (C) 2014 Troels E. Linnet
+estimate_errors_analyse_relax_r.png:                                                    Copyright (C) 2014 Troels E. Linnet
+estimate_errors_data_nt10.cp:                                                           Copyright (C) 2014 Troels E. Linnet
+estimate_errors_data_nt10.png:                                                          Copyright (C) 2014 Troels E. Linnet
+estimate_errors_data_nt5.cp:                                                            Copyright (C) 2014 Troels E. Linnet
+estimate_errors_data_nt5.png:                                                           Copyright (C) 2014 Troels E. Linnet
+estimate_errors_data_settings.cp:                                                       Copyright (C) 2014 Troels E. Linnet
+
+
+Public domain
+-------------
+
+These files are public domain:
+
+bootstrap_errors.log:                                                                   Public domain
+covariance_matrix.log:                                                                  Public domain
+estimate_errors.log:                                                                    Public domain
+Hessian.log:                                                                            Public domain
+integrate.log:                                                                          Public domain
+jacobian_chi2.log:                                                                      Public domain
+jacobian.log:                                                                           Public domain
