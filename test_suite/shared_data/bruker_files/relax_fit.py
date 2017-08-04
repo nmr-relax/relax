@@ -1,4 +1,6 @@
-# Script for relaxation curve fitting.
+# Module docstring.
+"""Script for relaxation curve fitting."""
+
 
 # Create the data pipe.
 pipe.create('rx', 'relax_fit')

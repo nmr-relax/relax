@@ -1,4 +1,5 @@
-# Script for determining the full eigensystem of the double rotor system.
+# Module docstring.
+"""Script for determining the full eigensystem of the double rotor system."""
 
 # Python module imports
 from numpy import array, cross, dot, float64, transpose

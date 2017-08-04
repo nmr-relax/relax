@@ -1,4 +1,5 @@
-# Script for optimising the rotor frame order test model of CaM to the rigid data.
+# Module docstring.
+"""Script for optimising the rotor frame order test model of CaM to the rigid data."""
 
 # Python module imports.
 from numpy import array

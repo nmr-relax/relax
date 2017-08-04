@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Script for generating relaxation data for the bond vectors in 'sphere.pdb'.
 
 Each vector will have the model-free parameter values of S2 = 0.8, te = 20 ns, Rex = 0 1/s.  The diffusion tensor is isotropic with a correlation time of 10 ns.

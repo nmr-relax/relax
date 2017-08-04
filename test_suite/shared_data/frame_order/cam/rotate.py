@@ -1,4 +1,5 @@
-# Script for shifting the C-domain to be out of the average rigid body position.
+# Module docstring.
+"""Script for shifting the C-domain to be out of the average rigid body position."""
 
 # Python module imports.
 from numpy import array, dot, float64, zeros

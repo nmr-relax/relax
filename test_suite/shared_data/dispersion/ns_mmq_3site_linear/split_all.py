@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for splitting up the all.res file."""
 
 # Translation table.

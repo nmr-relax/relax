@@ -1,5 +1,7 @@
+# Module docstring.
 """Script of randomising the RDC and PCS data."""
 
+# Python module imports.
 from random import gauss
 
 

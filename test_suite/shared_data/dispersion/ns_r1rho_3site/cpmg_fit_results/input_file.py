@@ -1,5 +1,7 @@
+# Module docstring.
 """Format the input files."""
 
+# Python module imports.
 from re import search
 
 

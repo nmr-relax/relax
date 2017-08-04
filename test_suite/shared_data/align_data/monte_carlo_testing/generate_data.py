@@ -1,4 +1,5 @@
-# relax script for generating synthetic RDC and PCS data for testing Monte Carlo simulations.
+# Module docstring.
+"""relax script for generating synthetic RDC and PCS data for testing Monte Carlo simulations."""
 
 # Python module imports.
 from numpy import dot, float64, transpose, zeros

@@ -1,4 +1,6 @@
+# Module docstring.
 """Script for splitting up the all.res file."""
+
 
 # Open the file and extract the data.
 file = open('all.res')

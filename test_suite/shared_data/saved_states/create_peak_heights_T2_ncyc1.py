@@ -1,5 +1,8 @@
-# relax script for regenerating the 'peak_heights_T2_ncyc1.bz2' saved state.  This is necessary when
-# the saved state becomes incompatible with relax during development.
+#  Module docstring.
+"""relax script for regenerating the 'peak_heights_T2_ncyc1.bz2' saved state.
+
+This is necessary when the saved state becomes incompatible with relax during development.
+"""
 
 # Python module imports.
 from os import sep
