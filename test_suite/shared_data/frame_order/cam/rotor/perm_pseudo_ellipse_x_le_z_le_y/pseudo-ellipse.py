@@ -1,5 +1,8 @@
-# Optimise all 3 pseudo-ellipse permutations for the CaM rotor synthetic frame order data.
-# These 3 solutions should mimic the rotor solution.
+# Module docstring.
+"""Optimise all 3 pseudo-ellipse permutations for the CaM rotor synthetic frame order data.
+
+These 3 solutions should mimic the rotor solution.
+"""
 
 # Python module imports.
 from numpy import array, cross, float64, transpose, zeros

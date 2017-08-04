@@ -1,5 +1,8 @@
-# Optimise all 3 iso cone permutations for the CaM rotor synthetic frame order data.
-# These 3 solutions should mimic the rotor solution.
+# Module docstring.
+"""Optimise all 3 iso cone permutations for the CaM rotor synthetic frame order data.
+
+These 3 solutions should mimic the rotor solution.
+"""
 
 # Python module imports.
 from numpy import float64, zeros

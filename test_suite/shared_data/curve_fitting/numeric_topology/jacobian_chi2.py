@@ -1,4 +1,5 @@
-# Script for numerically calculating the exponential curve gradient.
+# Module docstring.
+"""Script for numerically calculating the exponential curve gradient."""
 
 # Python module imports.
 from math import exp

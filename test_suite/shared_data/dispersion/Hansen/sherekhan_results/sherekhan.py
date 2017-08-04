@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for calculating R2eff values, generating input files for CPMGFit, and executing CPMGFit.
 
 To run:

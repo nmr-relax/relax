@@ -1,4 +1,5 @@
-#! Create a PDB file with a symmetric 'molecule' with CoM at [1, 1, 1].
+# Module docstring.
+"""Create a PDB file with a symmetric 'molecule' with CoM at [1, 1, 1]."""
 
 # Python module imports.
 from numpy import array, float64, ones, zeros

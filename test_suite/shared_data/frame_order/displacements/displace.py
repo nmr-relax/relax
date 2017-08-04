@@ -1,4 +1,5 @@
-# Rotate and translate the pseudo-molecule.
+# Module docstring.
+"""Rotate and translate the pseudo-molecule."""
 
 # Python module imports.
 from numpy import array, float64, transpose, zeros

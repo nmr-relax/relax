@@ -1,5 +1,7 @@
-# Script for creating an animation of the model and results.
+# Module docstring.
+"""Script for creating an animation of the model and results."""
 
+# Python module imports.
 from time import sleep
 
 

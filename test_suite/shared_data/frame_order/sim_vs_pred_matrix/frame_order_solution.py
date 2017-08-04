@@ -1,4 +1,5 @@
-# relax script!
+# Module docstring.
+"""relax script!"""
 
 # Python module imports.
 from math import pi

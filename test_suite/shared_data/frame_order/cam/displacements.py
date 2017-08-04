@@ -1,4 +1,6 @@
+# Module docstring.
 """Script to determine the displacements of 1J7P_1st_NH_rot_trans to the original structure."""
+
 
 # Create a data pipe.
 pipe.create('displacements', 'N-state')

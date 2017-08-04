@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for CPMG relaxation dispersion curve fitting to the 'MMQ CR72' model using Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o.
 
 This is to test the nesting of the 'CR72' and 'MMQ CR72' models.  The 'MMQ CR72' results should be identical to the 'CR72' results but with dwH = 0.
@@ -6,7 +7,6 @@ To run:
 
 $ ../../../../../relax --tee analysis_mq_cr72.log analysis_mq_cr72.py
 """
-
 
 # Python module imports.
 from os import sep

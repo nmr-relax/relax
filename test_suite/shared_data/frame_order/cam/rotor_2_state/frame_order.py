@@ -1,4 +1,5 @@
-# Script for optimising the rotor frame order test model applied to a 2-state system of CaM.
+# Module docstring.
+"""Script for optimising the rotor frame order test model applied to a 2-state system of CaM."""
 
 # Python module imports.
 from numpy import array, cross, float64, zeros

@@ -1,4 +1,5 @@
-# Script for generating the double rotor geometric system.
+# Module docstring.
+"""Script for generating the double rotor geometric system."""
 
 # Python module imports.
 from numpy import array, cross, float64, radians

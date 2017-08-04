@@ -1,4 +1,5 @@
-# Script for generating a save file of the R2eff fitted model.
+# Module docstring.
+"""Script for generating a save file of the R2eff fitted model."""
 
 # Python module imports.
 from os import sep
