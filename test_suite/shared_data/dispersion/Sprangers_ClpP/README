@@ -1,3 +1,6 @@
+Description
+===========
+
 The .out file have the intensities from the spectra. The columns are as follows:
 
 peak_number chemical_shift_proton chemical_shift_carbon int_reference int_ncyc=12,1,10,2,8,3,6,4,5,1,2,3

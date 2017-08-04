@@ -16,7 +16,6 @@ And tex as:
     tex = "%.3e" % (Tau / 1000)
 
 
-
 'Full_CPMG' or 'CR72' model parameter conversions.
 ==================================================
 
@@ -31,7 +30,6 @@ To obtain dw:
 And kex:
 
     kex = kex * 1000
-
 
 
 'Ishima' or 'IT99' model parameter conversions.
