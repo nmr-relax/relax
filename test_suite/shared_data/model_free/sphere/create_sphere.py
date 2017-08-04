@@ -1,5 +1,5 @@
-# relax script for creating the spherical PDB file.
-# Copyright 2004-2014, Edward d'Auvergne
+# Module docstring.
+"""relax script for creating the spherical PDB file."""
 
 # Python module imports.
 from math import acos, cos, pi, sin, sqrt

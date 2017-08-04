@@ -1,3 +1,4 @@
+# Module docstring.
 """Create a relax state file for the 1H and 15N SQ data.
 
 To run this, type:

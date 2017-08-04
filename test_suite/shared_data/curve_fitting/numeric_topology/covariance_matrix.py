@@ -1,5 +1,8 @@
-# Script for numerically calculating the exponential curve covariance matrix via the Jacobian.
-# The equation used is:  covar = inv(J^T.W.J)
+# Module docstring.
+"""Script for numerically calculating the exponential curve covariance matrix via the Jacobian.
+
+The equation used is:  covar = inv(J^T.W.J)
+"""
 
 # Python module imports.
 from math import exp, sqrt

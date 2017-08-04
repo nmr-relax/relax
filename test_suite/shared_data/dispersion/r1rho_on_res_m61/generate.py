@@ -1,3 +1,4 @@
+# Module docstring.
 """Simulate relaxation curves for an on resonance R1rho-type experiment using the M61 model.
 
 This is the Meiboom 1961 model for 2-site fast exchange.  The equation is:

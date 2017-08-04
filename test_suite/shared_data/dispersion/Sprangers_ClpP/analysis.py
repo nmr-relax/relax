@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for optimising the 'NS MMQ 2-site' model.
 
 This performs the analysis of:
