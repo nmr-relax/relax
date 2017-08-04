@@ -1,3 +1,4 @@
+# Module docstring.
 """Simulate relaxation curves for the 'LM63 3-site' CPMG dispersion model.
 
 This is the Luz and Meiboom 1963 model for fast 3-site exchange.  The equation is:

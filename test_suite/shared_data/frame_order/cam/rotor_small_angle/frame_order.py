@@ -1,4 +1,5 @@
-# Script for optimising the small angle (1 degree) rotor frame order test model of CaM.
+# Module docstring.
+"""Script for optimising the small angle (1 degree) rotor frame order test model of CaM."""
 
 # Python module imports.
 from numpy import array, cross, float64, zeros

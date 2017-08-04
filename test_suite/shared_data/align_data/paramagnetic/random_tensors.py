@@ -1,6 +1,7 @@
 # Python module imports.
 from random import uniform
 
+
 # Create a data pipe.
 pipe.create('random tensors', 'N-state')
 

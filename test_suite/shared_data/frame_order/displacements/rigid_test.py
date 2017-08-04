@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Script for testing translation and rotation in the frame order analyses.
 
 This script should be run from the directory where it is found with the commands:

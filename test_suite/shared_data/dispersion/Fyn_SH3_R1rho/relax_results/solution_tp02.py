@@ -1,3 +1,4 @@
+# Module docstring.
 """Compare the synthetic cpmg_fit data to the relax solution.
 
 To run this, type:

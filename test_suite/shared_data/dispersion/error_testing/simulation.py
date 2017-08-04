@@ -1,5 +1,5 @@
-# Optimise the R1rho on-resonance synthetic data using the M61 model.
-
+# Module docstring.
+"""Optimise the R1rho on-resonance synthetic data using the M61 model."""
 
 # Python module imports.
 from math import sqrt

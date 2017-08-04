@@ -1,3 +1,4 @@
+# Module docstring.
 """Optimise the SQ data in relax.
 
 To run this, type:

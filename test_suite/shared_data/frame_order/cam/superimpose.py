@@ -1,4 +1,6 @@
-# Script for superimposing the C-domain structures to convert the pivoted rotation to a translation + CoM rotation.
+# Module docstring.
+"""Script for superimposing the C-domain structures to convert the pivoted rotation to a translation + CoM rotation."""
+
 
 # Create a data pipe.
 pipe.create('superimpose', 'N-state')

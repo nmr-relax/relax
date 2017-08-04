@@ -1,4 +1,5 @@
-# Python script for truncating the peak intensity files to a couple of residues.
+# Module docstring.
+"""Python script for truncating the peak intensity files to a couple of residues."""
 
 # Python module imports.
 from os import listdir, sep
