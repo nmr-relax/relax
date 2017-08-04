@@ -1,5 +1,8 @@
-# Calculate the R and I0 errors via bootstrapping.
-# As this is an exact solution, bootstrapping is identical to Monte Carlo simulations.
+# Module docstring.
+"""Calculate the R and I0 errors via bootstrapping.
+
+As this is an exact solution, bootstrapping is identical to Monte Carlo simulations.
+"""
 
 # Python module imports.
 from minfx.generic import generic_minimise

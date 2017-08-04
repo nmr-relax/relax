@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for generating a NESSY save file from within relax.
 
 To run:
