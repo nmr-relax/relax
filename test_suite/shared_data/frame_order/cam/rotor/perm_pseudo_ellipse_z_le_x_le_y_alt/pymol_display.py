@@ -1,4 +1,5 @@
-# relax script for displaying the frame order results of this 'pseudo-ellipse' model in PyMOL.
+# Module docstring.
+"""relax script for displaying the frame order results of this 'pseudo-ellipse' model in PyMOL."""
 
 # PyMOL visualisation.
 pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true', dir='..')

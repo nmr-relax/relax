@@ -1,4 +1,5 @@
-# Create a PDB representation for the real pivot point used to generate the data.
+# Module docstring.
+"""Create a PDB representation for the real pivot point used to generate the data."""
 
 # relax module imports.
 from lib.io import open_write_file

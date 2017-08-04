@@ -1,4 +1,5 @@
-# Script for creating an animation of the model and results.
+# Module docstring.
+"""Script for creating an animation of the model and results."""
 
 
 # Load the frame order results.

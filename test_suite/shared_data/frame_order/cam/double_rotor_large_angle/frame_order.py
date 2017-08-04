@@ -1,4 +1,5 @@
-# Script for optimising the pseudo-ellipse frame order test model of CaM.
+# Module docstring.
+"""Script for optimising the pseudo-ellipse frame order test model of CaM."""
 
 # Python module imports.
 from numpy import array, float64, transpose

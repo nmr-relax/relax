@@ -1,4 +1,5 @@
-# Check the R2eff and I0 errors using the covariance technique.
+# Module docstring.
+"""Check the R2eff and I0 errors using the covariance technique."""
 
 # Python module imports.
 from os import chdir, getcwd, pardir

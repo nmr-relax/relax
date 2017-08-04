@@ -1,4 +1,5 @@
-# Script for optimising the rotor frame order test model of CaM.
+# Module docstring.
+"""Script for optimising the rotor frame order test model of CaM."""
 
 
 # The real parameter values.

@@ -1,4 +1,5 @@
-# Script for generating the distribution of PDB structures.
+# Module docstring.
+"""Script for generating the distribution of PDB structures."""
 
 # Modify the system path to load the base module.
 import sys

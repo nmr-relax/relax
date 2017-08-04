@@ -1,5 +1,8 @@
-# relax script for regenerating the 'basic_single_pipe.bz2' saved state.  This is for when the saved
-# state becomes incompatible with relax.
+# Module docstring.
+"""relax script for regenerating the 'basic_single_pipe.bz2' saved state.
+
+This is for when the saved state becomes incompatible with relax.
+"""
 
 # The relax data store.
 from data_store import Relax_data_store; ds = Relax_data_store()

@@ -1,4 +1,5 @@
-# Script for calculating the frame order matrix from the rotation matrices.
+# Module docstring.
+"""Script for calculating the frame order matrix from the rotation matrices."""
 
 # Python module imports.
 from numpy import float64, zeros
