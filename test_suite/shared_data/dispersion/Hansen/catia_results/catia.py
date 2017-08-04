@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for generating input files for CATIA and running CATIA.
 
 To run:

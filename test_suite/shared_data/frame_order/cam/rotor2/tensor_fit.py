@@ -1,4 +1,5 @@
-# Script for calculating the RDC alignment tensors for the test model.
+# Module docstring.
+"""Script for calculating the RDC alignment tensors for the test model."""
 
 
 # The tensor file for reading into relax.

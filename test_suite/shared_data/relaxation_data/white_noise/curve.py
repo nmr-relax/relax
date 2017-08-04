@@ -1,5 +1,7 @@
-# Generate an exponential curve.
+# Module docstring.
+"""Generate an exponential curve."""
 
+# Python module imports.
 from math import exp
 
 

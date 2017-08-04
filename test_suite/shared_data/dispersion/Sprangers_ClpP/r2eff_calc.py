@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for optimising the 'R2eff' model.
 
 This uses the data from:

@@ -1,3 +1,4 @@
+# Module docstring.
 """Taken from the relax disp manual, section 10.6.1 Dispersion script mode - the sample script.
 
 To run the script, simply type:

@@ -1,5 +1,7 @@
+# Python module imports.
 from math import pi
 from lib.physical_constants import return_gyromagnetic_ratio
+
 
 H_frq = 900.21422558574e6
 print("The magnetic field strength as the proton frequency in MegaHertz: %3.2f" % (H_frq / 1.E6) )

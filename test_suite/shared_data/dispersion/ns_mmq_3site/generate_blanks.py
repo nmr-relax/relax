@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for generating blank input data for cpmg_fit."""
 
 # Python module imports.

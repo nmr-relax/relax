@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Script for black-box Frame Order analysis.
 
 This script should be run from the directory where it is found with the commands:

@@ -1,4 +1,5 @@
-# Generate some synthetic RDC and PCS data.
+# Module docstring.
+"""Generate some synthetic RDC and PCS data."""
 
 # Python module imports.
 from numpy import array, float64

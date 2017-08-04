@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for optimising the 'MMQ CR72' model.
 
 This performs the analysis of:
