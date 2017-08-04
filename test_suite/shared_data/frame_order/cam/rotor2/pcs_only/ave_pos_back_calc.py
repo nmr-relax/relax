@@ -1,4 +1,5 @@
-# Script for calculation RDCs and PCSs for the rigid frame order model.
+# Module docstring.
+"""Script for calculation RDCs and PCSs for the rigid frame order model."""
 
 # relax module imports.
 from pipe_control.mol_res_spin import spin_loop

@@ -1,4 +1,5 @@
-# Script for CPMG relaxation dispersion curve fitting using Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o.
+# Module docstring.
+"""Script for CPMG relaxation dispersion curve fitting using Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o."""
 
 # Python module imports.
 from os import sep

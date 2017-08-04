@@ -19,11 +19,11 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 """Script for performing a full relaxation dispersion analysis using off-resonance R1rho-type data.
 
 This is here to test the ./sample_scripts/relax_disp/R1rho_analysis.py sample script.  The differences between the two files should be minimal.
 """
-
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp

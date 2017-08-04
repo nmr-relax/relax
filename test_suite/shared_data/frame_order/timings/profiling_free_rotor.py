@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for profiling the pseudo-ellipse model.
 
 The user functions below were obtained by running:

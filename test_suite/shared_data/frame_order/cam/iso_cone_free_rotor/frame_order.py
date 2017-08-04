@@ -1,4 +1,5 @@
-# Script for optimising the isotropic cone free rotor frame order test model of CaM.
+# Module docstring.
+"""Script for optimising the isotropic cone free rotor frame order test model of CaM."""
 
 # Python module imports.
 from numpy import array

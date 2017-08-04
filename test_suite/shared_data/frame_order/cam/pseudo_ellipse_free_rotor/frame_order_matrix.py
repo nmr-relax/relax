@@ -1,5 +1,7 @@
+# Python module imports.
 from numpy import array, float64, zeros
 
+# relax module imports.
 from lib.frame_order.format import print_frame_order_2nd_degree
 from lib.linear_algebra.kronecker_product import kron_prod
 

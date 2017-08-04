@@ -1,3 +1,4 @@
+# Module docstring.
 """Simulation of white noise through an exponential.
 
 To run the script, type:

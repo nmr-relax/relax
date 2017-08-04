@@ -1,3 +1,4 @@
+# Module docstring.
 """Format the input files."""
 
 from re import search

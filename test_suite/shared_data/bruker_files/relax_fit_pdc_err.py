@@ -1,4 +1,5 @@
-# Script for relaxation curve fitting.
+# Module docstring.
+"""Script for relaxation curve fitting."""
 
 # relax module imports.
 from pipe_control.mol_res_spin import return_spin

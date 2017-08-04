@@ -1,3 +1,4 @@
+# Module docstring.
 """Script for testing out the multi-processor optimisation efficiency.
 
 This script should be run from the directory where it is found with the commands:

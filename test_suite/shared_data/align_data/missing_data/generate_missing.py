@@ -1,5 +1,8 @@
-# relax script for generating a RDC and PCS test model with missing data.
-# Note:  relax is only used to read the PDB info!
+# Module docstring.
+"""relax script for generating a RDC and PCS test model with missing data.
+
+Note:  relax is only used to read the PDB info!
+"""
 
 # Python module imports.
 from numpy import array, dot, float64, zeros
