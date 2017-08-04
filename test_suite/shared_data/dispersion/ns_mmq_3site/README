@@ -1,3 +1,6 @@
+Description
+===========
+
 The data in this directory has been generated using Dmitry Korzhnev's cpmg_fit program.
 
 First, generate the blank cpmg_fit input data with:
