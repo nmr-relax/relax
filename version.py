@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014,2017 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,7 +35,8 @@ from status import Status; status = Status()
 
 
 version = "repository checkout"
-repo_revision = None
+repo_head = None
+repo_type = None
 repo_url = None
 
 
@@ -43,11 +44,12 @@ def repo_information():
     """Determine the subversion revision number and URL from svn or git-svn copies of the repository."""
 
     # The global variables
-    global repo_revision
+    global repo_head
+    global repo_type
     global repo_url
 
     # The variables are already set, so do nothing.
-    if repo_revision != None or repo_url != None:
+    if repo_head != None or repo_type != None or repo_url != None:
         return
 
     # Python 2.3 and earlier.
@@ -56,10 +58,15 @@ def repo_information():
 
     # The command to use.
     cmd = None
-    if access(status.install_path+sep+'.svn', F_OK):
-        cmd = 'svn info %s' % status.install_path
-    elif access(status.install_path+sep+'.git', F_OK):
+    if access(status.install_path+sep+'.git'+sep+'svn'+sep+'refs', F_OK):
         cmd = 'cd %s; git svn info' % status.install_path
+        repo_type = 'git-svn'
+    elif access(status.install_path+sep+'.git', F_OK):
+        cmd = 'cd %s; git rev-parse HEAD; git remote -v' % status.install_path
+        repo_type = 'git'
+    elif access(status.install_path+sep+'.svn', F_OK):
+        cmd = 'svn info %s' % status.install_path
+        repo_type = 'svn'
 
     # Not a repository copy, so do nothing.
     if not cmd:
@@ -69,21 +76,39 @@ def repo_information():
     pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
     # Loop over the output lines.
-    for line in pipe.stdout.readlines():
+    lines = pipe.stdout.readlines()
+    for i in range(len(lines)):
         # Decode Python 3 byte arrays.
-        if hasattr(line, 'decode'):
-            line = line.decode()
+        if hasattr(lines[i], 'decode'):
+            lines[i] = lines[i].decode()
 
-        # Split up the line.
-        row = line.split()
+        # Git info.
+        if repo_type == 'git':
+            # Git hash.
+            if i == 0:
+                repo_head = lines[i].strip()
+                continue
 
-        # Store revision as the global variable.
-        if len(row) and row[0] == 'Revision:':
-            repo_revision = str(row[1])
+            # Remote URL.
+            if repo_url:
+                repo_url += '\n'
+            else:
+                repo_url = ''
+            remote_info = lines[i].split()
+            repo_url += "%s %s" % (remote_info[1], remote_info[2])
 
-        # Store URL as the global variable.
-        if len(row) and row[0] == 'URL:':
-            repo_url = str(row[1])
+        # SVN and git-svn.
+        else:
+            # Split up the line.
+            row = lines[i].split()
+
+            # Store revision as the global variable.
+            if len(row) and row[0] == 'Revision:':
+                repo_head = str(row[1])
+
+            # Store URL as the global variable.
+            if len(row) and row[0] == 'URL:':
+                repo_url = str(row[1])
 
 
 def version_full():
@@ -99,14 +124,18 @@ def version_full():
     # Repository version.
     if ver == 'repository checkout':
         # The global variables
-        global repo_revision
+        global repo_head
+        global repo_type
         global repo_url
 
         # Change the version string.
-        if repo_revision != None:
-            ver = version + " r" + repo_revision
+        if repo_head != None:
+            if repo_type == 'git':
+                ver = version + " " + repo_head
+            else:
+                ver = version + " r" + repo_head
         if repo_url != None:
-            ver = ver + " " + repo_url
+            ver += " " + repo_url.replace('\n', '; ')
 
     # Return the version.
     return ver

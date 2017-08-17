@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2016 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2017 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -47,7 +47,7 @@ from textwrap import wrap
 
 # relax module imports.
 from status import Status; status = Status()
-from version import repo_revision, repo_url, version, version_full
+from version import repo_head, repo_type, repo_url, version, version_full
 
 
 def print_sys_info():
@@ -289,9 +289,17 @@ class Info_box(object):
 
         # Program name and version - subversion code.
         if version == 'repository checkout':
-            text = "%s %s r%s" % (self.title, self.version, repo_revision)
-            text2 = "%s" % (repo_url)
-            intro_string = intro_string + self.centre(text, status.text_width) + '\n' + self.centre(text2, status.text_width) + '\n\n'
+            if repo_type == 'git':
+                text = "%s %s" % (self.title, self.version)
+                text2 = "%s" % repo_head
+            else:
+                text = "%s %s r%s" % (self.title, self.version, repo_head)
+                text2 = "%s" % repo_url
+            intro_string += self.centre(text, status.text_width) + '\n' + self.centre(text2, status.text_width) + '\n'
+            if repo_type == 'git':
+                for url in repo_url.split('\n'):
+                    intro_string += self.centre(url, status.text_width) + '\n'
+            intro_string += '\n'
 
         # Program name and version - official releases.
         else:

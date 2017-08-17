@@ -33,6 +33,7 @@ set_printoptions(precision=15, threshold=nan)
 # relax module imports.
 import lib.arg_check
 import lib.check_types
+from lib.compat import unicode
 from lib.float import floatAsByteArray, packBytesAsPyFloat
 from lib.errors import RelaxError
 
@@ -110,7 +111,7 @@ def object_to_xml(doc, elem, value=None):
         py_type = 'None'
     elif isinstance(value, bool):
         py_type = 'bool'
-    elif isinstance(value, str):
+    elif isinstance(value, str) or isinstance(value, unicode):
         py_type = 'str'
     elif isinstance(value, float):
         py_type = 'float'
@@ -123,7 +124,7 @@ def object_to_xml(doc, elem, value=None):
     elif isinstance(value, ndarray):
         py_type = repr(value.dtype)
     else:
-        raise RelaxError("Unknown type for the value '%s'."  % value)
+        raise RelaxError("Unknown type for the value %s."  % repr(value))
 
     # Store as an attribute.
     elem.setAttribute('type', py_type)
