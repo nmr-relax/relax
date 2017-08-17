@@ -79,6 +79,7 @@ class Relax_disp(SystemTestCase):
             to_skip = [
                 "test_bug_atul_srivastava",
                 "test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp",
+                "test_bug_24601_r2eff_missing_data",
                 "test_bug_9999_slow_r1rho_r2eff_error_with_mc",
                 "test_estimate_r2eff_err",
                 "test_estimate_r2eff_err_auto",
