@@ -26,7 +26,6 @@
 import inspect
 import sys
 import wx
-from types import ListType
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
