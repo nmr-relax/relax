@@ -140,6 +140,10 @@ REPOS = [
     [".", "git", 2017, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
 ]
 
+# README file creation variables, for appending copyright notices to README files.
+README_APPEND_NOTICE = False
+README_COMMITTER = "Edward d'Auvergne"
+
 # The committer name translation table.
 COMMITTERS = {
     "Michael Bieri": "Michael Bieri",
@@ -2427,6 +2431,79 @@ def git_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
             committer_info[committer].append(year)
 
 
+def readme_add_notice(file_name=None, file=None, notices=[]):
+    """Add all copyright notices to the README file.
+
+    @param file_name:   The isolated file name to add a copyright notice for.
+    @type file_name:    str
+    @keyword file:      The full README file path.
+    @type file:         str
+    @keyword notices:   The list of current copyright notices.
+    @type notices:      list of str
+    """
+
+    # Append to the file.
+    readme = open(file, 'a')
+
+    # Loop over the notices.
+    for notice in notices:
+        readme.write("%-87s %s\n" % (("%s:" % file_name), notice))
+
+
+def readme_setup(file=None):
+    """Prepare the README file for appending copyright notices.
+
+    @keyword file:  The full README file path.
+    @type file:     str
+    """
+
+    # Create a new file.
+    if not path.exists(file):
+        # Open the file.
+        readme = open(file, 'w')
+
+        # Add a copyright notice.
+        now = datetime.now()
+        readme.write("###############################################################################\n")
+        readme.write("#                                                                             #\n")
+        readme.write("# Copyright (C) %i %-56s #\n" % (now.year, README_COMMITTER))
+        readme.write("#                                                                             #\n")
+        readme.write("# This file is part of the program relax (http://www.nmr-relax.com).          #\n")
+        readme.write("#                                                                             #\n")
+        readme.write("# This program is free software: you can redistribute it and/or modify        #\n")
+        readme.write("# it under the terms of the GNU General Public License as published by        #\n")
+        readme.write("# the Free Software Foundation, either version 3 of the License, or           #\n")
+        readme.write("# (at your option) any later version.                                         #\n")
+        readme.write("#                                                                             #\n")
+        readme.write("# This program is distributed in the hope that it will be useful,             #\n")
+        readme.write("# but WITHOUT ANY WARRANTY; without even the implied warranty of              #\n")
+        readme.write("# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #\n")
+        readme.write("# GNU General Public License for more details.                                #\n")
+        readme.write("#                                                                             #\n")
+        readme.write("# You should have received a copy of the GNU General Public License           #\n")
+        readme.write("# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #\n")
+        readme.write("#                                                                             #\n")
+        readme.write("###############################################################################\n\n\n")
+
+        # Close the file.
+        readme.close()
+
+    # Add the licencing section.
+    readme = open(file)
+    lines = readme.readlines()
+    section = False
+    for line in lines:
+        if line == "Licensing\n":
+            section = True
+            break
+    if not section:
+        readme = open(file, 'a')
+        readme.write("Licensing\n")
+        readme.write("=========\n\n")
+        readme.write("These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:\n\n")
+        readme.close()
+
+
 def svn_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], svn_head=None, committer_info={}, after=None, before=None, init=False):
     """Get the committers and years of significant commits from the svn log.
 
@@ -2867,6 +2944,21 @@ if __name__ == '__main__':
             if validate_copyright(expected_copyright, recorded_copyright):
                 files_valid += 1
                 continue
+
+            # README file copyright notice addition.
+            if README_APPEND_NOTICE:
+                # Prepare the README file, if necessary.
+                readme = root + sep + 'README'
+                readme_setup(file=readme)
+
+                # Add the copyright.
+                readme_add_notice(file_name=file_name, file=readme, notices=expected_copyright)
+
+                # Skip the failure printout.
+                files_valid += 1
+                continue
+
+            # A non-valid file.
             files_nonvalid += 1
 
             # Failure printout.
