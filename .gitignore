@@ -1,2 +1,13 @@
-.sconsign.dblite
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+
+# C extensions
+target_functions/c_chi2.os
+target_functions/exponential.os
+target_functions/exponential_inv.os
+target_functions/exponential_sat.os
+target_functions/relax_fit.os
 target_functions/relax_fit.so
+
+# Scons
+.sconsign.dblite
