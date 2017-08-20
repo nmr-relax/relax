@@ -51,6 +51,10 @@ def version_comparison(version1, version2):
     @rtype:             int
     """
 
+    # Strip out trailing after release candidate.
+    version1 = sub(r'(rc\d)', '', version1)
+    version2 = sub(r'(rc\d)', '', version2)
+
     # Strip out trailing zeros.
     version1 = sub(r'(\.0+)*$', '', version1)
     version2 = sub(r'(\.0+)*$', '', version2)
@@ -219,7 +223,7 @@ except ImportError:
 
 3. Choose another multi processor method to give to the --multi command line flag.\n
     """
- 
+
 # PyMOL.
 try:
     import pymol
