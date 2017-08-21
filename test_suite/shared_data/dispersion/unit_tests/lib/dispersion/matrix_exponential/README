@@ -1,0 +1,54 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_M0.npy:                                       Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_back_calc.npy:                                Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_dw.npy:                                       Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_dw_orig.npy:                                  Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_inv_tcpmg.npy:                                Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_kex.npy:                                      Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_num_points.npy:                               Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_pA.npy:                                       Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_power.npy:                                    Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_r10a.npy:                                     Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_r10b.npy:                                     Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_r180x.npy:                                    Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_r20a.npy:                                     Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_r20b.npy:                                     Copyright (C) 2014 Troels E. Linnet
+test_hansen_cpmg_data_to_ns_cpmg_2site_3D_tcp.npy:                                      Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_M0.npy:                                                  Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_back_calc.npy:                                           Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_dw.npy:                                                  Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_dwH.npy:                                                 Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_inv_tcpmg.npy:                                           Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_kex.npy:                                                 Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_num_points.npy:                                          Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_pA.npy:                                                  Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_power.npy:                                               Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_r20a.npy:                                                Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_r20b.npy:                                                Copyright (C) 2014 Troels E. Linnet
+test_korzhnev_2005_15n_dq_data_tcp.npy:                                                 Copyright (C) 2014 Troels E. Linnet

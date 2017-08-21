@@ -1,3 +1,25 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2011-2012,2014 Edward d'Auvergne                              #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
 align_tensor.init(tensor='Dy C-dom', params=(0.000419369045648, 0.000253834230138, -8.46818773038e-05, -0.000458122652273, 0.000803514091409), param_types=2)
 align_tensor.init(tensor='Dy C-dom', params=(8.02163731993e-06, 8.74025185771e-06, 8.33967253891e-06, 7.15772131787e-06, 9.24475582412e-06), param_types=2, errors=True)
 align_tensor.init(tensor='Tb C-dom', params=(-0.000103991600711, 0.000326134020807, -4.34384754903e-06, -0.000605265078125, 0.000764160155521), param_types=2)

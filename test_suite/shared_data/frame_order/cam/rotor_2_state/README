@@ -1,0 +1,59 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+ave_pos.pdb.gz:                                                                         Copyright (C) 2014 Edward d'Auvergne
+ave_pos_fixed_piv.pdb.gz:                                                               Copyright (C) 2014 Edward d'Auvergne
+ave_pos_sim.pdb.gz:                                                                     Copyright (C) 2014 Edward d'Auvergne
+ave_pos_true.pdb.gz:                                                                    Copyright (C) 2014 Edward d'Auvergne
+axis.pdb:                                                                               Copyright (C) 2011-2012 Edward d'Auvergne
+axis_system:                                                                            Copyright (C) 2012 Edward d'Auvergne
+clean:                                                                                  Copyright (C) 2012 Edward d'Auvergne
+cone.pdb:                                                                               Copyright (C) 2011-2012 Edward d'Auvergne
+distribution.pdb.gz:                                                                    Copyright (C) 2011-2012 Edward d'Auvergne
+frame_order.bz2:                                                                        Copyright (C) 2011-2012,2014 Edward d'Auvergne
+frame_order.log.bz2:                                                                    Copyright (C) 2011-2012,2014 Edward d'Auvergne
+frame_order.pdb.gz:                                                                     Copyright (C) 2014 Edward d'Auvergne
+frame_order_fixed_piv.bz2:                                                              Copyright (C) 2014 Edward d'Auvergne
+frame_order_fixed_piv.pdb.gz:                                                           Copyright (C) 2014 Edward d'Auvergne
+frame_order_matrix:                                                                     Copyright (C) 2012 Edward d'Auvergne
+frame_order_sim.pdb.gz:                                                                 Copyright (C) 2014 Edward d'Auvergne
+frame_order_true.bz2:                                                                   Copyright (C) 2014 Edward d'Auvergne
+frame_order_true.pdb.gz:                                                                Copyright (C) 2014 Edward d'Auvergne
+generate_distribution.log.bz2:                                                          Copyright (C) 2012 Edward d'Auvergne
+pcs_dy.txt:                                                                             Copyright (C) 2011-2012 Edward d'Auvergne
+pcs_dy_subset.txt:                                                                      Copyright (C) 2012 Edward d'Auvergne
+pcs_er.txt:                                                                             Copyright (C) 2011-2012 Edward d'Auvergne
+pcs_er_subset.txt:                                                                      Copyright (C) 2012 Edward d'Auvergne
+pcs_tb.txt:                                                                             Copyright (C) 2011-2012 Edward d'Auvergne
+pcs_tb_subset.txt:                                                                      Copyright (C) 2012 Edward d'Auvergne
+pcs_tm.txt:                                                                             Copyright (C) 2011-2012 Edward d'Auvergne
+pcs_tm_subset.txt:                                                                      Copyright (C) 2012 Edward d'Auvergne
+rdc_dy.txt:                                                                             Copyright (C) 2011-2012 Edward d'Auvergne
+rdc_er.txt:                                                                             Copyright (C) 2011-2012 Edward d'Auvergne
+rdc_tb.txt:                                                                             Copyright (C) 2011-2012 Edward d'Auvergne
+rdc_tm.txt:                                                                             Copyright (C) 2011-2012 Edward d'Auvergne
+tensor_fit.log.bz2:                                                                     Copyright (C) 2011-2012 Edward d'Auvergne

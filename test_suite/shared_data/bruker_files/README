@@ -1,0 +1,41 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+T1_demo_1UBQ_H_trunc.txt:                                                               Copyright (C) 2012 Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)
+bug_22411_T1.txt:                                                                       Copyright (C) 2014 Olena Dobrovolska (olena.dobrovolska@unibo.it)
+bug_22411_T1_sequence:                                                                  Copyright (C) 2014 Olena Dobrovolska (olena.dobrovolska@unibo.it)
+errors_R1.txt:                                                                          Copyright (C) 2011 Edward d'Auvergne
+heights_R1.txt:                                                                         Copyright (C) 2011 Edward d'Auvergne
+r1:                                                                                     Copyright (C) 2011 Edward d'Auvergne
+r1_pdc_err:                                                                             Copyright (C) 2011 Edward d'Auvergne
+seq:                                                                                    Copyright (C) 2011 Edward d'Auvergne
+testNOE.txt:                                                                            Copyright (C) 2010 Michael Bieri
+testNOE.txt:                                                                            Copyright (C) 2011 Edward d'Auvergne
+testT1.txt:                                                                             Copyright (C) 2010 Michael Bieri
+testT1.txt:                                                                             Copyright (C) 2011 Edward d'Auvergne
+testT2.txt:                                                                             Copyright (C) 2010 Michael Bieri
+testT2.txt:                                                                             Copyright (C) 2011 Edward d'Auvergne

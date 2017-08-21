@@ -1,3 +1,53 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2013,2017 Edward d'Auvergne                                   #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+dq_500.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+dq_600.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+dq_800.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+hm_500.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+hm_600.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+hm_800.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+hs_500.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+hs_600.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+hs_800.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+nm_500.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+nm_600.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+nm_800.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+ns_500.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+ns_600.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+ns_800.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+ts_500.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+ts_600.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+ts_800.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+zq_500.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+zq_600.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+zq_800.res:                                                                             Copyright (C) 2013 Edward d'Auvergne
+
+
 Description
 ===========
 

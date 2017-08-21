@@ -1,0 +1,130 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+R1.out:                                                                                 Copyright (C) 2013 Edward d'Auvergne
+generate.log:                                                                           Copyright (C) 2013 Edward d'Auvergne
+nu_1000_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1000_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1000_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1000_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1000_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1000_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1000_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1000_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1000_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1500_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1500_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1500_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1500_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1500_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1500_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1500_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1500_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_1500_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2000_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2000_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2000_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2000_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2000_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2000_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2000_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2000_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2000_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2500_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2500_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2500_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2500_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2500_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2500_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2500_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2500_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_2500_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3000_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3000_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3000_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3000_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3000_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3000_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3000_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3000_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3000_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3500_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3500_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3500_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3500_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3500_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3500_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3500_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3500_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_3500_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4000_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4000_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4000_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4000_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4000_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4000_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4000_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4000_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4000_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4500_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4500_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4500_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4500_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4500_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4500_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4500_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4500_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_4500_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5000_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5000_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5000_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5000_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5000_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5000_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5000_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5000_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5000_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5500_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5500_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5500_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5500_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5500_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5500_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5500_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5500_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_5500_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_6000_ncyc1.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_6000_ncyc2.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_6000_ncyc3.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_6000_ncyc4.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_6000_ncyc5.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_6000_ncyc6.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_6000_ncyc7.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_6000_ncyc8.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+nu_6000_ncyc9.list:                                                                     Copyright (C) 2013 Edward d'Auvergne
+r2eff_calc.log:                                                                         Copyright (C) 2013 Edward d'Auvergne
+r2eff_values.bz2:                                                                       Copyright (C) 2013 Edward d'Auvergne
