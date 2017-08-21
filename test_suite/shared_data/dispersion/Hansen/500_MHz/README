@@ -1,0 +1,85 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+1000.in:                                                                                Copyright (C) 2009 Sebastien Morin
+1000.in_sparky:                                                                         Copyright (C) 2009 Sebastien Morin
+1000.in_trunc:                                                                          Copyright (C) 2013 Edward d'Auvergne
+133.33.in:                                                                              Copyright (C) 2009 Sebastien Morin
+133.33.in.bis:                                                                          Copyright (C) 2009 Sebastien Morin
+133.33.in.bis_sparky:                                                                   Copyright (C) 2009 Sebastien Morin
+133.33.in.bis_trunc:                                                                    Copyright (C) 2013 Edward d'Auvergne
+133.33.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+133.33.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+200.in:                                                                                 Copyright (C) 2009 Sebastien Morin
+200.in_sparky:                                                                          Copyright (C) 2009 Sebastien Morin
+200.in_trunc:                                                                           Copyright (C) 2013 Edward d'Auvergne
+266.67.in:                                                                              Copyright (C) 2009 Sebastien Morin
+266.67.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+266.67.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+333.33.in:                                                                              Copyright (C) 2009 Sebastien Morin
+333.33.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+333.33.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+400.in:                                                                                 Copyright (C) 2009 Sebastien Morin
+400.in_sparky:                                                                          Copyright (C) 2009 Sebastien Morin
+400.in_trunc:                                                                           Copyright (C) 2013 Edward d'Auvergne
+466.67.in:                                                                              Copyright (C) 2009 Sebastien Morin
+466.67.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+466.67.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+533.33.in:                                                                              Copyright (C) 2009 Sebastien Morin
+533.33.in.bis:                                                                          Copyright (C) 2009 Sebastien Morin
+533.33.in.bis_sparky:                                                                   Copyright (C) 2009 Sebastien Morin
+533.33.in.bis_trunc:                                                                    Copyright (C) 2013 Edward d'Auvergne
+533.33.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+533.33.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+600.in:                                                                                 Copyright (C) 2009 Sebastien Morin
+600.in_sparky:                                                                          Copyright (C) 2009 Sebastien Morin
+600.in_trunc:                                                                           Copyright (C) 2013 Edward d'Auvergne
+66.667.in:                                                                              Copyright (C) 2009 Sebastien Morin
+66.667.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+66.667.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+666.67.in:                                                                              Copyright (C) 2009 Sebastien Morin
+666.67.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+666.67.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+733.33.in:                                                                              Copyright (C) 2009 Sebastien Morin
+733.33.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+733.33.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+800.in:                                                                                 Copyright (C) 2009 Sebastien Morin
+800.in_sparky:                                                                          Copyright (C) 2009 Sebastien Morin
+800.in_trunc:                                                                           Copyright (C) 2013 Edward d'Auvergne
+866.67.in:                                                                              Copyright (C) 2009 Sebastien Morin
+866.67.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+866.67.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+933.33.in:                                                                              Copyright (C) 2009 Sebastien Morin
+933.33.in.bis:                                                                          Copyright (C) 2009 Sebastien Morin
+933.33.in.bis_sparky:                                                                   Copyright (C) 2009 Sebastien Morin
+933.33.in.bis_trunc:                                                                    Copyright (C) 2013 Edward d'Auvergne
+933.33.in_sparky:                                                                       Copyright (C) 2009 Sebastien Morin
+933.33.in_trunc:                                                                        Copyright (C) 2013 Edward d'Auvergne
+reference.in:                                                                           Copyright (C) 2009 Sebastien Morin
+reference.in_sparky:                                                                    Copyright (C) 2009 Sebastien Morin
+reference.in_trunc:                                                                     Copyright (C) 2013 Edward d'Auvergne
+unresolved:                                                                             Copyright (C) 2009 Sebastien Morin

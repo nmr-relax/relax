@@ -1,0 +1,78 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+60_1000_0.024_1.in:                                                                     Copyright (C) 2016 Edward d'Auvergne
+60_1000_0.036_1.in:                                                                     Copyright (C) 2016 Edward d'Auvergne
+60_1000_0_1.in:                                                                         Copyright (C) 2016 Edward d'Auvergne
+60_111.11_0.018_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_111.11_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_111.11_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_166.67_0.024_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_166.67_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_166.67_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_222.22_0.027_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_222.22_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_222.22_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_277.78_0.0216_1.in:                                                                  Copyright (C) 2016 Edward d'Auvergne
+60_277.78_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_277.78_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_333.33_0.024_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_333.33_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_333.33_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_388.89_0.0205714_1.in:                                                               Copyright (C) 2016 Edward d'Auvergne
+60_388.89_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_388.89_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_444.44_0.0225_1.in:                                                                  Copyright (C) 2016 Edward d'Auvergne
+60_444.44_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_444.44_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_500_0.024_1.in:                                                                      Copyright (C) 2016 Edward d'Auvergne
+60_500_0.036_1.in:                                                                      Copyright (C) 2016 Edward d'Auvergne
+60_500_0_1.in:                                                                          Copyright (C) 2016 Edward d'Auvergne
+60_555.56_0.0216_1.in:                                                                  Copyright (C) 2016 Edward d'Auvergne
+60_555.56_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_555.56_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_611.11_0.0229091_1.in:                                                               Copyright (C) 2016 Edward d'Auvergne
+60_611.11_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_611.11_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_666.67_0.024_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_666.67_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_666.67_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_722.22_0.0249231_1.in:                                                               Copyright (C) 2016 Edward d'Auvergne
+60_722.22_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_722.22_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_777.78_0.0231429_1.in:                                                               Copyright (C) 2016 Edward d'Auvergne
+60_777.78_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_777.78_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_833.33_0.024_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_833.33_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_833.33_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_888.89_0.0225_1.in:                                                                  Copyright (C) 2016 Edward d'Auvergne
+60_888.89_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_888.89_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
+60_944.44_0.0232941_1.in:                                                               Copyright (C) 2016 Edward d'Auvergne
+60_944.44_0.036_1.in:                                                                   Copyright (C) 2016 Edward d'Auvergne
+60_944.44_0_1.in:                                                                       Copyright (C) 2016 Edward d'Auvergne
