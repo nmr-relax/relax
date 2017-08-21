@@ -1,0 +1,45 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+PCS_DY_200911.txt:                                                                      Copyright (C) 2014 Edward d'Auvergne
+PCS_DY_200911_subset.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+PCS_ER_200911.txt:                                                                      Copyright (C) 2014 Edward d'Auvergne
+PCS_ER_200911_subset.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+PCS_HO_300412.txt:                                                                      Copyright (C) 2014 Edward d'Auvergne
+PCS_HO_300412_subset.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+PCS_TB_200911.txt:                                                                      Copyright (C) 2014 Edward d'Auvergne
+PCS_TB_200911_subset.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+PCS_TM_200911.txt:                                                                      Copyright (C) 2014 Edward d'Auvergne
+PCS_TM_200911_subset.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+PCS_YB_211111.txt:                                                                      Copyright (C) 2014 Edward d'Auvergne
+PCS_YB_211111_subset.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+RDC_DY_111011_spinID.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+RDC_ER_111011_spinID.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+RDC_HO_300512_spinID.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+RDC_TB_111011_spinID.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+RDC_TM_111011_spinID.txt:                                                               Copyright (C) 2014 Edward d'Auvergne
+RDC_YB_110112_spinID.txt:                                                               Copyright (C) 2014 Edward d'Auvergne

@@ -1,0 +1,97 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+10_2000_46_20_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+11_500_46_0_max_standard.ser:                                                           Copyright (C) 2013 Troels E. Linnet
+12_500_46_10_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+13_500_46_40_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+14_500_46_4_max_standard.ser:                                                           Copyright (C) 2013 Troels E. Linnet
+15_500_46_20_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+16_5000_46_0_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+17_5000_46_10_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+18_5000_46_40_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+19_5000_46_4_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+1_0_46_0_max_standard.ser:                                                              Copyright (C) 2013 Troels E. Linnet
+1_0_46_0_max_standard_trunk.ser:                                                        Copyright (C) 2014 Troels E. Linnet
+20_5000_46_20_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+21_1000_46_0_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+22_1000_46_10_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+23_1000_46_40_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+24_1000_46_4_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+25_1000_46_20_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+26_10000_46_0_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+27_10000_46_10_max_standard.ser:                                                        Copyright (C) 2013 Troels E. Linnet
+28_10000_46_40_max_standard.ser:                                                        Copyright (C) 2013 Troels E. Linnet
+29_10000_46_4_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+2_0_46_10_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+30_10000_46_20_max_standard.ser:                                                        Copyright (C) 2013 Troels E. Linnet
+31_0_43_0_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+32_0_43_10_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+33_0_43_40_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+34_0_43_4_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+35_0_43_20_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+36_0_39_0_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+37_0_39_10_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+38_0_39_40_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+39_0_39_4_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+3_0_46_40_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+40_0_39_20_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+41_0_41_0_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+42_0_41_10_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+43_0_41_40_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+44_0_41_4_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+45_0_41_20_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+46_0_35_0_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+47_0_35_10_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+48_0_35_4_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+49_0_35_20_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+4_0_46_4_max_standard.ser:                                                              Copyright (C) 2013 Troels E. Linnet
+50_1000_41_0_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+51_1000_41_10_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+52_1000_41_40_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+53_1000_41_4_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+54_1000_41_20_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+55_2000_41_0_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+56_2000_41_10_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+57_2000_41_40_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+58_2000_41_4_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+59_2000_41_20_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+5_0_46_20_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+60_0_48_0_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+61_0_48_10_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+62_0_48_14_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+63_0_48_4_max_standard.ser:                                                             Copyright (C) 2013 Troels E. Linnet
+64_0_48_20_max_standard.ser:                                                            Copyright (C) 2013 Troels E. Linnet
+65_1000_48_0_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+66_1000_48_10_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+67_1000_48_14_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+68_1000_48_4_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+69_1000_48_20_max_standard.ser:                                                         Copyright (C) 2013 Troels E. Linnet
+6_2000_46_0_max_standard.ser:                                                           Copyright (C) 2013 Troels E. Linnet
+7_2000_46_10_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+8_2000_46_40_max_standard.ser:                                                          Copyright (C) 2013 Troels E. Linnet
+9_2000_46_4_max_standard.ser:                                                           Copyright (C) 2013 Troels E. Linnet
