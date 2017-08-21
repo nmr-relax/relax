@@ -1,0 +1,161 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+124_0_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+124_10_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+124_11_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+124_12_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+124_13_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+124_14_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+124_15_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+124_16_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+124_17_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+124_18_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+124_1_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+124_2_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+124_3_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+124_4_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+124_5_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+124_6_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+124_7_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+124_8_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+124_9_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_0_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_0_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_10_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_10_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+126_11_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_11_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+126_12_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_12_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+126_13_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_13_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+126_14_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_14_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+126_15_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_15_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+126_16_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_16_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+126_17_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_17_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+126_18_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_18_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+126_1_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_1_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_2_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_2_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_3_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_3_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_4_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_4_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_5_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_5_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_6_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_6_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_7_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_7_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_8_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_8_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+126_9_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+126_9_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_0_FT.ft2:                                                                           Copyright (C) 2014 Troels E. Linnet
+128_0_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_0_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_10_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_10_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+128_11_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_11_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+128_12_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_12_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+128_13_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_13_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+128_14_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_14_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+128_15_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_15_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+128_16_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_16_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+128_17_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_17_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+128_18_FT.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_18_MDD.rmsd:                                                                        Copyright (C) 2014 Troels E. Linnet
+128_1_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_1_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_2_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_2_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_3_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_3_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_4_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_4_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_5_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_5_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_6_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_6_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_7_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_7_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_8_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_8_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+128_9_FT.rmsd:                                                                          Copyright (C) 2014 Troels E. Linnet
+128_9_MDD.rmsd:                                                                         Copyright (C) 2014 Troels E. Linnet
+4_0_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+4_10_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+4_11_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+4_12_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+4_13_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+4_14_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+4_15_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+4_16_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+4_17_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+4_18_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+4_1_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+4_2_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+4_3_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+4_4_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+4_5_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+4_6_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+4_7_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+4_8_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+4_9_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_0_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_10_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+6_11_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+6_12_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+6_13_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+6_14_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+6_15_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+6_16_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+6_17_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+6_18_FT.rmsd:                                                                           Copyright (C) 2014 Troels E. Linnet
+6_1_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_2_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_3_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_4_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_5_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_6_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_7_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_8_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet
+6_9_FT.rmsd:                                                                            Copyright (C) 2014 Troels E. Linnet

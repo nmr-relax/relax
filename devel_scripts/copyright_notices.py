@@ -222,6 +222,24 @@ BLACKLISTED_FILES = [
     'test_suite/system_tests/scripts/nested_scripting/b.py',    # One line script.
     'test_suite/system_tests/scripts/nested_scripting/c.py',    # One line script.
     'test_suite/system_tests/scripts/nested_scripting/d.py',    # One line script.
+    'test_suite/shared_data/frame_order/cam/free_rotor2/full_analysis.py',                  # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/free_rotor/full_analysis.py',                   # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/free_rotor_missing_data/full_analysis.py',      # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/iso_cone_free_rotor2/full_analysis.py',         # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/iso_cone_free_rotor/full_analysis.py',          # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/iso_cone/full_analysis.py',                     # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/iso_cone_torsionless/full_analysis.py',         # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/pseudo_ellipse2/full_analysis.py',              # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/pseudo_ellipse_free_rotor/full_analysis.py',    # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/pseudo_ellipse/full_analysis.py',               # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/pseudo_ellipse_torsionless/full_analysis.py',   # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/rigid/full_analysis.py',                        # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/rotor2/full_analysis.py',                       # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/rotor_2_state/full_analysis.py',                # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/rotor/full_analysis.py',                        # Symbolic link.
+    'test_suite/shared_data/frame_order/cam/rotor_small_angle/full_analysis.py',            # Symbolic link.
+    'test_suite/shared_data/frame_order/simulation/clean',      # One line script.
+    'test_suite/shared_data/model_free/OMP/generate_final_results_trunc.py',    # Trivial script.
 ]
 
 # Directories to skip.
@@ -297,6 +315,16 @@ SVN_START = {
         "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
     "specific_analyses/n_state_model/uf.py":
         "Created the framework for the N-state model specific code. (2007-12-20 15:50:39 +0000)",
+    "test_suite/shared_data/__init__.py":
+        "test_suite.shared_data.diffusion_tensor.generate_data is now a module and used by the ellipsoid. (2010-03-19 13:37:05 +0000)",
+    "test_suite/shared_data/diffusion_tensor/__init__.py":
+        "test_suite.shared_data.diffusion_tensor.generate_data is now a module and used by the ellipsoid. (2010-03-19 13:37:05 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/relax_disp.py":
+        "Added a directory of relax results for the truncated high-precision Hansen CPMG R2eff values. (2013-05-30 10:44:14 +0000)",
+    "test_suite/shared_data/frame_order/__init__.py":
+        "Created the Frame_order.test_generate_rotor2_distribution system test. (2014-01-17 10:51:16 +0000)",
+    "test_suite/shared_data/frame_order/cam/__init__.py":
+        "Created the Frame_order.test_generate_rotor2_distribution system test. (2014-01-17 10:51:16 +0000)",
     "test_suite/system_tests/frame_order.py":
         "Added a system test for the frame order 'rigid' model with no tensor rotations and no motion. (2009-09-01 09:52:51 +0000)",
     "test_suite/system_tests/scripts/bug_19785_relax_data_delete.py":
@@ -679,6 +707,676 @@ GIT_START = {
         "Activated the NOE analysis system test. (2008-10-07 19:37:24 +0000)",
     "test_suite/gui_tests/state.py":
         "Created a GUI test for loading a relax save state file created in a non-GUI mode. (2011-07-20 13:00:05 +0000)",
+    "test_suite/shared_data/__init__.py":
+        "test_suite.shared_data.diffusion_tensor.generate_data is now a module and used by the ellipsoid. (2010-03-19 13:37:05 +0000)",
+    "test_suite/shared_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/CaM/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/CaM_IQ/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/basis_sets/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/menthol/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/metal_pos_opt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/missing_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/monte_carlo_testing/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/paramagnetic/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/population_model/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/align_data/pyrotartaric_anhydride/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/bmrb/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/bruker_files/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/curve_fitting/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/curve_fitting/bug_18789_no_grace_errors/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/curve_fitting/inversion_recovery/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/curve_fitting/numeric_topology/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/curve_fitting/numeric_topology/estimate_errors_peak_lists/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/curve_fitting/profiling/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/curve_fitting/saturation_recovery/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/diffusion_tensor/__init__.py":
+        "test_suite.shared_data.diffusion_tensor.generate_data is now a module and used by the ellipsoid. (2010-03-19 13:37:05 +0000)",
+    "test_suite/shared_data/diffusion_tensor/ellipsoid/ellipsoid.pdb":
+        "Added an optimisation script for the test_suite/shared_data/diffusion_tensor/ellipsoid relaxation data. (2014-08-22 09:55:21 +0000)",
+    "test_suite/shared_data/diffusion_tensor/ellipsoid/oblate.pdb":
+        "Added an optimisation script for the test_suite/shared_data/diffusion_tensor/ellipsoid relaxation data. (2014-08-22 09:55:21 +0000)",
+    "test_suite/shared_data/diffusion_tensor/ellipsoid/prolate.pdb":
+        "Added an optimisation script for the test_suite/shared_data/diffusion_tensor/ellipsoid relaxation data. (2014-08-22 09:55:21 +0000)",
+    "test_suite/shared_data/diffusion_tensor/ellipsoid/sphere.pdb":
+        "Added an optimisation script for the test_suite/shared_data/diffusion_tensor/ellipsoid relaxation data. (2014-08-22 09:55:21 +0000)",
+    "test_suite/shared_data/diffusion_tensor/sphere/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/diffusion_tensor/spheroid_oblate/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/diffusion_tensor/spheroid_prolate/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Baldwin_2014/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Fyn_SH3_R1rho/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Fyn_SH3_R1rho/cpmg_fit_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Fyn_SH3_R1rho/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/HWebb_KTeilum_Proteins_Struct_Funct_Bioinf_2011/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/generate_r2eff_files.py":
+        "Added a script to the test suite shared data for analysing the truncated Hansen CPMG data. (2013-05-23 17:17:08 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/r2eff_calc.py":
+        "Added a script to the test suite shared data for analysing the truncated Hansen CPMG data. (2013-05-23 17:17:08 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_disp.py":
+        "Created a script for running a full relaxation dispersion analysis on Flemming Hansen's data. (2013-05-03 13:45:38 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_disp_trunc.py":
+        "Added a script to the test suite shared data for analysing the truncated Hansen CPMG data. (2013-05-23 17:17:08 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/catia_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/catia_results/input_r2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmg_fit_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/cpmgfit.py":
+        "Created a directory for the results of the CPMGFit program using Hansen's truncated CPMG data. (2013-05-23 17:22:07 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/cr72/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/it99/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/lm63/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/cpmgfit_results/lm63_3-site/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/multi_processor/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/multi_processor/cluster_analysis.py":
+        "Created a set of scripts for testing out the multi-processor abilities of the dispersion analysis. (2013-10-08 07:15:11 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/multi_processor/precluster.py":
+        "Created a set of scripts for testing out the multi-processor abilities of the dispersion analysis. (2013-10-08 07:15:11 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/multi_processor/precluster/CR72/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/nessy_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/nessy_results/nessy_save_file.py":
+        "A script has been added to create the NESSY input for Flemming Hansen's CPMG data. (2013-05-28 15:48:45 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/nessy_results/Pymol_macros/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/analysis_mmq_cr72.py":
+        "Added a relax script for the 'MQ CR72' model optimised using Flemming Hansen's CPMG data. (2013-10-16 08:55:50 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/relax_disp.py":
+        "Added a directory of relax results for the truncated high-precision Hansen CPMG R2eff values. (2013-05-30 10:44:14 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/No Rex/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/relax_results/R2eff/grace2images.py":
+        "Updated the relax results for Flemming Hansen's CPMG data for the recent changes. (2013-10-28 08:38:04 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/sherekhan.py":
+        "Created a directory and script in preparation for the relax_disp.sherekhan_input user function. (2013-05-30 11:18:03 +0000)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster1/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster1/cr72_fast/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster1/cr72_slow/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster1/ns/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/cr72_fast/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/cr72_slow/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/lm63/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster2/ns/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/cr72_fast/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/cr72_slow/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/lm63/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster3/ns/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_048MGuHCl_40C_041223/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_048MGuHCl_40C_041223/check_graphs/TSMFK01/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/ini_setup_trunc.bz2":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_1_ini_trunc.log":
+        "A large number of fixes for the relaxation dispersion system tested needed for the fix of r21156. (2013-10-17 11:41:22 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72/dw.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72/kex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72/pA.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72/pB.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72/tex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72 full/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72 full/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72 full/dw.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72 full/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72 full/kex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72 full/pA.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72 full/pB.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72 full/tex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/IT99/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/IT99/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/IT99/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/IT99/kex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/IT99/padw2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/IT99/phi_ex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/IT99/tex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63/kex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63/phi_ex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63/tex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63 3-site/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63 3-site/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63 3-site/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63 3-site/kB.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63 3-site/kC.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63 3-site/phi_ex_B.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63 3-site/phi_ex_C.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site 3D/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site 3D/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site 3D/dw.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site 3D/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site 3D/kex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site 3D/pA.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site 3D/pB.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site 3D/tex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site expanded/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site expanded/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site expanded/dw.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site expanded/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site expanded/kex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site expanded/pA.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site expanded/pB.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site expanded/tex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site star/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site star/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site star/dw.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site star/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site star/kex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site star/pA.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site star/pB.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site star/tex.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/No Rex/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/No Rex/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/No Rex/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/R2eff/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/TSMFK01/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/TSMFK01/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/TSMFK01/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/final/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/final/chi2.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/final/dw.agr":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/final/grace2images.py":
+        "Added the output from relax after analysis of all models. (2013-09-09 16:33:09 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/bug_neg_int_acbp_cpmg_disp_048MGuHCl_40C_041223/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/bug_neg_int_acbp_cpmg_disp_048MGuHCl_40C_041223/ncyc.txt":
+        "Implemented systemtest: test_bug_negative_intensities_cpmg, to show lack of error message to user. (2014-08-29 14:02:33 +0000)",
+    "test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/surface_chi2_clustered_fitting/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/lm63_3site/cpmgfit_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/lm63_3site/cpmgfit_results/cpmgfit.py":
+        "Added the CPMGFit results for the 'LM63 3-site' dispersion model test data. (2013-07-22 16:39:23 +0000)",
+    "test_suite/shared_data/dispersion/lm63_3site/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/lm63_3site/relax_results/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/R2eff/grace2images.py":
+        "Changed graphs after new minimisation algorithm has been implemented. (2014-08-01 16:09:17 +0000)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/mc_2000/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/mc_2000/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/exp_error_analysis/i0_correlation2_good.agr":
+        "Comparison of 10,000 Monte Carlo simulations to a different covariance matrix error estimate. (2014-08-29 14:59:22 +0000)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/exp_error_analysis/i0_correlation_good.agr":
+        "An attempt at documenting the Monte Carlo simulation verses covariance matrix error estimates. (2014-08-29 14:07:40 +0000)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/exp_error_analysis/i0_correlation_head":
+        "An attempt at documenting the Monte Carlo simulation verses covariance matrix error estimates. (2014-08-29 14:07:40 +0000)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/exp_error_analysis/r2eff_correlation2_good.agr":
+        "Comparison of 10,000 Monte Carlo simulations to a different covariance matrix error estimate. (2014-08-29 14:59:22 +0000)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/exp_error_analysis/r2eff_correlation_good.agr":
+        "An attempt at documenting the Monte Carlo simulation verses covariance matrix error estimates. (2014-08-29 14:07:40 +0000)",
+    "test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/exp_error_analysis/r2eff_correlation_head":
+        "An attempt at documenting the Monte Carlo simulation verses covariance matrix error estimates. (2014-08-29 14:07:40 +0000)",
+    "test_suite/shared_data/dispersion/Korzhnev_et_al_2005/cpmg_fit_results/backups/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Korzhnev_et_al_2005/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Korzhnev_et_al_2005/relax_results/15N_SQ_CPMG/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Korzhnev_et_al_2005/relax_results/1H_SQ_CPMG/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Korzhnev_et_al_2005/relax_results/DQ_CPMG/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Korzhnev_et_al_2005/relax_results/ZQ_CPMG/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Korzhnev_et_al_2005/relax_results/sq/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/MMQ CR72/grace2images.py":
+        "Added a script and results files for optimising Sprangers' ClpP MQ CPMG data to the 'MQ CR72' model. (2013-10-16 11:38:06 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/NS MMQ 2-site/grace2images.py":
+        "Added a script and results files for optimising Sprangers' ClpP MQ CPMG data to the 'MQ CR72' model. (2013-10-16 11:38:06 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/No Rex/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/No Rex/grace2images.py":
+        "Added scripts and results for optimising Sprangers' ClpP MQ CPMG data to the 'MQ NS CPMG 2-site' model. (2013-10-16 13:59:07 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/R2eff/grace2images.py":
+        "Added scripts and results for optimising Sprangers' ClpP MQ CPMG data to the 'MQ NS CPMG 2-site' model. (2013-10-16 13:59:07 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/final/grace2images.py":
+        "Added scripts and results for optimising Sprangers' ClpP MQ CPMG data to the 'MQ NS CPMG 2-site' model. (2013-10-16 13:59:07 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/MMQ CR72/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/NS MMQ 2-site/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/No Rex/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/No Rex/grace2images.py":
+        "Added scripts and results for optimising Sprangers' ClpP MQ CPMG data to the 'MQ NS CPMG 2-site' model. (2013-10-16 13:59:07 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/R2eff/grace2images.py":
+        "Added scripts and results for optimising Sprangers' ClpP MQ CPMG data to the 'MQ NS CPMG 2-site' model. (2013-10-16 13:59:07 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/final/grace2images.py":
+        "Added scripts and results for optimising Sprangers' ClpP MQ CPMG data to the 'MQ NS CPMG 2-site' model. (2013-10-16 13:59:07 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/MMQ CR72/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/No Rex/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/No Rex/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/R2eff/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/final/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/MMQ CR72/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/No Rex/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/No Rex/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/R2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/R2eff/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/final/grace2images.py":
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
+    "test_suite/shared_data/dispersion/bug_21715_clustered_indexerror/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/bug_21715_clustered_indexerror/non_clustered/No_Rex/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/bug_22146_unpacking_r2a_r2b_cluster/B14_full/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/bug_22146_unpacking_r2a_r2b_cluster/CR72_full/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/bug_22146_unpacking_r2a_r2b_cluster/ns_cpmg_2site_3d_full/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/bug_22146_unpacking_r2a_r2b_cluster/ns_cpmg_2site_star_full/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/bug_22477_grace_write_k_AB_mixed_analysis/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/bug_3333_monte_carlo_mean/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/error_testing/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/exp_fit_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/guardd_data/Ile_26/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/ns_mmq_3site/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/ns_mmq_3site_linear/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/ns_r1rho_3site/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/ns_r1rho_3site_linear/relax_results/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/print_model_info/print_model_info.py":
+        "Added initial python script, to help print each model and its corresponding nested models. (2014-08-19 11:32:02 +0000)",
+    "test_suite/shared_data/dispersion/profiling/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/profiling/compat_profiling.py":
+        "Created a compat_profiling module for maintaining compatibility for the dispersion model profiling. (2014-09-04 07:53:45 +0000)",
+    "test_suite/shared_data/dispersion/r2eff/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060518/cpmg_disp_sod1d90a_060518_normal.fid/analysis_FT/ser_files/FT/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060518/cpmg_disp_sod1d90a_060518_normal.fid/analysis_FT/ser_files/MDD/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060521/cpmg_disp_sod1d90a_060521_normal.fid/analysis_FT/ser_files/FT/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060521/cpmg_disp_sod1d90a_060521_normal.fid/analysis_FT/ser_files/MDD/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/sod1wt_t25/500MHz/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/sod1wt_t25/600MHz/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/__init__.py":
+        "Created the Frame_order.test_generate_rotor2_distribution system test. (2014-01-17 10:51:16 +0000)",
+    "test_suite/shared_data/frame_order/axis_permutations/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/__init__.py":
+        "Created the Frame_order.test_generate_rotor2_distribution system test. (2014-01-17 10:51:16 +0000)",
+    "test_suite/shared_data/frame_order/cam/double_rotor_large_angle/pcs_dy.txt":
+        "Created a new synthetic CaM data set for the double rotor frame order model. (2014-06-25 07:35:40 +0000)",
+    "test_suite/shared_data/frame_order/cam/double_rotor_large_angle/pcs_er.txt":
+        "Created a new synthetic CaM data set for the double rotor frame order model. (2014-06-25 07:35:40 +0000)",
+    "test_suite/shared_data/frame_order/cam/double_rotor_large_angle/pcs_tb.txt":
+        "Created a new synthetic CaM data set for the double rotor frame order model. (2014-06-25 07:35:40 +0000)",
+    "test_suite/shared_data/frame_order/cam/double_rotor_large_angle/pcs_tb_subset.txt":
+        "Created a new synthetic CaM data set for the double rotor frame order model. (2014-06-25 07:35:40 +0000)",
+    "test_suite/shared_data/frame_order/cam/double_rotor_large_angle/pcs_tm.txt":
+        "Created a new synthetic CaM data set for the double rotor frame order model. (2014-06-25 07:35:40 +0000)",
+    "test_suite/shared_data/frame_order/cam/free_rotor/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/free_rotor2/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/iso_cone/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/iso_cone_free_rotor/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/iso_cone_free_rotor2/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/iso_cone_torsionless/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/pseudo_ellipse/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/pseudo_ellipse_free_rotor/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/pseudo_ellipse_torsionless/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rigid/rotor_analysis/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor/perm_iso_cone_torsionless_xy_le_z/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor/perm_iso_cone_xy_le_z/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor/perm_iso_cone_z_le_xy/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor/perm_pseudo_ellipse_x_le_y_le_z/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor/perm_pseudo_ellipse_x_le_z_le_y/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor/frame_order_free_start.py":
+        "Added a script for testing out the parameter nesting abilities of the frame order auto-analysis. (2014-07-11 13:38:59 +0000)",
+    "test_suite/shared_data/frame_order/cam/rotor/perm_pseudo_ellipse_z_le_x_le_y/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor/perm_pseudo_ellipse_z_le_x_le_y_alt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor2/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/cam/rotor_2_state/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/displacements/optimisation.py":
+        "For the frame order displacement test suite data, an optimisation script has been added. (2013-03-05 14:51:35 +0000)",
+    "test_suite/shared_data/frame_order/displacements/rigid_test.py":
+        "Added a script to test the displacement found in the rigid frame order model. (2013-03-04 14:54:46 +0000)",
+    "test_suite/shared_data/frame_order/pcs_information_content/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/frame_order/timings/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/jw_mapping/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/S2f_0.952_S2s_0.582_ts_32/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_14872_unicode_selection/m4/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_14872_unicode_selection/m5/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_14941_local_tm_global_selection/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_18790_negative_error/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20213_asn_sidechain/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20213_asn_sidechain/600/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20213_asn_sidechain/750/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20479_gui_final_pipe/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20563_missing_ri_error/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20563_missing_ri_error/local_tm/aic/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20563_missing_ri_error/sphere/init/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20563_missing_ri_error/sphere/round_1/opt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20563_missing_ri_error/sphere/round_2/opt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20563_missing_ri_error/sphere/round_3/opt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/local_tm/aic/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/sphere/init/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/sphere/round_1/opt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/sphere/round_2/opt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/sphere/round_3/opt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_20683_bdc_inf_values/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_21079_local_tm_global_selection/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/bug_23933_relax_data_read_ids/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/local_tm_10_S2_0.8_te_40/generate.py":
+        "Added a new model-free test set, calculated using the new back_calc.py module. (2011-01-12 11:00:34 +0000)",
+    "test_suite/shared_data/model_free/sphere/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/model_free/tm0_grid/generate.py":
+        "Generated relaxation data for model-free parameters for all of the local tm models. (2011-01-12 20:47:04 +0000)",
+    "test_suite/shared_data/model_free/tm1_grid/generate.py":
+        "Generated relaxation data for model-free parameters for all of the local tm models. (2011-01-12 20:47:04 +0000)",
+    "test_suite/shared_data/model_free/tm2_grid/generate.py":
+        "Created all the relaxation data for the tm2 model-free grid. (2011-01-12 13:50:34 +0000)",
+    "test_suite/shared_data/model_free/tm3_grid/generate.py":
+        "Generated relaxation data for model-free parameters for all of the local tm models. (2011-01-12 20:47:04 +0000)",
+    "test_suite/shared_data/model_free/tm4_grid/generate.py":
+        "Generated relaxation data for model-free parameters for all of the local tm models. (2011-01-12 20:47:04 +0000)",
+    "test_suite/shared_data/model_free/tm5_grid/generate.py":
+        "Generated relaxation data for model-free parameters for all of the local tm models. (2011-01-12 20:47:04 +0000)",
+    "test_suite/shared_data/model_free/tm6_grid/generate.py":
+        "Generated relaxation data for model-free parameters for all of the local tm models. (2011-01-12 20:47:04 +0000)",
+    "test_suite/shared_data/model_free/tm7_grid/generate.py":
+        "Generated relaxation data for model-free parameters for all of the local tm models. (2011-01-12 20:47:04 +0000)",
+    "test_suite/shared_data/model_free/tm8_grid/generate.py":
+        "Generated relaxation data for model-free parameters for all of the local tm models. (2011-01-12 20:47:04 +0000)",
+    "test_suite/shared_data/model_free/tm9_grid/generate.py":
+        "Generated relaxation data for model-free parameters for all of the local tm models. (2011-01-12 20:47:04 +0000)",
+    "test_suite/shared_data/noe_restraints/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/pcs_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/peak_lists/bug_17276/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/peak_lists/bug_19887/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/peak_lists/bug_21562/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/rdc_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/relaxation_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/init/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/round_1/aic/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/round_1/m1/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/round_1/m8/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/round_1/opt/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/relaxation_data/white_noise/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/results_files/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/saved_states/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/sequence/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/structures/diff_tensors/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/structures/dna/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/structures/pca/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/structures/pca/gromacs/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/structures/phthalic_acid/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/structures/phthalic_acid/README":
+        "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
     "test_suite/system_tests/__init__.py":
         "Creation of a framework for a relax test suite to check for regressions and new bugs. (2006-03-24 01:41:10 +0000)",
     "test_suite/system_tests/angles.py":
@@ -1084,6 +1782,401 @@ ADDITIONAL_COPYRIGHT_YEARS = {
     'graphics/screenshots/dispersion_analysis/README':                  [[2017, "Edward d'Auvergne"]],
     'graphics/screenshots/mf_analysis/README':                          [[2017, "Edward d'Auvergne"]],
     'graphics/wizards/README':                                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/align_data/CaM_IQ/README':                                                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/align_data/basis_sets/README':                                              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/align_data/menthol/README':                                                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/bmrb/README':                                                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/bruker_files/README':                                                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/bruker_files/bug_22411_T1.txt':                                             [[2014, "Olena Dobrovolska (olena.dobrovolska@unibo.it)"]],
+    'test_suite/shared_data/bruker_files/bug_22411_T1_sequence':                                        [[2014, "Olena Dobrovolska (olena.dobrovolska@unibo.it)"]],
+    'test_suite/shared_data/bruker_files/T1_demo_1UBQ_H_trunc.txt':                                     [[2012, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/2QFK_MONOMERHabc5.pdb':   [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/NOE dhp 700.txt':         [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/T1 dhp 700.txt':          [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/T2 dhp 700.txt':          [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/README':                                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_10_1.list':                 [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_11_1.list':                 [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_12_1.list':                 [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_13_1.list':                 [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_14_1.list':                 [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_15_1.list':                 [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_16_1.list':                 [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_17_1.list':                 [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_1_1.list':                  [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_2_1.list':                  [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_3_1.list':                  [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_4_1.list':                  [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_5_1.list':                  [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_6_1.list':                  [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_7_1.list':                  [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_8_1.list':                  [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_9_1.list':                  [[2015, "Xiangyan Shi"]],
+    'test_suite/shared_data/curve_fitting/inversion_recovery/README':                                   [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/numeric_topology/README':                                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/diffusion_tensor/ellipsoid/README':                                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/diffusion_tensor/sphere/README':                                            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/diffusion_tensor/spheroid_oblate/README':                                   [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/diffusion_tensor/spheroid_prolate/README':                                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Fyn_SH3_R1rho/README':                                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/README':                                                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/500_MHz/README':                                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/800_MHz/README':                                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/multi_processor/README':                                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/multi_processor/precluster/CR72/README':                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/nessy_results/Plots/svg/README':                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/nessy_results/Text_files/README':                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/nessy_results/chi2_surface/svg/README':                   [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/r2eff_data/README':                                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/CR72/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/CR72 full/README':                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/IT99/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/LM63/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/LM63 3-site/README':                        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/MMQ CR72/README':                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/NS CPMG 2-site 3D/README':                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/NS CPMG 2-site expanded/README':            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/NS CPMG 2-site star/README':                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/No Rex/README':                             [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/relax_results/final/README':                              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Hansen/sherekhan_results/cluster1/cr72_fast/README':             [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/README': [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/CR72 full/README':  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/LM63 3-site/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site 3D/README':  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site expanded/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/NS CPMG 2-site star/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/No Rex/README': [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/1_setup_r1rho.py':                         [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/1_setup_r1rho_GUI.py':                     [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/2_pre_run_r2eff.py':                       [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/3_analyse_models.py':                      [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/4_inspect_results.py':                     [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/5_clustered_analyses.py':                  [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/mc_2000/README':              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/mc_2000/R2eff/README':        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/exp_error_analysis/README':                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/peak_lists/README':                        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_101MGuHCl_40C_041223/relax_results_trunc/final/README':  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Korzhnev_et_al_2005/README':                                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Korzhnev_et_al_2005/cpmg_fit_results/README':                    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Korzhnev_et_al_2005/relax_results/sq/README':                    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/600_RFfields.mat':                         [[2015, "Paul Schanda"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/600_errorbars_rate.mat':                   [[2015, "Paul Schanda"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/600_rates.mat':                            [[2015, "Paul Schanda"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/600_residues.mat':                         [[2015, "Paul Schanda"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/950_RFfields.mat':                         [[2015, "Paul Schanda"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/950_errorbars_rate.mat':                   [[2015, "Paul Schanda"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/950_rates.mat':                            [[2015, "Paul Schanda"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/950_residues.mat':                         [[2015, "Paul Schanda"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/README':                                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/README':                                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/MMQ CR72/README':                        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/NS MMQ 2-site/README':                   [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/No Rex/README':                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/final/README':                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/README':                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/MMQ CR72/README':              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/NS MMQ 2-site/README':         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/No Rex/README':                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/analysis_clustered/final/README':                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/README':                        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/MMQ CR72/README':               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/No Rex/README':                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis/final/README':                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/README':              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/MMQ CR72/README':     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/No Rex/README':       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Sprangers_ClpP/mmq_cr72_analysis_clustered/final/README':        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_21715_clustered_indexerror/README':                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_21715_clustered_indexerror/non_clustered/No_Rex/README':     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_22146_unpacking_r2a_r2b_cluster/B14_full/README':            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_22146_unpacking_r2a_r2b_cluster/CR72_full/README':           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_22146_unpacking_r2a_r2b_cluster/ns_cpmg_2site_3d_full/README':   [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_22146_unpacking_r2a_r2b_cluster/ns_cpmg_2site_star_full/README': [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_22477_grace_write_k_AB_mixed_analysis/README':               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/README':                            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/README':                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_1000_0.024_1.in':             [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_1000_0.036_1.in':             [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_1000_0_1.in':                 [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_111.11_0.018_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_111.11_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_111.11_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_166.67_0.024_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_166.67_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_166.67_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_222.22_0.027_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_222.22_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_222.22_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_277.78_0.0216_1.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_277.78_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_277.78_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_333.33_0.024_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_333.33_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_333.33_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_388.89_0.0205714_1.in':       [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_388.89_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_388.89_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_444.44_0.0225_1.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_444.44_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_444.44_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_500_0.024_1.in':              [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_500_0.036_1.in':              [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_500_0_1.in':                  [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_555.56_0.0216_1.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_555.56_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_555.56_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_611.11_0.0229091_1.in':       [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_611.11_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_611.11_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_666.67_0.024_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_666.67_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_666.67_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_722.22_0.0249231_1.in':       [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_722.22_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_722.22_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_777.78_0.0231429_1.in':       [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_777.78_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_777.78_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_833.33_0.024_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_833.33_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_833.33_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_888.89_0.0225_1.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_888.89_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_888.89_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_944.44_0.0232941_1.in':       [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_944.44_0.036_1.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_944.44_0_1.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/README':                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1111.11_0.009_6.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1111.11_0.018_6.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1111.11_0_6.in':              [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1333.33_0.009_6.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1333.33_0.018_6.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1333.33_0_6.in':              [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1555.56_0.009_6.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1555.56_0.018_6.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1555.56_0_6.in':              [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1777.78_0.009_6.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1777.78_0.018_6.in':          [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1777.78_0_6.in':              [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_2000_0.009_6.in':             [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_2000_0.018_6.in':             [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_2000_0_6.in':                 [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_222.22_0.009_6.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_222.22_0.018_6.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_222.22_0_6.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_444.44_0.009_6.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_444.44_0.018_6.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_444.44_0_6.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_666.67_0.009_6.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_666.67_0.018_6.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_666.67_0_6.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_888.89_0.009_6.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_888.89_0.018_6.in':           [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_888.89_0_6.in':               [[2016, "Petr Padrta (padrta@ncbr.muni.cz)"]],
+    'test_suite/shared_data/dispersion/bug_3333_monte_carlo_mean/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/error_testing/README':                                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/exp_fit_data/README':                                            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/guardd_data/Ile_26/README':                                      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/guardd_data/Ile_26/GUARDD-Paramter_Table-2011.09.13-18-35-formatted.csv':    [[2011, "Ian Kleckner"]],
+    'test_suite/shared_data/dispersion/lm63_3site/README':                                              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/README':                    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site/README':                                            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site/blank/README':                                      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site/cpmg_fit_results/README':                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site/relax_results/README':                              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site_linear/README':                                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site_linear/blank/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site_linear/cpmg_fit_results/README':                    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_mmq_3site_linear/relax_results/README':                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_r1rho_3site/README':                                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_r1rho_3site/blank/README':                                    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_r1rho_3site/cpmg_fit_results/README':                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_r1rho_3site/relax_results/README':                            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_r1rho_3site_linear/README':                                   [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_r1rho_3site_linear/blank/README':                             [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_r1rho_3site_linear/cpmg_fit_results/README':                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/ns_r1rho_3site_linear/relax_results/README':                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/profiling/README':                                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/r1rho_off_res_tp02/README':                                      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/r1rho_off_res_tp02_high_kex/README':                             [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/r1rho_on_res_m61/README':                                        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/r1rho_on_res_m61b/README':                                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/r2eff/README':                                                   [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060518/cpmg_disp_sod1d90a_060518_normal.fid/analysis_FT/ser_files/FT/README':  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060518/cpmg_disp_sod1d90a_060518_normal.fid/analysis_FT/ser_files/MDD/README': [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060518/cpmg_disp_sod1d90a_060518_normal.fid/ft2_data/README':  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060521/cpmg_disp_sod1d90a_060521_normal.fid/analysis_FT/ser_files/FT/README':  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060521/cpmg_disp_sod1d90a_060521_normal.fid/analysis_FT/ser_files/MDD/README': [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/repeated_analysis/SOD1/cpmg_disp_sod1d90a_060521/cpmg_disp_sod1d90a_060521_normal.fid/ft2_data/README':  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/sod1wt_t25/500MHz/README':                                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/sod1wt_t25/600MHz/README':                                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/unit_tests/lib/dispersion/matrix_exponential/README':            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/axis_permutations/README':                                      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/double_rotor/README':                                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/double_rotor_large_angle/README':                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/free_rotor/README':                                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/free_rotor2/README':                                        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/free_rotor_missing_data/README':                            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/iso_cone/README':                                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/iso_cone_free_rotor/README':                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/iso_cone_free_rotor2/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/iso_cone_torsionless/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/pseudo_ellipse/README':                                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/pseudo_ellipse2/README':                                    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/pseudo_ellipse_free_rotor/README':                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/pseudo_ellipse_torsionless/README':                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rigid/README':                                              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rigid/rotor_analysis/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor/README':                                              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor/perm_iso_cone_torsionless_xy_le_z/README':            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor/perm_iso_cone_xy_le_z/README':                        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor/perm_iso_cone_z_le_xy/README':                        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor/perm_pseudo_ellipse_x_le_y_le_z/README':              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor/perm_pseudo_ellipse_x_le_z_le_y/README':              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor/perm_pseudo_ellipse_z_le_x_le_y/README':              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor/perm_pseudo_ellipse_z_le_x_le_y_alt/README':          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor2/README':                                             [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor2/pcs_only/README':                                    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor_2_state/README':                                      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/cam/rotor_small_angle/README':                                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/displacements/README':                                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/pcs_information_content/README':                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/representation/README':                                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/sim_vs_pred_matrix/README':                                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/frame_order/timings/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/jw_mapping/README':                                                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/README':                                                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/OMP/README':                                                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149/README':                              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/S2f_0.952_S2s_0.582_ts_32/README':                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_14872_unicode_selection/m4/README':                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_14872_unicode_selection/m5/README':                          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_14941_local_tm_global_selection/README':                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_18790_negative_error/README':                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20213_asn_sidechain/README':                                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20213_asn_sidechain/600/README':                             [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20213_asn_sidechain/750/README':                             [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20479_gui_final_pipe/README':                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20563_missing_ri_error/README':                              [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20563_missing_ri_error/local_tm/aic/README':                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20563_missing_ri_error/sphere/init/README':                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20563_missing_ri_error/sphere/round_1/opt/README':           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20563_missing_ri_error/sphere/round_2/opt/README':           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20563_missing_ri_error/sphere/round_3/opt/README':           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/README':                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/local_tm/aic/README':          [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/sphere/init/README':           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/sphere/round_1/opt/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/sphere/round_2/opt/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20613_auto_mf_diff_tensor_pdb/sphere/round_3/opt/README':    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/README':                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/2QFK_MONOMERHabc5.pdb':                 [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/NOE dhp 500.txt':                       [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/NOE dhp 700.txt':                       [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/T1 dhp 500.txt':                        [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/T1 dhp 700.txt':                        [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/T2 dhp 500.txt':                        [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/T2 dhp 700.txt':                        [[2013, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/model_free/bug_21079_local_tm_global_selection/README':                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/README':                      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/NOE_ForBugReport.txt':        [[2014, "Ivan Leung (ivanhoe.leung@chem.ox.ac.uk)"]],
+    'test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/T1_ForBugReport.txt':         [[2014, "Ivan Leung (ivanhoe.leung@chem.ox.ac.uk)"]],
+    'test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/T2_ForBugReport.txt':         [[2014, "Ivan Leung (ivanhoe.leung@chem.ox.ac.uk)"]],
+    'test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/Truncated_ForBugReport.pdb':  [[2014, "Ivan Leung (ivanhoe.leung@chem.ox.ac.uk)"]],
+    'test_suite/shared_data/model_free/bug_23933_relax_data_read_ids/README':                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_23933_relax_data_read_ids/LARA_N_term_no_helixFH_reg.pdb':   [[2015, "Sze Chan (samuelsw.chan@mail.utoronto.ca)"]],
+    'test_suite/shared_data/model_free/bug_23933_relax_data_read_ids/r1_600.txt':                       [[2015, "Sze Chan (samuelsw.chan@mail.utoronto.ca)"]],
+    'test_suite/shared_data/model_free/local_tm_10_S2_0.8_te_40/README':                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/sphere/README':                                                  [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/sphere/create_ri.py':                                            [[2004, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/sphere/create_sphere.py':                                        [[2004, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm0_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm1_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm2_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm3_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm4_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm5_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm6_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm7_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm8_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/tm9_grid/README':                                                [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/noe_restraints/README':                                                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/pcs_data/README':                                                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/README':                                                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-02.listb':                                        [[2008, "Michael Funk (mifu@nmr.mpibpc.mpg.de)"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-04.listb':                                        [[2008, "Michael Funk (mifu@nmr.mpibpc.mpg.de)"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-06.listb':                                        [[2008, "Michael Funk (mifu@nmr.mpibpc.mpg.de)"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-08.listb':                                        [[2008, "Michael Funk (mifu@nmr.mpibpc.mpg.de)"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-10.listb':                                        [[2008, "Michael Funk (mifu@nmr.mpibpc.mpg.de)"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-12.listb':                                        [[2008, "Michael Funk (mifu@nmr.mpibpc.mpg.de)"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-14.listb':                                        [[2008, "Michael Funk (mifu@nmr.mpibpc.mpg.de)"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-16.listb':                                        [[2008, "Michael Funk (mifu@nmr.mpibpc.mpg.de)"]],
+    'test_suite/shared_data/peak_lists/bug_17276/README':                                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_17276/T10102Ed.txt':                                         [[2010, "Leanne Minall (lm7902@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/bug_17276/T1010Ed.txt':                                          [[2010, "Leanne Minall (lm7902@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/bug_17276/T112002Ed.txt':                                        [[2010, "Leanne Minall (lm7902@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/bug_17276/T11200Ed.txt':                                         [[2010, "Leanne Minall (lm7902@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/bug_19887/README':                                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_1204.04.list':                                      [[2012, "Romel Bobby (rbob002@aucklanduni.ac.nz)"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_1804.04.list':                                      [[2012, "Romel Bobby (rbob002@aucklanduni.ac.nz)"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_2754.04.list':                                      [[2012, "Romel Bobby (rbob002@aucklanduni.ac.nz)"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_304.04.list':                                       [[2012, "Romel Bobby (rbob002@aucklanduni.ac.nz)"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_304.040.list':                                      [[2012, "Romel Bobby (rbob002@aucklanduni.ac.nz)"]],
+    'test_suite/shared_data/peak_lists/bug_21562/README':                                               [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/README':                                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0010.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0020.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0030.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0050.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0070.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0100.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0150.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0200.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0300.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0400.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0600.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0800.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_1000.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_1200.list':                                    [[2010, "Madeleine Strickland (M.Strickland@bristol.ac.uk)"]],
+    'test_suite/shared_data/peak_lists/noe.140109.8.001.list':                                          [[2014, "Martin Ballaschk (ballaschk@fmp-berlin.de)"]],
+    'test_suite/shared_data/peak_lists/noe.140109.8.002.list':                                          [[2014, "Martin Ballaschk (ballaschk@fmp-berlin.de)"]],
+    'test_suite/shared_data/peak_lists/Sam.csv':                                                        [[2015, "Sze Chan (samuelsw.chan@mail.utoronto.ca)"]],
+    'test_suite/shared_data/rdc_data/README':                                                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/relaxation_data/README':                                                    [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/README':                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/init/README':            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/round_1/aic/README':     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/round_1/m1/README':      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/round_1/m8/README':      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/relaxation_data/13259_bug_reproducing_data/prolate/round_1/opt/README':     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/relaxation_data/white_noise/README':                                        [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/results_files/README':                                                      [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/results_files/tylers_peptide_trunc.bz2':                                    [[2008, "Tyler Reddy (treddy@dal.ca)"]],
+    'test_suite/shared_data/saved_states/README':                                                       [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/saved_states/bug_20464_mf_missing_ri_data.bz2':                             [[2013, "Stanislava Panova (stpanova@gmail.com)"]],
+    'test_suite/shared_data/saved_states/bug_20480.bz2':                                                [[2013, "Stanislava Panova (stpanova@gmail.com)"]],
+    'test_suite/shared_data/saved_states/bug_20531_mf_relaxfault.bz2':                                  [[2013, "James Tolchard (J.Tolchard@uea.ac.uk)"]],
+    'test_suite/shared_data/saved_states/bug_21081_disp_cluster_fail.bz2':                              [[2013, "Troels E. Linnet"]],
+    'test_suite/shared_data/saved_states/bug_21460_bad_fields.bz2':                                     [[2014, "Min-Kyu Cho (min-kyu.cho@live.com)"]],
+    'test_suite/shared_data/sequence/README':                                                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/README':                                                         [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/1UBQ_H_trunc.pdb':                                               [[2012, "Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)"]],
+    'test_suite/shared_data/structures/SpUreE_dimer_H_new.pdb.bz2':                                     [[2014, "Stefano Luciano Ciurli (stefano.ciurli@unibo.it)"]],
+    'test_suite/shared_data/structures/Indol_test.xyz':                                                 [[2011, "Han Sun"]],
+    'test_suite/shared_data/structures/bug_21187_molecule.pdb':                                         [[2013, "Martin Ballaschk (ballaschk@fmp-berlin.de)"]],
+    'test_suite/shared_data/structures/diff_tensors/README':                                            [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/dna/README':                                                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/lactose/README':                                                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/lactose/lactose_MCMM4_S1_1.pdb':                                 [[2008, "Mate Erdelyi (mate.erdelyi@chem.gu.se)"]],
+    'test_suite/shared_data/structures/pca/README':                                                     [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/pca/gromacs/README':                                             [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/phthalic_acid/README':                                           [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/phthalic_acid/snapshots/README':                                 [[2017, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/tylers_peptide_trunc.pdb':                                       [[2008, "Tyler Reddy (treddy@dal.ca)"]],
+    'test_suite/shared_data/user_functions/README':                                                     [[2017, "Edward d'Auvergne"]],
 }
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
@@ -1141,6 +2234,177 @@ FALSE_NEG_YEARS = {
     'graphics/wizards/object-locked-unlocked.png':                      [[2012, "Edward d'Auvergne"]],
     'graphics/wizards/oxygen-icon-weather-clear.png':                   [[2012, "Edward d'Auvergne"]],
     'sample_scripts/model_free/final_data_extraction.py':               [[2010, "Michael Bieri"], [2011, "Michael Bieri"]],
+    'test_suite/shared_data/bruker_files/bug_22411_T1.txt':                                             [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/bruker_files/bug_22411_T1_sequence':                                        [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/bruker_files/T1_demo_1UBQ_H_trunc.txt':                                     [[2012, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_1000_0.024_1.in':             [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_1000_0.036_1.in':             [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_1000_0_1.in':                 [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_111.11_0.018_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_111.11_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_111.11_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_166.67_0.024_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_166.67_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_166.67_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_222.22_0.027_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_222.22_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_222.22_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_277.78_0.0216_1.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_277.78_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_277.78_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_333.33_0.024_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_333.33_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_333.33_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_388.89_0.0205714_1.in':       [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_388.89_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_388.89_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_444.44_0.0225_1.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_444.44_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_444.44_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_500_0.024_1.in':              [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_500_0.036_1.in':              [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_500_0_1.in':                  [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_555.56_0.0216_1.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_555.56_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_555.56_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_611.11_0.0229091_1.in':       [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_611.11_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_611.11_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_666.67_0.024_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_666.67_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_666.67_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_722.22_0.0249231_1.in':       [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_722.22_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_722.22_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_777.78_0.0231429_1.in':       [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_777.78_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_777.78_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_833.33_0.024_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_833.33_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_833.33_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_888.89_0.0225_1.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_888.89_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_888.89_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_944.44_0.0232941_1.in':       [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_944.44_0.036_1.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/60/60_944.44_0_1.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1111.11_0.009_6.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1111.11_0.018_6.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1111.11_0_6.in':              [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1333.33_0.009_6.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1333.33_0.018_6.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1333.33_0_6.in':              [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1555.56_0.009_6.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1555.56_0.018_6.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1555.56_0_6.in':              [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1777.78_0.009_6.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1777.78_0.018_6.in':          [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_1777.78_0_6.in':              [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_2000_0.009_6.in':             [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_2000_0.018_6.in':             [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_2000_0_6.in':                 [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_222.22_0.009_6.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_222.22_0.018_6.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_222.22_0_6.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_444.44_0.009_6.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_444.44_0.018_6.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_444.44_0_6.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_666.67_0.009_6.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_666.67_0.018_6.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_666.67_0_6.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_888.89_0.009_6.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_888.89_0.018_6.in':           [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/bug_24601_R2eff_missing_data/96/96_888.89_0_6.in':               [[2016, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/guardd_data/Ile_26/GUARDD-Paramter_Table-2011.09.13-18-35-formatted.csv':    [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/2QFK_MONOMERHabc5.pdb':   [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/NOE dhp 700.txt':         [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/T1 dhp 700.txt':          [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/consistency_testing/bug_20674_ct_analysis_failure/T2 dhp 700.txt':          [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_10_1.list':                 [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_11_1.list':                 [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_12_1.list':                 [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_13_1.list':                 [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_14_1.list':                 [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_15_1.list':                 [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_16_1.list':                 [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_17_1.list':                 [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_1_1.list':                  [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_2_1.list':                  [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_3_1.list':                  [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_4_1.list':                  [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_5_1.list':                  [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_6_1.list':                  [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_7_1.list':                  [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_8_1.list':                  [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/curve_fitting/bug_23244_Iinf_graph/GB1_TR347_T1_9_1.list':                  [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/dispersion/Kjaergaard_et_al_2013/check_graphs/R2eff/grace2images.py':       [[2014, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/600_RFfields.mat':                         [[2015, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/600_errorbars_rate.mat':                   [[2015, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/600_rates.mat':                            [[2015, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/600_residues.mat':                         [[2015, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/950_RFfields.mat':                         [[2015, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/950_errorbars_rate.mat':                   [[2015, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/950_rates.mat':                            [[2015, "Troels E. Linnet"]],
+    'test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/950_residues.mat':                         [[2015, "Troels E. Linnet"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/2QFK_MONOMERHabc5.pdb':                 [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/NOE dhp 500.txt':                       [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/NOE dhp 700.txt':                       [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/T1 dhp 500.txt':                        [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/T1 dhp 700.txt':                        [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/T2 dhp 500.txt':                        [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_20683_bdc_inf_values/T2 dhp 700.txt':                        [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/NOE_ForBugReport.txt':        [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/T1_ForBugReport.txt':         [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/T2_ForBugReport.txt':         [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_21615_incomplete_setup_failure/Truncated_ForBugReport.pdb':  [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_23933_relax_data_read_ids/LARA_N_term_no_helixFH_reg.pdb':   [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/model_free/bug_23933_relax_data_read_ids/r1_600.txt':                       [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-02.listb':                                        [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-04.listb':                                        [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-06.listb':                                        [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-08.listb':                                        [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-10.listb':                                        [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-12.listb':                                        [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-14.listb':                                        [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/700mhz-263k-1m-16.listb':                                        [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_17276/T10102Ed.txt':                                         [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_17276/T1010Ed.txt':                                          [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_17276/T112002Ed.txt':                                        [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_17276/T11200Ed.txt':                                         [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_1204.04.list':                                      [[2012, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_1804.04.list':                                      [[2012, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_2754.04.list':                                      [[2012, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_304.04.list':                                       [[2012, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/bug_19887/T1_304.040.list':                                      [[2012, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0010.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0020.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0030.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0050.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0070.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0100.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0150.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0200.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0300.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0400.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0600.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_0800.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_1000.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/ccpn_analysis/T1A_1200.list':                                    [[2010, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/noe.140109.8.001.list':                                          [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/noe.140109.8.002.list':                                          [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/peak_lists/Sam.csv':                                                        [[2015, "Edward d'Auvergne"]],
+    'test_suite/shared_data/results_files/tylers_peptide_trunc.bz2':                                    [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/saved_states/bug_20464_mf_missing_ri_data.bz2':                             [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/saved_states/bug_20480.bz2':                                                [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/saved_states/bug_20531_mf_relaxfault.bz2':                                  [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/saved_states/bug_21081_disp_cluster_fail.bz2':                              [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/saved_states/bug_21460_bad_fields.bz2':                                     [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/1UBQ_H_trunc.pdb':                                               [[2012, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/SpUreE_dimer_H_new.pdb.bz2':                                     [[2014, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/Indol_test.xyz':                                                 [[2011, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/bug_21187_molecule.pdb':                                         [[2013, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/tylers_peptide_trunc.pdb':                                       [[2008, "Edward d'Auvergne"]],
+    'test_suite/shared_data/structures/lactose/lactose_MCMM4_S1_1.pdb':                                 [[2008, "Edward d'Auvergne"]],
 }
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.

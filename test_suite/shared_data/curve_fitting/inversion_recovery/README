@@ -1,0 +1,45 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+T1_inv-recov_1100_ms.list:                                                              Copyright (C) 2006 Edward d'Auvergne
+T1_inv-recov_1100_ms.list:                                                              Copyright (C) 2011 Sebastien Morin
+T1_inv-recov_1500_ms.list:                                                              Copyright (C) 2006 Edward d'Auvergne
+T1_inv-recov_1500_ms.list:                                                              Copyright (C) 2011 Sebastien Morin
+T1_inv-recov_1950_ms.list:                                                              Copyright (C) 2006 Edward d'Auvergne
+T1_inv-recov_1950_ms.list:                                                              Copyright (C) 2011 Sebastien Morin
+T1_inv-recov_1950_ms_bis.list:                                                          Copyright (C) 2006 Edward d'Auvergne
+T1_inv-recov_1950_ms_bis.list:                                                          Copyright (C) 2011 Sebastien Morin
+T1_inv-recov_200_ms.list:                                                               Copyright (C) 2006 Edward d'Auvergne
+T1_inv-recov_200_ms.list:                                                               Copyright (C) 2011 Sebastien Morin
+T1_inv-recov_2450_ms.list:                                                              Copyright (C) 2006 Edward d'Auvergne
+T1_inv-recov_2450_ms.list:                                                              Copyright (C) 2011 Sebastien Morin
+T1_inv-recov_450_ms.list:                                                               Copyright (C) 2006 Edward d'Auvergne
+T1_inv-recov_450_ms.list:                                                               Copyright (C) 2011 Sebastien Morin
+T1_inv-recov_750_ms.list:                                                               Copyright (C) 2006 Edward d'Auvergne
+T1_inv-recov_750_ms.list:                                                               Copyright (C) 2011 Sebastien Morin
+T1_inv-recov_750_ms_bis.list:                                                           Copyright (C) 2006 Edward d'Auvergne
+T1_inv-recov_750_ms_bis.list:                                                           Copyright (C) 2011 Sebastien Morin
