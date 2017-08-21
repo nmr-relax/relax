@@ -1,0 +1,72 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+GPLv3+
+------
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+1F35_N_H_molmol.pdb:                                                                    Copyright (C) 2008 Edward d'Auvergne
+1F35_N_H_trunc.pdb:                                                                     Copyright (C) 2008 Edward d'Auvergne
+1RTE_H_trunc.pdb:                                                                       Copyright (C) 2013 Edward d'Auvergne
+1UBQ_H_trunc.pdb:                                                                       Copyright (C) 2012 Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)
+2AT7_fmf.pdb:                                                                           Copyright (C) 2014 Dhanasekaran Muthu (dhanas@email.arizona.edu)
+2BE6_core_I_IV.pdb:                                                                     Copyright (C) 2014 Edward d'Auvergne
+2BE6_secondary_structure.pdb:                                                           Copyright (C) 2015 Edward d'Auvergne
+Ap4Aase_res1-12.pdb:                                                                    Copyright (C) 2006,2008,2013 Edward d'Auvergne
+Ap4Aase_res1-6.pdb:                                                                     Copyright (C) 2006,2008,2013 Edward d'Auvergne
+Ap4Aase_res7-12.pdb:                                                                    Copyright (C) 2006,2008,2013 Edward d'Auvergne
+Indol_test.xyz:                                                                         Copyright (C) 2011 Han Sun
+SSS-cluster4-new-test.xyz:                                                              Copyright (C) 2011 Edward d'Auvergne
+SpUreE_dimer_H_new.pdb.bz2:                                                             Copyright (C) 2014 Stefano Luciano Ciurli (stefano.ciurli@unibo.it)
+bax_C_1J7P_N_H_Ca.pdb:                                                                  Copyright (C) 2009 Edward d'Auvergne
+bug_21187_molecule.pdb:                                                                 Copyright (C) 2013 Martin Ballaschk (ballaschk@fmp-berlin.de)
+bug_23293_missing_hetatm.pdb:                                                           Copyright (C) 2015 Edward d'Auvergne
+bug_23294_multi_mol_automerge.pdb:                                                      Copyright (C) 2015 Edward d'Auvergne
+generate_str_internal_results.py:                                                       Copyright (C) 2008 Edward d'Auvergne
+menthol_1R2S5R.pdb:                                                                     Copyright (C) 2012 Edward d'Auvergne
+multi_model_and_mol_test.pdb:                                                           Copyright (C) 2015 Edward d'Auvergne
+pyrotartaric_anhydride.pdb:                                                             Copyright (C) 2013 Edward d'Auvergne
+str_internal.bz2:                                                                       Copyright (C) 2008 Edward d'Auvergne
+strychnine.xyz:                                                                         Copyright (C) 2013 Edward d'Auvergne
+strychnine_opt_cdcl3_b3lyp_J_gaussian.log:                                              Copyright (C) 2013 Edward d'Auvergne
+strychnine_opt_cdcl3_b3lyp_gaussian.log.bz2:                                            Copyright (C) 2013 Edward d'Auvergne
+trunc_ubi_pcs.pdb:                                                                      Copyright (C) 2010 Edward d'Auvergne
+tylers_peptide_trunc.pdb:                                                               Copyright (C) 2008 Tyler Reddy (treddy@dal.ca)
+tylers_peptide_trunc.pdb:                                                               Copyright (C) 2009 Edward d'Auvergne
+web_of_motion.pdb:                                                                      Copyright (C) 2013 Edward d'Auvergne
+
+
+Public domain
+-------------
+
+The following files are public domain:
+
+1J7O.pdb:                                                                               Public domain
+1J7P.pdb:                                                                               Public domain
+1OGT_trunc.pdb:                                                                         Public domain
+1OSA.pdb:                                                                               Public domain
+1RTE_trunc.pdb:                                                                         Public domain
+1UBQ.pdb:                                                                               Public domain

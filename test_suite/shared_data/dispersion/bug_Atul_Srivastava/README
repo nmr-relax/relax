@@ -1,3 +1,44 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2014 Troels E. Linnet                                         #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+2100_off_reso_R1rho.list:                                                               Copyright (C) 2014 Troels E. Linnet
+2728_off_reso_R1rho.list:                                                               Copyright (C) 2014 Troels E. Linnet
+3357_off_reso_R1rho.list:                                                               Copyright (C) 2014 Troels E. Linnet
+3985_off_reso_R1rho.list:                                                               Copyright (C) 2014 Troels E. Linnet
+4614_off_reso_R1rho.list:                                                               Copyright (C) 2014 Troels E. Linnet
+5242_off_reso_R1rho.list:                                                               Copyright (C) 2014 Troels E. Linnet
+5871_off_reso_R1rho.list:                                                               Copyright (C) 2014 Troels E. Linnet
+6500_off_reso_R1rho.list:                                                               Copyright (C) 2014 Troels E. Linnet
+chemical_shifts.list:                                                                   Copyright (C) 2014 Troels E. Linnet
+fake_sequence.in:                                                                       Copyright (C) 2014 Troels E. Linnet
+ref_off_reso_R1rho.list:                                                                Copyright (C) 2014 Troels E. Linnet
+unresolved:                                                                             Copyright (C) 2014 Troels E. Linnet
+
+
 Description
 ===========
 

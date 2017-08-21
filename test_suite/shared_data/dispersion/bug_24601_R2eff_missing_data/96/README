@@ -1,0 +1,54 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+96_1111.11_0.009_6.in:                                                                  Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1111.11_0.018_6.in:                                                                  Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1111.11_0_6.in:                                                                      Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1333.33_0.009_6.in:                                                                  Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1333.33_0.018_6.in:                                                                  Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1333.33_0_6.in:                                                                      Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1555.56_0.009_6.in:                                                                  Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1555.56_0.018_6.in:                                                                  Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1555.56_0_6.in:                                                                      Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1777.78_0.009_6.in:                                                                  Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1777.78_0.018_6.in:                                                                  Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_1777.78_0_6.in:                                                                      Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_2000_0.009_6.in:                                                                     Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_2000_0.018_6.in:                                                                     Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_2000_0_6.in:                                                                         Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_222.22_0.009_6.in:                                                                   Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_222.22_0.018_6.in:                                                                   Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_222.22_0_6.in:                                                                       Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_444.44_0.009_6.in:                                                                   Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_444.44_0.018_6.in:                                                                   Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_444.44_0_6.in:                                                                       Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_666.67_0.009_6.in:                                                                   Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_666.67_0.018_6.in:                                                                   Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_666.67_0_6.in:                                                                       Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_888.89_0.009_6.in:                                                                   Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_888.89_0.018_6.in:                                                                   Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)
+96_888.89_0_6.in:                                                                       Copyright (C) 2016 Petr Padrta (padrta@ncbr.muni.cz)

@@ -1,0 +1,49 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+700mhz-263k-1m-02.listb:                                                                Copyright (C) 2008 Michael Funk (mifu@nmr.mpibpc.mpg.de)
+700mhz-263k-1m-04.listb:                                                                Copyright (C) 2008 Michael Funk (mifu@nmr.mpibpc.mpg.de)
+700mhz-263k-1m-06.listb:                                                                Copyright (C) 2008 Michael Funk (mifu@nmr.mpibpc.mpg.de)
+700mhz-263k-1m-08.listb:                                                                Copyright (C) 2008 Michael Funk (mifu@nmr.mpibpc.mpg.de)
+700mhz-263k-1m-10.listb:                                                                Copyright (C) 2008 Michael Funk (mifu@nmr.mpibpc.mpg.de)
+700mhz-263k-1m-12.listb:                                                                Copyright (C) 2008 Michael Funk (mifu@nmr.mpibpc.mpg.de)
+700mhz-263k-1m-14.listb:                                                                Copyright (C) 2008 Michael Funk (mifu@nmr.mpibpc.mpg.de)
+700mhz-263k-1m-16.listb:                                                                Copyright (C) 2008 Michael Funk (mifu@nmr.mpibpc.mpg.de)
+Sam.csv:                                                                                Copyright (C) 2015 Sze Chan (samuelsw.chan@mail.utoronto.ca)
+cNTnC.xpk:                                                                              Copyright (C) 2008 Ryan Hoffman (rmhoff@scripps.edu)
+generic_intensity.txt:                                                                  Copyright (C) 2008 Sebastien Morin
+noe.140109.8.001.list:                                                                  Copyright (C) 2014 Martin Ballaschk (ballaschk@fmp-berlin.de)
+noe.140109.8.002.list:                                                                  Copyright (C) 2014 Martin Ballaschk (ballaschk@fmp-berlin.de)
+peak_list_ccpnmr_analysis.list:                                                         Copyright (C) 2013 Troels E. Linnet
+ref_ave.list:                                                                           Copyright (C) 2008 Edward d'Auvergne
+sat_ave.list:                                                                           Copyright (C) 2008 Edward d'Auvergne
+seriesTab.ser:                                                                          Copyright (C) 2013 Troels E. Linnet
+seriesTab_multi.ser:                                                                    Copyright (C) 2013 Troels E. Linnet
+sparky2dim.list:                                                                        Copyright (C) 2013 Troels E. Linnet
+sparky_wo_int.list:                                                                     Copyright (C) 2013 Troels E. Linnet
+test.seq:                                                                               Copyright (C) 2013 Troels E. Linnet
+xeasy_r1_20ms.text:                                                                     Copyright (C) 2008 Edward d'Auvergne

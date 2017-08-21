@@ -1,0 +1,177 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2017 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+Sij_double_rotor_axis2_1_3_theta_x_calc.agr:                                            Copyright (C) 2014 Edward d'Auvergne
+Sij_double_rotor_axis2_1_3_theta_y_calc.agr:                                            Copyright (C) 2014 Edward d'Auvergne
+Sij_double_rotor_in_frame_theta_x_calc.agr:                                             Copyright (C) 2014 Edward d'Auvergne
+Sij_double_rotor_in_frame_theta_x_ens1000000.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sij_double_rotor_in_frame_theta_y_calc.agr:                                             Copyright (C) 2014 Edward d'Auvergne
+Sij_double_rotor_in_frame_theta_y_ens1000000.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sij_double_rotor_out_of_frame_theta_x_calc.agr:                                         Copyright (C) 2014 Edward d'Auvergne
+Sij_double_rotor_out_of_frame_theta_x_ens1000000.agr:                                   Copyright (C) 2014 Edward d'Auvergne
+Sij_double_rotor_out_of_frame_theta_y_calc.agr:                                         Copyright (C) 2014 Edward d'Auvergne
+Sij_double_rotor_out_of_frame_theta_y_ens1000000.agr:                                   Copyright (C) 2014 Edward d'Auvergne
+Sij_free_rotor_axis2_1_3_theta_z_calc.agr:                                              Copyright (C) 2014 Edward d'Auvergne
+Sij_free_rotor_in_frame_theta_z_calc.agr:                                               Copyright (C) 2014 Edward d'Auvergne
+Sij_free_rotor_in_frame_theta_z_ens1000000.agr:                                         Copyright (C) 2014 Edward d'Auvergne
+Sij_free_rotor_out_of_frame_theta_z_calc.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sij_free_rotor_out_of_frame_theta_z_ens1000000.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_axis2_1_3_theta_x_calc.agr:                                                Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_axis2_1_3_theta_z_calc.agr:                                                Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_free_rotor_axis2_1_3_theta_x_calc.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_free_rotor_in_frame_theta_x_calc.agr:                                      Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_free_rotor_in_frame_theta_x_ens1000000.agr:                                Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_free_rotor_out_of_frame_theta_x_calc.agr:                                  Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_free_rotor_out_of_frame_theta_x_ens1000000.agr:                            Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_in_frame_theta_x_calc.agr:                                                 Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_in_frame_theta_x_ens1000000.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_in_frame_theta_z_calc.agr:                                                 Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_in_frame_theta_z_ens1000000.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_out_of_frame_theta_x_calc.agr:                                             Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_out_of_frame_theta_x_ens1000000.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_out_of_frame_theta_z_calc.agr:                                             Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_out_of_frame_theta_z_ens1000000.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_torsionless_axis2_1_3_theta_x_calc.agr:                                    Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_torsionless_in_frame_theta_x_calc.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_torsionless_in_frame_theta_x_ens1000000.agr:                               Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_torsionless_out_of_frame_theta_x_calc.agr:                                 Copyright (C) 2014 Edward d'Auvergne
+Sij_iso_cone_torsionless_out_of_frame_theta_x_ens1000000.agr:                           Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_axis2_1_3_theta_x_calc.agr:                                          Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_axis2_1_3_theta_y_calc.agr:                                          Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_axis2_1_3_theta_z_calc.agr:                                          Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_axis2_1_3_theta_x_calc.agr:                               Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_axis2_1_3_theta_y_calc.agr:                               Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_in_frame_theta_x_calc.agr:                                Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_in_frame_theta_x_ens1000000.agr:                          Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_in_frame_theta_y_calc.agr:                                Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_in_frame_theta_y_ens1000000.agr:                          Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_out_of_frame_theta_x_calc.agr:                            Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_out_of_frame_theta_x_ens1000000.agr:                      Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_out_of_frame_theta_y_calc.agr:                            Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_free_rotor_out_of_frame_theta_y_ens1000000.agr:                      Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_in_frame_theta_x_calc.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_in_frame_theta_x_ens1000000.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_in_frame_theta_y_calc.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_in_frame_theta_y_ens1000000.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_in_frame_theta_z_calc.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_in_frame_theta_z_ens1000000.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_out_of_frame_theta_x_calc.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_out_of_frame_theta_x_ens1000000.agr:                                 Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_out_of_frame_theta_y_calc.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_out_of_frame_theta_y_ens1000000.agr:                                 Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_out_of_frame_theta_z_calc.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_out_of_frame_theta_z_ens1000000.agr:                                 Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_axis2_1_3_theta_x_calc.agr:                              Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_axis2_1_3_theta_y_calc.agr:                              Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_in_frame_theta_x_calc.agr:                               Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_in_frame_theta_x_ens1000000.agr:                         Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_in_frame_theta_y_calc.agr:                               Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_in_frame_theta_y_ens1000000.agr:                         Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_out_of_frame_theta_x_calc.agr:                           Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_out_of_frame_theta_x_ens1000000.agr:                     Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_out_of_frame_theta_y_calc.agr:                           Copyright (C) 2014 Edward d'Auvergne
+Sij_pseudo-ellipse_torsionless_out_of_frame_theta_y_ens1000000.agr:                     Copyright (C) 2014 Edward d'Auvergne
+Sij_rotor_axis2_1_3_theta_z_calc.agr:                                                   Copyright (C) 2014 Edward d'Auvergne
+Sij_rotor_in_frame_theta_z_calc.agr:                                                    Copyright (C) 2014 Edward d'Auvergne
+Sij_rotor_in_frame_theta_z_ens1000000.agr:                                              Copyright (C) 2014 Edward d'Auvergne
+Sij_rotor_out_of_frame_theta_z_calc.agr:                                                Copyright (C) 2014 Edward d'Auvergne
+Sij_rotor_out_of_frame_theta_z_ens1000000.agr:                                          Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_axis2_1_3_theta_x_calc.agr:                                          Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_axis2_1_3_theta_y_calc.agr:                                          Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_in_frame_theta_x_calc.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_in_frame_theta_x_ens1000000.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_in_frame_theta_y_calc.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_in_frame_theta_y_ens1000000.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_out_of_frame_theta_x_calc.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_out_of_frame_theta_x_ens1000000.agr:                                 Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_out_of_frame_theta_y_calc.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sijkl_double_rotor_out_of_frame_theta_y_ens1000000.agr:                                 Copyright (C) 2014 Edward d'Auvergne
+Sijkl_free_rotor_axis2_1_3_theta_z_calc.agr:                                            Copyright (C) 2014 Edward d'Auvergne
+Sijkl_free_rotor_in_frame_theta_z_calc.agr:                                             Copyright (C) 2014 Edward d'Auvergne
+Sijkl_free_rotor_in_frame_theta_z_ens1000000.agr:                                       Copyright (C) 2014 Edward d'Auvergne
+Sijkl_free_rotor_out_of_frame_theta_z_calc.agr:                                         Copyright (C) 2014 Edward d'Auvergne
+Sijkl_free_rotor_out_of_frame_theta_z_ens1000000.agr:                                   Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_axis2_1_3_theta_x_calc.agr:                                              Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_axis2_1_3_theta_z_calc.agr:                                              Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_free_rotor_axis2_1_3_theta_x_calc.agr:                                   Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_free_rotor_in_frame_theta_x_calc.agr:                                    Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_free_rotor_in_frame_theta_x_ens1000000.agr:                              Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_free_rotor_out_of_frame_theta_x_calc.agr:                                Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_free_rotor_out_of_frame_theta_x_ens1000000.agr:                          Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_in_frame_theta_x_calc.agr:                                               Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_in_frame_theta_x_ens1000000.agr:                                         Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_in_frame_theta_z_calc.agr:                                               Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_in_frame_theta_z_ens1000000.agr:                                         Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_out_of_frame_theta_x_calc.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_out_of_frame_theta_x_ens1000000.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_out_of_frame_theta_z_calc.agr:                                           Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_out_of_frame_theta_z_ens1000000.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_torsionless_axis2_1_3_theta_x_calc.agr:                                  Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_torsionless_in_frame_theta_x_calc.agr:                                   Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_torsionless_in_frame_theta_x_ens1000000.agr:                             Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_torsionless_out_of_frame_theta_x_calc.agr:                               Copyright (C) 2014 Edward d'Auvergne
+Sijkl_iso_cone_torsionless_out_of_frame_theta_x_ens1000000.agr:                         Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_axis2_1_3_theta_x_calc.agr:                                        Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_axis2_1_3_theta_y_calc.agr:                                        Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_axis2_1_3_theta_z_calc.agr:                                        Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_axis2_1_3_theta_x_calc.agr:                             Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_axis2_1_3_theta_y_calc.agr:                             Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_in_frame_theta_x_calc.agr:                              Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_in_frame_theta_x_ens1000000.agr:                        Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_in_frame_theta_y_calc.agr:                              Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_in_frame_theta_y_ens1000000.agr:                        Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_out_of_frame_theta_x_calc.agr:                          Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_out_of_frame_theta_x_ens1000000.agr:                    Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_out_of_frame_theta_y_calc.agr:                          Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_free_rotor_out_of_frame_theta_y_ens1000000.agr:                    Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_in_frame_theta_x_calc.agr:                                         Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_in_frame_theta_x_ens1000000.agr:                                   Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_in_frame_theta_y_calc.agr:                                         Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_in_frame_theta_y_ens1000000.agr:                                   Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_in_frame_theta_z_calc.agr:                                         Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_in_frame_theta_z_ens1000000.agr:                                   Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_out_of_frame_theta_x_calc.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_out_of_frame_theta_x_ens1000000.agr:                               Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_out_of_frame_theta_y_calc.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_out_of_frame_theta_y_ens1000000.agr:                               Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_out_of_frame_theta_z_calc.agr:                                     Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_out_of_frame_theta_z_ens1000000.agr:                               Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_axis2_1_3_theta_x_calc.agr:                            Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_axis2_1_3_theta_y_calc.agr:                            Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_in_frame_theta_x_calc.agr:                             Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_in_frame_theta_x_ens1000000.agr:                       Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_in_frame_theta_y_calc.agr:                             Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_in_frame_theta_y_ens1000000.agr:                       Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_out_of_frame_theta_x_calc.agr:                         Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_out_of_frame_theta_x_ens1000000.agr:                   Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_out_of_frame_theta_y_calc.agr:                         Copyright (C) 2014 Edward d'Auvergne
+Sijkl_pseudo-ellipse_torsionless_out_of_frame_theta_y_ens1000000.agr:                   Copyright (C) 2014 Edward d'Auvergne
+Sijkl_rotor_axis2_1_3_theta_z_calc.agr:                                                 Copyright (C) 2014 Edward d'Auvergne
+Sijkl_rotor_in_frame_theta_z_calc.agr:                                                  Copyright (C) 2014 Edward d'Auvergne
+Sijkl_rotor_in_frame_theta_z_ens1000000.agr:                                            Copyright (C) 2014 Edward d'Auvergne
+Sijkl_rotor_out_of_frame_theta_z_calc.agr:                                              Copyright (C) 2014 Edward d'Auvergne
+Sijkl_rotor_out_of_frame_theta_z_ens1000000.agr:                                        Copyright (C) 2014 Edward d'Auvergne
