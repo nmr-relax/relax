@@ -18,6 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+
 # Test if running as script or through GUI.
 is_script = False
 if not hasattr(cdp, "pipe_type"):
