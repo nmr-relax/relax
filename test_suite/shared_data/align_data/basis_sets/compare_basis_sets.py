@@ -1,3 +1,24 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
 # Random tensors of {Axx, Ayy, Axy, Axz, Ayz} generated using random.uniform(0, 1e-4).
 tensor1 = [5.4839183673166663e-05, 3.692459844061351e-05, 1.994164790083226e-05, 4.5945264935308495e-05, 1.0090119622465559e-05]
 tensor2 = [1.5832157768761617e-05, -4.9797877146095514e-05, -3.6007226809999e-05, -3.8175058915299295e-05, 5.3131759988544946e-05]
