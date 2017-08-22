@@ -2333,7 +2333,7 @@ def git_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
         before_opt = '--before=%i-12-31' % before
 
     # Exec.
-    pipe = Popen("git log %s %s --numstat --follow --pretty='%%an Ø %%ad Ø %%H Ø %%s' --date=iso %s" % (after_opt, before_opt, full_path), shell=True, stdout=PIPE, close_fds=False)
+    pipe = Popen("git log %s %s --numstat --follow --pretty='%%an Ø %%ad Ø %%H Ø %%s' --date=iso \"%s\"" % (after_opt, before_opt, full_path), shell=True, stdout=PIPE, close_fds=False)
 
     # Get the data.
     lines = pipe.stdout.readlines()
@@ -2547,7 +2547,7 @@ def svn_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
         date_range += '{1000-01-01}'
 
     # Exec.
-    pipe = Popen("svn log --diff %s %s" % (date_range, full_path), shell=True, stdout=PIPE, close_fds=False)
+    pipe = Popen("svn log --diff %s \"%s\"" % (date_range, full_path), shell=True, stdout=PIPE, close_fds=False)
 
     # Get the data.
     lines = pipe.stdout.readlines()
@@ -2866,9 +2866,9 @@ if __name__ == '__main__':
 
             # Check for untracked files.
             if REPOS[-1][1] == 'git':
-                pipe = Popen("git ls-files %s --error-unmatch; echo $?" % file_path, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
+                pipe = Popen("git ls-files \"%s\" --error-unmatch; echo $?" % file_path, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
             else:
-                pipe = Popen("svn info %s/%s/%s" % (REPOS[-1][0], REPOS[-1][4], file_path), shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
+                pipe = Popen("svn info \"%s/%s/%s\"" % (REPOS[-1][0], REPOS[-1][4], file_path), shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
             err = pipe.stderr.readlines()
             if err:
                 files_untracked += 1
