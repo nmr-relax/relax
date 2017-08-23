@@ -137,7 +137,7 @@ SIG_CODE = 8
 #       4 - The optional HEAD directory for svn.
 REPOS = [
     ["/data/relax/gna/repository_backup/git_migration/svn_cleanup_co", "svn", 2001, 2016, "trunk"],
-    [".", "git", 2017, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
+    [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
 ]
 
 # README file creation variables, for appending copyright notices to README files.
