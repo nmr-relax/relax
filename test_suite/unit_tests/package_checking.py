@@ -102,5 +102,9 @@ class PackageTestCase(UnitTestCase):
             if access(self.package_path+sep+module, F_OK):
                 continue
 
+            # Blacklisted files.
+            if hasattr(self, 'blacklist') and (module+'.py' in self.blacklist or module+'.so' in self.blacklist):
+                continue
+
             # Doesn't exist, so fail.
             self.fail()
