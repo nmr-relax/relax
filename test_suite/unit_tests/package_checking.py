@@ -41,6 +41,7 @@ class PackageTestCase(UnitTestCase):
         # Check for modules/packages missing from the __all__ list.
         print("\nChecking for modules/packages missing from the __all__ list.")
         files = listdir(self.package_path)
+        files.sort()
         skip = ['__init__.py']
         for file in files:
             # The full path.
