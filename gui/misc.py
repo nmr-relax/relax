@@ -269,7 +269,7 @@ def open_file(file, force_text=False):
     if platform.uname()[0] in ['Windows', 'Microsoft']:
         # Text file.
         if force_text:
-            os.system('notepad %s' % os.path.normpath(file))
+            os.system("notepad '%s'" % os.path.normpath(file))
 
         # All other files.
         else:
@@ -279,15 +279,15 @@ def open_file(file, force_text=False):
     elif platform.uname()[0] == 'Darwin':
         # Text file.
         if force_text:
-            os.system('open -t %s' % file)
+            os.system("open -t '%s'" % file)
 
         # All other files.
         else:
-            os.system('open %s' % file)
+            os.system("open '%s'" % file)
 
     # POSIX Systems with xdg-open.
     else:
-        os.system('/usr/bin/xdg-open %s' % file)
+        os.system("/usr/bin/xdg-open '%s'" % file)
 
 
 def protected_exec(fn, *args, **kargs):
