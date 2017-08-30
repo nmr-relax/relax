@@ -42,5 +42,5 @@ for name in pipes:
 model_selection(method='AIC', modsel_pipe='aic')
 
 # Write the results.
-state.save('save', force=True)
+state.save('state', force=True)
 results.write(file='results', force=True)

@@ -76,4 +76,4 @@ for name in pipes:
     results.write(file='results', force=True)
 
 # Save the program state.
-state.save('save', force=True)
+state.save('state', force=True)

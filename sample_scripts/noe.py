@@ -70,4 +70,4 @@ grace.view(file='noe.agr')
 results.write(file='results', dir=None, force=True)
 
 # Save the program state.
-state.save('save', force=True)
+state.save('state', force=True)

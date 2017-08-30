@@ -114,4 +114,4 @@ grace.view(file='intensities.agr')
 grace.view(file='intensities_norm.agr')
 
 # Save the program state.
-state.save('rx.save', force=True)
+state.save('state', force=True)

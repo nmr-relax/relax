@@ -147,5 +147,5 @@ pymol.cone_pdb(file='diff_on_cone.pdb')
 pymol.cone_pdb(file='diff_in_cone.pdb')
 
 # Finish.
-state.save('save', force=True)
+state.save('state', force=True)
 results.write(file='results', force=True)

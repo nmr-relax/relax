@@ -88,7 +88,7 @@ def exec_stage_1(pipes):
         palmer.execute(force=True)
 
     # Save the program state.
-    state.save('stage1.save', force=True)
+    state.save('stage1', force=True)
 
 
 def exec_stage_2(pipes):
@@ -98,7 +98,7 @@ def exec_stage_2(pipes):
     """
 
     # Load the saved state from stage 1.
-    state.load('stage1.save')
+    state.load('stage1')
 
     # Print out.
     print("\n\nLoading all the Modelfree 4 data.")
@@ -121,7 +121,7 @@ def exec_stage_2(pipes):
     results.write(file='results', force=True)
 
     # Save the program state.
-    state.save('stage2.save', force=True)
+    state.save('stage2', force=True)
 
 
 def exec_stage_3():
@@ -131,7 +131,7 @@ def exec_stage_3():
     """
 
     # Load the saved state from stage 2.
-    state.load('stage2.save')
+    state.load('stage2')
 
     # Let the diffusion tensor parameters be optimised.
     fix('diff', False)
@@ -146,7 +146,7 @@ def exec_stage_3():
     palmer.extract(dir='final')
 
     # Save the program state.
-    state.save('stage3.save', force=True)
+    state.save('stage3', force=True)
 
 
 # Main section of the script.

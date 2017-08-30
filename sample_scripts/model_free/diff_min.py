@@ -126,4 +126,4 @@ minimise.execute('newton')
 results.write(file='results', dir='opt', force=True)
 
 # Save the program state.
-state.save('save', force=True)
+state.save('state', force=True)
