@@ -143,7 +143,7 @@ from lib.io import open_read_file
 
 
 # Debugging modes.
-DEBUG = False
+DEBUG = True
 
 # The significant number of new lines of code added.
 SIG_CODE = 8
@@ -404,8 +404,12 @@ GIT_START = {
         "A complete shift from the make build system to the scons build system (and a bug fix). (2006-01-30 06:45:35 +0000)",
     "docs/latex/licence.tex":
         "Created the 'Licence' chapter in the manual. (2005-10-15 12:42:17 +0000)",
+    "docs/latex/images/pec_diag.py":
+        "Added a trivial relax script to help regenerate the pec_diag.eps diagram. (2017-08-31 10:30:23 +0200)",
     "extern/__init__.py":
         "The 'extern' package is now a proper package - the __init__.py file has been added! (2011-06-03 15:54:51 +0000)",
+    "extern/sobol/README":
+        "Update to FSF compliant copyright notices for the external Sobol package. (2017-08-31 09:56:56 +0200)",
     "extern/sobol/__init__.py":
         "Added the external LGPL SOBOL Python library code to relax. (2012-01-12 17:15:26 +0000)",
     "graphics/__init__.py":
@@ -2190,7 +2194,7 @@ ADDITIONAL_COPYRIGHT_YEARS = {
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
 FALSE_POS = {
-    'info.py':                                                          ["self.copyright.append(\"Copyright (C) 2001-2006 Edward d'Auvergne\")", "self.copyright.append(\"Copyright (C) 2006-2016 the relax development team\")", "self.copyright_short = \"Copyright (C) 2001-2016 the relax development team\""],
+    'info.py':                                                          ["self.copyright.append(\"Copyright (C) 2001-2006 Edward d'Auvergne\")", "self.copyright.append(\"Copyright (C) 2006-2017 the relax development team\")", "self.copyright_short = \"Copyright (C) 2001-2017 the relax development team\""],
     'devel_scripts/copyright_notices.py':                               ["Copyright (C) year1, year2, year3 copyright-holder"],
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/object-locked-unlocked.png':                      ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
