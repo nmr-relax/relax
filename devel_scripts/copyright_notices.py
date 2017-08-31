@@ -247,7 +247,6 @@ DIR_SKIP = [
     '.git',
     '.svn',
     'extern/numdifftools',                                      # External packages distributed with relax.
-    'extern/sobol',                                             # External packages distributed with relax.
     'graphics/oxygen_icons',                                    # External source, copyright documented as much as possible.
 ]
 
@@ -407,6 +406,8 @@ GIT_START = {
         "Created the 'Licence' chapter in the manual. (2005-10-15 12:42:17 +0000)",
     "extern/__init__.py":
         "The 'extern' package is now a proper package - the __init__.py file has been added! (2011-06-03 15:54:51 +0000)",
+    "extern/sobol/__init__.py":
+        "Added the external LGPL SOBOL Python library code to relax. (2012-01-12 17:15:26 +0000)",
     "graphics/__init__.py":
         "The graphics directory has been converted into a Python package. (2012-05-04 09:13:13 +0000)",
     "graphics/analyses/consistency_testing/README":
@@ -1770,6 +1771,10 @@ ADDITIONAL_COPYRIGHT_YEARS = {
     'docs/html/icons/prev.png':                                         [[1993, "Nikos Drakos"]],
     'docs/html/icons/up_g.png':                                         [[1993, "Nikos Drakos"]],
     'docs/html/icons/up.png':                                           [[1993, "Nikos Drakos"]],
+    'extern/sobol/sobol_test.py':                                       [[2011, "Corrado Chisari"]],
+    'extern/sobol/sobol_lib-not_tested.py':                             [[2011, "Corrado Chisari"]],
+    'extern/sobol/sobol_test_output.txt':                               [[2011, "Corrado Chisari"]],
+    'extern/sobol/sobol_lib.py':                                        [[2011, "Corrado Chisari"]],
     'graphics/README':                                                  [[2017, "Edward d'Auvergne"]],
     'graphics/analyses/README':                                         [[2017, "Edward d'Auvergne"]],
     'graphics/misc/README':                                             [[2017, "Edward d'Auvergne"]],
@@ -2230,6 +2235,10 @@ FALSE_NEG_YEARS = {
     'docs/html/icons/prev.png':                                         [[2011, "Edward d'Auvergne"]],
     'docs/html/icons/up_g.png':                                         [[2011, "Edward d'Auvergne"]],
     'docs/html/icons/up.png':                                           [[2011, "Edward d'Auvergne"]],
+    'extern/sobol/sobol_test.py':                                       [[2012, "Edward d'Auvergne"]],
+    'extern/sobol/sobol_lib-not_tested.py':                             [[2012, "Edward d'Auvergne"]],
+    'extern/sobol/sobol_test_output.txt':                               [[2012, "Edward d'Auvergne"]],
+    'extern/sobol/sobol_lib.py':                                        [[2012, "Edward d'Auvergne"]],
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    [[2012, "Edward d'Auvergne"]],
     'graphics/wizards/object-locked-unlocked.png':                      [[2012, "Edward d'Auvergne"]],
     'graphics/wizards/oxygen-icon-weather-clear.png':                   [[2012, "Edward d'Auvergne"]],
@@ -2409,6 +2418,8 @@ FALSE_NEG_YEARS = {
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
 EXCLUDE = [
+    # 90129abc13cb764c89a32c2fe2e38e532b859ac5 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for the external Sobol package. (2017-08-31 09:56:56 +0200)",
     # 0152ac6f384fb86fa082a4521d17fc3e1b8a15a4 - Copyright notice updates.
     "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
     # 4272a7f11dfa057d74d9b631f0ad3be1c72486a0 - Copyright notice updates.
@@ -2966,6 +2977,8 @@ EXCLUDE = [
     "Python 3 update for the external Sobol library. (2012-10-16 09:38:17 +0000)",
     # r17849 - 6edf77be3bdd2ed8c371ed7a7a2aef3365f32d58 - 2to3 automated conversions.
     "Python 3 fix for the structural API. (2012-10-16 09:30:03 +0000)",
+    # r17850 - 5b9ef114c543d0e3d42a756da0da2cc6f3129958 - 2to3 automated conversions.
+    "Python 3 fix - replaced all xrange() calls with range(). (2012-10-16 09:35:02 +0000)",
     # r17705 - df158daae9de2b3f8981bf31402830ff86bdcb6b - 2to3 automated conversions.
     "The relax_fit specific analysis module now supports both Python 2 and 3. (2012-10-05 17:48:03 +0000)",
     # r17674 - 1833765c56c4a5ac14be4782609552ee322ec121 - 2to3 automated conversions.
@@ -3004,6 +3017,8 @@ EXCLUDE = [
     "Renamed the PDC to Bruker DC in the test suite. (2012-04-30 10:43:05 +0000)",
     # r15228 - 09f4391582c9ab826e7de192a835e1a7a39209f5 - 2to3 automated conversions.
     "Updates for Python 3.0. (2012-01-24 14:24:40 +0000)",
+    # r15158 - f9d91d1a59dd644c4c2e8e4da6f09dc3ff362b48.
+    "Added the external LGPL SOBOL Python library code to relax. (2012-01-12 17:15:26 +0000)",
     # r14812 - cad3aac4d7ca177c4a4129b00f9f80e92a4b26ed - 2to3 automated conversions.
     "Updates for Python 3.0 using the Python 2to3 script. (2011-10-09 11:40:36 +0000)",
     # r14069 - b53f99f555ae895e416802f3c16c314db9558733.
