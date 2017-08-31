@@ -438,6 +438,8 @@ GIT_START = {
         "Added some basic initial relax icons for J couplings. (2013-06-13 15:17:14 +0000)",
     "graphics/screenshots/noe_analysis/README":
         "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
+    "graphics/screenshots/noe_analysis/grace.agr":
+        "Added the base Xmgrace data file for the generation of the NOE data plot. (2017-08-31 10:46:00 +0200)",
     "graphics/screenshots/r1_analysis/README":
         "FSF compliant copyright notices for the entirety of the graphics/ directory. (2017-07-07 11:49:32 +0200)",
     "graphics/screenshots/spin_viewer/README":
@@ -1786,6 +1788,7 @@ ADDITIONAL_COPYRIGHT_YEARS = {
     'graphics/screenshots/README':                                      [[2017, "Edward d'Auvergne"]],
     'graphics/screenshots/dispersion_analysis/README':                  [[2017, "Edward d'Auvergne"]],
     'graphics/screenshots/mf_analysis/README':                          [[2017, "Edward d'Auvergne"]],
+    'graphics/screenshots/noe_analysis/grace.agr':                      [[2004, "Edward d'Auvergne"]],
     'graphics/wizards/README':                                          [[2017, "Edward d'Auvergne"]],
     'test_suite/shared_data/align_data/CaM_IQ/README':                                                  [[2017, "Edward d'Auvergne"]],
     'test_suite/shared_data/align_data/basis_sets/README':                                              [[2017, "Edward d'Auvergne"]],
@@ -2239,6 +2242,7 @@ FALSE_NEG_YEARS = {
     'extern/sobol/sobol_lib-not_tested.py':                             [[2012, "Edward d'Auvergne"]],
     'extern/sobol/sobol_test_output.txt':                               [[2012, "Edward d'Auvergne"]],
     'extern/sobol/sobol_lib.py':                                        [[2012, "Edward d'Auvergne"]],
+    'graphics/screenshots/noe_analysis/grace.agr':                      [[2017, "Edward d'Auvergne"]],
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    [[2012, "Edward d'Auvergne"]],
     'graphics/wizards/object-locked-unlocked.png':                      [[2012, "Edward d'Auvergne"]],
     'graphics/wizards/oxygen-icon-weather-clear.png':                   [[2012, "Edward d'Auvergne"]],

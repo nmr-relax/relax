@@ -1,0 +1,508 @@
+# Grace project file
+#
+###############################################################################
+#                                                                             #
+# Copyright (C) 2004 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+@version 50122
+@page size 842, 595
+@page scroll 5%
+@page inout 5%
+@link page off
+@map font 0 to "Times-Roman", "Times-Roman"
+@map font 1 to "Times-Italic", "Times-Italic"
+@map font 2 to "Times-Bold", "Times-Bold"
+@map font 3 to "Times-BoldItalic", "Times-BoldItalic"
+@map font 4 to "Helvetica", "Helvetica"
+@map font 5 to "Helvetica-Oblique", "Helvetica-Oblique"
+@map font 6 to "Helvetica-Bold", "Helvetica-Bold"
+@map font 7 to "Helvetica-BoldOblique", "Helvetica-BoldOblique"
+@map font 8 to "Courier", "Courier"
+@map font 9 to "Courier-Oblique", "Courier-Oblique"
+@map font 10 to "Courier-Bold", "Courier-Bold"
+@map font 11 to "Courier-BoldOblique", "Courier-BoldOblique"
+@map font 12 to "Symbol", "Symbol"
+@map font 13 to "ZapfDingbats", "ZapfDingbats"
+@map color 0 to (255, 255, 255), "white"
+@map color 1 to (0, 0, 0), "black"
+@map color 2 to (255, 0, 0), "red"
+@map color 3 to (0, 255, 0), "green"
+@map color 4 to (0, 0, 255), "blue"
+@map color 5 to (255, 255, 0), "yellow"
+@map color 6 to (188, 143, 143), "brown"
+@map color 7 to (220, 220, 220), "grey"
+@map color 8 to (148, 0, 211), "violet"
+@map color 9 to (0, 255, 255), "cyan"
+@map color 10 to (255, 0, 255), "magenta"
+@map color 11 to (255, 165, 0), "orange"
+@map color 12 to (114, 33, 188), "indigo"
+@map color 13 to (103, 7, 72), "maroon"
+@map color 14 to (64, 224, 208), "turquoise"
+@map color 15 to (0, 139, 0), "green4"
+@reference date 0
+@date wrap off
+@date wrap year 1950
+@default linewidth 1.0
+@default linestyle 1
+@default color 1
+@default pattern 1
+@default font 0
+@default char size 1.000000
+@default symbol size 1.000000
+@default sformat "%.8g"
+@background color 0
+@page background fill on
+@timestamp off
+@timestamp 0.03, 0.03
+@timestamp color 1
+@timestamp rot 0
+@timestamp font 0
+@timestamp char size 1.000000
+@timestamp def "Tue Sep  4 11:40:53 2012"
+@r0 off
+@link r0 to g0
+@r0 type above
+@r0 linestyle 1
+@r0 linewidth 1.0
+@r0 color 1
+@r0 line 0, 0, 0, 0
+@r1 off
+@link r1 to g0
+@r1 type above
+@r1 linestyle 1
+@r1 linewidth 1.0
+@r1 color 1
+@r1 line 0, 0, 0, 0
+@r2 off
+@link r2 to g0
+@r2 type above
+@r2 linestyle 1
+@r2 linewidth 1.0
+@r2 color 1
+@r2 line 0, 0, 0, 0
+@r3 off
+@link r3 to g0
+@r3 type above
+@r3 linestyle 1
+@r3 linewidth 1.0
+@r3 color 1
+@r3 line 0, 0, 0, 0
+@r4 off
+@link r4 to g0
+@r4 type above
+@r4 linestyle 1
+@r4 linewidth 1.0
+@r4 color 1
+@r4 line 0, 0, 0, 0
+@g0 on
+@g0 hidden false
+@g0 type XY
+@g0 stacked false
+@g0 bar hgap 0.000000
+@g0 fixedpoint off
+@g0 fixedpoint type 0
+@g0 fixedpoint xy 0.000000, 0.000000
+@g0 fixedpoint format general general
+@g0 fixedpoint prec 6, 6
+@with g0
+@    world 0, 0, 170, 1
+@    stack world 0, 0, 0, 0
+@    znorm 1
+@    view 0.150000, 0.150000, 1.280000, 0.850000
+@    title ""
+@    title font 0
+@    title size 1.500000
+@    title color 1
+@    subtitle ""
+@    subtitle font 0
+@    subtitle size 1.000000
+@    subtitle color 1
+@    xaxes scale Normal
+@    yaxes scale Normal
+@    xaxes invert off
+@    yaxes invert off
+@    xaxis  on
+@    xaxis  type zero false
+@    xaxis  offset 0.000000 , 0.000000
+@    xaxis  bar on
+@    xaxis  bar color 1
+@    xaxis  bar linestyle 1
+@    xaxis  bar linewidth 1.0
+@    xaxis  label "Residue number"
+@    xaxis  label layout para
+@    xaxis  label place auto
+@    xaxis  label char size 1.480000
+@    xaxis  label font 0
+@    xaxis  label color 1
+@    xaxis  label place normal
+@    xaxis  tick on
+@    xaxis  tick major 10
+@    xaxis  tick minor ticks 9
+@    xaxis  tick default 6
+@    xaxis  tick place rounded true
+@    xaxis  tick in
+@    xaxis  tick major size 0.750000
+@    xaxis  tick major color 1
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick major linestyle 1
+@    xaxis  tick major grid off
+@    xaxis  tick minor color 1
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor linestyle 1
+@    xaxis  tick minor grid off
+@    xaxis  tick minor size 0.450000
+@    xaxis  ticklabel on
+@    xaxis  ticklabel format general
+@    xaxis  ticklabel prec 5
+@    xaxis  ticklabel formula ""
+@    xaxis  ticklabel append ""
+@    xaxis  ticklabel prepend ""
+@    xaxis  ticklabel angle 0
+@    xaxis  ticklabel skip 0
+@    xaxis  ticklabel stagger 0
+@    xaxis  ticklabel place normal
+@    xaxis  ticklabel offset auto
+@    xaxis  ticklabel offset 0.000000 , 0.010000
+@    xaxis  ticklabel start type auto
+@    xaxis  ticklabel start 0.000000
+@    xaxis  ticklabel stop type auto
+@    xaxis  ticklabel stop 0.000000
+@    xaxis  ticklabel char size 1.000000
+@    xaxis  ticklabel font 0
+@    xaxis  ticklabel color 1
+@    xaxis  tick place both
+@    xaxis  tick spec type none
+@    yaxis  on
+@    yaxis  type zero false
+@    yaxis  offset 0.000000 , 0.000000
+@    yaxis  bar on
+@    yaxis  bar color 1
+@    yaxis  bar linestyle 1
+@    yaxis  bar linewidth 1.0
+@    yaxis  label "\qNOE\Q"
+@    yaxis  label layout para
+@    yaxis  label place auto
+@    yaxis  label char size 1.480000
+@    yaxis  label font 0
+@    yaxis  label color 1
+@    yaxis  label place normal
+@    yaxis  tick on
+@    yaxis  tick major 0.2
+@    yaxis  tick minor ticks 1
+@    yaxis  tick default 6
+@    yaxis  tick place rounded true
+@    yaxis  tick in
+@    yaxis  tick major size 0.750000
+@    yaxis  tick major color 1
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick major linestyle 1
+@    yaxis  tick major grid off
+@    yaxis  tick minor color 1
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor linestyle 1
+@    yaxis  tick minor grid off
+@    yaxis  tick minor size 0.450000
+@    yaxis  ticklabel on
+@    yaxis  ticklabel format general
+@    yaxis  ticklabel prec 5
+@    yaxis  ticklabel formula ""
+@    yaxis  ticklabel append ""
+@    yaxis  ticklabel prepend ""
+@    yaxis  ticklabel angle 0
+@    yaxis  ticklabel skip 0
+@    yaxis  ticklabel stagger 0
+@    yaxis  ticklabel place normal
+@    yaxis  ticklabel offset auto
+@    yaxis  ticklabel offset 0.000000 , 0.010000
+@    yaxis  ticklabel start type auto
+@    yaxis  ticklabel start 0.000000
+@    yaxis  ticklabel stop type auto
+@    yaxis  ticklabel stop 0.000000
+@    yaxis  ticklabel char size 1.000000
+@    yaxis  ticklabel font 0
+@    yaxis  ticklabel color 1
+@    yaxis  tick place both
+@    yaxis  tick spec type none
+@    altxaxis  off
+@    altyaxis  off
+@    legend on
+@    legend loctype view
+@    legend 0.4, 0.4
+@    legend box color 1
+@    legend box pattern 1
+@    legend box linewidth 1.0
+@    legend box linestyle 1
+@    legend box fill color 0
+@    legend box fill pattern 1
+@    legend font 0
+@    legend char size 1.000000
+@    legend color 1
+@    legend length 4
+@    legend vgap 1
+@    legend hgap 1
+@    legend invert false
+@    frame type 0
+@    frame linestyle 1
+@    frame linewidth 0.5
+@    frame color 1
+@    frame pattern 1
+@    frame background color 0
+@    frame background pattern 0
+@    s0 hidden false
+@    s0 type xydy
+@    s0 symbol 1
+@    s0 symbol size 0.450000
+@    s0 symbol color 1
+@    s0 symbol pattern 1
+@    s0 symbol fill color 2
+@    s0 symbol fill pattern 1
+@    s0 symbol linewidth 0.5
+@    s0 symbol linestyle 1
+@    s0 symbol char 65
+@    s0 symbol char font 0
+@    s0 symbol skip 0
+@    s0 line type 0
+@    s0 line linestyle 1
+@    s0 line linewidth 1.0
+@    s0 line color 1
+@    s0 line pattern 1
+@    s0 baseline type 0
+@    s0 baseline off
+@    s0 dropline off
+@    s0 fill type 0
+@    s0 fill rule 0
+@    s0 fill color 1
+@    s0 fill pattern 1
+@    s0 avalue off
+@    s0 avalue type 2
+@    s0 avalue char size 1.000000
+@    s0 avalue font 0
+@    s0 avalue color 1
+@    s0 avalue rot 0
+@    s0 avalue format general
+@    s0 avalue prec 3
+@    s0 avalue prepend ""
+@    s0 avalue append ""
+@    s0 avalue offset 0.000000 , 0.000000
+@    s0 errorbar on
+@    s0 errorbar place both
+@    s0 errorbar color 1
+@    s0 errorbar pattern 1
+@    s0 errorbar size 0.500000
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser linewidth 0.5
+@    s0 errorbar riser linestyle 1
+@    s0 errorbar riser clip off
+@    s0 errorbar riser clip length 0.100000
+@    s0 comment "/data/PhD/relaxation/Mg.Noe.500.2004-10-04/data-analysis/grace/noe.agr"
+@    s0 legend  "N spins. "
+@    s1 hidden false
+@    s1 type xydy
+@    s1 symbol 2
+@    s1 symbol size 0.450000
+@    s1 symbol color 1
+@    s1 symbol pattern 1
+@    s1 symbol fill color 4
+@    s1 symbol fill pattern 1
+@    s1 symbol linewidth 0.5
+@    s1 symbol linestyle 1
+@    s1 symbol char 65
+@    s1 symbol char font 0
+@    s1 symbol skip 0
+@    s1 line type 0
+@    s1 line linestyle 1
+@    s1 line linewidth 1.0
+@    s1 line color 1
+@    s1 line pattern 1
+@    s1 baseline type 0
+@    s1 baseline off
+@    s1 dropline off
+@    s1 fill type 0
+@    s1 fill rule 0
+@    s1 fill color 1
+@    s1 fill pattern 1
+@    s1 avalue off
+@    s1 avalue type 2
+@    s1 avalue char size 1.000000
+@    s1 avalue font 0
+@    s1 avalue color 1
+@    s1 avalue rot 0
+@    s1 avalue format general
+@    s1 avalue prec 3
+@    s1 avalue prepend ""
+@    s1 avalue append ""
+@    s1 avalue offset 0.000000 , 0.000000
+@    s1 errorbar on
+@    s1 errorbar place both
+@    s1 errorbar color 1
+@    s1 errorbar pattern 1
+@    s1 errorbar size 0.500000
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar linestyle 1
+@    s1 errorbar riser linewidth 0.5
+@    s1 errorbar riser linestyle 1
+@    s1 errorbar riser clip off
+@    s1 errorbar riser clip length 0.100000
+@    s1 comment "/data/PhD/relaxation/Mg.Noe.500.2004-10-04/data-analysis/grace/noe.agr"
+@    s1 legend  "NE1 spins. "
+@target G0.S0
+@type xydy
+4 0.038921947 0.01903177
+5 0.31240423 0.018596937
+6 0.42850832 0.025258563
+7 0.53054928 0.027990623
+8 0.5652843 0.021706121
+12 0.70366264 0.046813702
+13 0.74746457 0.035946401
+14 0.75241296 0.049570186
+15 0.81568922 0.059453701
+16 0.75103324 0.072571006
+17 0.90385462 0.057324571
+18 0.78838978 0.031256901
+20 0.83882401 0.04450365
+21 0.82448483 0.062654792
+22 0.76229204 0.040722978
+24 0.70329097 0.032525141
+25 0.80500737 0.025390849
+26 0.74045831 0.031163868
+27 0.73978426 0.02728445
+28 0.80128221 0.051910241
+29 0.82063508 0.053394038
+30 0.86319729 0.042101615
+32 0.71850088 0.038985154
+33 0.7419426 0.046668301
+34 0.73574395 0.049761714
+35 0.62893104 0.044087554
+36 0.69688464 0.031183505
+38 0.6296588 0.030222135
+39 0.6772167 0.028740943
+40 0.65394813 0.038300619
+41 0.7811241 0.042585064
+45 0.82686526 0.048871453
+46 0.83758556 0.03950514
+47 0.75092701 0.046648575
+48 0.71751641 0.039078152
+49 0.71884446 0.020093793
+50 0.67370291 0.039168942
+51 0.77033718 0.021091845
+52 0.72458529 0.027743598
+55 0.80423644 0.031836148
+56 0.83623236 0.033833214
+57 0.75794018 0.021093706
+58 0.83878113 0.042470178
+59 0.80319696 0.034278317
+60 0.86092778 0.04511748
+61 0.82510675 0.030922011
+62 0.76246648 0.032453125
+63 0.77878587 0.039972489
+64 0.87186953 0.042708644
+65 0.87660962 0.065424518
+66 0.81302529 0.033263733
+67 0.75538609 0.036979625
+68 0.91370578 0.087392314
+69 0.88795021 0.065899191
+70 0.8115626 0.02020169
+71 0.79264857 0.031103238
+72 0.7546273 0.023120801
+73 0.90978038 0.070177095
+74 0.79693757 0.029897052
+75 0.83315495 0.029105512
+76 0.79252013 0.04136659
+78 0.67883702 0.019681765
+79 0.79819195 0.056472928
+80 0.99438568 0.082202094
+81 0.77478925 0.042737706
+83 0.75993799 0.047680149
+84 0.71146405 0.046822759
+87 0.65557107 0.06499096
+88 0.71550181 0.046555878
+89 0.65506885 0.040355459
+90 0.65779867 0.036146748
+91 0.68450988 0.038671284
+93 0.65070537 0.02803966
+95 0.52219546 0.087020556
+97 0.56309613 0.039377899
+98 0.5878304 0.044411476
+100 0.56283965 0.073136079
+102 0.72584878 0.047244943
+103 0.84204249 0.052437764
+104 0.76280622 0.052411403
+105 0.83614886 0.059977333
+106 0.82981802 0.060051653
+107 0.83361852 0.074853441
+108 0.77255065 0.042389932
+109 0.81338955 0.043969453
+110 0.80689963 0.050300457
+111 0.82363175 0.038623344
+112 0.76821164 0.043177109
+113 0.71519608 0.041232446
+114 0.32345263 0.1789088
+115 0.75684555 0.026364813
+116 0.75150927 0.024486144
+117 0.7555169 0.01962242
+118 0.78893514 0.02213169
+119 0.86891531 0.031177224
+120 0.69426777 0.031596169
+121 0.72629075 0.039949551
+122 0.70290261 0.025849395
+123 0.57143276 0.017775448
+125 0.55690854 0.016661843
+127 0.46732454 0.014160037
+128 0.41759763 0.016587257
+130 0.6357347 0.03571117
+131 0.66756686 0.033703637
+132 0.79061794 0.054323667
+133 0.58997403 0.025450776
+134 0.75774902 0.024049549
+135 0.85292691 0.03718455
+137 0.77417273 0.043332726
+138 0.75490436 0.031955662
+140 0.72869996 0.024778488
+142 0.79576364 0.034295193
+143 0.70327469 0.034950956
+144 0.81810451 0.029305523
+146 0.69276302 0.033036824
+148 0.75470481 0.038391991
+149 0.78600901 0.055973893
+150 0.74820619 0.063440491
+151 0.81493814 0.049723604
+153 0.67717526 0.042270776
+154 0.72308345 0.045576173
+155 0.7789596 0.032693988
+156 0.72996961 0.030151116
+157 0.79908424 0.038839146
+158 0.76426759 0.040820972
+159 0.75887769 0.028690986
+160 0.80763182 0.034217305
+161 0.80115514 0.034986461
+162 0.78525538 0.023210254
+164 0.78019087 0.030450875
+165 0.70597749 0.025537857
+&
+@target G0.S1
+@type xydy
+40 0.6707388 0.014260663
+79 0.7508272 0.026249764
+96 0.41926397 0.01636747
+100 0.6250636 0.019274867
+107 0.79547017 0.049154679
+134 0.77991329 0.016773922
+136 0.76706486 0.024053563
+&
