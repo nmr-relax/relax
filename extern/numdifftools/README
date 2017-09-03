@@ -23,7 +23,25 @@
 Licencing
 =========
 
-All files are licensed under the New BSD licence, as stated in the 'licence.py' file.
+New BSD
+-------
+
+The following files are licensed under the New BSD licence, as stated in the 'licence.py' file:
+
+__init__.py:                                                                            Copyright (C) 2008 John D'Errico, Per A. Brodtkorb
+core.py:                                                                                Copyright (C) 2008 John D'Errico, Per A. Brodtkorb
+info.py:                                                                                Copyright (C) 2008 John D'Errico, Per A. Brodtkorb
+nd_algopy.py:                                                                           Copyright (C) 2008 John D'Errico, Per A. Brodtkorb
+nd_scientific.py:                                                                       Copyright (C) 2008 John D'Errico, Per A. Brodtkorb
+numdifftools.prj:                                                                       Copyright (C) 2008 John D'Errico, Per A. Brodtkorb
+
+
+Public domain
+-------------
+
+The new BSD licence is public domain:
+
+license.py:                                                                             Public domain
 
 
 Origin

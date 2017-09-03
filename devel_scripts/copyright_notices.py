@@ -143,7 +143,7 @@ from lib.io import open_read_file
 
 
 # Debugging modes.
-DEBUG = True
+DEBUG = False
 
 # The significant number of new lines of code added.
 SIG_CODE = 8
@@ -246,7 +246,6 @@ BLACKLISTED_FILES = [
 DIR_SKIP = [
     '.git',
     '.svn',
-    'extern/numdifftools',                                      # External packages distributed with relax.
     'graphics/oxygen_icons',                                    # External source, copyright documented as much as possible.
 ]
 
@@ -408,6 +407,16 @@ GIT_START = {
         "Added a trivial relax script to help regenerate the pec_diag.eps diagram. (2017-08-31 10:30:23 +0200)",
     "extern/__init__.py":
         "The 'extern' package is now a proper package - the __init__.py file has been added! (2011-06-03 15:54:51 +0000)",
+    "extern/numdifftools/README":
+        "Update to FSF compliant copyright notices for the external numdifftools package. (2017-09-03 14:52:10 +0200)",
+    "extern/numdifftools/doc/README":
+        "Update to FSF compliant copyright notices for the external numdifftools package. (2017-09-03 14:52:10 +0200)",
+    "extern/numdifftools/html/README":
+        "Update to FSF compliant copyright notices for the external numdifftools package. (2017-09-03 14:52:10 +0200)",
+    "extern/numdifftools/speed_comparison/README":
+        "Update to FSF compliant copyright notices for the external numdifftools package. (2017-09-03 14:52:10 +0200)",
+    "extern/numdifftools/test/README":
+        "Update to FSF compliant copyright notices for the external numdifftools package. (2017-09-03 14:52:10 +0200)",
     "extern/sobol/README":
         "Update to FSF compliant copyright notices for the external Sobol package. (2017-08-31 09:56:56 +0200)",
     "extern/sobol/__init__.py":
@@ -1777,6 +1786,33 @@ ADDITIONAL_COPYRIGHT_YEARS = {
     'docs/html/icons/prev.png':                                         [[1993, "Nikos Drakos"]],
     'docs/html/icons/up_g.png':                                         [[1993, "Nikos Drakos"]],
     'docs/html/icons/up.png':                                           [[1993, "Nikos Drakos"]],
+    'extern/numdifftools/__init__.py':                                  [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/core.py':                                      [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/info.py':                                      [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/nd_algopy.py':                                 [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/nd_scientific.py':                             [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/numdifftools.prj':                             [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/doc/DERIVEST.pdf':                             [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/doc/DERIVEST.tex':                             [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/html/epydoc.css':                              [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/html/index.html':                              [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/benchmark1.py':               [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/prettyplotting.py':           [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/run_benchmarks.py':           [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/use_adolc.py':                [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/use_algopy.py':               [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/use_funcdesigner.py':         [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/use_numdifftools.py':         [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/use_scientific.py':           [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/use_theano.py':               [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/speed_comparison/use_uncertainties.py':        [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/test/test_hessian.py':                         [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/test/test_numdifftools_docstrings.py':         [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/numdifftools/test/testnumdifftools.py':                     [[2008, "John D'Errico, Per A. Brodtkorb"]],
+    'extern/sobol/sobol_test.py':                                       [[2012, "Edward d'Auvergne"]],
+    'extern/sobol/sobol_lib-not_tested.py':                             [[2012, "Edward d'Auvergne"]],
+    'extern/sobol/sobol_test_output.txt':                               [[2012, "Edward d'Auvergne"]],
+    'extern/sobol/sobol_lib.py':                                        [[2012, "Edward d'Auvergne"]],
     'extern/sobol/sobol_test.py':                                       [[2011, "Corrado Chisari"]],
     'extern/sobol/sobol_lib-not_tested.py':                             [[2011, "Corrado Chisari"]],
     'extern/sobol/sobol_test_output.txt':                               [[2011, "Corrado Chisari"]],
@@ -2243,6 +2279,29 @@ FALSE_NEG_YEARS = {
     'docs/html/icons/prev.png':                                         [[2011, "Edward d'Auvergne"]],
     'docs/html/icons/up_g.png':                                         [[2011, "Edward d'Auvergne"]],
     'docs/html/icons/up.png':                                           [[2011, "Edward d'Auvergne"]],
+    'extern/numdifftools/__init__.py':                                  [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/core.py':                                      [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/info.py':                                      [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/nd_algopy.py':                                 [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/nd_scientific.py':                             [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/numdifftools.prj':                             [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/doc/DERIVEST.pdf':                             [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/doc/DERIVEST.tex':                             [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/html/epydoc.css':                              [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/html/index.html':                              [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/benchmark1.py':               [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/prettyplotting.py':           [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/run_benchmarks.py':           [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/use_adolc.py':                [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/use_algopy.py':               [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/use_funcdesigner.py':         [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/use_numdifftools.py':         [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/use_scientific.py':           [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/use_theano.py':               [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/speed_comparison/use_uncertainties.py':        [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/test/test_hessian.py':                         [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/test/test_numdifftools_docstrings.py':         [[2014, "Edward d'Auvergne"]],
+    'extern/numdifftools/test/testnumdifftools.py':                     [[2014, "Edward d'Auvergne"]],
     'extern/sobol/sobol_test.py':                                       [[2012, "Edward d'Auvergne"]],
     'extern/sobol/sobol_lib-not_tested.py':                             [[2012, "Edward d'Auvergne"]],
     'extern/sobol/sobol_test_output.txt':                               [[2012, "Edward d'Auvergne"]],
@@ -2428,6 +2487,8 @@ FALSE_NEG_YEARS = {
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
 EXCLUDE = [
+    # 93aea1f25e4af51d25909003f6158ba88b064fe4 - Copyright notice updates.
+    "Update to FSF compliant copyright notices for the external numdifftools package. (2017-09-03 14:52:10 +0200)",
     # 90129abc13cb764c89a32c2fe2e38e532b859ac5 - Copyright notice updates.
     "Update to FSF compliant copyright notices for the external Sobol package. (2017-08-31 09:56:56 +0200)",
     # 0152ac6f384fb86fa082a4521d17fc3e1b8a15a4 - Copyright notice updates.
@@ -2527,6 +2588,8 @@ EXCLUDE = [
     "Python 3 fixes via 2to3 - replacement of all `x` with repr(x). (2014-11-11 09:43:30 +0000)",
     # r26511 - c64eb50966737265f3894d4ffe1c188280abf943 - 2to3 automated conversions.
     "Python 3 fixes via 2to3 - elimination of all map and lambda usage in relax. (2014-11-11 09:26:07 +0000)",
+    # r26507 - a3ff1b0892f187567306537ce874bd5f50fbf50a.
+    "Converted all the extern.numdifftools modules using the dos2unix program. (2014-11-11 09:09:43 +0000)",
     # r26506 - d6d4002cc383a80c684ccc94821abd51f36245a3 - 2to3 automated conversions.
     "Python 3 fixes using 2to3 for the extern.numdifftools package. (2014-11-11 09:04:21 +0000)",
     # r26505 - a8c0b3c3c6b413d484b01c37e975851738436537 - 2to3 automated conversions.
