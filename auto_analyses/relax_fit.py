@@ -31,6 +31,7 @@ from stat import S_IRWXU, S_IRGRP, S_IROTH
 import sys
 
 # relax module imports.
+from lib.errors import RelaxNoPipeError
 from lib.io import get_file_path, open_write_file
 from lib.plotting.grace import script_grace2images
 from lib.text.sectioning import section
