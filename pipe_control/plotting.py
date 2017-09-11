@@ -527,8 +527,8 @@ def axis_setup(data_type=None, norm=True):
         else:
             # Label.
             if analysis_spec and not axis_labels[i]:
-                # Get the units.
-                units = api.return_units(data_type[i])
+                # Get the Grace units.
+                units = api.return_grace_units(data_type[i])
 
                 # Set the label.
                 axis_labels[i] = api.return_grace_string(data_type[i])

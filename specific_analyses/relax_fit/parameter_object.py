@@ -149,6 +149,7 @@ class Relax_fit_params(Param_list):
             grid_lower = 0.0,
             grid_upper = 20.0,
             grace_string = '\\qR\\sx\\Q',
+            grace_units = 'rad.s\\S-1\\N',
             err = True,
             sim = True
         )

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012,2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012,2014,2017 Edward d'Auvergne                              #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -97,6 +97,7 @@ class Param_list(object):
         self._py_types = {}
         self._conv_factor = {}
         self._grace_string = {}
+        self._grace_units = {}
         self._grid_lower = {}
         self._grid_upper = {}
         self._set = {}
@@ -144,7 +145,7 @@ class Param_list(object):
         return cls._instance
 
 
-    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, scaling=1.0, grid_lower=None, grid_upper=None, grace_string=None, err=False, sim=False):
+    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, scaling=1.0, grid_lower=None, grid_upper=None, grace_string=None, grace_units=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -173,6 +174,8 @@ class Param_list(object):
         @type grid_upper:       int or function
         @keyword grace_string:  The string used for the axes in Grace plots of the data.
         @type grace_string:     None or str
+        @keyword grace_units:   A Grace string representing the parameters units.
+        @type grace_units:      None or str
         @keyword err:           A flag which if True indicates that the parameter name + '_err' error data structure can exist.
         @type err:              bool
         @keyword sim:           A flag which if True indicates that the parameter name + '_sim' Monte Carlo simulation data structure can exist.
@@ -209,11 +212,13 @@ class Param_list(object):
         else:
             self._string[name] = name
 
-        # The Grace string.
+        # The Grace strings.
+        self._grace_string[name] = name
         if grace_string:
             self._grace_string[name] = grace_string
-        else:
-            self._grace_string[name] = name
+        self._grace_units[name] = units
+        if grace_units:
+            self._grace_units[name] = grace_units
 
 
     def _add_align_data(self):
@@ -1009,6 +1014,34 @@ class Param_list(object):
 
         # Return the value.
         return self._grace_string[name]
+
+
+    def grace_units(self, name):
+        """Return the Grace units string for the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The Grace units string.
+        @rtype:         str
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Function.
+        if isinstance(self._grace_units[name], FunctionType) or isinstance(self._grace_units[name], MethodType):
+            grace_unit = self._grace_units[name]()
+
+        # The value.
+        else:
+            grace_unit = self._grace_units[name]
+
+        # Convert None to an empty string.
+        if grace_unit == None:
+            grace_unit = ''
+
+        # Return the units.
+        return grace_unit
 
 
     def is_spin_param(self, name):

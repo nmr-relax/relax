@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2004,2006-2015 Edward d'Auvergne                         #
+# Copyright (C) 2002-2004,2006-2015,2017 Edward d'Auvergne                    #
 # Copyright (C) 2015 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -637,6 +637,19 @@ class API_base(object):
 
         # The string.
         return self._PARAMS.grace_string(param)
+
+
+    def return_grace_units(self, param):
+        """Return a Grace string representing the parameters units.
+
+        @param param:       The name of the parameter to return the units string for.
+        @type param:        str
+        @return:            The Grace formatted parameter units string.
+        @rtype:             str
+        """
+
+        # Return the name.
+        return self._PARAMS.grace_units(param)
 
 
     def return_units(self, param):
