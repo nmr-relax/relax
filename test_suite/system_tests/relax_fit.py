@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012,2014-2015 Edward d'Auvergne                         #
+# Copyright (C) 2006-2012,2014-2015,2017 Edward d'Auvergne                    #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -31,7 +31,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from pipe_control.mol_res_spin import count_spins, return_spin, spin_index_loop, spin_loop
 from pipe_control import pipes
-from lib.errors import RelaxError
+from lib.errors import RelaxError, RelaxNoPipeError
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -137,6 +137,19 @@ class Relax_fit(SystemTestCase):
 
             # Increment the spin index.
             i = i + 1
+
+
+    def test_auto_analysis_pipe_name(self):
+        """Test the auto-analysis when the data pipe name is incorrectly supplied."""
+
+        # Reset
+        self.interpreter.reset()
+
+        # Create the 'rx' data pipe.
+        self.interpreter.pipe.create('rx', 'relax_fit')
+
+        # Execute the auto-analysis
+        self.assertRaises(RelaxNoPipeError, relax_fit.Relax_fit, pipe_name='test', pipe_bundle='R1 analysis', file_root='rx', results_dir='.', grid_inc=11, mc_sim_num=50, view_plots=True)
 
 
     def test_bug_12670_12679(self):
