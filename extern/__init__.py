@@ -23,7 +23,6 @@
 """External Python modules bundled with relax."""
 
 __all__ = [
-    'numdifftools',
     'numpy_future',
     'sobol'
 ]
