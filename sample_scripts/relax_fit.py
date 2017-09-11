@@ -28,6 +28,7 @@ pipe.create('rx', 'relax_fit')
 # Load the backbone amide 15N spins from a PDB file.
 structure.read_pdb('Ap4Aase_new_3.pdb')
 structure.load_spins(spin_id='@N')
+structure.load_spins(spin_id='@NE1')
 
 # Spectrum names.
 names = [
