@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004,2006-2008 Edward d'Auvergne                              #
+# Copyright (C) 2004,2006-2008,2017 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,10 +22,14 @@
 """Script for relaxation curve fitting."""
 
 
+# relax module imports.
+from auto_analyses.relax_fit import Relax_fit
+
+
 # Create the 'rx' data pipe.
 pipe.create('rx', 'relax_fit')
 
-# Load the backbone amide 15N spins from a PDB file.
+# Load the backbone amide and tryptophan indole 15N spins from a PDB file.
 structure.read_pdb('Ap4Aase_new_3.pdb')
 structure.load_spins(spin_id='@N')
 structure.load_spins(spin_id='@NE1')
@@ -60,9 +64,8 @@ times = [
 
 # Loop over the spectra.
 for i in range(len(names)):
-    # Load the peak intensities (first the backbone NH, then the tryptophan indole NH).
-    spectrum.read_intensities(file=names[i]+'.list', spectrum_id=names[i], int_method='height', spin_id="@N")
-    spectrum.read_intensities(file=names[i]+'.list', spectrum_id=names[i], int_method='height', spin_id="@NE1")
+    # Load the peak intensities.
+    spectrum.read_intensities(file=names[i]+'.list', spectrum_id=names[i], int_method='height')
 
     # Set the relaxation times.
     relax_fit.relax_time(time=times[i], spectrum_id=names[i])
@@ -77,43 +80,10 @@ spectrum.replicated(spectrum_ids=['T2_ncyc11_ave', 'T2_ncyc11b_ave'])
 spectrum.error_analysis()
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
+deselect.read(file='unresolved', res_num_col=1)
 
 # Set the relaxation curve type.
 relax_fit.select_model('exp')
 
-# Grid search.
-minimise.grid_search(inc=11)
-
-# Minimise.
-minimise.execute('newton', constraints=False)
-
-# Monte Carlo simulations.
-monte_carlo.setup(number=500)
-monte_carlo.create_data()
-monte_carlo.initial_values()
-minimise.execute('newton', constraints=False)
-monte_carlo.error_analysis()
-
-# Save the relaxation rates.
-value.write(param='rx', file='rx.out', force=True)
-
-# Save the results.
-results.write(file='results', force=True)
-
-# Create Grace plots of the data.
-grace.write(y_data_type='chi2', file='chi2.agr', force=True)    # Minimised chi-squared value.
-grace.write(y_data_type='i0', file='i0.agr', force=True)    # Initial peak intensity.
-grace.write(y_data_type='rx', file='rx.agr', force=True)    # Relaxation rate.
-grace.write(x_data_type='relax_times', y_data_type='peak_intensity', file='intensities.agr', force=True)    # Average peak intensities.
-grace.write(x_data_type='relax_times', y_data_type='peak_intensity', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
-
-# Display the Grace plots.
-grace.view(file='chi2.agr')
-grace.view(file='i0.agr')
-grace.view(file='rx.agr')
-grace.view(file='intensities.agr')
-grace.view(file='intensities_norm.agr')
-
-# Save the program state.
-state.save('state', force=True)
+# Execute the auto-analysis.
+Relax_fit(pipe_name='rx', pipe_bundle='R1 analysis', file_root='rx', results_dir='.', grid_inc=11, mc_sim_num=50, view_plots=True)
