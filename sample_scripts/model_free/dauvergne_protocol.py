@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009,2011-2012 Edward d'Auvergne                         #
+# Copyright (C) 2003-2009,2011-2012,2017 Edward d'Auvergne                    #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -130,13 +130,18 @@ Model V - Ellipsoid
 The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is './ellipsoid/'.
 
 
-
 Final run
 ~~~~~~~~~
 
 Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable DIFF_MODEL to 'final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run solely on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate).
 
 The final black-box model-free results will be placed in the file 'final/results'.
+
+
+Automation of all models
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The DIFF_MODEL variable can be alternatively supplied as a list.  This allows for all or a subset of all models to be processed consecutively.
 """
 
 # Python module imports.
@@ -150,7 +155,14 @@ from auto_analyses.dauvergne_protocol import dAuvergne_protocol
 #####################
 
 # The diffusion model.
-DIFF_MODEL = 'local_tm'
+DIFF_MODEL = [
+    'local_tm',
+    'sphere',
+    'prolate',
+    'oblate',
+    'ellipsoid',
+    'final'
+]
 
 # The model-free models.  Do not change these unless absolutely necessary, the protocol is likely to fail if these are changed.
 MF_MODELS = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
