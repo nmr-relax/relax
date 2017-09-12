@@ -888,9 +888,6 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
     if ri_type not in VALID_TYPES:
         raise RelaxError("The relaxation data type '%s' must be one of %s." % (ri_type, VALID_TYPES))
 
-    # Frequency checks.
-    frequency_checks(frq)
-
     # Loop over the file data to create the data structures for packing.
     values = []
     errors = []
