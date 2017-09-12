@@ -138,6 +138,9 @@ class MolContainer:
                  'S': ['SD', 'SG']
         }
 
+        # NMR Pseudo-atoms (with trailing numbers stripped).
+        table['H'] += ['QA', 'QB', 'QD', 'QE', 'QG', 'QH', 'QQD', 'QQG', 'QR', 'QZ']
+
         # Translate amino acids.
         for key in table:
             if element in table[key]:
