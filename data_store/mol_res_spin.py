@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2001-2004,2006-2008,2010-2012,2014 Edward d'Auvergne          #
+# Copyright (C) 2001-2004,2006-2008,2010-2012,2014,2017 Edward d'Auvergne     #
 # Copyright (C) 2006 Chris MacRaild                                           #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -24,6 +24,8 @@
 """The molecule-residue-spin containers of the relax data store."""
 
 # Python module imports.
+from binascii import hexlify
+from os import urandom
 from re import match
 
 # relax module imports.
@@ -40,12 +42,26 @@ class SpinContainer(Prototype):
     """Class containing all the spin system specific data."""
 
     def __init__(self, spin_name=None, spin_num=None, select=True):
-        """Set up the default objects of the spin system data container."""
+        """Set up the default objects of the spin system data container.
+
+        @keyword spin_name: The name of the spin.
+        @type spin_name:    str or None
+        @keyword spin_num:  The number of the spin.
+        @type spin_num:     str or None
+        @keyword select:    The selection flag.
+        @type select:       bool
+        """
 
         # The spin system name and number.
         self.name = spin_name
         self.num = spin_num
         self.select = select
+
+        # Generate a unique hash for the spin.
+        self._hash = hexlify(urandom(20))
+
+        # The identifiers for all interatomic interactions (InteratomContainer hashes).
+        self._interatomic_hashes = []
 
         # The private metadata.
         self._mol_name = None
@@ -76,7 +92,7 @@ class SpinContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^_", name):
+            if name not in ['_spin_ids', '_hash'] and match("^_", name):
                 continue
 
             # Add the object's attribute to the text string.
@@ -296,6 +312,8 @@ class SpinList(list):
             if name == 'None':
                 name = None
             num = eval(spin_node.getAttribute('num'))
+
+            # Get the spin details and add the spin to the SpinList structure.
             self.add_item(spin_name=name, spin_num=num)
 
             # Recreate the current spin container.
