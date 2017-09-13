@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005,2008 Edward d'Auvergne                              #
+# Copyright (C) 2004-2005,2008,2017 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,8 +22,16 @@
 """Script for calculating NOEs."""
 
 
-# Create the NOE data pipe.
-pipe.create('NOE', 'noe')
+# Python module imports.
+from time import asctime, localtime
+
+# relax module imports.
+from auto_analyses.noe import NOE_calc
+
+
+# Create the data pipe.
+pipe_bundle = "noe (%s)" % asctime(localtime())
+pipe.create(pipe_name='NOE', pipe_type='noe', bundle=pipe_bundle)
 
 # Load the backbone amide 15N spins from a PDB file.
 structure.read_pdb('Ap4Aase_new_3.pdb')
@@ -46,28 +54,8 @@ spectrum.baseplane_rmsd(error=3000, spectrum_id='sat_ave')
 spectrum.baseplane_rmsd(error=122000, spectrum_id='ref_ave', spin_id=":114")
 spectrum.baseplane_rmsd(error=8500, spectrum_id='sat_ave', spin_id=":114")
 
-# Peak intensity error analysis.
-spectrum.error_analysis()
-
 # Deselect unresolved residues.
 deselect.read(file='unresolved', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
 
-# Calculate the NOEs.
-minimise.calculate()
-
-# Save the NOEs.
-value.write(param='noe', file='noe.out', force=True)
-
-# Create grace files.
-grace.write(y_data_type='peak_intensity', file='intensities.agr', force=True)
-grace.write(y_data_type='noe', file='noe.agr', force=True)
-
-# View the grace files.
-grace.view(file='intensities.agr')
-grace.view(file='noe.agr')
-
-# Write the results.
-results.write(file='results', dir=None, force=True)
-
-# Save the program state.
-state.save('state', force=True)
+# Execute the auto-analysis.
+NOE_calc(pipe_name='NOE', pipe_bundle=pipe_bundle, file_root='noe', results_dir='.', save_state=True)
