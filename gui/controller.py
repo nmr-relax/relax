@@ -128,7 +128,7 @@ class Controller(wx.Frame):
         # Initial update of the controller.
         self.update_controller()
 
-        # Create a timer for updating the gauges.
+        # Create a timer for updating the controller elements.
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.handler_timer, self.timer)
 
@@ -350,6 +350,9 @@ class Controller(wx.Frame):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Update the controller log.
+        wx.CallAfter(self.log_panel.write)
 
         # Pulse.
         wx.CallAfter(self.main_gauge.Pulse)
@@ -1140,7 +1143,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         """Write the text in the log queue to the log control."""
 
         # At the end?
-        if self.GetScrollRange(wx.VERTICAL) - self.GetCurrentLine() <= 1:
+        if not self.at_end and self.GetScrollRange(wx.VERTICAL) - self.GetCurrentLine() <= 1:
             self.at_end = True
 
         # Get the text.
@@ -1245,6 +1248,3 @@ class Redirect_text(object):
 
         # Add the text to the queue.
         self.log_queue.put([string, self.stream])
-
-        # Call the log control write method one the GUI is responsive.
-        wx.CallAfter(self.control.write)
