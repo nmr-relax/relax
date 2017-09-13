@@ -127,19 +127,15 @@ reasonable time frame.
 """
 
 # Python module imports.
+import bz2
 from datetime import date, datetime
+import gzip
 import mimetypes
-from os import getcwd, path, sep, walk
+from os import F_OK, access, getcwd, path, sep, walk
 from pytz import utc
 from re import search
 from subprocess import PIPE, Popen
 import sys
-
-# Modify the module path.
-sys.path.append('.')
-
-# relax module imports.
-from lib.io import open_read_file
 
 
 # Debugging modes.
@@ -3697,6 +3693,37 @@ def committer_info_cleanup(file_path, committer_info):
         del committer_info[committer]
 
 
+def determine_compression(file_path):
+    """Function for determining the compression type, and for also testing if the file exists.
+
+    @param file_path:   The full file path of the file.
+    @type file_path:    str
+    @return:            A tuple of the compression type and full path of the file (including its extension).  A value of 0 corresponds to no compression.  Bzip2 compression corresponds to a value of 1.  Gzip compression corresponds to a value of 2.
+    @rtype:             (int, str)
+    """
+
+    # The file has been supplied without its compression extension.
+    if access(file_path, F_OK):
+        compress_type = 0
+        if search('.bz2$', file_path):
+            compress_type = 1
+        elif search('.gz$', file_path):
+            compress_type = 2
+
+    # The file has been supplied with the '.bz2' extension.
+    elif access(file_path + '.bz2', F_OK):
+        file_path = file_path + '.bz2'
+        compress_type = 1
+
+    # The file has been supplied with the '.gz' extension.
+    elif access(file_path + '.gz', F_OK):
+        file_path = file_path + '.gz'
+        compress_type = 2
+
+    # Return the compression type.
+    return compress_type, file_path
+
+
 def extract_copyright(file_path):
     """Pull out all the copyright notices from the given file.
 
@@ -3707,7 +3734,7 @@ def extract_copyright(file_path):
     """
 
     # Read the file data.
-    file = open_read_file(file_path, verbosity=0)
+    file = open_read_file(file_path)
     lines = file.readlines()
     file.close()
 
@@ -3999,6 +4026,41 @@ def git_log_data(file_path, repo_path=None, exclude=[], start_commit=[], author_
             committer_info[committer] = []
         if committer and year not in committer_info[committer]:
             committer_info[committer].append(year)
+
+
+def open_read_file(file_name=None):
+    """Open the file 'file' and return all the data.
+
+    @keyword file_name: The name of the file to extract the data from.
+    @type file_name:    str
+    @return:            The open file object.
+    @rtype:             file object
+    """
+
+    # Test if the file exists and determine the compression type.
+    compress_type, file_path = determine_compression(file_name)
+
+    # Open the file for reading.
+    try:
+        # Uncompressed text.
+        if compress_type == 0:
+            file_obj = open(file_path, 'r')
+
+        # Bzip2 compressed text.
+        elif compress_type == 1:
+            file_obj = bz2.open(file_path, 't')
+
+        # Gzipped compressed text.
+        elif compress_type == 2:
+            file_obj = gzip.open(file_path, 'rt')
+
+    # Cannot open.
+    except IOError:
+        message = sys.exc_info()[1]
+        raise NameError("Cannot open the file %s.  %s." % (file_path, message.args[1]))
+
+    # Return the opened file.
+    return file_obj
 
 
 def readme_add_notice(file_name=None, file=None, notices=[]):
