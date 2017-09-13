@@ -115,7 +115,7 @@ class NOE_calc:
 
         # Save the program state.
         if self.save_state:
-            self.interpreter.state.save(state=self.file_root+'.save', dir=self.results_dir, force=True)
+            self.interpreter.state.save(state='state', dir=self.results_dir, force=True)
 
 
     def check_vars(self):

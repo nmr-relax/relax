@@ -184,7 +184,7 @@ class Relax_fit:
             self.interpreter.grace.view(file='intensities_norm.agr', dir=self.grace_dir)
 
         # Save the program state.
-        self.interpreter.state.save(state=self.file_root+'.save', dir=self.results_dir, force=True)
+        self.interpreter.state.save(state='state', dir=self.results_dir, force=True)
 
 
     def error_analysis(self):
