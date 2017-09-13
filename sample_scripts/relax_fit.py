@@ -22,12 +22,16 @@
 """Script for relaxation curve fitting."""
 
 
+# Python module imports.
+from time import asctime, localtime
+
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 
 
-# Create the 'rx' data pipe.
-pipe.create('rx', 'relax_fit')
+# Create the data pipe.
+pipe_bundle = "rx (%s)" % asctime(localtime())
+pipe.create(pipe_name='rx', pipe_type='relax_fit', bundle=pipe_bundle)
 
 # Load the backbone amide and tryptophan indole 15N spins from a PDB file.
 structure.read_pdb('Ap4Aase_new_3.pdb')
@@ -86,4 +90,4 @@ deselect.read(file='unresolved', res_num_col=1)
 relax_fit.select_model('exp')
 
 # Execute the auto-analysis.
-Relax_fit(pipe_name='rx', pipe_bundle='R1 analysis', file_root='rx', results_dir='.', grid_inc=11, mc_sim_num=50, view_plots=True)
+Relax_fit(pipe_name='rx', pipe_bundle=pipe_bundle, file_root='rx', results_dir='.', grid_inc=11, mc_sim_num=50, view_plots=True)
