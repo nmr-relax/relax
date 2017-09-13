@@ -26,6 +26,8 @@
 from os import sep
 
 # relax module imports.
+from lib.io import get_file_path, open_write_file
+from lib.plotting.grace import create_grace2images
 from pipe_control.pipes import cdp_name, has_pipe, switch
 from prompt.interpreter import Interpreter
 from status import Status; status = Status()
@@ -112,6 +114,9 @@ class NOE_calc:
         # Create Grace plots of the data.
         self.interpreter.grace.write(y_data_type='peak_intensity', file='intensities.agr', dir=self.grace_dir, force=True)
         self.interpreter.grace.write(y_data_type='noe', file='noe.agr', dir=self.grace_dir, force=True)
+
+        # Create the Python "grace to PNG/EPS/SVG..." conversion script.
+        create_grace2images(dir=self.grace_dir)
 
         # Save the program state.
         if self.save_state:

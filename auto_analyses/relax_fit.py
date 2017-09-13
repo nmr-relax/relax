@@ -25,15 +25,12 @@
 """The automatic relaxation curve fitting protocol."""
 
 # Python module imports.
-from os import chmod, sep
-from os.path import expanduser
-from stat import S_IRWXU, S_IRGRP, S_IROTH
+from os import sep
 import sys
 
 # relax module imports.
 from lib.errors import RelaxNoPipeError
-from lib.io import get_file_path, open_write_file
-from lib.plotting.grace import script_grace2images
+from lib.plotting.grace import create_grace2images
 from lib.text.sectioning import section
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name, has_pipe, switch
@@ -155,25 +152,8 @@ class Relax_fit:
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='peak_intensity', file='intensities.agr', dir=self.grace_dir, force=True)    # Average peak intensities.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='peak_intensity', norm_type=norm_type, norm=True, file='intensities_norm.agr', dir=self.grace_dir, force=True)    # Average peak intensities (normalised).
 
-        # Write a python "grace to PNG/EPS/SVG..." conversion script.
-        # Open the file for writing.
-        file_name = "grace2images.py"
-        file_path = get_file_path(file_name=file_name, dir=self.grace_dir)
-        file = open_write_file(file_name=file_name, dir=self.grace_dir, force=True)
-
-        # Write the file.
-        script_grace2images(file=file)
-
-        # Close the batch script, then make it executable (expanding any ~ characters).
-        file.close()
-
-        if self.grace_dir:
-            dir = expanduser(self.grace_dir)
-            chmod(dir + sep + file_name, S_IRWXU|S_IRGRP|S_IROTH)
-        else:
-            file_name = expanduser(file_name)
-            chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
-
+        # Create the Python "grace to PNG/EPS/SVG..." conversion script.
+        create_grace2images(dir=self.grace_dir)
 
         # Display the Grace plots if selected.
         if self.view_plots:

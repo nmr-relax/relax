@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2001-2005,2007-2010,2012-2015 Edward d'Auvergne               #
+# Copyright (C) 2001-2005,2007-2010,2012-2015,2017 Edward d'Auvergne          #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
@@ -26,13 +26,176 @@
 
 # Python module imports.
 from math import ceil, sqrt
+from os import chmod
+from os.path import expanduser
+from stat import S_IRWXU, S_IRGRP, S_IROTH
 
 # relax module imports.
 from lib.errors import RelaxError
+from lib.io import get_file_path, open_write_file
 
 
 # This script is used to batch convert the Grace *.agr files into graphics files using the Grace
 # program itself.
+GRACE2IMAGES = """\
+#!/usr/bin/env python3
+
+###############################################################################
+#                                                                             #
+# Copyright (C) 2013 Troels E. Linnet                                         #
+# Copyright (C) 2013,2017 Edward d'Auvergne                                   #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+# Script docstring.
+\"\"\"Scripted conversion of Grace *.agr graphs into vector or bitmap graphics files.
+
+This script is used to batch convert the Grace *.agr files into graphics bitmap files using the Grace program itself.  Therefore you will need to install grace on your system using one of the programs:
+    Xmgrace - http://plasma-gate.weizmann.ac.il/Grace/,
+    qtgrace - http://sourceforge.net/projects/qtgrace/,
+    gracegtk - http://sourceforge.net/projects/gracegtk/.
+\"\"\"
+
+# Python module imports.
+from argparse import Action, ArgumentParser
+import sys
+from os import getcwd, listdir, path
+import shlex, subprocess
+
+
+# Define a callback class for handling the multiple input of PNG, EPS, SVG, etc.
+class SplitFormats(Action):
+     def __call__(self, parser, namespace, values, option_string=None):
+         setattr(namespace, self.dest, values.split(','))
+
+
+# Add script argument parsing.
+parser = ArgumentParser(description="Scripted conversion of Grace *.agr graphs into vector or bitmap graphics files.")
+
+# Add the script arguments.
+parser.add_argument('types', action=SplitFormats, nargs='?', default='EPS', help="The different image types to convert to.  E.g. execute script with: %s -t JPG,EPS,SVG,PNG ..." % (sys.argv[0]))
+parser.add_argument('-g', action='store_true', dest='relax_gui', default=False, help="Allow the script to be run through the relax GUI via the 'User-functions -> script' submenu, by only allowing for PNG conversions.")
+
+# Parse the arguments.
+args = parser.parse_args()
+
+# If we run through the GUI we cannot pass input arguments so we fall back to EPS-only conversion.
+if args.relax_gui:
+    args.types = ['EPS']
+
+# For PNG conversion, several parameters can be passed to xmgrace.  These can be altered later and the script rerun.
+# The option for transparency is good for poster or insertion in color backgrounds.  This ability depends on the Grace compilation.
+if "PNG" in args.types:
+    pngpar = "png.par"
+    if not path.isfile(pngpar):
+        wpngpar = open(pngpar, "w")
+        wpngpar.write("DEVICE \\\"PNG\\\" FONT ANTIALIASING on\\n")
+        wpngpar.write("DEVICE \\\"PNG\\\" OP \\\"transparent:off\\\"\\n")
+        wpngpar.write("DEVICE \\\"PNG\\\" OP \\\"compression:9\\\"\\n")
+        wpngpar.close()
+
+# Convert the different possible graphics type options into Grace format.
+types = []
+text = []
+ext = []
+param = []
+for type in args.types:
+    # PNG bitmap graphics.
+    if type in ["PNG", ".PNG", "png", ".png"]:
+        types.append("PNG")
+        text.append("portable network graphics (PNG)")
+        ext.append("png")
+        param.append(pngpar)
+
+    # Encapsulated postscript vector graphics.
+    elif type in ["EPS", ".EPS", "eps", ".eps"]:
+        types.append("EPS")
+        text.append("encapsulated postscript (EPS)")
+        ext.append("eps")
+        param.append(None)
+
+    # JPG bitmap graphics.
+    elif type in ["JPG", ".JPG", "jpg", ".jpg", "JPEG", ".JPEG", "jpeg", ".jpeg"]:
+        types.append("JPEG")
+        text.append("JPEG")
+        ext.append("jpg")
+        param.append(None)
+
+    # Scalable vector graphics.
+    elif type in ["SVG", ".SVG", "svg", ".svg"]:
+        types.append("SVG")
+        text.append("scalable vector graphics (SVG)")
+        ext.append("svg")
+        param.append(None)
+
+    # Unknown graphic.
+    else:
+        print("Unknown graphic type '%s', skipping the format." % type)
+        continue
+
+# Loop over all files in the current directory.
+for filename in listdir(getcwd()):
+    # Skip non-Grace files.
+    if not filename.endswith(".agr"):
+        continue
+
+    # Get the filename without extension.
+    basename = path.splitext(filename)[0]
+
+    # Loop over each output format.
+    for i in range(len(types)):
+        im_args = r"xmgrace -hdevice %s -hardcopy" % types[i]
+        if param[i]:
+            im_args += r" -param %s" % param[i]
+        im_args += r" -printfile %s.%s %s" % (basename, ext[i], filename)
+
+        # Split the arguments the right way to call xmgrace.
+        im_args = shlex.split(im_args)
+
+        # Generate the graphic.
+        print("Converting '%s' into a %s graphic." % (filename, text[i]))
+        return_code = subprocess.call(im_args)
+"""
+
+
+def create_grace2images(dir=None):
+    """Create the grace2images.py executable script.
+
+    @keyword dir:   The directory to place the script into.
+    @type dir:      str
+    """
+
+    # Expand any ~ characters.
+    dir = expanduser(dir)
+
+    # Open the file.
+    print("\nCreating the Python \"grace to PNG/EPS/SVG...\" conversion script.")
+    file_name = "grace2images.py"
+    file_path = get_file_path(file_name=file_name, dir=dir)
+    file = open_write_file(file_name=file_name, dir=dir, force=True)
+
+    # Write the Python "grace to PNG/EPS/SVG..." conversion script.
+    script_grace2images(file=file)
+
+    # Close the batch script, then make it executable (expanding any ~ characters).
+    file.close()
+    chmod(file_path, S_IRWXU|S_IRGRP|S_IROTH)
+
 
 def script_grace2images(file=None):
     """Write a python "grace to PNG/EPS/SVG..." conversion script..
@@ -44,84 +207,7 @@ def script_grace2images(file=None):
     """
 
     # Write to file
-    file.write("#!/usr/bin/env python\n")
-    file.write("#\n")
-    file.write("# This script is used to batch convert the Grace *.agr files into graphics bitmap files using the\n")
-    file.write("# Grace program itself.  Therefore you will need to install on your system xmgrace,\n")
-    file.write("# (http://plasma-gate.weizmann.ac.il/Grace/), qtgrace (http://sourceforge.net/projects/qtgrace/)\n")
-    file.write("# or gracegtk (http://sourceforge.net/projects/gracegtk/).\n")
-    file.write("\n")
-    file.write("import glob, os, sys\n")
-    file.write("import shlex, subprocess\n")
-    file.write("import optparse\n")
-    file.write("\n")
-    file.write("# Define a callback function, for a multiple input of PNG, EPS, SVG\n")
-    file.write("def foo_callback(option, opt, value, parser):\n")
-    file.write("    setattr(parser.values, option.dest, value.split(','))\n")
-    file.write("\n")
-    file.write("# Add functioning for argument parsing\n")
-    file.write("parser = optparse.OptionParser(description='Process grace files to images')\n")
-    file.write("# Add argument type. Destination instance is set to types.\n")
-    file.write("parser.add_option('-g', action='store_true', dest='relax_gui', default=False, help='Make it possible to run script through relax GUI. Run by using User-functions -> script')\n")
-    file.write("parser.add_option('-l', action='callback', callback=foo_callback, dest='l', type=\"string\", default=False, help='Make in possible to run scriptif relax has logfile turned on. Run by using User-functions -> script')\n")
-    file.write("parser.add_option('-t', action='callback', callback=foo_callback, dest='types', type=\"string\", default=[], help='List image types for conversion. Execute script with: python %s -t PNG,EPS ...'%(sys.argv[0]))\n")
-    file.write("\n")
-    file.write("# Parse the arguments to a Class instance object\n")
-    file.write("args = parser.parse_args()\n")
-    file.write("\n")
-    file.write("# Lets print help if no arguments are passed\n")
-    file.write("if len(sys.argv) == 1 or len(args[0].types) == 0:\n")
-    file.write("    print('system argument is:', sys.argv)\n")
-    file.write("    parser.print_help()\n")
-    file.write("    print('Performing a default PNG conversion')\n")
-    file.write("    # If no input arguments, we make a default PNG option\n")
-    file.write("    args[0].types = ['PNG']\n")
-    file.write("\n")
-    file.write("# If we run through the GUI we cannot pass input arguments so we make a default PNG option\n")
-    file.write("if args[0].relax_gui:\n")
-    file.write("    args[0].types = ['PNG']\n")
-    file.write("\n")
-    file.write("types = list(args[0].types)\n")
-    file.write("\n")
-    file.write("# A easy search for files with *.agr, is to use glob, which is pathnames matching a specified pattern according to the rules used by the Unix shell, not opening a shell\n")
-    file.write("gracefiles = glob.glob(\"*.agr\")\n")
-    file.write("\n")
-    file.write("# For png conversion, several parameters can be passed to xmgrace. These can be altered later afterwards and the script rerun. \n")
-    file.write("# The option for transparent is good for poster or insertion in color backgrounds. The ability for this still depends on xmgrace compilation\n")
-    file.write("if \"PNG\" in types:\n")
-    file.write("    pngpar = \"png.par\"\n")
-    file.write("    if not os.path.isfile(pngpar):\n")
-    file.write("        wpngpar = open(pngpar, \"w\")\n")
-    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" FONT ANTIALIASING on\\n\")\n")
-    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" OP \\\"transparent:off\\\"\\n\")\n")
-    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" OP \\\"compression:9\\\"\\n\")\n")
-    file.write("        wpngpar.close()\n")
-    file.write("\n")
-    file.write("# Now loop over the grace files\n")
-    file.write("for grace in gracefiles:\n")
-    file.write("    # Get the filename without extension\n")
-    file.write("    fname = grace.split(\".agr\")[0]\n")
-    file.write("    if (\"PNG\" in types or \".PNG\" in types or \"png\" in types or \".png\" in types):\n")
-    file.write("        # Produce the argument string\n")
-    file.write("        im_args = r\"xmgrace -hdevice PNG -hardcopy -param %s -printfile %s.png %s\" % (pngpar, fname, grace)\n")
-    file.write("        # Split the arguments the right way to call xmgrace\n")
-    file.write("        im_args = shlex.split(im_args)\n")
-    file.write("        return_code = subprocess.call(im_args)\n")
-    file.write("    if (\"EPS\" in types or \".EPS\" in types or \"eps\" in types or \".eps\" in types):\n")
-    file.write("        im_args = r\"xmgrace -hdevice EPS -hardcopy -printfile %s.eps %s\" % (fname, grace)\n")
-    file.write("        im_args = shlex.split(im_args)\n")
-    file.write("        return_code = subprocess.call(im_args)\n")
-    file.write("    if (\"JPG\" in types or \".JPG\" in types or \"jpg\" in types or \".jpg\" in types):\n")
-    file.write("        im_args = r\"xmgrace -hdevice JPEG -hardcopy -printfile %s.jpg %s\" % (fname, grace)\n")
-    file.write("        im_args = shlex.split(im_args)\n")
-    file.write("    if (\"JPEG\" in types or \".JPEG\" in types or \"jpeg\" in types or \".jpeg\" in types):\n")
-    file.write("        im_args = r\"xmgrace -hdevice JPEG -hardcopy -printfile %s.jpg %s\" % (fname, grace)\n")
-    file.write("        im_args = shlex.split(im_args)\n")
-    file.write("        return_code = subprocess.call(im_args)\n")
-    file.write("    if (\"SVG\" in types or \".SVG\" in types or \"svg\" in types or \".svg\" in types):\n")
-    file.write("        im_args = r\"xmgrace -hdevice SVG -hardcopy -printfile %s.svg %s\" % (fname, grace)\n")
-    file.write("        im_args = shlex.split(im_args)\n")
-    file.write("        return_code = subprocess.call(im_args)\n")
+    file.write(GRACE2IMAGES)
 
 
 def write_xy_data(data, file=None, graph_type=None, norm_type='first', norm=None, autoscale=True):
