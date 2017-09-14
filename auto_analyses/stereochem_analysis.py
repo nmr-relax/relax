@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010,2012-2015 Edward d'Auvergne                              #
+# Copyright (C) 2010,2012-2015,2017 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -56,11 +56,14 @@ from re import search
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
 import sys
+from time import time
 
 # relax module imports.
 from lib.periodic_table import periodic_table
 from lib.physical_constants import dipolar_constant
 from lib.plotting.api import write_xy_data, write_xy_header
+from lib.text.sectioning import title
+from lib.timing import print_elapsed_time
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
 from lib.io import mkdir_nofail
@@ -126,6 +129,9 @@ class Stereochem_analysis:
         @type upper_lim_rdc:        int
         """
 
+        # Initial printout.
+        title(file=sys.stdout, text="Stereochemistry auto-analysis")
+
         # Execution lock.
         status.exec_lock.acquire('auto stereochem analysis', mode='auto-analysis')
 
@@ -176,6 +182,10 @@ class Stereochem_analysis:
         # Create a directory for log files.
         if self.log:
             mkdir_nofail(self.results_dir + sep + "logs")
+
+        # Final printout.
+        title(file=sys.stdout, text="Completion of the stereochemistry auto-analysis")
+        print_elapsed_time(time() - status.start_time)
 
         # Finish and unlock execution.
         status.auto_analysis['stereochem'].fin = True

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014,2017 Edward d'Auvergne                              #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2010 Michael Bieri                                            #
 #                                                                             #
@@ -27,7 +27,7 @@ from os import F_OK, R_OK, X_OK, access, getcwd, listdir, sep
 from os.path import isdir
 from re import search
 import sys
-from time import sleep
+from time import sleep, time
 
 # relax module imports.
 from info import Info_box; info = Info_box()
@@ -35,6 +35,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
 from lib.float import floatAsByteArray
 from lib.text.sectioning import title, subtitle
 from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
+from lib.timing import print_elapsed_time
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.pipes import cdp_name, get_pipe, has_pipe, pipe_names, switch
@@ -157,8 +158,8 @@ class dAuvergne_protocol:
         @type conv_loop:                bool
         """
 
-        # Printout.
-        title(file=sys.stdout, text="The dauvergne_protocol model-free auto-analysis")
+        # Initial printout.
+        title(file=sys.stdout, text="d'Auvergne protocol model-free auto-analysis")
 
         # Execution lock.
         status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
@@ -249,6 +250,10 @@ class dAuvergne_protocol:
 
         # Clean up.
         finally:
+            # Final printout.
+            title(file=sys.stdout, text="Completion of the d'Auvergne protocol model-free auto-analysis")
+            print_elapsed_time(time() - status.start_time)
+
             # Finish and unlock execution.
             status.auto_analysis[self.pipe_bundle].fin = True
             status.current_analysis = None

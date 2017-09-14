@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2015,2017 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -52,6 +52,7 @@ from math import pi
 from numpy import float64, zeros
 from os import F_OK, access, getcwd, sep
 import sys
+from time import time
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -64,6 +65,7 @@ from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.text.sectioning import subtitle, subsubtitle, title
 from lib.text.table import MULTI_COL, format_table
+from lib.timing import print_elapsed_time
 from pipe_control import pipes, results
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure.mass import pipe_centre_of_mass
@@ -98,21 +100,21 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
     for model in MODEL_LIST:
         # Add the base model.
         models.append(model)
-        title = model[0].upper() + model[1:]
-        model_titles.append(title)
+        model_title = model[0].upper() + model[1:]
+        model_titles.append(model_title)
         dirs.append(model_directory(model, base_dir=dir))
 
         # Axis permutations.
         if model in MODEL_LIST_ISO_CONE + MODEL_LIST_PSEUDO_ELLIPSE:
             # The A permutation.
             models.append("%s permutation A" % model)
-            model_titles.append(title + ' (perm A)')
+            model_titles.append(model_title + ' (perm A)')
             dirs.append(model_directory(models[-1], base_dir=dir))
 
             # The B permutation.
             if model in MODEL_LIST_PSEUDO_ELLIPSE:
                 models.append("%s permutation B" % model)
-                model_titles.append(title + ' (perm B)')
+                model_titles.append(model_title + ' (perm B)')
                 dirs.append(model_directory(models[-1], base_dir=dir))
 
     # Loop over the models.
@@ -235,21 +237,21 @@ def summarise(file_name='summary', dir=None, force=True):
     for model in MODEL_LIST:
         # Add the base model.
         models.append(model)
-        title = model[0].upper() + model[1:]
-        model_titles.append(title)
+        model_title = model[0].upper() + model[1:]
+        model_titles.append(model_title)
         dirs.append(model_directory(model, base_dir=dir))
 
         # Axis permutations.
         if model in MODEL_LIST_ISO_CONE + MODEL_LIST_PSEUDO_ELLIPSE:
             # The A permutation.
             models.append("%s permutation A" % model)
-            model_titles.append(title + ' (perm A)')
+            model_titles.append(model_title + ' (perm A)')
             dirs.append(model_directory(models[-1], base_dir=dir))
 
             # The B permutation.
             if model in MODEL_LIST_PSEUDO_ELLIPSE:
                 models.append("%s permutation B" % model)
-                model_titles.append(title + ' (perm B)')
+                model_titles.append(model_title + ' (perm B)')
                 dirs.append(model_directory(models[-1], base_dir=dir))
 
     # The analysis directory and structures.
@@ -540,6 +542,10 @@ class Frame_order_analysis:
 
         # Clean up.
         finally:
+            # Final printout.
+            title(file=sys.stdout, text="Completion of the frame order auto-analysis", prespace=7)
+            print_elapsed_time(time() - status.start_time)
+
             # Finish and unlock execution.
             status.exec_lock.release()
 

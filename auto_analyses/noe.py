@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005,2008,2010-2012 Edward d'Auvergne                    #
+# Copyright (C) 2004-2005,2008,2010-2012,2017 Edward d'Auvergne               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,10 +24,14 @@
 
 # Python module imports.
 from os import sep
+import sys
+from time import time
 
 # relax module imports.
 from lib.io import get_file_path, open_write_file
 from lib.plotting.grace import create_grace2images
+from lib.text.sectioning import title
+from lib.timing import print_elapsed_time
 from pipe_control.pipes import cdp_name, has_pipe, switch
 from prompt.interpreter import Interpreter
 from status import Status; status = Status()
@@ -56,6 +60,9 @@ class NOE_calc:
         @keyword save_state:    A flag which if True will cause a relax save state to be created at the end of the analysis.
         @type save_state:       bool
         """
+
+        # Initial printout.
+        title(file=sys.stdout, text="Steady-state NOE auto-analysis")
 
         # Execution lock.
         status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
@@ -89,6 +96,10 @@ class NOE_calc:
 
         # Execute.
         self.run()
+
+        # Final printout.
+        title(file=sys.stdout, text="Completion of the steady-state NOE auto-analysis")
+        print_elapsed_time(time() - status.start_time)
 
         # Finish and unlock execution.
         status.auto_analysis[self.pipe_bundle].fin = True

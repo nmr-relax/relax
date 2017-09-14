@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004,2006-2008,2010-2012,2014-2015 Edward d'Auvergne          #
+# Copyright (C) 2004,2006-2008,2010-2012,2014-2015,2017 Edward d'Auvergne     #
 # Copyright (C) 2010 Michael Bieri                                            #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
@@ -26,12 +26,14 @@
 
 # Python module imports.
 from os import sep
+from time import time
 import sys
 
 # relax module imports.
 from lib.errors import RelaxNoPipeError
 from lib.plotting.grace import create_grace2images
-from lib.text.sectioning import section
+from lib.text.sectioning import section, title
+from lib.timing import print_elapsed_time
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name, has_pipe, switch
 from prompt.interpreter import Interpreter
@@ -64,6 +66,9 @@ class Relax_fit:
         @keyword view_plots:    Flag to automatically view grace plots after calculation.
         @type view_plots:       bool
         """
+
+        # Initial printout.
+        title(file=sys.stdout, text="Relaxation curve-fitting auto-analysis")
 
         # Execution lock.
         status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
@@ -99,6 +104,10 @@ class Relax_fit:
 
         # Execute.
         self.run()
+
+        # Final printout.
+        title(file=sys.stdout, text="Completion of the relaxation curve-fitting auto-analysis")
+        print_elapsed_time(time() - status.start_time)
 
         # Finish and unlock execution.
         status.auto_analysis[self.pipe_bundle].fin = True

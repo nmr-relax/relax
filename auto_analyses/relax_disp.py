@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014,2017 Edward d'Auvergne                              #
 # Copyright (C) 2010 Michael Bieri                                            #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
@@ -29,6 +29,7 @@ from copy import deepcopy
 from os import F_OK, access, getcwd, sep
 from numpy import version
 import sys
+from time import time
 from warnings import warn
 
 # relax module imports.
@@ -36,6 +37,7 @@ from lib.dispersion.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_L
 from lib.errors import RelaxError, RelaxFileError, RelaxNoPipeError
 from lib.io import determine_compression, get_file_path
 from lib.text.sectioning import section, subsection, subtitle, title
+from lib.timing import print_elapsed_time
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
@@ -89,7 +91,7 @@ class Relax_disp:
         @keyword r1_fit:                    A flag which if True will activate R1 parameter fitting via relax_disp.r1_fit for the models that support it.  If False, then the relax_disp.r1_fit user function will not be called.
         """
 
-        # Printout.
+        # Initial printout.
         title(file=sys.stdout, text="Relaxation dispersion auto-analysis", prespace=4)
 
         # Execution lock.
@@ -137,8 +139,13 @@ class Relax_disp:
         try:
             self.run()
 
-        # Finish and unlock execution.
+        # Clean up.
         finally:
+            # Final printout.
+            title(file=sys.stdout, text="Completion of the relaxation dispersion auto-analysis", prespace=4)
+            print_elapsed_time(time() - status.start_time)
+
+            # Finish and unlock execution.
             status.auto_analysis[self.pipe_bundle].fin = True
             status.current_analysis = None
             status.exec_lock.release()
