@@ -28,6 +28,7 @@ from os.path import sep
 import platform
 from re import search
 import sys
+from time import time
 from threading import Lock, RLock
 
 # relax module imports.
@@ -62,6 +63,9 @@ class Status(object):
 
             # Set up the singleton.
             self._instance._setup()
+
+            # Store the time to allow for elapsed time calculations.
+            self._instance.start_time = time()
 
         # Already instantiated, so return the instance.
         return self._instance
