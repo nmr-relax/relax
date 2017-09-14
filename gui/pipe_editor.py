@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013,2015 Edward d'Auvergne                              #
+# Copyright (C) 2011-2013,2015,2017 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -39,6 +39,13 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from lib.errors import RelaxError
 from pipe_control.pipes import cdp_name, delete, get_bundle, get_type, pipe_names, switch
 from status import Status; status = Status()
+
+
+# Some IDs for the menu entries.
+MENU_BUNDLE = wx.NewId()
+MENU_DELETE = wx.NewId()
+MENU_SWITCH = wx.NewId()
+MENU_NEW_AUTO_ANALYSIS = wx.NewId()
 
 
 class Pipe_editor(wx.Frame):
@@ -148,34 +155,65 @@ class Pipe_editor(wx.Frame):
         pipe_bundle = get_bundle(self.selected_pipe)
 
         # Initialise the menu.
-        menu = wx.Menu()
-        items = []
+        popup_menus = []
 
         # Menu entry:  add the data pipe to a bundle.
         if not pipe_bundle:
-            items.append(build_menu_item(menu, parent=self, text="&Add the pipe to a bundle", icon=fetch_icon("relax.pipe_bundle"), fn=self.pipe_bundle))
+            popup_menus.append({
+                'id': MENU_BUNDLE,
+                'text': "&Add the pipe to a bundle",
+                'icon': fetch_icon("relax.pipe_bundle"),
+                'method': self.pipe_bundle
+            })
 
         # Menu entry:  delete the data pipe.
-        items.append(build_menu_item(menu, parent=self, text="&Delete the pipe", icon=fetch_icon('oxygen.actions.list-remove', "16x16"), fn=self.pipe_delete))
- 
+        popup_menus.append({
+            'id': MENU_DELETE,
+            'text': "&Delete the pipe",
+            'icon': fetch_icon('oxygen.actions.list-remove', "16x16"),
+            'method': self.pipe_delete
+        })
+
         # Menu entry:  switch to this data pipe.
-        items.append(build_menu_item(menu, parent=self, text="&Switch to this pipe", icon=fetch_icon('oxygen.actions.system-switch-user', "16x16"), fn=self.pipe_switch))
- 
+        popup_menus.append({
+            'id': MENU_SWITCH,
+            'text': "&Switch to this pipe",
+            'icon': fetch_icon('oxygen.actions.system-switch-user', "16x16"),
+            'method': self.pipe_switch
+        })
+
         # Menu entry:  new auto-analysis tab.
         if pipe_bundle and self.gui.analysis.page_index_from_bundle(pipe_bundle) == None and pipe_type in ['noe', 'r1', 'r2', 'mf', 'relax_disp']:
-            items.append(build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=fetch_icon('oxygen.actions.document-new', "16x16"), fn=self.associate_auto))
- 
-        # Set up the entries.
-        for item in items:
-            menu.AppendItem(item)
-            if status.exec_lock.locked():
-                item.Enable(False)
+            popup_menus.append({
+                'id': MENU_NEW_AUTO_ANALYSIS,
+                'text': "&Associate with a new auto-analysis",
+                'icon': fetch_icon('oxygen.actions.document-new', "16x16"),
+                'method': self.associate_auto
+            })
 
-        # Show the menu.
+        # Execution lock, so do nothing.
+        if status.exec_lock.locked():
+            return
+
+        # Initialise the menu.
+        menu = wx.Menu()
+
+        # Loop over the menu items.
+        for i in range(len(popup_menus)):
+            # Alias.
+            info = popup_menus[i]
+
+            # Add the menu item.
+            menu.AppendItem(build_menu_item(menu, id=info['id'], text=info['text'], icon=info['icon']))
+
+            # Bind clicks.
+            self.Bind(wx.EVT_MENU, info['method'], id=info['id'])
+
+        # Pop up the menu.
         if status.show_gui:
             self.PopupMenu(menu)
 
-        # Kill the menu once done.
+        # Cleanup.
         menu.Destroy()
 
 
@@ -398,7 +436,7 @@ class Pipe_editor(wx.Frame):
 
         # Ask if this should be done.
         msg = "Are you sure you would like to delete the '%s' data pipe?  This operation cannot be undone." % self.selected_pipe
-        if status.show_gui and Question(msg, parent=self, default=False).ShowModal() == wx.ID_NO:
+        if status.show_gui and Question(msg, parent=self, size=(350, 200), default=False).ShowModal() == wx.ID_NO:
             return
 
         # Delete the data pipe.
