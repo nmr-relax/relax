@@ -232,7 +232,7 @@ class Rx(GuiTestCase):
         # Check the created files.
         self.assert_(access(ds.tmpdir+sep+'r1.600.out', F_OK))
         self.assert_(access(ds.tmpdir+sep+'results.bz2', F_OK))
-        self.assert_(access(ds.tmpdir+sep+'r1.600.save.bz2', F_OK))
+        self.assert_(access(ds.tmpdir+sep+'state.bz2', F_OK))
         self.assert_(access(ds.tmpdir+sep+'grace'+sep+'r1.600.agr', F_OK))
         self.assert_(access(ds.tmpdir+sep+'grace'+sep+'chi2.agr', F_OK))
         self.assert_(access(ds.tmpdir+sep+'grace'+sep+'i0.agr', F_OK))
