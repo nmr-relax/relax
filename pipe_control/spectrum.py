@@ -833,6 +833,10 @@ def replicated_ids(spectrum_id):
     @rtype:             list of str
     """
 
+    # No replicates present.
+    if not hasattr(cdp, 'replicates'):
+        return []
+
     # Initialise the ID list.
     repl = []
 
