@@ -94,49 +94,50 @@ class Relax_disp:
         # Initial printout.
         title(file=sys.stdout, text="Relaxation dispersion auto-analysis", prespace=4)
 
-        # Execution lock.
-        status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
-
-        # Set up the analysis status object.
-        status.init_auto_analysis(pipe_bundle, type='relax_disp')
-        status.current_analysis = pipe_bundle
-
-        # Store the args.
-        self.pipe_name = pipe_name
-        self.pipe_bundle = pipe_bundle
-        self.results_dir = results_dir
-        self.grid_inc = grid_inc
-        self.mc_sim_num = mc_sim_num
-        self.exp_mc_sim_num = exp_mc_sim_num
-        self.models = models
-        self.modsel = modsel
-        self.pre_run_dir = pre_run_dir
-        self.optimise_r2eff = optimise_r2eff
-        self.insignificance = insignificance
-        self.set_grid_r20 = set_grid_r20
-        self.numeric_only = numeric_only
-        self.mc_sim_all_models = mc_sim_all_models
-        self.eliminate = eliminate
-        self.r1_fit = r1_fit
-
-        # No results directory, so default to the current directory.
-        if not self.results_dir:
-            self.results_dir = getcwd()
-
-        # Data checks.
-        self.check_vars()
-
-        # Check for numerical model using numpy version under 1.8.
-        # This will result in slow "for loop" calculation through data, making the analysis 5-6 times slower.
-        self.check_numpy_less_1_8_and_numerical_model()
-
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
-
-        # Execute.
+        # Safely execute the full protocol.
         try:
+            # Execution lock.
+            status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
+
+            # Set up the analysis status object.
+            status.init_auto_analysis(pipe_bundle, type='relax_disp')
+            status.current_analysis = pipe_bundle
+
+            # Store the args.
+            self.pipe_name = pipe_name
+            self.pipe_bundle = pipe_bundle
+            self.results_dir = results_dir
+            self.grid_inc = grid_inc
+            self.mc_sim_num = mc_sim_num
+            self.exp_mc_sim_num = exp_mc_sim_num
+            self.models = models
+            self.modsel = modsel
+            self.pre_run_dir = pre_run_dir
+            self.optimise_r2eff = optimise_r2eff
+            self.insignificance = insignificance
+            self.set_grid_r20 = set_grid_r20
+            self.numeric_only = numeric_only
+            self.mc_sim_all_models = mc_sim_all_models
+            self.eliminate = eliminate
+            self.r1_fit = r1_fit
+
+            # No results directory, so default to the current directory.
+            if not self.results_dir:
+                self.results_dir = getcwd()
+
+            # Data checks.
+            self.check_vars()
+
+            # Check for numerical model using numpy version under 1.8.
+            # This will result in slow "for loop" calculation through data, making the analysis 5-6 times slower.
+            self.check_numpy_less_1_8_and_numerical_model()
+
+            # Load the interpreter.
+            self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
+            self.interpreter.populate_self()
+            self.interpreter.on(verbose=False)
+
+            # Execute.
             self.run()
 
         # Clean up.

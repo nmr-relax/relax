@@ -132,65 +132,69 @@ class Stereochem_analysis:
         # Initial printout.
         title(file=sys.stdout, text="Stereochemistry auto-analysis")
 
-        # Execution lock.
-        status.exec_lock.acquire('auto stereochem analysis', mode='auto-analysis')
+        # Safely execute the full protocol.
+        try:
+            # Execution lock.
+            status.exec_lock.acquire('auto stereochem analysis', mode='auto-analysis')
 
-        # Set up the analysis status object.
-        status.init_auto_analysis('stereochem', type='stereochem')
-        status.current_analysis = 'auto stereochem analysis'
+            # Set up the analysis status object.
+            status.init_auto_analysis('stereochem', type='stereochem')
+            status.current_analysis = 'auto stereochem analysis'
 
-        # Store all the args.
-        self.stage = stage
-        self.results_dir = results_dir
-        self.num_ens = num_ens
-        self.num_models = num_models
-        self.configs = configs
-        self.snapshot_dir = snapshot_dir
-        self.snapshot_min = snapshot_min
-        self.snapshot_max = snapshot_max
-        self.pseudo = pseudo
-        self.noe_file = noe_file
-        self.noe_norm = noe_norm
-        self.rdc_name = rdc_name
-        self.rdc_file = rdc_file
-        self.rdc_spin_id1_col = rdc_spin_id1_col
-        self.rdc_spin_id2_col = rdc_spin_id2_col
-        self.rdc_data_col = rdc_data_col
-        self.rdc_error_col = rdc_error_col
-        self.bond_length = bond_length
-        self.bond_length_file = bond_length_file
-        self.log = log
-        self.bucket_num = bucket_num
-        self.lower_lim_noe = lower_lim_noe
-        self.upper_lim_noe = upper_lim_noe
-        self.lower_lim_rdc = lower_lim_rdc
-        self.upper_lim_rdc = upper_lim_rdc
+            # Store all the args.
+            self.stage = stage
+            self.results_dir = results_dir
+            self.num_ens = num_ens
+            self.num_models = num_models
+            self.configs = configs
+            self.snapshot_dir = snapshot_dir
+            self.snapshot_min = snapshot_min
+            self.snapshot_max = snapshot_max
+            self.pseudo = pseudo
+            self.noe_file = noe_file
+            self.noe_norm = noe_norm
+            self.rdc_name = rdc_name
+            self.rdc_file = rdc_file
+            self.rdc_spin_id1_col = rdc_spin_id1_col
+            self.rdc_spin_id2_col = rdc_spin_id2_col
+            self.rdc_data_col = rdc_data_col
+            self.rdc_error_col = rdc_error_col
+            self.bond_length = bond_length
+            self.bond_length_file = bond_length_file
+            self.log = log
+            self.bucket_num = bucket_num
+            self.lower_lim_noe = lower_lim_noe
+            self.upper_lim_noe = upper_lim_noe
+            self.lower_lim_rdc = lower_lim_rdc
+            self.upper_lim_rdc = upper_lim_rdc
 
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
+            # Load the interpreter.
+            self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
+            self.interpreter.populate_self()
+            self.interpreter.on(verbose=False)
 
-        # Create the results directory.
-        if self.results_dir:
-            mkdir_nofail(self.results_dir)
+            # Create the results directory.
+            if self.results_dir:
+                mkdir_nofail(self.results_dir)
 
-        # Or use the current working directory.
-        else:
-            self.results_dir = getcwd()
+            # Or use the current working directory.
+            else:
+                self.results_dir = getcwd()
 
-        # Create a directory for log files.
-        if self.log:
-            mkdir_nofail(self.results_dir + sep + "logs")
+            # Create a directory for log files.
+            if self.log:
+                mkdir_nofail(self.results_dir + sep + "logs")
 
-        # Final printout.
-        title(file=sys.stdout, text="Completion of the stereochemistry auto-analysis")
-        print_elapsed_time(time() - status.start_time)
+        # Clean up.
+        finally:
+            # Final printout.
+            title(file=sys.stdout, text="Completion of the stereochemistry auto-analysis")
+            print_elapsed_time(time() - status.start_time)
 
-        # Finish and unlock execution.
-        status.auto_analysis['stereochem'].fin = True
-        status.current_analysis = None
-        status.exec_lock.release()
+            # Finish and unlock execution.
+            status.auto_analysis['stereochem'].fin = True
+            status.current_analysis = None
+            status.exec_lock.release()
 
 
     def run(self):

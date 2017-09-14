@@ -161,68 +161,68 @@ class dAuvergne_protocol:
         # Initial printout.
         title(file=sys.stdout, text="d'Auvergne protocol model-free auto-analysis")
 
-        # Execution lock.
-        status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
-
-        # Store the args.
-        self.pipe_name = pipe_name
-        self.pipe_bundle = pipe_bundle
-        self.mf_models = mf_models
-        self.local_tm_models = local_tm_models
-        self.grid_inc = grid_inc
-        self.diff_tensor_grid_inc = diff_tensor_grid_inc
-        self.min_algor = min_algor
-        self.mc_sim_num = mc_sim_num
-        self.max_iter = max_iter
-        self.conv_loop = conv_loop
-
-        # The model-free data pipe names.
-        self.mf_model_pipes = []
-        for i in range(len(self.mf_models)):
-            self.mf_model_pipes.append(self.name_pipe(self.mf_models[i]))
-        self.local_tm_model_pipes = []
-        for i in range(len(self.local_tm_models)):
-            self.local_tm_model_pipes.append(self.name_pipe(self.local_tm_models[i]))
-
-        # The diffusion models.
-        if isinstance(diff_model, list):
-            self.diff_model_list = diff_model
-        else:
-            self.diff_model_list = [diff_model]
-
-        # Project directory (i.e. directory containing the model-free model results and the newly generated files)
-        if results_dir:
-            self.results_dir = results_dir + sep
-        else:
-            self.results_dir = getcwd() + sep
-        if write_results_dir:
-            self.write_results_dir = write_results_dir + sep
-        else:
-            self.write_results_dir = self.results_dir
-
-        # Data checks.
-        self.check_vars()
-
-        # Set the data pipe to the current data pipe.
-        if self.pipe_name != cdp_name():
-            switch(self.pipe_name)
-
-        # Some info for the status.
-        self.status_setup()
-
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
-
-        # Replacement user functions.
-        if user_fns:
-            for name in user_fns:
-                setattr(self.interpreter, name, user_fns[name])
-
-        # Execute the protocol.
+        # Safely execute the full protocol.
         try:
-            # Loop over the models.
+            # Execution lock.
+            status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
+
+            # Store the args.
+            self.pipe_name = pipe_name
+            self.pipe_bundle = pipe_bundle
+            self.mf_models = mf_models
+            self.local_tm_models = local_tm_models
+            self.grid_inc = grid_inc
+            self.diff_tensor_grid_inc = diff_tensor_grid_inc
+            self.min_algor = min_algor
+            self.mc_sim_num = mc_sim_num
+            self.max_iter = max_iter
+            self.conv_loop = conv_loop
+
+            # The model-free data pipe names.
+            self.mf_model_pipes = []
+            for i in range(len(self.mf_models)):
+                self.mf_model_pipes.append(self.name_pipe(self.mf_models[i]))
+            self.local_tm_model_pipes = []
+            for i in range(len(self.local_tm_models)):
+                self.local_tm_model_pipes.append(self.name_pipe(self.local_tm_models[i]))
+
+            # The diffusion models.
+            if isinstance(diff_model, list):
+                self.diff_model_list = diff_model
+            else:
+                self.diff_model_list = [diff_model]
+
+            # Project directory (i.e. directory containing the model-free model results and the newly generated files)
+            if results_dir:
+                self.results_dir = results_dir + sep
+            else:
+                self.results_dir = getcwd() + sep
+            if write_results_dir:
+                self.write_results_dir = write_results_dir + sep
+            else:
+                self.write_results_dir = self.results_dir
+
+            # Data checks.
+            self.check_vars()
+
+            # Set the data pipe to the current data pipe.
+            if self.pipe_name != cdp_name():
+                switch(self.pipe_name)
+
+            # Some info for the status.
+            self.status_setup()
+
+            # Load the interpreter.
+            self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
+            self.interpreter.populate_self()
+            self.interpreter.on(verbose=False)
+
+            # Replacement user functions.
+            if user_fns:
+                for name in user_fns:
+                    setattr(self.interpreter, name, user_fns[name])
+
+            # Execute the protocol.
             for self.diff_model in self.diff_model_list:
                 # Wait a little while between diffusion models.
                 sleep(1)

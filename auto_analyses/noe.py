@@ -64,47 +64,51 @@ class NOE_calc:
         # Initial printout.
         title(file=sys.stdout, text="Steady-state NOE auto-analysis")
 
-        # Execution lock.
-        status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
+        # Safely execute the full protocol.
+        try:
+            # Execution lock.
+            status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
 
-        # Set up the analysis status object.
-        status.init_auto_analysis(pipe_bundle, type='noe')
-        status.current_analysis = pipe_bundle
+            # Set up the analysis status object.
+            status.init_auto_analysis(pipe_bundle, type='noe')
+            status.current_analysis = pipe_bundle
 
-        # Store the args.
-        self.save_state = save_state
-        self.pipe_name = pipe_name
-        self.pipe_bundle = pipe_bundle
-        self.file_root = file_root
-        self.results_dir = results_dir
-        if self.results_dir:
-            self.grace_dir = results_dir + sep + 'grace'
-        else:
-            self.grace_dir = 'grace'
+            # Store the args.
+            self.save_state = save_state
+            self.pipe_name = pipe_name
+            self.pipe_bundle = pipe_bundle
+            self.file_root = file_root
+            self.results_dir = results_dir
+            if self.results_dir:
+                self.grace_dir = results_dir + sep + 'grace'
+            else:
+                self.grace_dir = 'grace'
 
-        # Data checks.
-        self.check_vars()
+            # Data checks.
+            self.check_vars()
 
-        # Set the data pipe to the current data pipe.
-        if self.pipe_name != cdp_name():
-            switch(self.pipe_name)
+            # Set the data pipe to the current data pipe.
+            if self.pipe_name != cdp_name():
+                switch(self.pipe_name)
 
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
+            # Load the interpreter.
+            self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
+            self.interpreter.populate_self()
+            self.interpreter.on(verbose=False)
 
-        # Execute.
-        self.run()
+            # Execute.
+            self.run()
 
-        # Final printout.
-        title(file=sys.stdout, text="Completion of the steady-state NOE auto-analysis")
-        print_elapsed_time(time() - status.start_time)
+        # Clean up.
+        finally:
+            # Final printout.
+            title(file=sys.stdout, text="Completion of the steady-state NOE auto-analysis")
+            print_elapsed_time(time() - status.start_time)
 
-        # Finish and unlock execution.
-        status.auto_analysis[self.pipe_bundle].fin = True
-        status.current_analysis = None
-        status.exec_lock.release()
+            # Finish and unlock execution.
+            status.auto_analysis[self.pipe_bundle].fin = True
+            status.current_analysis = None
+            status.exec_lock.release()
 
 
     def run(self):
