@@ -253,7 +253,7 @@ class Menu:
         if not status.exec_lock.locked():
             enable = True
 
-        # The file menu entries.
+        # The file menu entries to enable or disable.
         self.menubar.Enable(MENU_FILE_NEW, enable)
         self.menubar.Enable(MENU_FILE_CLOSE, enable)
         self.menubar.Enable(MENU_FILE_CLOSE_ALL, enable)
@@ -261,6 +261,10 @@ class Menu:
         self.menubar.Enable(MENU_FILE_OPEN, enable)
         self.menubar.Enable(MENU_FILE_SAVE, enable)
         self.menubar.Enable(MENU_FILE_SAVE_AS, enable)
+        self.menubar.Enable(MENU_FILE_EXPORT_BMRB, enable)
+        self.menubar.Enable(MENU_TOOLS_FORMAT, enable)
+        self.menubar.Enable(MENU_TOOLS_TEST_SUITE, enable)
+        self.menubar.Enable(MENU_TOOLS_SYS_INFO, enable)
 
         # The view menu entries.
         self.menubar.Enable(MENU_VIEW_PROMPT, enable)
