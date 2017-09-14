@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013,2017 Edward d'Auvergne                                   #
 # Copyright (C) 2013-2015 Troels E. Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -189,6 +189,93 @@ class Relax_disp(GuiTestCase):
 
         # Closure.
         self.app.gui.analysis.delete_analysis(0)
+
+
+    def test_bug_missing_replicates(self):
+        """Catch an Attribute error when the replicated spectra are specified via the spectrum list rather than the wizard."""
+
+        # The paths to the data files.
+        data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'dispersion' + sep + 'Hansen' + sep
+        data_path_500 = data_path + sep + '500_MHz' + sep
+
+        # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
+        analysis = self.new_analysis_wizard(analysis_type='disp')
+
+        # Change the results directory.
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # Load the sequence.
+        file = data_path + 'fake_sequence.in'
+        self._execute_uf(uf_name='sequence.read', file=file, mol_name_col=None, res_num_col=1, res_name_col=2, spin_name_col=None, spin_num_col=None)
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
+
+        # Set up the nuclear isotopes.
+        analysis.spin_isotope()
+        uf_store['spin.isotope'].page.SetValue('spin_id', '')
+        uf_store['spin.isotope'].wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
+        data = [
+            ['500_reference.in',    '500_MHz'+sep+'reference.in',           None,  500e6],
+            ['500_66.667.in',       '500_MHz'+sep+'66.667.in',           66.6666,  500e6],
+            ['500_133.33.in',       '500_MHz'+sep+'133.33.in',          133.3333,  500e6],
+            ['500_133.33.in.bis',   '500_MHz'+sep+'133.33.in.bis',      133.3333,  500e6],
+        ]
+
+        # Set up the peak intensity wizard.
+        analysis.peak_wizard_launch(None)
+        wizard = analysis.peak_wizard
+
+        # Spin naming.
+        wizard.setup_page(page='name', name="N", force=True)
+        wizard._go_next(None)
+
+        # The spectrum.
+        for id, file, cpmg_frq, H_frq in data:
+            wizard.setup_page(page='read', file=data_path+file, spectrum_id=id, int_method='height', int_col=2, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None)
+            wizard._apply(None)
+        wizard._skip(None)
+
+        # The error type.
+        page = wizard.get_page(wizard.page_indices['err_type'])
+        page.selection = 'repl'
+        wizard._go_next(None)
+
+        # Replicated spectra (skip).
+        wizard._go_next(None)
+
+        # Set the experiment types.
+        for id, file, cpmg_frq, H_frq in data:
+            wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='SQ CPMG')
+            wizard._apply(None)
+        wizard._skip(None)
+
+        # Set the spectrometer frequencies.
+        for id, file, cpmg_frq, H_frq in data:
+            wizard.setup_page(page='spectrometer_frequency', id=id, frq=H_frq)
+            wizard._apply(None)
+        wizard._skip(None)
+
+        # Set the relaxation time.
+        for id, file, cpmg_frq, H_frq in data:
+            wizard.setup_page(page='relax_time', spectrum_id=id, time=0.03)
+            wizard._apply(None)
+        wizard._skip(None)
+
+        # Set the CPMG frequencies.
+        for id, file, cpmg_frq, H_frq in data:
+            wizard.setup_page(page='cpmg_setup', spectrum_id=id, cpmg_frq=cpmg_frq)
+            wizard._apply(None)
+        wizard._skip(None)
+
+        # Flush all wx events (to allow the spectrum list GUI element to populate all its rows).
+        wx.Yield()
+
+        # Simulate setting replicated spectra via the spectrum list element.
+        analysis.peak_intensity.action_spectrum_replicated(item=0)
 
 
     def test_hansen_trunc_data(self):
