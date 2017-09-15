@@ -152,13 +152,17 @@ def consistent_interatomic_data(pipe1=None, pipe2=None):
             raise RelaxInteratomInconsistentError(pipe1, pipe2)
 
 
-def create_interatom(spin_id1=None, spin_id2=None, pipe=None, verbose=False):
+def create_interatom(spin_id1=None, spin_id2=None, spin1=None, spin2=None, pipe=None, verbose=False):
     """Create and return the interatomic data container for the two spins.
 
     @keyword spin_id1:  The spin ID string of the first atom.
     @type spin_id1:     str
     @keyword spin_id2:  The spin ID string of the second atom.
     @type spin_id2:     str
+    @keyword spin1:     The optional spin container for the first atom.  This is for speeding up the interatomic data container creation, if the spin containers are already available in the calling function.
+    @type spin1:        str
+    @keyword spin2:     The optional spin container for the second atom.  This is for speeding up the interatomic data container creation, if the spin containers are already available in the calling function.
+    @type spin2:        str
     @keyword pipe:      The data pipe to create the interatomic data container for.  This defaults to the current data pipe if not supplied.
     @type pipe:         str or None
     @keyword verbose:   A flag which if True will result printouts.
@@ -179,12 +183,14 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None, verbose=False):
     dp = pipes.get_pipe(pipe)
 
     # Check that the spin IDs exist.
-    spin1 = return_spin(spin_id1, pipe)
     if spin1 == None:
-        raise RelaxNoSpinError(spin_id1)
-    spin2 = return_spin(spin_id2, pipe)
+        spin1 = return_spin(spin_id1, pipe)
+        if spin1 == None:
+            raise RelaxNoSpinError(spin_id1)
     if spin2 == None:
-        raise RelaxNoSpinError(spin_id2)
+        spin2 = return_spin(spin_id2, pipe)
+        if spin2 == None:
+            raise RelaxNoSpinError(spin_id2)
 
     # Check if the two spin IDs have already been added.
     for i in range(len(dp.interatomic)):
@@ -226,8 +232,9 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_sele
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
-    # Initialise the spin ID pairs list.
+    # Initialise data structures for storing spin data.
     ids = []
+    spins = []
     spin_selections = []
 
     # Use the structural data to find connected atoms.
@@ -268,6 +275,9 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_sele
 
                 # Store the IDs for the printout.
                 ids.append([id1, id2])
+
+                # Store the spin data.
+                spins.append([spin1, spin2])
                 spin_selections.append([spin1.select, spin2.select])
 
     # No structural data present or the spin IDs are not in the structural data, so use spin loops and some basic rules.
@@ -301,6 +311,9 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_sele
 
                 # Store the IDs for the printout.
                 ids.append([id1, id2])
+
+                # Store the spin data.
+                spins.append([spin1, spin2])
                 spin_selections.append([spin1.select, spin2.select])
 
     # No matches, so fail!
@@ -332,7 +345,7 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_sele
 
         # Create the container if needed.
         if interatom == None:
-            interatom = create_interatom(spin_id1=id1, spin_id2=id2, pipe=pipe)
+            interatom = create_interatom(spin_id1=id1, spin_id2=id2, spin1=spins[i][0], spin2=spins[i][1], pipe=pipe)
 
         # Check that this has not already been set up.
         if interatom.dipole_pair:
