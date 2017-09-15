@@ -116,6 +116,9 @@ def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=Tru
         # Store the IDs for the printout.
         ids.append([repr(interatom.spin_id1), repr(interatom.spin_id2)])
 
+        # Reconfigure the spin hashes.
+        hash_update(interatom=new_interatom, pipe=pipe_to)
+
     # Print out.
     if verbose:
         write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
@@ -397,6 +400,24 @@ def exists_data(pipe=None):
 
     # Otherwise.
     return True
+
+
+def hash_update(interatom=None, pipe=None):
+    """Recreate the spin hashes for the interatomic data container.
+
+    @keyword interatom: The interatomic data container.
+    @type interatom:    InteratomContainer instance
+    @keyword pipe:      The data pipe containing the interatomic data container.  Defaults to the current data pipe.
+    @type pipe:         str or None
+    """
+
+    # Fetch the spin containers.
+    spin1 = return_spin(interatom.spin_id1, pipe=pipe)
+    spin2 = return_spin(interatom.spin_id2, pipe=pipe)
+
+    # Reset the hashes.
+    interatom._spin_hash1 = spin1._hash
+    interatom._spin_hash2 = spin2._hash
 
 
 def id_match(spin_id=None, interatom=None, pipe=None):
