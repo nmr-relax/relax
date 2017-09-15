@@ -191,8 +191,15 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None, verbose=False):
         if id_match(spin_id=spin_id1, interatom=dp.interatomic[i], pipe=pipe) and id_match(spin_id=spin_id2, interatom=dp.interatomic[i], pipe=pipe):
             raise RelaxError("The spin pair %s and %s have already been added." % (spin_id1, spin_id2))
 
-    # Add and return the data.
-    return dp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2, spin_hash1=spin1._hash, spin_hash2=spin2._hash)
+    # Add the data.
+    interatom = dp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2, spin_hash1=spin1._hash, spin_hash2=spin2._hash)
+
+    # Store the interatom hash in the spin containers.
+    spin1._interatomic_hashes.append(interatom._hash)
+    spin2._interatomic_hashes.append(interatom._hash)
+
+    # Return the interatomic data container.
+    return interatom
 
 
 def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_selection=False, verbose=True):
