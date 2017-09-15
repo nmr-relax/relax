@@ -87,7 +87,7 @@ for i in range(len(times)):
 
         # The spin ID.
         spin_id = ':%s' % err_lines[j][1]
-        spin = return_spin(spin_id)
+        spin = return_spin(spin_id=spin_id)
 
         # Set the error.
         if not hasattr(spin, 'peak_intensity_err'):

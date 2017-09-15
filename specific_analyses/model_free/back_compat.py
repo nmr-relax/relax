@@ -829,7 +829,7 @@ def read_1_2_results(file_data, verbosity=1):
         spin_id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
         # Get the spin container.
-        spin = return_spin(spin_id)
+        spin = return_spin(spin_id=spin_id)
 
         # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
         if data_set == 'value' and spin_name:

@@ -376,7 +376,7 @@ class Relax_disp(API_base, API_common):
         # Loop over all the spins and deselect them.
         for spin_id in model_info:
             # Get the spin.
-            spin = return_spin(spin_id)
+            spin = return_spin(spin_id=spin_id)
 
             # Spin deselection.
             if sim_index == None:
@@ -453,7 +453,7 @@ class Relax_disp(API_base, API_common):
         # Loop over the cluster.
         for id in model_info:
             # The original spin container.
-            spin = return_spin(id, pipe=pipe_from)
+            spin = return_spin(spin_id=id, pipe=pipe_from)
 
             # Duplicate the spin specific data.
             for name in dir(spin):
@@ -542,7 +542,7 @@ class Relax_disp(API_base, API_common):
         spins = []
         for spin_id in model_info:
             # Get the spin.
-            spin = return_spin(spin_id)
+            spin = return_spin(spin_id=spin_id)
 
             # Skip deselected spins.
             if not spin.select:
@@ -574,7 +574,7 @@ class Relax_disp(API_base, API_common):
         spins = []
         for spin_id in model_info:
             # Get the spin.
-            spin = return_spin(spin_id)
+            spin = return_spin(spin_id=spin_id)
 
             # Skip deselected spins.
             if not spin.select:
@@ -638,7 +638,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param)
 
         # Return the spin.
-        spin = return_spin(spin_id)
+        spin = return_spin(spin_id=spin_id)
 
         # Loop over each spectrometer frequency and dispersion point to collect param_keys.
         param_keys = []
@@ -882,7 +882,7 @@ class Relax_disp(API_base, API_common):
 
         # Get the spin containers (the spin ID overrides the model info).
         if spin_id != None:
-            spins = [return_spin(spin_id)]
+            spins = [return_spin(spin_id=spin_id)]
         else:
             spins = spin_ids_to_containers(model_info)
 

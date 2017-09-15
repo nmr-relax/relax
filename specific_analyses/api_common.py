@@ -63,7 +63,7 @@ class API_common:
         """
 
         # Get the spin container.
-        spin = return_spin(data_id)
+        spin = return_spin(spin_id=data_id)
 
         # Initialise the data structure.
         data = []
@@ -100,7 +100,7 @@ class API_common:
 
         # Alias the data and get the spin container.
         spin_id = data
-        spin = return_spin(spin_id)
+        spin = return_spin(spin_id=spin_id)
 
         # Loop over the parameters.
         for name in self._PARAMS.loop(set='params', scope='spin', error_names=False, sim_names=sim):
@@ -399,7 +399,7 @@ class API_common:
         """
 
         # Get the spin container.
-        spin = return_spin(data_id)
+        spin = return_spin(spin_id=data_id)
 
         # Convert to a list.
         error = []
@@ -754,7 +754,7 @@ class API_common:
         """
 
         # Get the spin container.
-        spin = return_spin(data_id)
+        spin = return_spin(spin_id=data_id)
 
         # Initialise the data structure.
         spin.ri_data_sim = {}

@@ -113,7 +113,7 @@ class Jw_mapping(API_base, API_common):
                     spin_id2 = interatom.spin_id1
                 else:
                     spin_id2 = interatom.spin_id2
-                spin2 = return_spin(spin_id2)
+                spin2 = return_spin(spin_id=spin_id2)
 
                 # Test if the nuclear isotope type has been set.
                 if not hasattr(spin2, 'isotope'):
@@ -181,7 +181,7 @@ class Jw_mapping(API_base, API_common):
                     spin_id2 = interatoms[i].spin_id1
                 else:
                     spin_id2 = interatoms[i].spin_id2
-                spin2 = return_spin(spin_id2)
+                spin2 = return_spin(spin_id=spin_id2)
 
                 # Gyromagnetic ratios.
                 gx = periodic_table.gyromagnetic_ratio(spin.isotope)
@@ -227,7 +227,7 @@ class Jw_mapping(API_base, API_common):
         """
 
         # Get the spin container.
-        spin = return_spin(data)
+        spin = return_spin(spin_id=data)
 
         # Get the data names.
         data_names = self.data_names()
@@ -298,7 +298,7 @@ class Jw_mapping(API_base, API_common):
                     spin_id2 = interatoms[i].spin_id1
                 else:
                     spin_id2 = interatoms[i].spin_id2
-                spin2 = return_spin(spin_id2)
+                spin2 = return_spin(spin_id=spin_id2)
 
                 # Dipolar relaxation flag.
                 dipole_relax = True

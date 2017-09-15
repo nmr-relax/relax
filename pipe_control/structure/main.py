@@ -757,7 +757,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
         id = generate_spin_id_unique(res_num=res_num, res_name=None, spin_num=atom_num, spin_name=atom_name)
 
         # Get the spin container.
-        spin_cont = return_spin(id)
+        spin_cont = return_spin(spin_id=id)
 
         # Skip the spin if it doesn't exist.
         if spin_cont == None:
@@ -780,7 +780,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
             positions = []
             for atom in spin.members:
                 # Get the spin container.
-                subspin = return_spin(atom)
+                subspin = return_spin(spin_id=atom)
 
                 # Test that the spin exists.
                 if subspin == None:
@@ -883,7 +883,7 @@ def load_spins(spin_id=None, str_id=None, from_mols=None, mol_name_target=None, 
 
         # Otherwise, get the spin container.
         except RelaxError:
-            spin_cont = return_spin(id)
+            spin_cont = return_spin(spin_id=id)
 
         # Append all the spin ID info for printing later.
         if mol_name_target:
@@ -1018,7 +1018,7 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
     spin_names2 = []
     for id in ids:
         # Fetch the spin.
-        spin_cont = return_spin(id)
+        spin_cont = return_spin(spin_id=id)
 
         # Create the spin if it does not exist.
         if spin_cont == None:
@@ -1351,7 +1351,7 @@ def rmsd(pipes=None, models=None, molecules=None, atom_id=None, atomic=False):
             id = generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_num=i, spin_name=atom_names[i])
 
             # Get the spin container.
-            spin_cont = return_spin(id)
+            spin_cont = return_spin(spin_id=id)
 
             # Skip the spin if it doesn't exist.
             if spin_cont == None:

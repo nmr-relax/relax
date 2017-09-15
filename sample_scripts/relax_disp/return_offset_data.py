@@ -41,7 +41,7 @@ def generate_theta_dic():
     cur_spins = []
     for curspin_id in all_spin_ids:
         # Get the spin
-        curspin = return_spin(curspin_id)
+        curspin = return_spin(spin_id=curspin_id)
 
         # Check if is selected
         if curspin.select == True:

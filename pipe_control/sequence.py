@@ -55,9 +55,9 @@ def attach_protons():
         if len(interatoms):
             for i in range(len(interatoms)):
                 # Get the attached spin.
-                spin_attached = return_spin(interatoms[i].spin_id1)
+                spin_attached = return_spin(spin_id=interatoms[i].spin_id1)
                 if id(spin_attached) == id(spin):
-                    spin_attached = return_spin(interatoms[i].spin_id2)
+                    spin_attached = return_spin(spin_id=interatoms[i].spin_id2)
 
                 # Is it a proton?
                 if hasattr(spin_attached, 'element') and spin_attached.element == 'H' or spin.name == 'H':
@@ -277,7 +277,7 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name, pipe=pipe)
 
     # A new spin.
-    curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
+    curr_spin = return_spin(spin_id=generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
     if not curr_spin or ((spin_num != None and curr_spin.num != spin_num) or (spin_name != None and curr_spin.name != spin_name)):
         # Add the spin.
         curr_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name, pipe=pipe)
@@ -381,9 +381,9 @@ def return_attached_protons(spin_id=None):
     for i in range(len(interatoms)):
         # Get the attached spin.
         if interatoms[i].spin_id1 == spin_id:
-            attached = return_spin(interatoms[i].spin_id2)
+            attached = return_spin(spin_id=interatoms[i].spin_id2)
         else:
-            attached = return_spin(interatoms[i].spin_id1)
+            attached = return_spin(spin_id=interatoms[i].spin_id1)
 
         # Is it a proton?
         if (hasattr(attached, 'element') and attached.element == 'H') or attached.name == 'H':

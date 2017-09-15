@@ -154,7 +154,7 @@ class Relax_fit(API_base, API_common):
         mc_data = {}
 
         # Get the spin container.
-        spin = return_spin(data_id)
+        spin = return_spin(spin_id=data_id)
 
         # Skip deselected spins.
         if not spin.select:
@@ -190,7 +190,7 @@ class Relax_fit(API_base, API_common):
         """
 
         # Get the spin container.
-        spin = return_spin(data)
+        spin = return_spin(spin_id=data)
 
         # Loop over the data structure names.
         for name in self.data_names(set='params'):
@@ -522,7 +522,7 @@ class Relax_fit(API_base, API_common):
         """
 
         # Get the spin container.
-        spin = return_spin(data_id)
+        spin = return_spin(spin_id=data_id)
 
         # Return the peak intensities.
         return spin.peak_intensity
@@ -539,7 +539,7 @@ class Relax_fit(API_base, API_common):
         """
 
         # Get the spin container.
-        spin = return_spin(data_id)
+        spin = return_spin(spin_id=data_id)
 
         # Return the error list.
         return spin.peak_intensity_err
@@ -555,7 +555,7 @@ class Relax_fit(API_base, API_common):
         """
 
         # Get the spin container.
-        spin = return_spin(data_id)
+        spin = return_spin(spin_id=data_id)
 
         # Create the data structure.
         spin.peak_intensity_sim = sim_data

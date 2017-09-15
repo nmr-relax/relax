@@ -112,7 +112,7 @@ def sf_csa_read(star):
             spin_id = mol_res_spin.generate_spin_id_unique(mol_name=mol_names[i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
 
             # Obtain the spin.
-            spin = mol_res_spin.return_spin(spin_id)
+            spin = mol_res_spin.return_spin(spin_id=spin_id)
 
             # The CSA value (converted from ppm).
             setattr(spin, 'csa', data['csa'][i] * 1e-6)
@@ -189,7 +189,7 @@ def sf_model_free_read(star, sample_conditions=None):
             spin_id = mol_res_spin.generate_spin_id_unique(mol_name=mol_names[i], res_name=data['res_names'][i], res_num=data['res_nums'][i], spin_name=data['atom_names'][i])
 
             # Obtain the spin.
-            spin = mol_res_spin.return_spin(spin_id)
+            spin = mol_res_spin.return_spin(spin_id=spin_id)
 
             # No spin?!?
             if spin == None:

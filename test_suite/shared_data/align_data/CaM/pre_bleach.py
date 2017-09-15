@@ -48,7 +48,7 @@ structure.read_pdb('bax_C_1J7P_N_H_Ca.pdb', dir=path+sep+'structures')
 structure.load_spins()
 
 # Get the first calcium position.
-spin = return_spin(':1000@CA')
+spin = return_spin(spin_id=':1000@CA')
 centre = spin.pos
 
 # Open the unresolved file.

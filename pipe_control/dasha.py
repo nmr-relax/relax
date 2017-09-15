@@ -538,7 +538,7 @@ def extract(dir):
 
     # Set the values.
     for i in range(len(data)):
-        spin = return_spin(data[i][0])
+        spin = return_spin(spin_id=data[i][0])
         spin.chi2 = data[i][1]
 
 

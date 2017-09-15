@@ -1222,7 +1222,7 @@ def loop_cluster(skip_desel=True):
             spin_id_list = []
             for spin_id in cdp.clustering[key]:
                 # Skip deselected spins.
-                spin = return_spin(spin_id)
+                spin = return_spin(spin_id=spin_id)
                 if skip_desel and not spin.select:
                     continue
 
@@ -1239,7 +1239,7 @@ def loop_cluster(skip_desel=True):
         # The free spins.
         for spin_id in cdp.clustering['free spins']:
             # Skip deselected spins.
-            spin = return_spin(spin_id)
+            spin = return_spin(spin_id=spin_id)
             if skip_desel and not spin.select:
                 continue
 
@@ -2379,7 +2379,7 @@ def r2eff_read(id=None, file=None, dir=None, disp_frq=None, offset=None, spin_id
 
         # Get the corresponding spin container.
         spin_id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
-        spin = return_spin(spin_id)
+        spin = return_spin(spin_id=spin_id)
         if spin == None:
             warn(RelaxNoSpinWarning(spin_id))
             continue
@@ -2502,7 +2502,7 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
     check_mol_res_spin_data()
 
     # Get the spin.
-    spin = return_spin(spin_id)
+    spin = return_spin(spin_id=spin_id)
     if spin == None:
         raise RelaxNoSpinError(spin_id)
 
@@ -4952,7 +4952,7 @@ def spin_ids_to_containers(spin_ids):
     # Loop over the IDs and fetch the container.
     spins = []
     for id in spin_ids:
-        spins.append(return_spin(id))
+        spins.append(return_spin(spin_id=id))
 
     # Return the containers.
     return spins

@@ -265,7 +265,7 @@ class Relax_data_store(dict):
                                 spin_id2 = pipe_control.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin_name=proton_name)
 
                                 # Fetch the proton spin if it exists.
-                                h_spin = pipe_control.mol_res_spin.return_spin(spin_id2, pipe=pipe_name)
+                                h_spin = pipe_control.mol_res_spin.return_spin(spin_id=spin_id2, pipe=pipe_name)
                                 if h_spin:
                                     spin_id2 = pipe_control.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin_name=proton_name, spin_num=h_spin.num)
 

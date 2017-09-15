@@ -132,8 +132,8 @@ def copy(pipe_from=None, pipe_to=None):
         # Loop over the spins, adding parameters to a list, which in the end will be used to find the median.
         for id in spin_ids:
             # Get the spins, then store them.
-            spin_from = return_spin(id, pipe=pipe_from)
-            spin_to = return_spin(id, pipe=pipe_to)
+            spin_from = return_spin(spin_id=id, pipe=pipe_from)
+            spin_to = return_spin(spin_id=id, pipe=pipe_to)
             spins_from.append(spin_from)
             spins_to.append(spin_to)
 

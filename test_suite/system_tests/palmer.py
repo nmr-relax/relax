@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
-# Copyright (C) 2008-2009,2012-2014 Edward d'Auvergne                         #
+# Copyright (C) 2008-2009,2012-2014,2017 Edward d'Auvergne                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -75,12 +75,12 @@ class Palmer(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer.py')
 
         # Determine if the Gnu gcc or Portland C compiler version is being used.
-        spin = return_spin(':0@N', pipe='m2')
+        spin = return_spin(spin_id=':0@N', pipe='m2')
         if spin.te == 1.951*1e-12:
             binary = 'linux-i386-gcc'   # Linux Gnu gcc modelfree4 version.
         else:
             binary = 'linux-i386-pgf'   # Linux Portland C compiler modelfree4 version.
-        spin = return_spin(':-2@N', pipe='m1')
+        spin = return_spin(spin_id=':-2@N', pipe='m1')
         if spin.chi2 == 36.62:
             binary = 'mac-i386'         # Mac OS X intel binary.
         if not binary:
@@ -106,7 +106,7 @@ class Palmer(SystemTestCase):
                 print("Spin " + repr(spin_names[spin_index]))
 
                 # Get the spin.
-                spin = return_spin(spin_names[spin_index], pipe=models[model_index])
+                spin = return_spin(spin_id=spin_names[spin_index], pipe=models[model_index])
 
                 # Conversions.
                 if te[model_index][spin_index]:
@@ -140,7 +140,7 @@ class Palmer(SystemTestCase):
             chi2 = [1.796, 0.7392]
         for spin_index in range(3):
             # Get the spin.
-            spin = return_spin(spin_names[spin_index], pipe='aic')
+            spin = return_spin(spin_id=spin_names[spin_index], pipe='aic')
 
             # Deselected spin.
             if not spin.select:
@@ -184,12 +184,12 @@ class Palmer(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer_omp.py')
 
         # Catch a the old, buggy modelfree4 versions and complain loudly!
-        spin = return_spin(':9@N', pipe='m2')
+        spin = return_spin(spin_id=':9@N', pipe='m2')
         if spin.s2 == 0.855:
             raise RelaxError("You are using an old, buggy Modelfree4 version!  You must upgrade to version 4.20 or later.")
 
         # Determine the Modelfree4 binary type used.
-        spin = return_spin(':9@N', pipe='aic')
+        spin = return_spin(spin_id=':9@N', pipe='aic')
         binary = None
         if spin.te * 1e12 == 52.195:
             binary = 'linux-i386-gcc'   # Linux Gnu gcc modelfree4 version.
@@ -197,7 +197,7 @@ class Palmer(SystemTestCase):
             binary = 'linux-i386-pgf'   # Linux Portland C compiler modelfree4 version.
         elif spin.te * 1e12 == 52.194:
             binary = 'linux-x86_64-gcc'   # 64-bit Linux Gnu gcc modelfree4 version.
-        spin = return_spin(':9@N', pipe='m1')
+        spin = return_spin(spin_id=':9@N', pipe='m1')
         if binary == None and spin.chi2 == 143.7:
             binary = 'mac-i386'         # Mac OS X intel binary.
         if not binary:
@@ -224,7 +224,7 @@ class Palmer(SystemTestCase):
                 print("Spin " + repr(spin_names[spin_index]))
 
                 # Get the spin.
-                spin = return_spin(spin_names[spin_index], pipe=models[model_index])
+                spin = return_spin(spin_id=spin_names[spin_index], pipe=models[model_index])
 
                 # Conversions.
                 if rex[model_index][spin_index]:
@@ -262,7 +262,7 @@ class Palmer(SystemTestCase):
         # Checks for the final mfout file reading.
         for spin_index in range(3):
             # Get the spin.
-            spin = return_spin(spin_names[spin_index], pipe='aic')
+            spin = return_spin(spin_id=spin_names[spin_index], pipe='aic')
 
             # Checks.
             self.assertEqual(spin.model, models[spin_index])

@@ -186,9 +186,9 @@ def bmrb_write(star):
             raise RelaxError("The BMRB only handles a signal interatomic interaction for the spin '%s'." % spin_id)
 
         # Get the attached spin.
-        spin_attached = return_spin(interatoms[0].spin_id1)
+        spin_attached = return_spin(spin_id=interatoms[0].spin_id1)
         if id(spin_attached) == id(spin):
-            spin_attached = return_spin(interatoms[0].spin_id2)
+            spin_attached = return_spin(spin_id=interatoms[0].spin_id2)
 
         # The attached atom info.
         if hasattr(spin_attached, 'name'):

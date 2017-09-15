@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2015,2017 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -82,7 +82,7 @@ def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=Tru
     # Check for the sequence data in the target pipe if no spin IDs are given.
     if not spin_id1 and not spin_id2:
         for spin, spin_id in spin_loop(pipe=pipe_from, return_id=True):
-            if not return_spin(spin_id, pipe=pipe_to):
+            if not return_spin(spin_id=spin_id, pipe=pipe_to):
                 raise RelaxNoSpinError(spin_id, pipe_to)
 
     # Test if pipe_from contains interatomic data (skipping the rest of the function if it is missing).
@@ -187,11 +187,11 @@ def create_interatom(spin_id1=None, spin_id2=None, spin1=None, spin2=None, pipe=
 
     # Check that the spin IDs exist.
     if spin1 == None:
-        spin1 = return_spin(spin_id1, pipe)
+        spin1 = return_spin(spin_id=spin_id1, pipe=pipe)
         if spin1 == None:
             raise RelaxNoSpinError(spin_id1)
     if spin2 == None:
-        spin2 = return_spin(spin_id2, pipe)
+        spin2 = return_spin(spin_id=spin_id2, pipe=pipe)
         if spin2 == None:
             raise RelaxNoSpinError(spin_id2)
 
@@ -252,7 +252,7 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_sele
             id1 = generate_spin_id_unique(pipe_cont=dp, mol_name=mol_name1, res_num=res_num1, res_name=res_name1, spin_num=atom_num1, spin_name=atom_name1)
 
             # Do the spin exist?
-            spin1 = return_spin(id1)
+            spin1 = return_spin(spin_id=id1)
             if not spin1:
                 continue
 
@@ -272,7 +272,7 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_sele
                 id2 = generate_spin_id_unique(pipe_cont=dp, mol_name=mol_name2, res_num=res_num2, res_name=res_name2, spin_num=atom_num2, spin_name=atom_name2)
 
                 # Do the spin exist?
-                spin2 = return_spin(id2)
+                spin2 = return_spin(spin_id=id2)
                 if not spin2:
                     continue
 
@@ -412,8 +412,8 @@ def hash_update(interatom=None, pipe=None):
     """
 
     # Fetch the spin containers.
-    spin1 = return_spin(interatom.spin_id1, pipe=pipe)
-    spin2 = return_spin(interatom.spin_id2, pipe=pipe)
+    spin1 = return_spin(spin_id=interatom.spin_id1, pipe=pipe)
+    spin2 = return_spin(spin_id=interatom.spin_id2, pipe=pipe)
 
     # Reset the hashes.
     interatom._spin_hash1 = spin1._hash
@@ -434,8 +434,8 @@ def id_match(spin_id=None, interatom=None, pipe=None):
     """
 
     # Get the spin containers.
-    spin1 = return_spin(interatom.spin_id1, pipe=pipe)
-    spin2 = return_spin(interatom.spin_id2, pipe=pipe)
+    spin1 = return_spin(spin_id=interatom.spin_id1, pipe=pipe)
+    spin2 = return_spin(spin_id=interatom.spin_id2, pipe=pipe)
 
     # No spins.
     if spin1 == None or spin2 == None:
@@ -711,8 +711,8 @@ def set_dist(spin_id1=None, spin_id2=None, ave_dist=None, unit='meter'):
     data = []
     for interatom in interatomic_loop():
         # Get the spin info.
-        mol_name1, res_num1, res_name1, spin1 = return_spin(interatom.spin_id1, full_info=True)
-        mol_name2, res_num2, res_name2, spin2 = return_spin(interatom.spin_id2, full_info=True)
+        mol_name1, res_num1, res_name1, spin1 = return_spin(spin_id=interatom.spin_id1, full_info=True)
+        mol_name2, res_num2, res_name2, spin2 = return_spin(spin_id=interatom.spin_id2, full_info=True)
 
         # No match, either way.
         if not (sel_obj1.contains_spin(spin_num=spin1.num, spin_name=spin1.name, res_num=res_num1, res_name=res_name1, mol=mol_name1) and sel_obj2.contains_spin(spin_num=spin2.num, spin_name=spin2.name, res_num=res_num2, res_name=res_name2, mol=mol_name2)) and not (sel_obj2.contains_spin(spin_num=spin1.num, spin_name=spin1.name, res_num=res_num1, res_name=res_name1, mol=mol_name1) and sel_obj1.contains_spin(spin_num=spin2.num, spin_name=spin2.name, res_num=res_num2, res_name=res_name2, mol=mol_name2)):
@@ -758,8 +758,8 @@ def unit_vectors(ave=True):
     pos_info = False
     for interatom in interatomic_loop(skip_desel=False):
         # Get the spin info.
-        spin1 = return_spin(interatom.spin_id1)
-        spin2 = return_spin(interatom.spin_id2)
+        spin1 = return_spin(spin_id=interatom.spin_id1)
+        spin2 = return_spin(spin_id=interatom.spin_id2)
 
         # No positional information.
         if not hasattr(spin1, 'pos'):

@@ -87,7 +87,7 @@ def read(file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=N
             spin_id = generate_spin_id_unique(res_num=assign.res_nums[i], spin_name=assign.spin_names[i])
 
             # Get the spin container.
-            spin = return_spin(spin_id)
+            spin = return_spin(spin_id=spin_id)
             if not spin:
                 warn(RelaxNoSpinWarning(spin_id))
                 continue

@@ -463,7 +463,7 @@ class Mol_res_spin_tree(wx.Window):
         """
 
         # Get the current spin element.
-        spin = return_spin(self.info['id'])
+        spin = return_spin(spin_id=self.info['id'])
         element = None
         if hasattr(spin, 'element'):
             element = spin.element
@@ -818,7 +818,7 @@ class Mol_res_spin_tree(wx.Window):
                 continue
 
             # Get the spin.
-            spin = return_spin(info['id'])
+            spin = return_spin(spin_id=info['id'])
 
             # Add to the prune list if it has been removed or renamed/renumbered.
             if spin == None or spin.name != info['spin_name'] or spin.num != info['spin_num']:

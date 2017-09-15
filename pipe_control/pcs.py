@@ -330,7 +330,7 @@ def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
         data = []
         for spin_from, spin_id in spin_loop(return_id=True, skip_desel=True, pipe=pipe_from):
             # Find the matching spin container in the target data pipe.
-            spin_to = return_spin(spin_id, pipe=pipe_to)
+            spin_to = return_spin(spin_id=spin_id, pipe=pipe_to)
 
             # No matching spin container.
             if spin_to == None:
@@ -829,9 +829,9 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
 
         # Get the corresponding spin container.
         id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
-        spin = return_spin(id)
+        spin = return_spin(spin_id=id)
         if spin == None and spin_id and spin_id[0] == '@':    # Allow spin IDs of atom names to be used to specify multi column data.
-            spin = return_spin(id+spin_id)
+            spin = return_spin(spin_id=id+spin_id)
         if spin == None:
             warn(RelaxNoSpinWarning(id))
             continue

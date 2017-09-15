@@ -276,7 +276,7 @@ def minimise_data_setup(data_store, min_algor, num_data_sets, min_options, spin=
                 spin_id2 = interatoms[i].spin_id1
             else:
                 spin_id2 = interatoms[i].spin_id2
-            spin2 = return_spin(spin_id2)
+            spin2 = return_spin(spin_id=spin_id2)
 
             # The data.
             data_store.r = [interatoms[i].r]
@@ -353,7 +353,7 @@ def minimise_data_setup(data_store, min_algor, num_data_sets, min_options, spin=
                 spin_id2 = interatoms[i].spin_id1
             else:
                 spin_id2 = interatoms[i].spin_id2
-            spin2 = return_spin(spin_id2)
+            spin2 = return_spin(spin_id=spin_id2)
 
             # The data.
             data_store.gh.append(periodic_table.gyromagnetic_ratio(spin2.isotope))

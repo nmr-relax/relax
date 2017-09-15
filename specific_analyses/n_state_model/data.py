@@ -103,8 +103,8 @@ def calc_ave_dist(atom1, atom2, exp=1):
     """
 
     # Get the spin containers.
-    spin1 = return_spin(atom1)
-    spin2 = return_spin(atom2)
+    spin1 = return_spin(spin_id=atom1)
+    spin2 = return_spin(spin_id=atom2)
 
     # Loop over each model.
     num_models = len(spin1.pos)

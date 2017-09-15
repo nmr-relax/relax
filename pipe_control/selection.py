@@ -239,7 +239,7 @@ def desel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_c
     for mol_name, res_num, res_name, spin_num, spin_name in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Get the corresponding spin container.
         id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
-        spin = return_spin(id)
+        spin = return_spin(spin_id=id)
 
         # No spin.
         if spin == None:
@@ -405,7 +405,7 @@ def is_spin_selected(selection=None):
     """
 
     # Get the spin.
-    spin = return_spin(selection)
+    spin = return_spin(spin_id=selection)
 
     # Return the selected state.
     return spin.select
@@ -604,7 +604,7 @@ def sel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col
     ids = []
     for id in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Get the corresponding spin container.
-        spin = return_spin(id)
+        spin = return_spin(spin_id=id)
 
         # No spin.
         if spin == None:

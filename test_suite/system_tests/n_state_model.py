@@ -394,7 +394,7 @@ class N_state_model(SystemTestCase):
             self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.084926009099013003)
 
             # Get a spin to check.
-            spin = return_spin(':114@N')
+            spin = return_spin(spin_id=':114@N')
             interatom = return_interatom(':114@N', ':114@H')
 
             # Check the RDC and PCS values.

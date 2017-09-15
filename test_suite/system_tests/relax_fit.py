@@ -491,7 +491,7 @@ class Relax_fit(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_3param_inv_neg.py')
 
         # Check the curve-fitting results.
-        spin = return_spin(":4@N")
+        spin = return_spin(spin_id=":4@N")
         self.assertAlmostEqual(spin.rx, 1.2)
         self.assertAlmostEqual(spin.i0, -30.0)
         self.assertAlmostEqual(spin.iinf, 22.0)
@@ -553,7 +553,7 @@ class Relax_fit(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_saturation_recovery.py')
 
         # Check the curve-fitting results.
-        spin = return_spin(":17@H")
+        spin = return_spin(spin_id=":17@H")
         self.assertAlmostEqual(spin.chi2, 0.0)
         self.assertAlmostEqual(spin.rx, 0.5)
         self.assertAlmostEqual(spin.iinf/1e15, 1.0)
@@ -566,7 +566,7 @@ class Relax_fit(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_zooming_grid.py')
 
         # Check the curve-fitting results (the values are from the optimisation of test_curve_fitting_height()).
-        spin = return_spin(":4@N")
+        spin = return_spin(spin_id=":4@N")
         self.assertAlmostEqual(spin.chi2, 2.9169526515678883)
         self.assertAlmostEqual(spin.rx, 8.0814894974893967)
         self.assertAlmostEqual(spin.i0/1e6, 1996050.9699629977/1e6)

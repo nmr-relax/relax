@@ -386,7 +386,7 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
 
         # Test if the spin number already exists.
         if spin_to_token:
-            spin_to_cont = return_spin(spin_to, pipe_to)
+            spin_to_cont = return_spin(spin_id=spin_to, pipe=pipe_to)
             if spin_to_cont and not spin_to_cont.is_empty():
                 raise RelaxError("The spin " + repr(spin_to) + " already exists in the " + repr(pipe_from) + " data pipe.")
 
@@ -395,7 +395,7 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
             raise RelaxError("The residue in " + repr(spin_from) + " does not exist in the " + repr(pipe_from) + " data pipe.")
 
         # No spin to copy data from.
-        spin_from_cont = return_spin(spin_from, pipe_from)
+        spin_from_cont = return_spin(spin_id=spin_from, pipe=pipe_from)
         if spin_from_cont == None:
             raise RelaxError("The spin " + repr(spin_from) + " does not exist in the " + repr(pipe_from) + " data pipe.")
 
@@ -753,7 +753,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
         positions = []
         for atom in members:
             # Get the spin container.
-            spin = return_spin(atom, pipe=pipe)
+            spin = return_spin(spin_id=atom, pipe=pipe)
 
             # Test that the spin exists.
             if spin == None:
@@ -780,7 +780,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
         # Now add the pseudo-spin name to the spins belonging to it (after the tests).
         for atom in members:
             # Get the spin container.
-            spin = return_spin(atom, pipe=pipe)
+            spin = return_spin(spin_id=atom, pipe=pipe)
 
             # Add the pseudo-spin number and name.
             if res_id:

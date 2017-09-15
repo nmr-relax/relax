@@ -42,7 +42,7 @@ def dw_lower(incs=None, model_info=None):
     """
 
     # Fetch the first spin container.
-    spin0 = return_spin(model_info[0])
+    spin0 = return_spin(spin_id=model_info[0])
 
     # The MMQ models.
     if spin0.model in MODEL_LIST_MMQ:
@@ -65,7 +65,7 @@ def dwH_lower(incs=None, model_info=None):
     """
 
     # Fetch the first spin container.
-    spin0 = return_spin(model_info[0])
+    spin0 = return_spin(spin_id=model_info[0])
 
     # The MMQ models.
     if spin0.model in MODEL_LIST_MMQ:
@@ -88,7 +88,7 @@ def pA_lower(incs=None, model_info=None):
     """
 
     # Fetch the first spin container.
-    spin0 = return_spin(model_info[0])
+    spin0 = return_spin(spin_id=model_info[0])
 
     # The MMQ models.
     if spin0.model == MODEL_M61B:
@@ -119,7 +119,7 @@ def i0_upper(incs=None, model_info=None):
     # Find the maximum intensity.
     upper = 0.0
     for si in range(len(spin_ids)):
-        spin = return_spin(spin_ids[si])
+        spin = return_spin(spin_id=spin_ids[si])
         upper = max(upper, max(spin.peak_intensity.values()))
 
     # Multiply the value by 2.0 and then round up to the next order - this will be the upper bound.

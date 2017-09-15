@@ -646,7 +646,7 @@ def set(val=None, error=None, param=None, scaling=None, spin_id=None):
     # Residue specific minimisation.
     else:
         # Get the spin.
-        spin = return_spin(spin_id)
+        spin = return_spin(spin_id=spin_id)
 
         # Chi-squared.
         if param == 'chi2':

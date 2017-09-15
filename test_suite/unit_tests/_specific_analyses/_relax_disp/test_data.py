@@ -54,7 +54,7 @@ class Test_data(UnitTestCase):
         state.load_state(statefile, force=True)
 
         curspin_id = ':5@N'
-        curspin = return_spin(curspin_id)
+        curspin = return_spin(spin_id=curspin_id)
 
         # Use calc_tilt_angle function
         theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin = curspin, spin_id = curspin_id)
@@ -703,7 +703,7 @@ class Test_data(UnitTestCase):
         cur_spins = []
         for curspin_id in all_spin_ids:
             # Get the spin
-            curspin = return_spin(curspin_id)
+            curspin = return_spin(spin_id=curspin_id)
 
             # Check if is selected
             if curspin.select == True:

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008,2017 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -52,10 +52,10 @@ class Modelim(SystemTestCase):
         self.interpreter.eliminate()
 
         # Checks.
-        self.assert_(return_spin(':9@N').select)
-        self.assert_(return_spin(':10@N').select)
-        self.assert_(not return_spin(':11@N').select)
-        self.assert_(return_spin(':12@N').select)
+        self.assert_(return_spin(spin_id=':9@N').select)
+        self.assert_(return_spin(spin_id=':10@N').select)
+        self.assert_(not return_spin(spin_id=':11@N').select)
+        self.assert_(return_spin(spin_id=':12@N').select)
 
 
     def test_tm_51ns(self):
@@ -65,7 +65,7 @@ class Modelim(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'local_tm_model_elimination.py')
 
         # Checks.
-        self.assert_(return_spin(':13').select)
-        self.assert_(return_spin(':14').select)
-        self.assert_(not return_spin(':15').select)
-        self.assert_(return_spin(':16').select)
+        self.assert_(return_spin(spin_id=':13').select)
+        self.assert_(return_spin(spin_id=':14').select)
+        self.assert_(not return_spin(spin_id=':15').select)
+        self.assert_(return_spin(spin_id=':16').select)

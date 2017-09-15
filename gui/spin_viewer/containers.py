@@ -502,7 +502,7 @@ class Spin(Container_base):
         table.SetColumnWidth(2, 200)
 
         # The spin container.
-        spin = return_spin(self.spin_id)
+        spin = return_spin(spin_id=self.spin_id)
 
         # Add some names to the blacklist.
         blacklist += ['is_empty']

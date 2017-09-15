@@ -39,7 +39,7 @@ pipe.create('white noise', 'relax_fit')
 spin.create(res_num=1, res_name='Gly', spin_name='N')
 
 # Get the spin.
-spin_cont = return_spin(':1@N')
+spin_cont = return_spin(spin_id=':1@N')
 
 # Set up the synthetic peak intensities (rx = 2.25, i0 = 10000).
 cdp.spectrum_ids = ['ncyc_1', 'ncyc_2', 'ncyc_3', 'ncyc_4', 'ncyc_5', 'ncyc_6', 'ncyc_7', 'ncyc_8', 'ncyc_9', 'ncyc_10']

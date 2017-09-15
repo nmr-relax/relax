@@ -211,7 +211,7 @@ class Frame_order(API_base, API_common):
             data_type, spin_id, align_id = data_id
 
             # Get the spin container.
-            spin = return_spin(spin_id)
+            spin = return_spin(spin_id=spin_id)
 
             # Does back-calculated data exist?
             if not hasattr(spin, 'pcs_bc'):
@@ -714,7 +714,7 @@ class Frame_order(API_base, API_common):
             data_type, spin_id, align_id = data_id
 
             # Get the spin container.
-            spin = return_spin(spin_id)
+            spin = return_spin(spin_id=spin_id)
 
             # Do errors exist?
             if not hasattr(spin, 'pcs_err'):
@@ -866,7 +866,7 @@ class Frame_order(API_base, API_common):
             data_type, spin_id, align_id = data_id
 
             # Get the spin container.
-            spin = return_spin(spin_id)
+            spin = return_spin(spin_id=spin_id)
 
             # Initialise.
             if not hasattr(spin, 'pcs_sim'):

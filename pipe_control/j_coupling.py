@@ -256,8 +256,8 @@ def read(file=None, dir=None, file_data=None, spin_id1_col=None, spin_id2_col=No
                 continue
 
         # Get the spins.
-        spin1 = return_spin(spin_id1)
-        spin2 = return_spin(spin_id2)
+        spin1 = return_spin(spin_id=spin_id1)
+        spin2 = return_spin(spin_id=spin_id2)
 
         # Check the spin IDs.
         if not spin1:

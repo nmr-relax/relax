@@ -41,7 +41,7 @@ cur_spin_id = ":%i@%s"%(61, 'N')
 cur_spin_id_str = cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_')
 
 # Get the spin container.
-cur_spin = return_spin(cur_spin_id)
+cur_spin = return_spin(spin_id=cur_spin_id)
 
 # Get the chi2 value
 pre_chi2 = cur_spin.chi2

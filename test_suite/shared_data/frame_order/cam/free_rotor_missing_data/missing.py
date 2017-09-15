@@ -91,7 +91,7 @@ for file in files:
         # Delete the data.
         for spin_id in missing_pcs[file]:
             # Get the container.
-            spin = return_spin(spin_id)
+            spin = return_spin(spin_id=spin_id)
 
             # Delete the data.
             del spin.pcs[file]

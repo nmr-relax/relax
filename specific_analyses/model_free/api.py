@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009,2011-2012,2014 Edward d'Auvergne                    #
+# Copyright (C) 2007-2009,2011-2012,2014,2017 Edward d'Auvergne               #
 # Copyright (C) 2007 Gary S Thompson                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -491,7 +491,7 @@ class Model_free(API_base, API_common):
                     spin_id2 = interatom.spin_id1
                 else:
                     spin_id2 = interatom.spin_id2
-                spin2 = return_spin(spin_id2)
+                spin2 = return_spin(spin_id=spin_id2)
 
                 # Test if the nuclear isotope type has been set.
                 if not hasattr(spin2, 'isotope'):
@@ -549,7 +549,7 @@ class Model_free(API_base, API_common):
                     spin_id2 = interatoms[i].spin_id1
                 else:
                     spin_id2 = interatoms[i].spin_id2
-                spin2 = return_spin(spin_id2)
+                spin2 = return_spin(spin_id=spin_id2)
 
                 # The data.
                 if sim_index == None:
@@ -621,7 +621,7 @@ class Model_free(API_base, API_common):
         mc_data = []
 
         # Get the spin container and global spin index.
-        spin = return_spin(data_id)
+        spin = return_spin(spin_id=data_id)
         global_index = find_index(data_id)
 
         # Skip deselected spins.
@@ -654,7 +654,7 @@ class Model_free(API_base, API_common):
         """
 
         # Get the spin container.
-        spin = return_spin(data)
+        spin = return_spin(spin_id=data)
 
         # Loop over the data structure names.
         for name in self._PARAMS.loop(scope='spin'):
@@ -694,7 +694,7 @@ class Model_free(API_base, API_common):
         # Local models.
         if model_type == 'mf' or model_type == 'local_tm':
             # Get the spin.
-            spin = return_spin_from_index(model_info)
+            spin = return_spin_from_index(global_index=model_info)
 
             # Spin deselection.
             if sim_index == None:
@@ -849,7 +849,7 @@ class Model_free(API_base, API_common):
         model_type = determine_model_type()
 
         # Sequence specific data.
-        spin, spin_id = return_spin_from_index(model_info, pipe=pipe_from, return_spin_id=True)
+        spin, spin_id = return_spin_from_index(global_index=model_info, pipe=pipe_from, return_spin_id=True)
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
             # Duplicate the spin specific data.
             for name in dir(spin):
@@ -880,10 +880,10 @@ class Model_free(API_base, API_common):
                     spin_id2 = interatom.spin_id1
                 else:
                     spin_id2 = interatom.spin_id2
-                spin2 = return_spin(spin_id2)
+                spin2 = return_spin(spin_id=spin_id2)
 
                 # Duplicate the spin specific data.
-                mol_index, res_index, spin_index = return_spin_indices(spin_id2)
+                mol_index, res_index, spin_index = return_spin_indices(spin_id=spin_id2)
                 dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(spin2)
 
         # Other data types.
@@ -925,7 +925,7 @@ class Model_free(API_base, API_common):
             raise RelaxError("Elimination of the global model is not yet supported.")
 
         # Get the spin and it's id string.
-        spin, spin_id = return_spin_from_index(model_info, return_spin_id=True)
+        spin, spin_id = return_spin_from_index(global_index=model_info, return_spin_id=True)
 
         # Get the tm value.
         if model_type == 'local_tm':
@@ -972,7 +972,7 @@ class Model_free(API_base, API_common):
         # Get the spin ids.
         if model_type == 'mf' or model_type == 'local_tm':
             # Get the spin and it's id string.
-            spin, spin_id = return_spin_from_index(model_info, return_spin_id=True)
+            spin, spin_id = return_spin_from_index(global_index=model_info, return_spin_id=True)
         else:
             spin_id = None
 
@@ -1006,7 +1006,7 @@ class Model_free(API_base, API_common):
 
         # Set the spin container (to None if the model is global).
         if model_type == 'mf' or model_type == 'local_tm':
-            spin = return_spin_from_index(model_info)
+            spin = return_spin_from_index(global_index=model_info)
         else:
             spin = None
 
@@ -1053,7 +1053,7 @@ class Model_free(API_base, API_common):
             return diffusion_tensor.map_bounds(param)
 
         # Get the spin.
-        spin = return_spin(spin_id)
+        spin = return_spin(spin_id=spin_id)
 
         # {s2, s2f, s2s}.
         if search('^s2', param):

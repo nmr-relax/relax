@@ -632,7 +632,7 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
                     warn(RelaxWarning("A peak intensity of zero has been encountered for the spin '%s' - this could be fatal later on." % spin_id))
 
                 # Get the spin container.
-                spin = return_spin(spin_id)
+                spin = return_spin(spin_id=spin_id)
                 if not spin:
                     warn(RelaxNoSpinWarning(spin_id))
                     continue

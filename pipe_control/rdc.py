@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015,2017 Edward d'Auvergne                              #
 # Copyright (C) 2006 Chris MacRaild                                           #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -88,8 +88,8 @@ def back_calc(align_id=None):
             continue
 
         # Get the spins.
-        spin1 = return_spin(interatom.spin_id1)
-        spin2 = return_spin(interatom.spin_id2)
+        spin1 = return_spin(spin_id=interatom.spin_id1)
+        spin2 = return_spin(spin_id=interatom.spin_id2)
 
         # Checks.
         if not hasattr(spin1, 'isotope'):
@@ -216,8 +216,8 @@ def check_rdcs(interatom):
         return False
 
     # Get the spins.
-    spin1 = return_spin(interatom.spin_id1)
-    spin2 = return_spin(interatom.spin_id2)
+    spin1 = return_spin(spin_id=interatom.spin_id1)
+    spin2 = return_spin(spin_id=interatom.spin_id2)
 
     # Spin information checks.
     if not hasattr(spin1, 'isotope'):
@@ -761,8 +761,8 @@ def q_factors(spin_id=None, sim_index=None, verbosity=1):
                 continue
 
             # Get the spins.
-            spin1 = return_spin(interatom.spin_id1)
-            spin2 = return_spin(interatom.spin_id2)
+            spin1 = return_spin(spin_id=interatom.spin_id1)
+            spin2 = return_spin(spin_id=interatom.spin_id2)
 
             # Alias the RDC data.
             if not sim_flag:
@@ -1010,8 +1010,8 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
                 continue
 
         # Get the spins.
-        spin1 = return_spin(spin_id1)
-        spin2 = return_spin(spin_id2)
+        spin1 = return_spin(spin_id=spin_id1)
+        spin2 = return_spin(spin_id=spin_id2)
 
         # Check the spin IDs.
         if not spin1:
@@ -1151,8 +1151,8 @@ def return_rdc_data(sim_index=None, verbosity=0):
     # The unit vectors, RDC constants, and J couplings.
     for interatom in interatomic_loop():
         # Get the spins.
-        spin1 = return_spin(interatom.spin_id1)
-        spin2 = return_spin(interatom.spin_id2)
+        spin1 = return_spin(spin_id=interatom.spin_id1)
+        spin2 = return_spin(spin_id=interatom.spin_id2)
 
         # RDC checks.
         if not check_rdcs(interatom):
@@ -1277,8 +1277,8 @@ def return_rdc_data(sim_index=None, verbosity=0):
         j = 0
         for interatom in interatomic_loop():
             # Get the spins.
-            spin1 = return_spin(interatom.spin_id1)
-            spin2 = return_spin(interatom.spin_id2)
+            spin1 = return_spin(spin_id=interatom.spin_id1)
+            spin2 = return_spin(spin_id=interatom.spin_id2)
 
             # RDC checks.
             if not check_rdcs(interatom):
@@ -1398,8 +1398,8 @@ def setup_pseudoatom_rdc():
     # Loop over all interatomic data containers.
     for interatom in interatomic_loop():
         # Get the spins.
-        spin1 = return_spin(interatom.spin_id1)
-        spin2 = return_spin(interatom.spin_id2)
+        spin1 = return_spin(spin_id=interatom.spin_id1)
+        spin2 = return_spin(spin_id=interatom.spin_id2)
 
         # Checks.
         flag1 = is_pseudoatom(spin1)

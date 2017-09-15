@@ -183,8 +183,8 @@ relax_disp.select_model(model=model)
 value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
 
 # Alias the spins.
-spin70 = return_spin(":70")
-spin71 = return_spin(":71")
+spin70 = return_spin(spin_id=":70")
+spin71 = return_spin(spin_id=":71")
 
 # Set the initial parameter values (from the CR72 model).
 spin70.r2 = [6.972410747346718, 9.404991115575587]

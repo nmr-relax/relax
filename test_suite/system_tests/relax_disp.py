@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008,2010,2013-2016 Edward d'Auvergne                    #
+# Copyright (C) 2006-2008,2010,2013-2017 Edward d'Auvergne                    #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2015 Troels E. Linnet                                    #
 #                                                                             #
@@ -281,7 +281,7 @@ class Relax_disp(SystemTestCase):
         for i in range(len(spins)):
             res_name, res_num, spin_name, params = spins[i]
             cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
+            cur_spin = return_spin(spin_id=cur_spin_id)
 
             for mo_param in cur_spin.params:
                 print(mo_param)
@@ -2180,7 +2180,7 @@ class Relax_disp(SystemTestCase):
         for i in range(len(cur_spins)):
             res_name, res_num, spin_name, params = cur_spins[i]
             cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
+            cur_spin = return_spin(spin_id=cur_spin_id)
 
             grid_params = ds.grid_results[i][3]
 
@@ -2326,7 +2326,7 @@ class Relax_disp(SystemTestCase):
         for i in range(len(cur_spins)):
             res_name, res_num, spin_name, params = cur_spins[i]
             cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
+            cur_spin = return_spin(spin_id=cur_spin_id)
 
             grid_params = ds.grid_results[i][3]
 
@@ -2466,7 +2466,7 @@ class Relax_disp(SystemTestCase):
         for i in range(len(cur_spins)):
             res_name, res_num, spin_name, params = cur_spins[i]
             cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
+            cur_spin = return_spin(spin_id=cur_spin_id)
 
             grid_params = ds.grid_results[i][3]
             min_params = ds.min_results[i][3]
@@ -2605,7 +2605,7 @@ class Relax_disp(SystemTestCase):
         for i in range(len(cur_spins)):
             res_name, res_num, spin_name, params = cur_spins[i]
             cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
+            cur_spin = return_spin(spin_id=cur_spin_id)
 
             grid_params = ds.grid_results[i][3]
             min_params = ds.min_results[i][3]
@@ -2747,7 +2747,7 @@ class Relax_disp(SystemTestCase):
         for i in range(len(cur_spins)):
             res_name, res_num, spin_name, params = cur_spins[i]
             cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
+            cur_spin = return_spin(spin_id=cur_spin_id)
 
             grid_params = ds.grid_results[i][3]
 
@@ -2901,7 +2901,7 @@ class Relax_disp(SystemTestCase):
 
         res_name, res_num, spin_name, params = cur_spins[0]
         cur_spin_id = ":%i@%s"%(res_num, spin_name)
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         print("Params for dx map is")
         print(ds.dx_params)
@@ -3172,7 +3172,7 @@ class Relax_disp(SystemTestCase):
         cur_spin_id_str = cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_')
 
         # Get the spin container.
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         # Get the chi2 value
         pre_chi2 = cur_spin.chi2
@@ -3303,7 +3303,7 @@ class Relax_disp(SystemTestCase):
         cur_spin_id_str = cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_')
 
         # Get the spin container.
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         # Get the chi2 value
         pre_chi2 = cur_spin.chi2
@@ -4009,8 +4009,8 @@ class Relax_disp(SystemTestCase):
 
         # The 'No Rex' model checks.
         self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4025,8 +4025,8 @@ class Relax_disp(SystemTestCase):
 
         # The 'LM63' model checks.
         self.interpreter.pipe.switch(pipe_name='LM63 - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4047,8 +4047,8 @@ class Relax_disp(SystemTestCase):
 
         # The 'CR72' model checks.
         self.interpreter.pipe.switch(pipe_name='CR72 - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4094,8 +4094,8 @@ class Relax_disp(SystemTestCase):
 
         # The 'No Rex' model checks.
         self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4110,8 +4110,8 @@ class Relax_disp(SystemTestCase):
 
         # The 'CR72' model checks.
         self.interpreter.pipe.switch(pipe_name='CR72 - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4135,8 +4135,8 @@ class Relax_disp(SystemTestCase):
 
         # The 'NS CPMG 2-site expanded' model checks.
         self.interpreter.pipe.switch(pipe_name='NS CPMG 2-site expanded - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4160,8 +4160,8 @@ class Relax_disp(SystemTestCase):
 
         # The final data pipe checks.
         self.interpreter.pipe.switch(pipe_name='final - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         self.assertEqual(spin70.model, 'NS CPMG 2-site expanded')
         self.assertEqual(spin71.model, 'NS CPMG 2-site expanded')
 
@@ -4190,8 +4190,8 @@ class Relax_disp(SystemTestCase):
 
         # The 'No Rex' model checks.
         self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4206,8 +4206,8 @@ class Relax_disp(SystemTestCase):
 
         # The 'LM63' model checks.
         self.interpreter.pipe.switch(pipe_name='LM63 - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4228,8 +4228,8 @@ class Relax_disp(SystemTestCase):
 
         # The 'CR72' model checks.
         self.interpreter.pipe.switch(pipe_name='CR72 - relax_disp')
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4276,9 +4276,9 @@ class Relax_disp(SystemTestCase):
 
         # The 'No Rex' model checks.
         self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
-        spin4 = return_spin(":4")
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin4 = return_spin(spin_id=":4")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s %-20s" % ("Parameter", "Value (:4)", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g %20.15g" % ("R2 (500 MHz)", spin4.r2[r20_key1], spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4295,9 +4295,9 @@ class Relax_disp(SystemTestCase):
 
         # The 'CR72' model checks.
         self.interpreter.pipe.switch(pipe_name='CR72 - relax_disp')
-        spin4 = return_spin(":4")
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin4 = return_spin(spin_id=":4")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s %-20s" % ("Parameter", "Value (:4)", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g %20.15g" % ("R2 (500 MHz)", spin4.r2[r20_key1], spin70.r2[r20_key1], spin71.r2[r20_key1]))
@@ -4335,8 +4335,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='CR72')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -4399,8 +4399,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='CR72 full')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -4470,8 +4470,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='IT99')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -4527,8 +4527,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='LM63')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -4578,8 +4578,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='LM63 3-site')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -4642,8 +4642,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='NS CPMG 2-site 3D')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -4707,8 +4707,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='NS CPMG 2-site 3D full')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -4780,8 +4780,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='NS CPMG 2-site expanded')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -4845,8 +4845,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='NS CPMG 2-site star')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -4909,8 +4909,8 @@ class Relax_disp(SystemTestCase):
         self.setup_hansen_cpmg_data(model='NS CPMG 2-site star full')
 
         # Alias the spins.
-        spin70 = return_spin(":70")
-        spin71 = return_spin(":71")
+        spin70 = return_spin(spin_id=":70")
+        spin71 = return_spin(spin_id=":71")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -5098,7 +5098,7 @@ class Relax_disp(SystemTestCase):
         self.setup_korzhnev_2005_data(data_list=['DQ'])
 
         # Alias the spin.
-        spin = return_spin(":9@N")
+        spin = return_spin(spin_id=":9@N")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=500e6)
@@ -5170,7 +5170,7 @@ class Relax_disp(SystemTestCase):
         self.setup_korzhnev_2005_data(data_list=['MQ'])
 
         # Alias the spin.
-        spin = return_spin(":9@N")
+        spin = return_spin(spin_id=":9@N")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=500e6)
@@ -5241,7 +5241,7 @@ class Relax_disp(SystemTestCase):
         self.setup_korzhnev_2005_data(data_list=['SQ'])
 
         # Alias the spin.
-        spin = return_spin(":9@N")
+        spin = return_spin(spin_id=":9@N")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -5310,7 +5310,7 @@ class Relax_disp(SystemTestCase):
         self.setup_korzhnev_2005_data(data_list=['ZQ'])
 
         # Alias the spin.
-        spin = return_spin(":9@N")
+        spin = return_spin(spin_id=":9@N")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=500e6)
@@ -5382,7 +5382,7 @@ class Relax_disp(SystemTestCase):
         self.setup_korzhnev_2005_data(data_list=['1H MQ'])
 
         # Alias the spin.
-        spin = return_spin(":9@N")
+        spin = return_spin(spin_id=":9@N")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=500e6)
@@ -5453,7 +5453,7 @@ class Relax_disp(SystemTestCase):
         self.setup_korzhnev_2005_data(data_list=['1H SQ'])
 
         # Alias the spin.
-        spin = return_spin(":9@N")
+        spin = return_spin(spin_id=":9@N")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=500e6)
@@ -5527,7 +5527,7 @@ class Relax_disp(SystemTestCase):
         self.setup_korzhnev_2005_data(data_list=['SQ', '1H SQ', 'DQ', 'ZQ', 'MQ', '1H MQ'])
 
         # Alias the spin.
-        spin = return_spin(":9@N")
+        spin = return_spin(spin_id=":9@N")
 
         # The R20 keys.
         r20_key1  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=500e6)
@@ -5656,7 +5656,7 @@ class Relax_disp(SystemTestCase):
         self.setup_korzhnev_2005_data(data_list=['SQ', '1H SQ', 'DQ', 'ZQ', 'MQ', '1H MQ'])
 
         # Alias the spin.
-        spin = return_spin(":9@N")
+        spin = return_spin(spin_id=":9@N")
 
         # The R20 keys.
         r20_key1  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=500e6)
@@ -6054,8 +6054,8 @@ class Relax_disp(SystemTestCase):
         self.interpreter.spin.isotope('15N')
 
         # Alias the spins.
-        spin1 = return_spin(":1")
-        spin2 = return_spin(":2")
+        spin1 = return_spin(spin_id=":1")
+        spin2 = return_spin(spin_id=":2")
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -8761,7 +8761,7 @@ class Relax_disp(SystemTestCase):
 
         # For sanity check, calculate degree of freedom.
         cur_spin_id = spins_cluster[0]
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         # Calculate total number of datapoins.
         N = len(spins_cluster)
@@ -8825,7 +8825,7 @@ class Relax_disp(SystemTestCase):
 
         # For sanity check, calculate degree of freedom.
         cur_spin_id = spins_cluster[0]
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         # Calculate total number of datapoins.
         Ns = len(spins_cluster)

@@ -227,7 +227,7 @@ def save_res(res_spins):
     res_list = []
     for res_name, res_num, spin_name, params in res_spins:
         cur_spin_id = ":%i@%s"%(res_num, spin_name)
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         # Save all the paramers to loop throgh later.
         ds.model_analyse_params = cur_spin.params
@@ -258,7 +258,7 @@ def print_res(cur_spins=None, grid_params=None, min_params=None, clust_params=No
     for i in range(len(cur_spins)):
         res_name, res_num, spin_name, params = cur_spins[i]
         cur_spin_id = ":%i@%s"%(res_num, spin_name)
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         # Now read the parameters.
         if ds.print_res:
@@ -370,7 +370,7 @@ relax_disp.select_model(model=model_create)
 for i in range(len(cur_spins)):
     res_name, res_num, spin_name, params = cur_spins[i]
     cur_spin_id = ":%i@%s"%(res_num, spin_name)
-    cur_spin = return_spin(cur_spin_id)
+    cur_spin = return_spin(spin_id=cur_spin_id)
 
     if ds.print_res:
         print("For spin: '%s'"%cur_spin_id)
@@ -401,7 +401,7 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
     # Then loop over the spins.
     for res_name, res_num, spin_name, params in cur_spins:
         cur_spin_id = ":%i@%s"%(res_num, spin_name)
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         ## First do a fake R2eff structure.
         # Define file name
@@ -430,7 +430,7 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
     # Then loop over the spins.
     for res_name, res_num, spin_name, params in cur_spins:
         cur_spin_id = ":%i@%s"%(res_num, spin_name)
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         ### Now back calculate values from parameters, and stuff R2eff it back.
         print("Generating data with MODEL:%s, for spin id:%s"%(model_create, cur_spin_id))
@@ -566,7 +566,7 @@ if ds.opendx:
     for i in range(len(cur_spins)):
         res_name, res_num, spin_name, params = cur_spins[i]
         cur_spin_id = ":%i@%s"%(res_num, spin_name)
-        cur_spin = return_spin(cur_spin_id)
+        cur_spin = return_spin(spin_id=cur_spin_id)
 
         for mo_param in cur_spin.params:
             # The R2 is a dictionary, depending on spectrometer frequency.

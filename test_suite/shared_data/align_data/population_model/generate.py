@@ -193,8 +193,8 @@ for i in range(len(A)):
             continue
 
         # Get the spins.
-        spin1 = return_spin(interatom.spin_id1)
-        spin2 = return_spin(interatom.spin_id2)
+        spin1 = return_spin(spin_id=interatom.spin_id1)
+        spin2 = return_spin(spin_id=interatom.spin_id2)
 
         # Skip.
         skip = False

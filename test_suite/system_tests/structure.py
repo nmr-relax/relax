@@ -4993,7 +4993,7 @@ class Structure(SystemTestCase):
         self.assertEqual(count_spins(), 1)
 
         # Test the spin coordinates.
-        a=return_spin('#SSS-cluster4-new-test_mol1@2')
+        a=return_spin(spin_id='#SSS-cluster4-new-test_mol1@2')
         self.assertAlmostEqual(a.pos[0], -12.398)
         self.assertAlmostEqual(a.pos[1], -15.992)
         self.assertAlmostEqual(a.pos[2], 11.448)

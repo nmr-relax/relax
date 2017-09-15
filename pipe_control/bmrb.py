@@ -95,7 +95,7 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
     # Loop over the spin data.
     for i in range(N):
         # The spin already exists.
-        spin = return_spin(spin_ids[i])
+        spin = return_spin(spin_id=spin_ids[i])
         if spin:
             continue
 

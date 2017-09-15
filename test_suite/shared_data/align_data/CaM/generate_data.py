@@ -96,7 +96,7 @@ interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
 interatom.unit_vectors(ave=False)
 
 # Get the first calcium position.
-spin = return_spin(':1000@CA')
+spin = return_spin(spin_id=':1000@CA')
 centre = spin.pos
 
 # Open the results files.
