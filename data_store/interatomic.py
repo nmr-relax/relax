@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2001-2004,2006-2008,2010,2012,2014 Edward d'Auvergne          #
+# Copyright (C) 2001-2004,2006-2008,2010,2012,2014,2017 Edward d'Auvergne     #
 # Copyright (C) 2006 Chris MacRaild                                           #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -24,6 +24,8 @@
 """The interatomic data containers of the relax data store."""
 
 # Python module imports.
+from binascii import hexlify
+from os import urandom
 from re import match
 
 # relax module imports.
@@ -36,24 +38,33 @@ import specific_analyses
 class InteratomContainer(Prototype):
     """Class containing the interatomic data."""
 
-    def __init__(self, spin_id1=None, spin_id2=None, select=True):
+    def __init__(self, spin_id1=None, spin_id2=None, spin_hash1=None, spin_hash2=None, select=True):
         """Set up the objects of the interatomic data container.
 
-        @keyword spin_id1:  The spin ID string of the first atom.
-        @type spin_id1:     str
-        @keyword spin_id2:  The spin ID string of the second atom.
-        @type spin_id2:     str
-        @keyword select:    The selection flag.
-        @type select:       bool
+        @keyword spin_id1:      The spin ID string of the first atom.
+        @type spin_id1:         str
+        @keyword spin_id2:      The spin ID string of the second atom.
+        @type spin_id2:         str
+        @keyword spin_hash1:    The unique and temporary hash identifying the spin container of the first atom.
+        @type spin_hash1:       str
+        @keyword spin_hash2:    The unique and temporary hash identifying the spin container of the second atom.
+        @type spin_hash2:       str
+        @keyword select:        The selection flag.
+        @type select:           bool
         """
 
         # Store the spin IDs.
         self.spin_id1 = spin_id1
         self.spin_id2 = spin_id2
+        self._spin_hash1 = spin_hash1
+        self._spin_hash2 = spin_hash2
 
         # Class variable defaults.
         self.dipole_pair = False
         self.select = select
+
+        # Generate a unique hash for the interatomic data container.
+        self._hash = hexlify(urandom(20))
 
 
     def __repr__(self):
@@ -75,7 +86,7 @@ class InteratomContainer(Prototype):
                 continue
 
             # Skip special objects.
-            if match("^_", name):
+            if name not in ['_spin_hash1', '_spin_hash2'] and match("^_", name):
                 continue
 
             # Add the object's attribute to the text string.
@@ -133,19 +144,23 @@ class InteratomList(list):
         return text
 
 
-    def add_item(self, spin_id1=None, spin_id2=None):
+    def add_item(self, spin_id1=None, spin_id2=None, spin_hash1=None, spin_hash2=None):
         """Append an empty container to the list.
 
-        @keyword spin_id1:  The spin ID string of the first atom.
-        @type spin_id1:     str
-        @keyword spin_id2:  The spin ID string of the first atom.
-        @type spin_id2:     str
-        @return:            The new interatomic data container.
-        @rtype:             InteratomContainer instance
+        @keyword spin_id1:      The spin ID string of the first atom.
+        @type spin_id1:         str
+        @keyword spin_id2:      The spin ID string of the second atom.
+        @type spin_id2:         str
+        @keyword spin_hash1:    The unique and temporary hash identifying the spin container of the first atom.
+        @type spin_hash1:       str
+        @keyword spin_hash2:    The unique and temporary hash identifying the spin container of the second atom.
+        @type spin_hash2:       str
+        @return:                The new interatomic data container.
+        @rtype:                 InteratomContainer instance
         """
 
         # Append a new InteratomContainer.
-        cont = InteratomContainer(spin_id1, spin_id2)
+        cont = InteratomContainer(spin_id1, spin_id2, spin_hash1, spin_hash2)
         self.append(cont)
 
         # Return the container.
