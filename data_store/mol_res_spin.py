@@ -58,7 +58,7 @@ class SpinContainer(Prototype):
         self.select = select
 
         # Generate a unique hash for the spin.
-        self._hash = hexlify(urandom(20))
+        self._generate_hash()
 
         # The identifiers for all interatomic interactions (InteratomContainer hashes).
         self._interatomic_hashes = []
@@ -170,6 +170,13 @@ class SpinContainer(Prototype):
         del self.relax_error
         if sims:
             del self.relax_sim_data
+
+
+    def _generate_hash(self):
+        """Generate a unique hash for the spin."""
+
+        # The hash.
+        self._hash = hexlify(urandom(20))
 
 
     def is_empty(self):

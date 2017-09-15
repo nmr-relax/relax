@@ -65,7 +65,7 @@ class InteratomContainer(Prototype):
         self.select = select
 
         # Generate a unique hash for the interatomic data container.
-        self._hash = hexlify(urandom(20))
+        self._generate_hash()
 
 
     def __repr__(self):
@@ -94,6 +94,13 @@ class InteratomContainer(Prototype):
             text += "  %s: %s\n" % (name, repr(getattr(self, name)))
 
         return text
+
+
+    def _generate_hash(self):
+        """Generate a unique hash for the interatomic data container."""
+
+        # The hash.
+        self._hash = hexlify(urandom(20))
 
 
     def is_empty(self):

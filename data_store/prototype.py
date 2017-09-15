@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003,2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003,2007,2017 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -53,6 +53,10 @@ class Prototype(object):
             # Replace the object with a deepcopy of it.
             setattr(new_obj, name, deepcopy(value, memo))
 
+        # Regenerate any hashes.
+        if hasattr(new_obj, '_generate_hash'):
+            new_obj._generate_hash()
+
         # Return the new object.
         return new_obj
 
@@ -61,4 +65,11 @@ class Prototype(object):
         """Prototype method which returns a deepcopy of the object."""
 
         # Make a new object.
-        return deepcopy(self)
+        new_obj = deepcopy(self)
+
+        # Regenerate any hashes.
+        if hasattr(new_obj, '_generate_hash'):
+            new_obj._generate_hash()
+
+        # Return the new object.
+        return new_obj
