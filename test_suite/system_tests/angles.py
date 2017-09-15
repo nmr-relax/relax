@@ -73,7 +73,7 @@ class Angles(SystemTestCase):
             self.assertEqual(cdp.mol[0].res[i].spin[0].name, spin_name[i])
 
             # Get the interatomic container.
-            interatoms = return_interatom_list(cdp.mol[0].res[i].spin[0]._spin_ids[0])
+            interatoms = return_interatom_list(spin_hash=cdp.mol[0].res[i].spin[0]._hash)
 
             # Check the containers.
             self.assert_(len(interatoms) <= 1)

@@ -26,6 +26,7 @@ from re import search
 
 # relax module imports.
 from pipe_control.interatomic import return_interatom
+from pipe_control.mol_res_spin import return_spin
 from status import Status; status = Status()
 
 
@@ -107,7 +108,9 @@ for line in data:
     spin_id1, spin_id2, j, j_sign, dist = line.split()
 
     # Get the interatomic data container.
-    interatom = return_interatom(spin_id1, spin_id2)
+    spin1 = return_spin(spin_id1)
+    spin2 = return_spin(spin_id2)
+    interatom = return_interatom(spin_hash1=spin1._hash, spin_hash2=spin2._hash)
 
     # The dipolar constant.
     r = float(dist) * 1e-10

@@ -107,7 +107,9 @@ for file in files:
         # Delete the data.
         for spin_id1, spin_id2 in missing_rdc[file]:
             # Get the container.
-            interatom = return_interatom(spin_id1, spin_id2)
+            spin1 = return_spin(spin_id=spin_id1)
+            spin2 = return_spin(spin_id=spin_id2)
+            interatom = return_interatom(spin_hash1=spin1._hash, spin_hash1=spin2._hash)
 
             # Delete the data.
             del interatom.rdc[file]

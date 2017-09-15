@@ -235,16 +235,18 @@ def check_rdcs(interatom):
         # Alias the pseudo and normal atoms.
         pseudospin = spin1
         base_spin_id = interatom.spin_id2
+        base_spin_hash = interatom._spin_hash2
         pseudospin_id = interatom.spin_id1
         if is_pseudoatom(spin2):
             pseudospin = spin2
             base_spin_id = interatom.spin_id1
+            base_spin_hash = interatom._spin_hash1
             pseudospin_id = interatom.spin_id2
 
         # Loop over the atoms of the pseudo-atom.
         for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
             # Get the corresponding interatomic data container.
-            pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
+            pseudo_interatom = return_interatom(spin_hash1=spin._hash, spin_hash2=base_spin_hash)
 
             # Unit vector check.
             if not hasattr(pseudo_interatom, 'vector'):
@@ -1022,7 +1024,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             continue
 
         # Get the interatomic data container.
-        interatom = return_interatom(spin_id1, spin_id2)
+        interatom = return_interatom(spin_hash1=spin1._hash, spin_hash2=spin2._hash)
 
         # Create the container if needed.
         if interatom == None:
@@ -1175,18 +1177,20 @@ def return_rdc_data(sim_index=None, verbosity=0):
                 base_spin = spin2
                 pseudospin_id = interatom.spin_id1
                 base_spin_id = interatom.spin_id2
+                base_spin_hash = interatom._spin_hash2
             else:
                 pseudospin = spin2
                 base_spin = spin1
                 pseudospin_id = interatom.spin_id2
                 base_spin_id = interatom.spin_id1
+                base_spin_hash = interatom._spin_hash1
 
             # Loop over the atoms of the pseudo-atom, storing the data.
             pseudo_unit_vect = []
             pseudo_rdc_const = []
             for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
                 # Get the corresponding interatomic data container.
-                pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
+                pseudo_interatom = return_interatom(spin_hash1=spin._hash, spin_hash2=base_spin_hash)
 
                 # Check.
                 if pseudo_interatom == None:
@@ -1417,16 +1421,18 @@ def setup_pseudoatom_rdc():
         # Alias the pseudo and normal atoms.
         pseudospin = spin1
         base_spin_id = interatom.spin_id2
+        base_spin_hash = interatom._spin_hash2
         pseudospin_id = interatom.spin_id1
         if flag2:
             pseudospin = spin2
             base_spin_id = interatom.spin_id1
+            base_spin_hash = interatom._spin_hash1
             pseudospin_id = interatom.spin_id2
 
         # Loop over the atoms of the pseudo-atom.
         for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
             # Get the corresponding interatomic data container.
-            pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
+            pseudo_interatom = return_interatom(spin_hash1=spin._hash, spin_hash2=base_spin_hash)
 
             # Deselect if needed.
             if pseudo_interatom.select:

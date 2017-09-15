@@ -282,7 +282,7 @@ class Relax_data_store(dict):
                                 pipe_control.interatomic.define(spin_id1, spin_id2, verbose=False, pipe=pipe_name)
 
                                 # Get the interatomic data container.
-                                interatom = pipe_control.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2, pipe=pipe_name)
+                                interatom = pipe_control.interatomic.return_interatom(spin_hash1=spin._hash, spin_hash2=h_spin._hash, pipe=pipe_name)
 
                                 # Set the interatomic distance.
                                 if hasattr(spin, 'r'):

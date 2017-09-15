@@ -265,7 +265,7 @@ def minimise_data_setup(data_store, min_algor, num_data_sets, min_options, spin=
         data_store.gx = [periodic_table.gyromagnetic_ratio(spin.isotope)]
 
         # The interatomic data.
-        interatoms = return_interatom_list(data_store.spin_id)
+        interatoms = return_interatom_list(spin_hash=spin._hash)
         for i in range(len(interatoms)):
             # No relaxation mechanism.
             if not interatoms[i].dipole_pair:
@@ -342,7 +342,7 @@ def minimise_data_setup(data_store, min_algor, num_data_sets, min_options, spin=
         data_store.gx.append(periodic_table.gyromagnetic_ratio(spin.isotope))
 
         # Repackage the interatomic data.
-        interatoms = return_interatom_list(data_store.spin_id)
+        interatoms = return_interatom_list(spin_hash=spin._hash)
         for i in range(len(interatoms)):
             # No relaxation mechanism.
             if not interatoms[i].dipole_pair:

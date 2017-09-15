@@ -179,7 +179,7 @@ def bmrb_write(star):
         atom_name_list.append(str(spin.name))
 
         # Interatomic info.
-        interatoms = return_interatom_list(spin_id)
+        interatoms = return_interatom_list(spin_hash=spin._hash)
         if len(interatoms) == 0:
             raise RelaxError("No interatomic interactions are defined for the spin '%s'." % spin_id)
         if len(interatoms) > 1:

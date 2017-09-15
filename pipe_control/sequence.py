@@ -50,7 +50,7 @@ def attach_protons():
             continue
 
         # Get the interatomic data container.
-        interatoms = return_interatom_list(spin_id)
+        interatoms = return_interatom_list(spin_hash=spin._hash)
         proton_found = False
         if len(interatoms):
             for i in range(len(interatoms)):
@@ -358,11 +358,11 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
     write_spin_data(sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
-def return_attached_protons(spin_id=None):
+def return_attached_protons(spin_hash=None):
     """Return a list of all proton spin containers attached to the given spin.
 
-    @keyword spin_id:   The spin ID string.
-    @type spin_id:      str
+    @keyword spin_hash: The unique spin hash.
+    @type spin_hash:    str
     @return:            The list of proton spin containers attached to the given spin.
     @rtype:             list of SpinContainer instances
     """
@@ -371,7 +371,7 @@ def return_attached_protons(spin_id=None):
     spin_list = []
 
     # Get all interatomic data containers.
-    interatoms = return_interatom_list(spin_id)
+    interatoms = return_interatom_list(spin_hash=spin_hash)
 
     # No containers.
     if not len(interatoms):
@@ -380,7 +380,7 @@ def return_attached_protons(spin_id=None):
     # Loop over the containers.
     for i in range(len(interatoms)):
         # Get the attached spin.
-        if interatoms[i].spin_id1 == spin_id:
+        if interatoms[i]._spin_hash1 == spin_hash:
             attached = return_spin(spin_hash=interatoms[i]._spin_hash2)
         else:
             attached = return_spin(spin_hash=interatoms[i]._spin_hash1)

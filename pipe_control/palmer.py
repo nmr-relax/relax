@@ -480,7 +480,7 @@ def create_mfpar(file, spin=None, spin_id=None, res_num=None, atom1=None, atom2=
     """
 
     # Get the interatomic data containers.
-    interatoms = return_interatom_list(spin_id)
+    interatoms = return_interatom_list(spin_hash=spin._hash)
     if len(interatoms) == 0:
         raise RelaxNoInteratomError
     elif len(interatoms) > 1:

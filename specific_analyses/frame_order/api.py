@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2011,2013-2014 Edward d'Auvergne                         #
+# Copyright (C) 2009-2011,2013-2014,2017 Edward d'Auvergne                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -79,7 +79,7 @@ class Frame_order(API_base, API_common):
             - The RDC identification data for the interatomic data container and alignment.
             - The PCS identification data for the spin data container and alignment.
 
-        @return:    The base data type ('rdc' or 'pcs'), the spin or interatomic data container information (either one or two spin IDs), and the alignment ID string.
+        @return:    The base data type ('rdc' or 'pcs'), the spin or interatomic data container information (either one or two spin hashes), and the alignment ID string.
         @rtype:     list of str
         """
 
@@ -97,7 +97,7 @@ class Frame_order(API_base, API_common):
             for align_id in cdp.rdc_ids:
                 # Yield the info set.
                 if align_id in interatom.rdc and interatom.rdc[align_id] != None:
-                    yield ['rdc', interatom.spin_id1, interatom.spin_id2, align_id]
+                    yield ['rdc', interatom._spin_hash1, interatom._spin_hash2, align_id]
 
         # Loop over the spin containers for the moving domain (for the PCS data).
         for spin, spin_id in spin_loop(selection=domain_moving(), return_id=True):
@@ -187,10 +187,10 @@ class Frame_order(API_base, API_common):
         # The RDC data.
         if data_id[0] == 'rdc':
             # Unpack the set.
-            data_type, spin_id1, spin_id2, align_id = data_id
+            data_type, spin_hash1, spin_hash2, align_id = data_id
 
             # Get the interatomic data container.
-            interatom = return_interatom(spin_id1, spin_id2)
+            interatom = return_interatom(spin_hash1=spin_hash1, spin_hash2=spin_hash2)
 
             # Does back-calculated data exist?
             if not hasattr(interatom, 'rdc_bc'):
@@ -691,10 +691,10 @@ class Frame_order(API_base, API_common):
         # The RDC data.
         if data_id[0] == 'rdc':
             # Unpack the set.
-            data_type, spin_id1, spin_id2, align_id = data_id
+            data_type, spin_hash1, spin_hash2, align_id = data_id
 
             # Get the interatomic data container.
-            interatom = return_interatom(spin_id1, spin_id2)
+            interatom = return_interatom(spin_hash1=spin_hash1, spin_hash2=spin_hash2)
 
             # Do errors exist?
             if not hasattr(interatom, 'rdc_err'):
@@ -846,10 +846,10 @@ class Frame_order(API_base, API_common):
         # The RDC data.
         if data_id[0] == 'rdc':
             # Unpack the set.
-            data_type, spin_id1, spin_id2, align_id = data_id
+            data_type, spin_hash1, spin_hash2, align_id = data_id
 
             # Get the interatomic data container.
-            interatom = return_interatom(spin_id1, spin_id2)
+            interatom = return_interatom(spin_hash1=spin_hash1, spin_hash2=spin_hash2)
 
             # Initialise.
             if not hasattr(interatom, 'rdc_sim'):

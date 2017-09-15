@@ -130,7 +130,8 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     # Get the interatomic data container.
     spin_id1 = generate_spin_id(res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
     spin_id2 = generate_spin_id(res_num=res_num, res_name=res_name, spin_name='H')
-    interatom = return_interatom(spin_id1, spin_id2)
+    spin2 = return_spin(spin_id=spin_id2)
+    interatom = return_interatom(spin_hash1=spin._hash, spin_hash2=spin2._hash)
 
     # Skip interatoms without vectors.
     if not hasattr(interatom, 'vector'):

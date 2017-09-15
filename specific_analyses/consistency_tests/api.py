@@ -110,7 +110,7 @@ class Consistency_tests(API_base, API_common):
                 raise RelaxNoValueError("correlation time")
 
             # Test the interatomic data.
-            interatoms = return_interatom_list(id)
+            interatoms = return_interatom_list(spin_hash=spin._hash)
             for interatom in interatoms:
                 # No relaxation mechanism.
                 if not interatom.dipole_pair:
@@ -178,7 +178,7 @@ class Consistency_tests(API_base, API_common):
                 continue
 
             # Loop over the interatomic data.
-            interatoms = return_interatom_list(id)
+            interatoms = return_interatom_list(spin_hash=spin._hash)
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
                 if not interatoms[i].dipole_pair:
@@ -292,7 +292,7 @@ class Consistency_tests(API_base, API_common):
                 continue
 
             # The interatomic data.
-            interatoms = return_interatom_list(spin_id)
+            interatoms = return_interatom_list(spin_hash=spin._hash)
 
             # Loop over the interatomic data.
             dipole_relax = False

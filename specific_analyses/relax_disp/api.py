@@ -118,7 +118,7 @@ class Relax_disp(API_base, API_common):
                 # Get the attached proton.
                 proton = None
                 if proton_mmq_flag:
-                    proton = return_attached_protons(spin_id)[0]
+                    proton = return_attached_protons(spin_hash=spin._hash)[0]
 
                 # Skip spins with no R2eff/R1rho values.
                 if not hasattr(spin, 'r2eff') and not hasattr(proton, 'r2eff'):
@@ -337,7 +337,7 @@ class Relax_disp(API_base, API_common):
 
             # Get the attached proton data.
             if proton_mmq_flag:
-                proton = return_attached_protons(spin_id)[0]
+                proton = return_attached_protons(spin_hash=spin._hash)[0]
                 proton_back_calc = back_calc_r2eff(spins=[proton], spin_ids=[spin_id])
 
             # Convert to a dictionary matching the R2eff data structure.
@@ -939,7 +939,7 @@ class Relax_disp(API_base, API_common):
             proton = None
             if proton_mmq_flag:
                 # Get all protons.
-                proton_spins = return_attached_protons(spin_id)
+                proton_spins = return_attached_protons(spin_hash=spin._hash)
 
                 # Only one allowed.
                 if len(proton_spins) > 1:
@@ -1023,7 +1023,7 @@ class Relax_disp(API_base, API_common):
             # Get the attached proton.
             proton = None
             if proton_mmq_flag:
-                proton = return_attached_protons(spin_id)[0]
+                proton = return_attached_protons(spin_hash=spin._hash)[0]
 
             # The errors.
             r2eff_err = {}
@@ -1480,7 +1480,7 @@ class Relax_disp(API_base, API_common):
             # Get the attached proton.
             proton = None
             if proton_mmq_flag:
-                proton = return_attached_protons(spin_id)[0]
+                proton = return_attached_protons(spin_hash=spin._hash)[0]
 
             # Pack the data.
             spin.r2eff_sim = sim_data

@@ -281,7 +281,7 @@ def create_script(file, model_type, algor):
                 continue
 
             # Get the interatomic data containers.
-            interatoms = return_interatom_list(spin._spin_ids[0])
+            interatoms = return_interatom_list(spin_hash=spin._hash)
             if len(interatoms) == 0:
                 raise RelaxNoInteratomError
             elif len(interatoms) > 1:

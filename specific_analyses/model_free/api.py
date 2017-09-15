@@ -112,7 +112,7 @@ class Model_free(API_base, API_common):
 
         # Missing interatomic vectors.
         if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
-            interatoms = interatomic.return_interatom_list(spin_id)
+            interatoms = interatomic.return_interatom_list(spin_hash=spin._hash)
             for i in range(len(interatoms)):
                 # No dipolar relaxation mechanism.
                 if not interatoms[i].dipole_pair:
@@ -268,7 +268,7 @@ class Model_free(API_base, API_common):
                 csa_list.append(None)
 
             # Interatomic distances.
-            interatoms = return_interatom_list(spin_id)
+            interatoms = return_interatom_list(spin_hash=spin._hash)
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
                 if not interatoms[i].dipole_pair:
@@ -472,7 +472,7 @@ class Model_free(API_base, API_common):
                 raise RelaxNoValueError("CSA")
 
             # Test the interatomic data.
-            interatoms = return_interatom_list(spin_id)
+            interatoms = return_interatom_list(spin_hash=spin._hash)
             for interatom in interatoms:
                 # No relaxation mechanism.
                 if not interatom.dipole_pair:
@@ -538,7 +538,7 @@ class Model_free(API_base, API_common):
                 csa = [spin.csa_sim[sim_index]]
 
             # The interatomic data.
-            interatoms = return_interatom_list(spin_id)
+            interatoms = return_interatom_list(spin_hash=spin._hash)
             for i in range(len(interatoms)):
                 # No relaxation mechanism.
                 if not interatoms[i].dipole_pair:
@@ -869,7 +869,7 @@ class Model_free(API_base, API_common):
                 setattr(dp_to.mol[spin._mol_index].res[spin._res_index].spin[spin._spin_index], name, new_obj)
 
             # Duplicate the relaxation active spins which have not been copied yet.
-            interatoms = interatomic.return_interatom_list(spin_id)
+            interatoms = interatomic.return_interatom_list(spin_hash=spin._hash)
             for interatom in interatoms:
                 # No relaxation mechanism.
                 if not interatom.dipole_pair:
@@ -1179,7 +1179,7 @@ class Model_free(API_base, API_common):
                     continue
 
                 # Get the interatomic data container.
-                interatoms = return_interatom_list(spin_id)
+                interatoms = return_interatom_list(spin_hash=spin._hash)
 
                 # Unit vectors.
                 for i in range(len(interatoms)):
@@ -1221,7 +1221,7 @@ class Model_free(API_base, API_common):
                 raise RelaxNoValueError("CSA")
 
             # Get the interatomic data container.
-            interatoms = return_interatom_list(spin_id)
+            interatoms = return_interatom_list(spin_hash=spin._hash)
 
             # Interatomic distances.
             count = 0
@@ -1283,7 +1283,7 @@ class Model_free(API_base, API_common):
 
             # Skip spins missing the dipolar interaction.
             if spin and (data_store.model_type == 'mf' or data_store.model_type == 'local_tm'):
-                interatoms = return_interatom_list(data_store.spin_id)
+                interatoms = return_interatom_list(spin_hash=spin._hash)
                 if not len(interatoms):
                     continue
 
@@ -1635,7 +1635,7 @@ class Model_free(API_base, API_common):
                 continue
 
             # The interatomic data.
-            interatoms = interatomic.return_interatom_list(spin_id)
+            interatoms = interatomic.return_interatom_list(spin_hash=spin._hash)
 
             # Loop over the interatomic data.
             dipole_relax = False

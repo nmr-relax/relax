@@ -272,7 +272,7 @@ def read(file=None, dir=None, file_data=None, spin_id1_col=None, spin_id2_col=No
             raise RelaxError("An invalid error value of zero has been encountered.")
 
         # Get the interatomic data container.
-        interatom = return_interatom(spin_id1, spin_id2)
+        interatom = return_interatom(spin_hash1=spin1._hash, spin_hash2=spin2._hash)
 
         # Create the container if needed.
         if interatom == None:

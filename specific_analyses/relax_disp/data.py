@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008,2013-2014 Edward d'Auvergne                         #
+# Copyright (C) 2003-2008,2013-2014,2017 Edward d'Auvergne                    #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2008-2009 Sebastien Morin                                     #
 # Copyright (C) 2013-2015 Troels E. Linnet                                    #
@@ -634,7 +634,7 @@ def has_disp_data(spins=None, spin_ids=None, exp_type=None, frq=None, offset=Non
         # Alias the correct spin.
         current_spin = spins[si]
         if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
-            current_spin = return_attached_protons(spin_ids[si])[0]
+            current_spin = return_attached_protons(spin_hash=spins[si]._hash)[0]
 
         # The data is present.
         if key in current_spin.r2eff:
@@ -1899,7 +1899,7 @@ def pack_back_calc_r2eff(spin=None, spin_id=None, si=None, back_calc=None, proto
     # Get the attached proton.
     proton = None
     if proton_mmq_flag:
-        proton = return_attached_protons(spin_id)[0]
+        proton = return_attached_protons(spin_hash=spin._hash)[0]
 
     # Loop over the R2eff data.
     for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
@@ -2075,7 +2075,7 @@ def plot_disp_curves_to_file(file_name_ini=None, dir=None, y_axis=None, x_axis=N
         # Get the attached proton.
         proton = None
         if proton_mmq_flag:
-            proton = return_attached_protons(spin_id)[0]
+            proton = return_attached_protons(spin_hash=spin._hash)[0]
 
         # Loop over each experiment type.
         graph_index = 0
@@ -2198,7 +2198,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                 # Get the attached proton.
                 proton = None
                 if proton_mmq_flag:
-                    proton = return_attached_protons(spin_id)[0]
+                    proton = return_attached_protons(spin_hash=spin._hash)[0]
 
                 # Alias the correct spin.
                 current_spin = spin
@@ -4454,7 +4454,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
     @keyword spins:         The list of spin containers in the cluster.
     @type spins:            list of SpinContainer instances
-    @keyword spin_ids:      The list of spin IDs for the cluster.
+    @keyword spin_ids:      The list of spin IDs for the cluster.  In the case of multi-quantum systems, these will be different to the spins argument and instead refer to the second spin of the pair.
     @type spin_ids:         list of str
     @keyword fields:        The list of spectrometer field strengths.
     @type fields:           list of float
@@ -4524,8 +4524,8 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
         # Get the attached proton.
         proton = None
         if proton_mmq_flag:
-            # Get all protons.
-            proton_spins = return_attached_protons(spin_id)
+            # Get all protons - for multi-quantum systems the spins and spin_ids do not correspond to the same spin!
+            proton_spins = return_attached_protons(spin_hash=return_spin(spin_id=spin_id)._hash)
 
             # Only one allowed.
             if len(proton_spins) > 1:
@@ -5085,7 +5085,7 @@ def write_disp_curves(dir=None, force=None):
             # Get the attached proton.
             proton = None
             if proton_mmq_flag:
-                proton = return_attached_protons(spin_id)[0]
+                proton = return_attached_protons(spin_hash=spin._hash)[0]
 
             # The unique file name.
             file_name = "%s%s.out" % (wvar[0], spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))

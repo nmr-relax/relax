@@ -184,7 +184,9 @@ def bmrb_read(star, sample_conditions=None):
                 spin_id2 = generate_spin_id_unique(spin_name=data['atom_names_2'][i], res_num=data['res_nums'][i], res_name=data['res_names'][i], mol_name=mol_names[i])
 
                 # Check if the container exists.
-                if return_interatom(spin_id1=spin_id1, spin_id2=spin_id2):
+                spin1 = return_spin(spin_id=spin_id1)
+                spin2 = return_spin(spin_id=spin_id2)
+                if return_interatom(spin_hash1=spin1._hash, spin_hash2=spin2._hash):
                     continue
 
                 # Define.
@@ -293,7 +295,7 @@ def bmrb_write(star):
         atom_name_list.append(str(spin.name))
 
         # Interatomic info.
-        interatoms = return_interatom_list(spin_id)
+        interatoms = return_interatom_list(spin_hash=spin._hash)
         if len(interatoms) == 0:
             raise RelaxError("No interatomic interactions are defined for the spin '%s'." % spin_id)
         if len(interatoms) > 1:

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2012,2014 Edward d'Auvergne                              #
+# Copyright (C) 2002-2012,2014,2017 Edward d'Auvergne                         #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
@@ -232,7 +232,8 @@ def load_model_free_data(spin_line, col, data_set, spin, spin_id, verbosity=1):
     model_type = spin_line[col['param_set']]
 
     # Get the interatomic data container.
-    interatom = return_interatom_list(spin_id)[0]
+    spin = return_spin(spin_id)
+    interatom = return_interatom_list(spin_hash=spin._hash)[0]
 
     # Values.
     if data_set == 'value':
@@ -911,7 +912,7 @@ def read_1_2_results(file_data, verbosity=1):
 
         # XH vector, heteronucleus, and proton.
         if data_set == 'value':
-            set_xh_vect(file_line, col, spin, spin_id1=spin_id, spin_id2=spin_id2, verbosity=verbosity)
+            set_xh_vect(file_line, col, spin, spin_id1=spin_id, spin_id2=spin_id2, spin_hash1=spin._hash, spin_hash2=h_spin._hash, verbosity=verbosity)
 
         # Relaxation data.
         load_relax_data(file_line, col, data_set, spin, verbosity)
@@ -1090,25 +1091,29 @@ def read_columnar_results(file_data, verbosity=1):
         read_1_2_results(file_data, verbosity)
 
 
-def set_xh_vect(spin_line, col, spin, spin_id1=None, spin_id2=None, verbosity=1):
+def set_xh_vect(spin_line, col, spin, spin_id1=None, spin_id2=None, spin_hash1=None, spin_hash2=None, verbosity=1):
     """Set the unit vectors.
 
-    @param spin_line:   The line of data for a single spin.
-    @type spin_line:    list of str
-    @param col:         The column indices.
-    @type col:          dict of int
-    @param spin:        The spin container.
-    @type spin:         SpinContainer instance
-    @keyword spin_id1:  The ID string of the first spin.
-    @type spin_id1:     str
-    @keyword spin_id2:  The ID string of the second spin.
-    @type spin_id2:     str
-    @keyword verbosity: A variable specifying the amount of information to print.  The higher the value, the greater the verbosity.
-    @type verbosity:    int
+    @param spin_line:       The line of data for a single spin.
+    @type spin_line:        list of str
+    @param col:             The column indices.
+    @type col:              dict of int
+    @param spin:            The spin container.
+    @type spin:             SpinContainer instance
+    @keyword spin_id1:      The ID string of the first spin.
+    @type spin_id1:         str
+    @keyword spin_id2:      The ID string of the second spin.
+    @type spin_id2:         str
+    @keyword spin_hash1:    The unique hash of the first spin.
+    @type spin_hash1:       str
+    @keyword spin_hash2:    The unique hash of the second spin.
+    @type spin_hash2:       str
+    @keyword verbosity:     A variable specifying the amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
     """
 
     # Get the interatomic data container.
-    interatom = return_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
+    interatom = return_interatom(spin_hash1=spin_hash1, spin_hash2=spin_hash2)
     if interatom == None:
         raise RelaxError("No interatomic interaction between spins '%s' and '%s' could be found." (spin_id1, spin_id2))
 

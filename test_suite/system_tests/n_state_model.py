@@ -395,7 +395,8 @@ class N_state_model(SystemTestCase):
 
             # Get a spin to check.
             spin = return_spin(spin_id=':114@N')
-            interatom = return_interatom(':114@N', ':114@H')
+            spin2 = return_spin(spin_id=':114@H')
+            interatom = return_interatom(spin_hash1=spin._hash, spin_hash2=spin2._hash)
 
             # Check the RDC and PCS values.
             self.assertAlmostEqual(interatom.rdc[tag], -8.9193269604999994)
