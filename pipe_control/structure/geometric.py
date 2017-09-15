@@ -163,8 +163,8 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     # Loop over the interatomic data containers.
     for interatom in interatomic_loop():
         # Get the spins.
-        spin1 = return_spin(spin_id=interatom.spin_id1)
-        spin2 = return_spin(spin_id=interatom.spin_id2)
+        spin1 = return_spin(spin_hash=interatom._spin_hash1)
+        spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
         # Skip deselected spin systems.
         if not spin1.select or not spin2.select:
@@ -194,8 +194,8 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
         # Loop over the interatomic data containers.
         for interatom in interatomic_loop():
             # Get the spins.
-            spin1 = return_spin(spin_id=interatom.spin_id1)
-            spin2 = return_spin(spin_id=interatom.spin_id2)
+            spin1 = return_spin(spin_hash=interatom._spin_hash1)
+            spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
             # Skip deselected spin systems.
             if not spin1.select or not spin2.select:

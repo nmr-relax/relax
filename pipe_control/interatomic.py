@@ -412,8 +412,8 @@ def hash_update(interatom=None, pipe=None):
     """
 
     # Fetch the spin containers.
-    spin1 = return_spin(spin_id=interatom.spin_id1, pipe=pipe)
-    spin2 = return_spin(spin_id=interatom.spin_id2, pipe=pipe)
+    spin1 = return_spin(spin_hash=interatom._spin_hash1, pipe=pipe)
+    spin2 = return_spin(spin_hash=interatom._spin_hash2, pipe=pipe)
 
     # Reset the hashes.
     interatom._spin_hash1 = spin1._hash
@@ -434,8 +434,8 @@ def id_match(spin_id=None, interatom=None, pipe=None):
     """
 
     # Get the spin containers.
-    spin1 = return_spin(spin_id=interatom.spin_id1, pipe=pipe)
-    spin2 = return_spin(spin_id=interatom.spin_id2, pipe=pipe)
+    spin1 = return_spin(spin_hash=interatom._spin_hash1, pipe=pipe)
+    spin2 = return_spin(spin_hash=interatom._spin_hash2, pipe=pipe)
 
     # No spins.
     if spin1 == None or spin2 == None:
@@ -711,8 +711,8 @@ def set_dist(spin_id1=None, spin_id2=None, ave_dist=None, unit='meter'):
     data = []
     for interatom in interatomic_loop():
         # Get the spin info.
-        mol_name1, res_num1, res_name1, spin1 = return_spin(spin_id=interatom.spin_id1, full_info=True)
-        mol_name2, res_num2, res_name2, spin2 = return_spin(spin_id=interatom.spin_id2, full_info=True)
+        mol_name1, res_num1, res_name1, spin1 = return_spin(spin_hash=interatom._spin_hash1, full_info=True)
+        mol_name2, res_num2, res_name2, spin2 = return_spin(spin_hash=interatom._spin_hash2, full_info=True)
 
         # No match, either way.
         if not (sel_obj1.contains_spin(spin_num=spin1.num, spin_name=spin1.name, res_num=res_num1, res_name=res_name1, mol=mol_name1) and sel_obj2.contains_spin(spin_num=spin2.num, spin_name=spin2.name, res_num=res_num2, res_name=res_name2, mol=mol_name2)) and not (sel_obj2.contains_spin(spin_num=spin1.num, spin_name=spin1.name, res_num=res_num1, res_name=res_name1, mol=mol_name1) and sel_obj1.contains_spin(spin_num=spin2.num, spin_name=spin2.name, res_num=res_num2, res_name=res_name2, mol=mol_name2)):
@@ -758,8 +758,8 @@ def unit_vectors(ave=True):
     pos_info = False
     for interatom in interatomic_loop(skip_desel=False):
         # Get the spin info.
-        spin1 = return_spin(spin_id=interatom.spin_id1)
-        spin2 = return_spin(spin_id=interatom.spin_id2)
+        spin1 = return_spin(spin_hash=interatom._spin_hash1)
+        spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
         # No positional information.
         if not hasattr(spin1, 'pos'):

@@ -55,9 +55,9 @@ def attach_protons():
         if len(interatoms):
             for i in range(len(interatoms)):
                 # Get the attached spin.
-                spin_attached = return_spin(spin_id=interatoms[i].spin_id1)
+                spin_attached = return_spin(spin_hash=interatoms[i]._spin_hash1)
                 if id(spin_attached) == id(spin):
-                    spin_attached = return_spin(spin_id=interatoms[i].spin_id2)
+                    spin_attached = return_spin(spin_hash=interatoms[i]._spin_hash2)
 
                 # Is it a proton?
                 if hasattr(spin_attached, 'element') and spin_attached.element == 'H' or spin.name == 'H':
@@ -381,9 +381,9 @@ def return_attached_protons(spin_id=None):
     for i in range(len(interatoms)):
         # Get the attached spin.
         if interatoms[i].spin_id1 == spin_id:
-            attached = return_spin(spin_id=interatoms[i].spin_id2)
+            attached = return_spin(spin_hash=interatoms[i]._spin_hash2)
         else:
-            attached = return_spin(spin_id=interatoms[i].spin_id1)
+            attached = return_spin(spin_hash=interatoms[i]._spin_hash1)
 
         # Is it a proton?
         if (hasattr(attached, 'element') and attached.element == 'H') or attached.name == 'H':

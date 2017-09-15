@@ -436,8 +436,8 @@ def minimise_setup_rdcs(sim_index=None):
     # The unit vectors and RDC constants.
     for interatom in interatomic_loop(selection1=domain_moving()):
         # Get the spins.
-        spin1 = return_spin(spin_id=interatom.spin_id1)
-        spin2 = return_spin(spin_id=interatom.spin_id2)
+        spin1 = return_spin(spin_hash=interatom._spin_hash1)
+        spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
         # A single unit vector.
         if interatom.vector.shape == (3,):
@@ -507,8 +507,8 @@ def minimise_setup_rdcs(sim_index=None):
         # Interatom loop over the domain.
         for interatom in interatomic_loop(domain_moving(), skip_desel=True):
             # Get the spins.
-            spin1 = return_spin(spin_id=interatom.spin_id1)
-            spin2 = return_spin(spin_id=interatom.spin_id2)
+            spin1 = return_spin(spin_hash=interatom._spin_hash1)
+            spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
             # Only use interatomic data containers with RDC and vector data.
             if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'vector'):

@@ -106,8 +106,8 @@ def minimise_bc_data(model, sim_index=None):
         rdc_index = 0
         for interatom in interatomic_loop():
             # Get the spins.
-            spin1 = return_spin(spin_id=interatom.spin_id1)
-            spin2 = return_spin(spin_id=interatom.spin_id2)
+            spin1 = return_spin(spin_hash=interatom._spin_hash1)
+            spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
             # RDC checks.
             if not check_rdcs(interatom):

@@ -323,8 +323,8 @@ class dAuvergne_protocol:
         # Interatomic vars.
         for interatom in interatomic_loop():
             # Get the corresponding spins.
-            spin1 = return_spin(spin_id=interatom.spin_id1)
-            spin2 = return_spin(spin_id=interatom.spin_id2)
+            spin1 = return_spin(spin_hash=interatom._spin_hash1)
+            spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
             # Skip deselected spins.
             if not spin1.select or not spin2.select:

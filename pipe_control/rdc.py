@@ -88,8 +88,8 @@ def back_calc(align_id=None):
             continue
 
         # Get the spins.
-        spin1 = return_spin(spin_id=interatom.spin_id1)
-        spin2 = return_spin(spin_id=interatom.spin_id2)
+        spin1 = return_spin(spin_hash=interatom._spin_hash1)
+        spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
         # Checks.
         if not hasattr(spin1, 'isotope'):
@@ -216,8 +216,8 @@ def check_rdcs(interatom):
         return False
 
     # Get the spins.
-    spin1 = return_spin(spin_id=interatom.spin_id1)
-    spin2 = return_spin(spin_id=interatom.spin_id2)
+    spin1 = return_spin(spin_hash=interatom._spin_hash1)
+    spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
     # Spin information checks.
     if not hasattr(spin1, 'isotope'):
@@ -761,8 +761,8 @@ def q_factors(spin_id=None, sim_index=None, verbosity=1):
                 continue
 
             # Get the spins.
-            spin1 = return_spin(spin_id=interatom.spin_id1)
-            spin2 = return_spin(spin_id=interatom.spin_id2)
+            spin1 = return_spin(spin_hash=interatom._spin_hash1)
+            spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
             # Alias the RDC data.
             if not sim_flag:
@@ -1151,8 +1151,8 @@ def return_rdc_data(sim_index=None, verbosity=0):
     # The unit vectors, RDC constants, and J couplings.
     for interatom in interatomic_loop():
         # Get the spins.
-        spin1 = return_spin(spin_id=interatom.spin_id1)
-        spin2 = return_spin(spin_id=interatom.spin_id2)
+        spin1 = return_spin(spin_hash=interatom._spin_hash1)
+        spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
         # RDC checks.
         if not check_rdcs(interatom):
@@ -1277,8 +1277,8 @@ def return_rdc_data(sim_index=None, verbosity=0):
         j = 0
         for interatom in interatomic_loop():
             # Get the spins.
-            spin1 = return_spin(spin_id=interatom.spin_id1)
-            spin2 = return_spin(spin_id=interatom.spin_id2)
+            spin1 = return_spin(spin_hash=interatom._spin_hash1)
+            spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
             # RDC checks.
             if not check_rdcs(interatom):
@@ -1398,8 +1398,8 @@ def setup_pseudoatom_rdc():
     # Loop over all interatomic data containers.
     for interatom in interatomic_loop():
         # Get the spins.
-        spin1 = return_spin(spin_id=interatom.spin_id1)
-        spin2 = return_spin(spin_id=interatom.spin_id2)
+        spin1 = return_spin(spin_hash=interatom._spin_hash1)
+        spin2 = return_spin(spin_hash=interatom._spin_hash2)
 
         # Checks.
         flag1 = is_pseudoatom(spin1)
