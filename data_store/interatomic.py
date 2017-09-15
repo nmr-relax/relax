@@ -31,6 +31,7 @@ from re import match
 # relax module imports.
 from data_store.prototype import Prototype
 from lib.errors import RelaxFromXMLNotEmptyError, RelaxImplementError
+from lib.text.table import format_table
 from lib.xml import fill_object_contents, object_to_xml, xml_to_object
 import specific_analyses
 
@@ -134,12 +135,13 @@ class InteratomList(list):
         """
 
         # Intro.
-        text = "Interatomic data.\n\n"
+        text = "Interatomic data container list:\n"
 
         # The data.
-        text += "%-25s%-25s%-25s" % ("Index", "Spin ID 1", "Spin ID 2") + "\n"
+        table = []
         for i in range(len(self)):
-            text += "%-25i%-25s%-25s\n\n" % (i, self[i].spin_id1, self[i].spin_id2)
+            table.append([i, self[i]._hash, self[i].spin_id1, self[i].spin_id2, self[i]._spin_hash1, self[i]._spin_hash2])
+        text += format_table(headings=[["Index", "Hash", "Spin ID 1", "Spin ID 2", "Spin hash 1", "Spin hash 2"]], contents=table)
 
         return text
 
