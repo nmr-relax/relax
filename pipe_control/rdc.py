@@ -1081,7 +1081,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             interatom.rdc_err[align_id] = error
 
         # Append the data for printout.
-        data.append([spin_id1, spin_id2])
+        data.append([interatom.spin_id1, interatom.spin_id2])
         if is_float(value):
             data[-1].append("%20.15f" % value)
         else:
