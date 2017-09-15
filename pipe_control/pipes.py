@@ -33,6 +33,7 @@ from lib.checks import Check
 from lib.compat import builtins
 from lib.errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 from lib.io import sort_filenames, write_data
+import pipe_control
 from status import Status; status = Status()
 
 
@@ -211,6 +212,10 @@ def copy(pipe_from=None, pipe_to=None, bundle_to=None):
     # Release the lock.
     finally:
         status.pipe_lock.release(sys._getframe().f_code.co_name)
+
+    # Update all of the required metadata structures.
+    pipe_control.mol_res_spin.metadata_update(pipe=pipe_to)
+    pipe_control.interatomic.metadata_update(pipe=pipe_to)
 
     # Notify observers that a pipe change has occurred.
     status.observers.pipe_alteration.notify()

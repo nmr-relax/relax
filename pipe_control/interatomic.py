@@ -524,6 +524,47 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None, skip_desel=Tru
         yield interatom
 
 
+def metadata_update(interatom_index=None, pipe=None):
+    """Update all of the private look up metadata.
+
+    @keyword interatom_index:   The index of the interatomic data container to update.  If not supplied, all containers will be updated.
+    @type interatom_index:      int or None
+    @keyword pipe:              The data pipe to update, defaulting to the current data pipe.
+    @type pipe:                 str or None
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    check_pipe(pipe)
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
+    # Loop over the containers.
+    for i in range(len(dp.interatomic)):
+        # Interatom skipping.
+        if interatom_index != None and interatom_index != i:
+            continue
+
+        # Alias.
+        interatom = dp.interatomic[i]
+
+        # Get the matching spin from the IDs, rather than from the hashes.
+        spin1 = return_spin(spin_id=interatom.spin_id1, pipe=pipe)
+        spin2 = return_spin(spin_id=interatom.spin_id2, pipe=pipe)
+
+        # Update the hashes.
+        interatom._spin_hash1 = None
+        interatom._spin_hash2 = None
+        if spin1:
+            interatom._spin_hash1 = spin1._hash
+        if spin2:
+            interatom._spin_hash2 = spin2._hash
+
+
 def read_dist(file=None, dir=None, unit='meter', spin_id1_col=None, spin_id2_col=None, data_col=None, sep=None):
     """Set up the magnetic dipole-dipole interaction.
 

@@ -31,7 +31,7 @@ import sys
 from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.errors import RelaxError, RelaxFileEmptyError
 from lib.io import extract_data, get_file_path, open_read_file, open_write_file, strip
-from pipe_control import pipes
+from pipe_control import interatomic, mol_res_spin, pipes
 from pipe_control.pipes import check_pipe
 from specific_analyses.model_free.back_compat import read_columnar_results
 
@@ -114,6 +114,10 @@ def read(file='results', dir=None):
     # Unknown results file.
     else:
         raise RelaxError("The format of the results file " + repr(file_path) + " cannot be determined.")
+
+    # Update all of the required metadata structures.
+    mol_res_spin.metadata_update()
+    interatomic.metadata_update()
 
 
 def write(file="results", dir=None, force=False, compress_type=1, verbosity=1):

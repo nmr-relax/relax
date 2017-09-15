@@ -26,6 +26,7 @@
 from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.errors import RelaxError
 from lib.io import open_read_file, open_write_file
+from pipe_control import interatomic, mol_res_spin, pipes
 from pipe_control.reset import reset
 from status import Status; status = Status()
 
@@ -96,6 +97,11 @@ def load_state(state=None, dir=None, verbosity=1, force=False):
 
     # Restore from the XML.
     ds.from_xml(file)
+
+    # Update all of the required metadata structures.
+    for pipe, pipe_name in pipes.pipe_loop(name=True):
+        mol_res_spin.metadata_update(pipe=pipe_name)
+        interatomic.metadata_update(pipe=pipe_name)
 
     # Signal a change in the current data pipe.
     status.observers.pipe_alteration.notify()

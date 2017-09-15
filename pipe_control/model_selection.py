@@ -29,6 +29,7 @@ import sys
 from lib.errors import RelaxError, RelaxPipeError
 from lib.io import write_data
 from lib.model_selection import aic, aicc, bic
+from pipe_control import interatomic, mol_res_spin
 import pipe_control.pipes
 from pipe_control.pipes import has_pipe, pipe_names, switch
 from specific_analyses.api import return_api
@@ -257,3 +258,7 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
     # Bundle the data pipe.
     if bundle:
         pipe_control.pipes.bundle(bundle=bundle, pipe=modsel_pipe)
+
+    # Update all of the required metadata structures.
+    mol_res_spin.metadata_update()
+    interatomic.metadata_update()
