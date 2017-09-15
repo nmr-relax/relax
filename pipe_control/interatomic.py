@@ -179,11 +179,11 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None, verbose=False):
     dp = pipes.get_pipe(pipe)
 
     # Check that the spin IDs exist.
-    spin = return_spin(spin_id1, pipe)
-    if spin == None:
+    spin1 = return_spin(spin_id1, pipe)
+    if spin1 == None:
         raise RelaxNoSpinError(spin_id1)
-    spin = return_spin(spin_id2, pipe)
-    if spin == None:
+    spin2 = return_spin(spin_id2, pipe)
+    if spin2 == None:
         raise RelaxNoSpinError(spin_id2)
 
     # Check if the two spin IDs have already been added.
@@ -192,7 +192,7 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None, verbose=False):
             raise RelaxError("The spin pair %s and %s have already been added." % (spin_id1, spin_id2))
 
     # Add and return the data.
-    return dp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
+    return dp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2, spin_hash1=spin1._hash, spin_hash2=spin2._hash)
 
 
 def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_selection=False, verbose=True):
