@@ -715,8 +715,9 @@ class MoleculeList(list):
         # Add the initial molecule container at index 0.
         self.append(MoleculeContainer())
 
-        # Create a special private lookup table for fast spin accesses.
+        # Create special private lookup tables for fast spin accesses.
         self._spin_id_lookup = {}
+        self._spin_hash_lookup = {}
 
 
     def __repr__(self):

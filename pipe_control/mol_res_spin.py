@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004,2006-2014 Edward d'Auvergne                         #
+# Copyright (C) 2003-2004,2006-2014,2017 Edward d'Auvergne                    #
 # Copyright (C) 2006-2007 Chris MacRaild                                      #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
@@ -2162,6 +2162,10 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
                     if spin_id in dp.mol._spin_id_lookup:
                         dp.mol._spin_id_lookup.pop(spin_id)
 
+                # Hash removal.
+                if spin._hash in dp.mol._spin_hash_lookup:
+                    dp.mol._spin_hash_lookup.pop(spin._hash)
+
 
 def metadata_update(mol_index=None, res_index=None, spin_index=None, pipe=None):
     """Update all of the private look up metadata for the given containers.
@@ -2247,6 +2251,9 @@ def metadata_update(mol_index=None, res_index=None, spin_index=None, pipe=None):
 
                     # Update the look up table.
                     dp.mol._spin_id_lookup[spin_id] = [i, j, k]
+
+                # Hash storage.
+                dp.mol._spin_hash_lookup[spin._hash] = [i, j, k]
 
 
 def molecule_loop(selection=None, pipe=None, return_id=False):
@@ -2813,11 +2820,13 @@ def return_residue_by_info(mol=None, res_name=None, res_num=None):
                 return res
 
 
-def return_spin(spin_id=None, pipe=None, full_info=False, multi=False):
+def return_spin(spin_id=None, spin_hash=None, pipe=None, full_info=False, multi=False):
     """Return the spin data container corresponding to the given spin ID string.
 
     @keyword spin_id:   The unique spin ID string.
     @type spin_id:      str
+    @keyword spin_hash: The unique and temporary spin hash.  If supplied, this overrides the spin_id argument.
+    @type spin_hash:    str or None
     @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
     @keyword full_info: A flag specifying if the amount of information to be returned.  If false, only the data container is returned.  If true, the molecule name, residue number, and residue name is additionally returned.
@@ -2835,11 +2844,15 @@ def return_spin(spin_id=None, pipe=None, full_info=False, multi=False):
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
-    # No spin ID, so assume there is no spin.
-    if spin_id not in dp.mol._spin_id_lookup:
+    # No spin ID or hash, so assume there is no spin.
+    if spin_hash and spin_hash not in dp.mol._spin_hash_lookup:
+        return None
+    if not spin_hash and spin_id not in dp.mol._spin_id_lookup:
         return None
 
     # The indices from the look up table.
+    if spin_hash:
+        mol_index, res_index, spin_index = dp.mol._spin_hash_lookup[spin_hash]
     else:
         mol_index, res_index, spin_index = dp.mol._spin_id_lookup[spin_id]
 
@@ -3016,11 +3029,13 @@ def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
         spin_num = spin_num + 1
 
 
-def return_spin_indices(spin_id=None, pipe=None):
+def return_spin_indices(spin_id=None, spin_hash=None, pipe=None):
     """Return the molecule, residue and spin indices corresponding to the given spin ID string.
 
     @keyword spin_id:   The unique spin ID string.
     @type spin_id:      str
+    @keyword spin_hash: The unique and temporary spin hash.  If supplied, this overrides the spin_id argument.
+    @type spin_hash:    str or None
     @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
     @return:            The molecule, residue and spin indices.
@@ -3034,8 +3049,8 @@ def return_spin_indices(spin_id=None, pipe=None):
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
-    # No spin ID, so switch to selection matching.
-    if spin_id not in dp.mol._spin_id_lookup:
+    # No spin hash supplied and the spin ID does not exist, so switch to selection matching.
+    if not spin_hash and spin_id not in dp.mol._spin_id_lookup:
         # Parse the selection string.
         select_obj = Selection(spin_id)
 
@@ -3070,6 +3085,8 @@ def return_spin_indices(spin_id=None, pipe=None):
                     break
 
     # The indices from the look up table.
+    elif spin_hash:
+        mol_index, res_index, spin_index = dp.mol._spin_hash_lookup[spin_hash]
     else:
         mol_index, res_index, spin_index = dp.mol._spin_id_lookup[spin_id]
 
