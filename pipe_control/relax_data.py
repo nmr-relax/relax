@@ -39,7 +39,7 @@ from lib.physical_constants import element_from_isotope, number_from_isotope
 from lib.sequence import read_spin_data
 from lib.warnings import RelaxWarning
 from pipe_control import bmrb, pipes, value
-from pipe_control.interatomic import define, return_interatom, return_interatom_list
+from pipe_control.interatomic import define_dipole_pair, return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import Selection, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from pipe_control.pipes import check_pipe
 from pipe_control.spectrometer import copy_frequencies, delete_frequencies, frequency_checks, loop_frequencies, set_frequency
@@ -190,7 +190,7 @@ def bmrb_read(star, sample_conditions=None):
                     continue
 
                 # Define.
-                define(spin_id1=spin_id1, spin_id2=spin_id2, verbose=False)
+                define_dipole_pair(spin_id1=spin_id1, spin_id2=spin_id2, spin1=spin1, spin2=spin2, verbose=False)
 
         # The data and error.
         vals = data['data']

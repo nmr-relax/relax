@@ -211,13 +211,17 @@ def create_interatom(spin_id1=None, spin_id2=None, spin1=None, spin2=None, pipe=
     return interatom
 
 
-def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_selection=False, verbose=True):
+def define_dipole_pair(spin_id1=None, spin_id2=None, spin1=None, spin2=None, pipe=None, direct_bond=False, spin_selection=False, verbose=True):
     """Set up the magnetic dipole-dipole interaction.
 
     @keyword spin_id1:          The spin identifier string of the first spin of the pair.
     @type spin_id1:             str
     @keyword spin_id2:          The spin identifier string of the second spin of the pair.
     @type spin_id2:             str
+    @keyword spin1:             An optional single spin container for the first atom.  This is for speeding up the interatomic data container creation, if the spin containers are already available in the calling function.
+    @type spin1:                str
+    @keyword spin2:             An optional single spin container for the second atom.  This is for speeding up the interatomic data container creation, if the spin containers are already available in the calling function.
+    @type spin2:                str
     @param pipe:                The data pipe to operate on.  Defaults to the current data pipe.
     @type pipe:                 str
     @keyword direct_bond:       A flag specifying if the two spins are directly bonded.
@@ -240,8 +244,17 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_sele
     spins = []
     spin_selections = []
 
+    # Pre-supplied spins.
+    if spin1 and spin2:
+        # Store the IDs for the printout.
+        ids.append([spin_id1, spin_id2])
+
+        # Store the spin data.
+        spins.append([spin1, spin2])
+        spin_selections.append([spin1.select, spin2.select])
+
     # Use the structural data to find connected atoms.
-    if hasattr(dp, 'structure'):
+    elif hasattr(dp, 'structure'):
         # The selection objects.
         selection1 = cdp.structure.selection(atom_id=spin_id1)
         selection2 = cdp.structure.selection(atom_id=spin_id2)

@@ -163,7 +163,7 @@ uf.desc[-1].add_prompt("relax> interatom.define(spin_id1=':1@N', spin_id2=':1@H'
 uf.desc[-1].add_paragraph("To define the protein 15N heteronuclear relaxation mechanism for a model-free analysis, type one of the following:")
 uf.desc[-1].add_prompt("relax> interatom.define('@N', '@H', True)")
 uf.desc[-1].add_prompt("relax> interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)")
-uf.backend = interatomic.define
+uf.backend = interatomic.define_dipole_pair
 uf.menu_text = "&define"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 380
