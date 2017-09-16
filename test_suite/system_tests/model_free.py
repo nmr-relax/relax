@@ -128,7 +128,7 @@ class Mf(SystemTestCase):
         # Loop over the interatomic data containers.
         for i in range(len(pipe_12.interatomic)):
             # Test the objects.
-            print("Comparison of the objects of the molecule:")
+            print("Comparison of the objects of the interatomic data containers:")
             self.object_comparison(obj1=pipe_12.interatomic[i], obj2=pipe_13.interatomic[i])
 
 
