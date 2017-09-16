@@ -475,8 +475,8 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None, skip_desel=Tru
 
         # Aliases.
         interatom = dp.interatomic[i]
-        mol_index1, res_index1, spin_index1 = dp.mol._spin_id_lookup[interatom.spin_id1]
-        mol_index2, res_index2, spin_index2 = dp.mol._spin_id_lookup[interatom.spin_id2]
+        mol_index1, res_index1, spin_index1 = dp.mol._spin_hash_lookup[interatom._spin_hash1]
+        mol_index2, res_index2, spin_index2 = dp.mol._spin_hash_lookup[interatom._spin_hash2]
         mol1 =  dp.mol[mol_index1]
         res1 =  dp.mol[mol_index1].res[res_index1]
         spin1 = dp.mol[mol_index1].res[res_index1].spin[spin_index1]
