@@ -2220,6 +2220,7 @@ FALSE_POS = {
     'lib/dispersion/tp02.py':                                           ["Copyright (C) 2000-2001 Nikolai Skrynnikov", "Copyright (C) 2000-2001 Martin Tollinger"],
     'lib/dispersion/tsmfk01.py':                                        ["Copyright (C) 2009 Sebastien Morin"],
     'lib/dispersion/two_point.py':                                      ["Copyright (C) 2009 Sebastien Morin"],
+    'lib/plotting/grace.py':                                            ["Copyright (C) 2013,2017 Edward d'Auvergne"],
     'sample_scripts/model_free/final_data_extraction.py':               ["Copyright (C) 2009-2011 Michael Bieri"],
     'specific_analyses/model_free/api.py':                              ["Copyright (C) 2007 Gary S Thompson"],
     'specific_analyses/model_free/data.py':                             ["Copyright (C) 2007 Gary S Thompson"],
@@ -4367,10 +4368,6 @@ def validate_copyright(expected_copyright, recorded_copyright):
     @rtype:                     bool
     """
 
-    # Sort the lists.
-    expected_copyright.sort()
-    recorded_copyright.sort()
-
     # Replace alternative names in the recorded list.
     for i in range(len(recorded_copyright)):
         for alt in COMMITTER_ALT:
@@ -4573,6 +4570,12 @@ if __name__ == '__main__':
                     for j in reversed(range(len(expected_copyright))):
                         if FALSE_NEG[file_path][i] in expected_copyright[j]:
                             expected_copyright.pop(j)
+
+            # Remove duplicates and sort the lists.
+            expected_copyright = list(set(expected_copyright))
+            recorded_copyright = list(set(recorded_copyright))
+            expected_copyright.sort()
+            recorded_copyright.sort()
 
             # Validate.
             if validate_copyright(expected_copyright, recorded_copyright):
