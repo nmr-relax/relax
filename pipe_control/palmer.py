@@ -31,6 +31,7 @@ import dep_check
 from math import pi
 from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
+import signal
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
@@ -604,27 +605,34 @@ def execute(dir, force, binary):
         else:
             cmd = binary + ' -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'
         pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+        out, err = pipe.communicate()
 
         # Close the pipe.
         pipe.stdin.close()
 
         # Write to stdout.
-        for line in pipe.stdout.readlines():
+        if out:
             # Decode Python 3 byte arrays.
-            if hasattr(line, 'decode'):
-                line = line.decode()
+            if hasattr(out, 'decode'):
+                out = out.decode()
 
             # Write.
-            sys.stdout.write(line)
+            sys.stdout.write(out)
 
         # Write to stderr.
-        for line in pipe.stderr.readlines():
+        if err:
             # Decode Python 3 byte arrays.
-            if hasattr(line, 'decode'):
-                line = line.decode()
+            if hasattr(err, 'decode'):
+                err = err.decode()
 
             # Write.
-            sys.stderr.write(line)
+            sys.stderr.write(err)
+
+        # Catch errors.
+        if pipe.returncode == -signal.SIGSEGV:
+            raise RelaxError("Modelfree4 return code 11 (Segmentation fault).\n")
+        elif pipe.returncode:
+            raise RelaxError("Modelfree4 return code %s.\n" % pipe.returncode)
 
     # Failure.
     except:
