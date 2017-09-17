@@ -831,8 +831,8 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     @type mol_name:     str
     @keyword pipe:      The data pipe to add the spin to.  Defaults to the current data pipe.
     @type pipe:         str or None
-    @return:            The newly created spin.
-    @rtype:             SpinContainer instance
+    @return:            The newly created spin(s).
+    @rtype:             list of SpinContainer instances
     """
 
     # The data pipe.
@@ -848,49 +848,73 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
     try:
-        # Create the molecule if it does not exist.
-        mol_index = index_molecule(mol_name, pipe=pipe)
-        if mol_index == None:
-            create_molecule(mol_name=mol_name, pipe=pipe)
-            mol_index = len(dp.mol) - 1
+        # The list of new spins.
+        new_spins = []
 
-        # Create the residue if it does not exist.
-        res_index = index_residue(res_num=res_num, res_name=res_name, mol_index=mol_index, pipe=pipe)
-        if res_index == None:
-            create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name, pipe=pipe)
-            res_index = len(dp.mol[mol_index].res) - 1
+        # Create the molecule if it none exists.
+        mol_index = None
+        if mol_name:
+            mol_index = index_molecule(mol_name, pipe=pipe)
+            if mol_index == None:
+                create_molecule(mol_name=mol_name, pipe=pipe)
+                mol_index = len(dp.mol) - 1
 
-        # Alias the residue.
-        res_cont = dp.mol[mol_index].res[res_index]
+        # Loop over the molecules.
+        for i in range(len(dp.mol)):
+            # Skip non-matching molecules.
+            if mol_index != None and mol_index != i:
+                continue
 
-        # Rename the spin, if only a single one exists and it is empty.
-        if len(res_cont.spin) == 1 and res_cont.spin[0].is_empty():
-            spin_cont = res_cont.spin[0]
-            spin_cont.name = spin_name
-            spin_cont.num = spin_num
+            # Create the residue if it does not exist.
+            res_index = None
+            if res_num != None:
+                res_index = index_residue(res_num=res_num, res_name=res_name, mol_index=i, pipe=pipe)
+                if res_index == None:
+                    create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name, pipe=pipe)
+                    res_index = len(dp.mol[i].res) - 1
 
-        # Otherwise add the spin.
-        else:
-            res_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
-            spin_cont = res_cont.spin[-1]
+            # Loop over the residues.
+            for j in range(len(dp.mol[i].res)):
+                # Skip non-matching residues.
+                if res_index != None and res_index != j:
+                    continue
+                if res_name and dp.mol[i].res[j].name != res_name:
+                    continue
 
-        # The spin index and id.
-        spin_index = len(res_cont.spin) - 1
-        spin_id = generate_spin_id(pipe_cont=dp, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+                # Rename the spin, if only a single one exists and it is empty.
+                if len(dp.mol[i].res[j].spin) == 1 and dp.mol[i].res[j].spin[0].is_empty():
+                    spin_cont = dp.mol[i].res[j].spin[0]
+                    spin_cont.name = spin_name
+                    spin_cont.num = spin_num
 
-        # Update the private metadata.
-        if len(res_cont.spin) == 2:
-            metadata_cleanup(mol_index=mol_index, res_index=res_index, pipe=pipe)
-        else:
-            metadata_cleanup(mol_index=mol_index, res_index=res_index, spin_index=spin_index, pipe=pipe)
-        metadata_update(mol_index=mol_index, res_index=res_index, spin_index=spin_index, pipe=pipe)
+                # Otherwise add the spin.
+                else:
+                    dp.mol[i].res[j].spin.add_item(spin_num=spin_num, spin_name=spin_name)
+                    spin_cont = dp.mol[i].res[j].spin[-1]
+
+                # The spin index.
+                spin_index = len(dp.mol[i].res[j].spin) - 1
+
+                # Store the spin container to return.
+                new_spins.append(spin_cont)
+
+                # Update the private metadata.
+                if len(dp.mol[i].res[j].spin) == 2:
+                    metadata_cleanup(mol_index=i, res_index=j, pipe=pipe)
+                else:
+                    metadata_cleanup(mol_index=i, res_index=j, spin_index=spin_index, pipe=pipe)
+                metadata_update(mol_index=i, res_index=j, spin_index=spin_index, pipe=pipe)
+
+                # Printout.
+                spin_id = generate_spin_id_unique(pipe_cont=dp, mol=dp.mol[i], res=dp.mol[i].res[j], spin=spin_cont, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+                print("Creating the spin: '%s'" % spin_id)
 
     # Release the lock.
     finally:
         status.spin_lock.release(sys._getframe().f_code.co_name)
 
-    # Return the spin.
-    return spin_cont
+    # Return the spin(s).
+    return new_spins
 
 
 def convert_from_global_index(global_index=None, pipe=None):

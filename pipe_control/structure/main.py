@@ -879,7 +879,7 @@ def load_spins(spin_id=None, str_id=None, from_mols=None, mol_name_target=None, 
 
         # Create the spin.
         try:
-            spin_cont = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=atom_num, spin_name=atom_name)
+            spin_cont = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=atom_num, spin_name=atom_name)[0]
 
         # Otherwise, get the spin container.
         except RelaxError:
@@ -1022,7 +1022,7 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
 
         # Create the spin if it does not exist.
         if spin_cont == None:
-            spin_cont = create_spin(mol_name=mol_name_target, res_num=res_nums[id], res_name=res_names[id], spin_name=spin_names[id])
+            spin_cont = create_spin(mol_name=mol_name_target, res_num=res_nums[id], res_name=res_names[id], spin_name=spin_names[id])[0]
 
         # Position vector.
         spin_cont.pos = []

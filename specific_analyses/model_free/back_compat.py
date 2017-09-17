@@ -834,7 +834,7 @@ def read_1_2_results(file_data, verbosity=1):
 
         # Create a new spin container for the proton, then set up a dipole interaction between the two spins.
         if data_set == 'value' and spin_name:
-            h_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
+            h_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')[0]
             h_spin.select = False
             h_spin.element = 'H'
             h_spin.isotope = '1H'

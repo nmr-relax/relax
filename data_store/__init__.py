@@ -271,7 +271,7 @@ class Relax_data_store(dict):
 
                                 # Create a new spin container for the proton if needed.
                                 if not h_spin:
-                                    h_spin = pipe_control.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, pipe=pipe_name)
+                                    h_spin = pipe_control.mol_res_spin.create_spin(mol_name=mol.name, res_num=res.num, res_name=res.name, spin_name=proton_name, pipe=pipe_name)[0]
                                     h_spin.select = False
 
                                 # Set up a dipole interaction between the two spins if needed.

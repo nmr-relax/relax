@@ -77,7 +77,7 @@ def attach_protons():
     ids = []
     for i in range(len(mol_names)):
         # Create the spin container.
-        spin = create_spin(spin_name='H', res_name=res_names[i], res_num=res_nums[i], mol_name=mol_names[i])
+        spin = create_spin(spin_name='H', res_name=res_names[i], res_num=res_nums[i], mol_name=mol_names[i])[0]
         ids.append(generate_spin_id(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_name='H'))
     print("Creating the spins %s." % ids)
 
@@ -123,7 +123,7 @@ def copy(pipe_from=None, pipe_to=None, preserve_select=False, empty=True, verbos
     # Loop over the spins of the pipe_from data pipe.
     for spin, mol_name, res_num, res_name in spin_loop(pipe=pipe_from, full_info=True):
         # Generate the new sequence.
-        new_spin = create_spin(spin_num=spin.num, spin_name=spin.name, res_num=res_num, res_name=res_name, mol_name=mol_name, pipe=pipe_to)
+        new_spin = create_spin(spin_num=spin.num, spin_name=spin.name, res_num=res_num, res_name=res_name, mol_name=mol_name, pipe=pipe_to)[0]
 
         # Preserve selection.
         if preserve_select:
@@ -280,7 +280,7 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     curr_spin = return_spin(spin_id=generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
     if not curr_spin or ((spin_num != None and curr_spin.num != spin_num) or (spin_name != None and curr_spin.name != spin_name)):
         # Add the spin.
-        curr_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name, pipe=pipe)
+        curr_spin = create_spin(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name, pipe=pipe)[0]
 
     # Set the selection flag.
     curr_spin.select = select

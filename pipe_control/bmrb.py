@@ -100,7 +100,7 @@ def generate_sequence(N=0, spin_ids=None, spin_nums=None, spin_names=None, res_n
             continue
 
         # Create the spin.
-        spin = create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])
+        spin = create_spin(spin_num=spin_nums[i], spin_name=spin_names[i], res_num=res_nums[i], res_name=res_names[i], mol_name=mol_names[i])[0]
 
         # Set the spin isotope and element.
         spin_id = spin._spin_ids[0]
