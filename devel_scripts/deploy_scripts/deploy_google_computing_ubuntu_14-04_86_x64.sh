@@ -74,7 +74,7 @@ function dopiplocal {
   # Install minfx
   mkdir -p $HOME/Downloads
   cd $HOME/Downloads
-  curl http://download.gna.org/minfx/minfx-$VMIN.tar.gz -o minfx-$VMIN.tar.gz
+  curl https://iweb.dl.sourceforge.net/project/minfx/$VMIN/minfx-$VMIN.tar.gz -o minfx-$VMIN.tar.gz
   tar -xzf minfx-$VMIN.tar.gz
   cd minfx-$VMIN
   sudo pip install .
@@ -83,7 +83,7 @@ function dopiplocal {
   # Install bmrblib
   mkdir -p $HOME/Downloads
   cd $HOME/Downloads
-  curl http://download.gna.org/bmrblib/bmrblib-$VBMR.tar.gz -o bmrblib-$VBMR.tar.gz
+  curl https://iweb.dl.sourceforge.net/project/bmrblib/$VMIN/bmrblib-$VMIN.tar.gz -o bmrblib-$VMIN.tar.gz
   tar -xzf bmrblib-$VBMR.tar.gz
   cd bmrblib-$VBMR
   sudo pip install .
@@ -94,7 +94,7 @@ function dopiplocal {
 function getlatest {
   cd $HOME
   if [ ! -d "$HOME/relax-$VREL" ]; then
-    curl http://download.gna.org/relax/relax-$VREL.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
+    curl https://iweb.dl.sourceforge.net/project/relax/$VMIN/relax-$VMIN.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
     tar xvjf relax-$VREL.GNU-Linux.x86_64.tar.bz2
     rm relax-$VREL.GNU-Linux.x86_64.tar.bz2
   fi
@@ -104,17 +104,17 @@ function getlatest {
   cd $HOME
 }
 
-# Get the trunk of relax with subversion
+# Get relax with git.
 function gettrunk {
   cd $HOME
-  if [ ! -d "$HOME/relax_trunk" ]; then
-    svn co svn://svn.gna.org/svn/relax/trunk relax_trunk
+  if [ ! -d "$HOME/relax" ]; then
+    git clone git://git.code.sf.net/p/nmr-relax/code relax
   fi
-  cd $HOME/relax_trunk
-  svn up
+  cd $HOME/relax
+  git checkout master; git pull
   scons
-  if [ ! \( -e "$HOME/bin/relax_trunk" \) ]; then
-    ln -s $HOME/relax_trunk/relax $HOME/bin/relax_trunk
+  if [ ! \( -e "$HOME/bin/relax" \) ]; then
+    ln -s $HOME/relax/relax $HOME/bin/relax
   fi
   cd $HOME
 }
@@ -132,8 +132,8 @@ function checkinstallation {
   which relax_$VREL
   relax_$VREL -i
 
-  which relax_trunk
-  relax_trunk -i
+  which relax
+  relax -i
 }
 
 # Combine functions
