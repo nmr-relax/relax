@@ -36,10 +36,7 @@ LGPLv3+
 
 These files are licensed under the terms of the GNU LGPL license, either version 3 of the License, or (at your option) any later version:
 
-sobol_lib-not_tested.py:                                                                Copyright (C) 2011 Corrado Chisari
-sobol_lib.py:                                                                           Copyright (C) 2011 Corrado Chisari
 sobol_test_output.txt:                                                                  Copyright (C) 2011 Corrado Chisari
-sobol_test.py:                                                                          Copyright (C) 2011 Corrado Chisari
 
 Please see the COPYING file.
 
