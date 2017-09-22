@@ -23,7 +23,7 @@
 """This system test catches the local tm global model selection bug.
 
 The bug is:
-    - Bug #21079 (U{bug #21079<https://gna.org/bugs/?21079>}).
+    - Bug #21079 (U{bug #21079<https://web.archive.org/web/https://gna.org/bugs/?21079>}).
 """
 
 # Python module imports.

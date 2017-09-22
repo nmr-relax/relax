@@ -23,7 +23,7 @@
 """This system test catches the unicode selection bug submitted by Olivier Serve.
 
 The bug is:
-    - Bug #14872 (https://gna.org/bugs/?14872).
+    - Bug #14872 (https://web.archive.org/web/https://gna.org/bugs/?14872).
 """
 
 # Python module imports.

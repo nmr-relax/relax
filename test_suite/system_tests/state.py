@@ -187,7 +187,7 @@ class State(SystemTestCase):
 
 
     def test_bug_21716_no_cdp_state_save(self):
-        """Catch U{bug #21716<https://gna.org/bugs/?21716>}, the failure to save the relax state when no current data pipe is set."""
+        """Catch U{bug #21716<https://web.archive.org/web/https://gna.org/bugs/?21716>}, the failure to save the relax state when no current data pipe is set."""
 
         # Create two data pipes.
         self.interpreter.pipe.create('a', 'mf')
@@ -201,7 +201,7 @@ class State(SystemTestCase):
 
 
     def test_bug_23017_ieee_754_multidim_numpy_arrays(self):
-        """Test catching U{bug #23017<https://gna.org/bugs/?23017>}, the multidimensional numpy arrays are not being stored as IEEE 754 arrays in the XML state and results files."""
+        """Test catching U{bug #23017<https://web.archive.org/web/https://gna.org/bugs/?23017>}, the multidimensional numpy arrays are not being stored as IEEE 754 arrays in the XML state and results files."""
 
         # Create a data pipe.
         self.interpreter.pipe.create('test', 'mf')

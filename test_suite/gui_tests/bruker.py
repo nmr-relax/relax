@@ -58,7 +58,7 @@ class Bruker(GuiTestCase, system_tests.bruker.Bruker):
 
 
     def test_bug_20152_read_dc_file(self):
-        """Test the reading of a DC file, catching U{bug #20152<https://gna.org/bugs/?20152>}."""
+        """Test the reading of a DC file, catching U{bug #20152<https://web.archive.org/web/https://gna.org/bugs/?20152>}."""
 
         # Simulate the new analysis wizard.
         analysis = self.new_analysis_wizard(analysis_type='mf', analysis_name='Model-free test')

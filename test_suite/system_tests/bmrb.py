@@ -236,7 +236,7 @@ class Bmrb(SystemTestCase):
 
 
     def test_bug_20471_structure_present(self):
-        """Catch U{bug #20471<https://gna.org/bugs/?20471>}, with structural data present prior to a bmrb.read call."""
+        """Catch U{bug #20471<https://web.archive.org/web/https://gna.org/bugs/?20471>}, with structural data present prior to a bmrb.read call."""
 
         # Create the data pipe.
         self.interpreter.pipe.create('test', 'mf')
@@ -257,7 +257,7 @@ class Bmrb(SystemTestCase):
 
 
     def test_bug_22703_display_empty(self):
-        """Catch U{bug #22703<https://gna.org/bugs/?22703>}, the failure of the bmrb.display user function with an AttributeError when no data is present."""
+        """Catch U{bug #22703<https://web.archive.org/web/https://gna.org/bugs/?22703>}, the failure of the bmrb.display user function with an AttributeError when no data is present."""
 
         # Create the data pipe.
         self.interpreter.pipe.create('test', 'mf')
@@ -274,7 +274,7 @@ class Bmrb(SystemTestCase):
 
 
     def test_bug_22704_corrupted_state_file(self):
-        """Catch U{bug #22704<https://gna.org/bugs/?22704>}, the corrupted relax state files."""
+        """Catch U{bug #22704<https://web.archive.org/web/https://gna.org/bugs/?22704>}, the corrupted relax state files."""
 
         # Create the data pipe.
         self.interpreter.pipe.create('test', 'mf')

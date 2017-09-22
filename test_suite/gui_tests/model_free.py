@@ -41,9 +41,9 @@ class Mf(GuiTestCase):
     """Class for testing various aspects specific to the model-free auto-analysis."""
 
     def test_bug_20479_gui_final_pipe(self):
-        """Catch U{bug #20479<https://gna.org/bugs/?20479>}, the failure to load a relax state in the GUI.
+        """Catch U{bug #20479<https://web.archive.org/web/https://gna.org/bugs/?20479>}, the failure to load a relax state in the GUI.
 
-        This was reported by U{Stanislava Panova<https://gna.org/users/stacy>}.
+        This was reported by U{Stanislava Panova<https://web.archive.org/web/https://gna.org/users/stacy>}.
         """
 
         # Simulate the new analysis wizard.
@@ -173,7 +173,7 @@ class Mf(GuiTestCase):
 
 
     def test_bug_21615_incomplete_setup_failure(self):
-        """Catch U{bug #21615<https://gna.org/bugs/?21615>}, the failure of showing the missing data dialog when executing the analysis with an incomplete setup.
+        """Catch U{bug #21615<https://web.archive.org/web/https://gna.org/bugs/?21615>}, the failure of showing the missing data dialog when executing the analysis with an incomplete setup.
 
         This was reported by Ivan Leung.
         """
@@ -246,7 +246,7 @@ class Mf(GuiTestCase):
     def test_mf_auto_analysis(self):
         """Test the model-free auto-analysis.
 
-        This now catches U{bug #20603<https://gna.org/bugs/?20603>}.
+        This now catches U{bug #20603<https://web.archive.org/web/https://gna.org/bugs/?20603>}.
         """
 
         # Simulate the new analysis wizard.
@@ -299,7 +299,7 @@ class Mf(GuiTestCase):
         for i in range(len(data)):
             self._execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3], mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
-        # Simulate right clicking on the NOE to test the pop up menu (bug #20603, https://gna.org/bugs/?20603).
+        # Simulate right clicking on the NOE to test the pop up menu (bug #20603, https://web.archive.org/web/https://gna.org/bugs/?20603).
         analysis.relax_data.on_right_click(Fake_right_click())
 
         # Dipole-dipole interaction wizard:  Initialisation.
@@ -477,7 +477,7 @@ class Mf(GuiTestCase):
     def test_opendx_s2_te_rex(self):
         """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map().
 
-        This is to catch U{bug #22035<https://gna.org/bugs/?22035>}, the dx.map user function being broken in the GUI.
+        This is to catch U{bug #22035<https://web.archive.org/web/https://gna.org/bugs/?22035>}, the dx.map user function being broken in the GUI.
         """
 
         # Execute the script.

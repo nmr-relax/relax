@@ -23,9 +23,9 @@
 """This system test catches 2 bugs submitted by Chris Brosey.
 
 The bugs include:
-    - Bug #12582 (https://gna.org/bugs/?12582).
-    - Bug #12591 (https://gna.org/bugs/?12591).
-    - Bug #12607 (https://gna.org/bugs/?12607).
+    - Bug #12582 (https://web.archive.org/web/https://gna.org/bugs/?12582).
+    - Bug #12591 (https://web.archive.org/web/https://gna.org/bugs/?12591).
+    - Bug #12607 (https://web.archive.org/web/https://gna.org/bugs/?12607).
 """
 
 # Python module imports.
@@ -70,7 +70,7 @@ model_selection(method='AIC', modsel_pipe='aic', pipes=['tm0', 'tm1'])
 
 
 
-# Catch bug #12607 (https://gna.org/bugs/?12607).
+# Catch bug #12607 (https://web.archive.org/web/https://gna.org/bugs/?12607).
 #################################################
 
 model_free.remove_tm(spin_id=None)

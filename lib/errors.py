@@ -214,7 +214,7 @@ class RelaxNoModuleInstallError(BaseError):
 
 class RelaxFault(BaseError):
     def __init__(self):
-        self.text = "Impossible to be here, please re-run relax with the '--debug' flag and summit a bug report at https://gna.org/projects/relax/."
+        self.text = "Impossible to be here, please re-run relax with the '--debug' flag and summit a bug report at https://web.archive.org/web/https://gna.org/projects/relax/."
 
     def __str__(self):
         # Save the program state, no matter what.

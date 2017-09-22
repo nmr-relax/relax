@@ -233,7 +233,7 @@ def rmmq_3site(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=N
 def rr1rho_3d_2site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, wA=None, wB=None, w1=None, k_AB=None, k_BA=None):
     """Definition of the 3D exchange matrix.
 
-    This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
+    This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://web.archive.org/web/https://gna.org/support/download.php?file_id=18404 attached to https://web.archive.org/web/https://gna.org/task/?7712#comment5).
 
 
     @keyword matrix:        The matrix to fill.

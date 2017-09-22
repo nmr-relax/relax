@@ -48,7 +48,7 @@ class Noe(SystemTestCase):
 
 
     def test_bug_21562_noe_replicate_fail(self):
-        """Catch U{bug #21562<https://gna.org/bugs/?21562>}, the failure of the NOE analysis when replicated spectra are used."""
+        """Catch U{bug #21562<https://web.archive.org/web/https://gna.org/bugs/?21562>}, the failure of the NOE analysis when replicated spectra are used."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe'+sep+'bug_21562_noe_replicate_fail.py')
@@ -83,7 +83,7 @@ class Noe(SystemTestCase):
 
 
     def test_bug_21591_noe_calculation_fail(self):
-        """Catch U{bug #21591<https://gna.org/bugs/?21591>}, the failure of the NOE analysis."""
+        """Catch U{bug #21591<https://web.archive.org/web/https://gna.org/bugs/?21591>}, the failure of the NOE analysis."""
 
         # Generate the sequence.
         self.interpreter.spin.create(mol_name='XYZ_mol1', res_num=120, res_name='GLY', spin_num=1865, spin_name='N')
@@ -140,7 +140,7 @@ class Noe(SystemTestCase):
     def test_noe_analysis(self):
         """Test the NOE analysis.
 
-        The test has been modified to also catch U{bug #21863<https://gna.org/bugs/?21863>}.
+        The test has been modified to also catch U{bug #21863<https://web.archive.org/web/https://gna.org/bugs/?21863>}.
         """
 
         # Execute the script.

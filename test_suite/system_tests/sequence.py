@@ -41,7 +41,7 @@ class Sequence(SystemTestCase):
 
 
     def test_bug_23372_read_csv(self):
-        """Catch U{bug #23372<https://gna.org/bugs/?23372>}, the sequence.read failure with CSV files."""
+        """Catch U{bug #23372<https://web.archive.org/web/https://gna.org/bugs/?23372>}, the sequence.read failure with CSV files."""
 
         # Load the sequence.
         self.interpreter.sequence.read('Sam.csv', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', res_num_col=1, sep=',')

@@ -22,7 +22,7 @@
 # Module docstring.
 """The automatic relaxation dispersion protocol for repeated data for CPMG.
 
-U{task #7826<https://gna.org/task/index.php?78266>}, Write an python class for the repeated analysis of dispersion data.
+U{task #7826<https://web.archive.org/web/https://gna.org/task/index.php?78266>}, Write an python class for the repeated analysis of dispersion data.
 """
 
 # Dependencies.

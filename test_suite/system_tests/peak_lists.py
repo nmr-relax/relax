@@ -59,14 +59,14 @@ class Peak_lists(SystemTestCase):
 
 
     def test_bug_17276_peak_lists(self):
-        """Test catching U{bug #17276<https://gna.org/bugs/?17276>}, the duplicated peak list reading failure submitted by Leanne Minall."""
+        """Test catching U{bug #17276<https://web.archive.org/web/https://gna.org/bugs/?17276>}, the duplicated peak list reading failure submitted by Leanne Minall."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_17276_peak_lists.py')
 
 
     def test_bug_20873_peak_lists(self):
-        """Test catching U{bug #20873<https://gna.org/bugs/?20873>}, the custom peak intensity reading with a list of spectrum_ids submitted by Troels E. Linnet."""
+        """Test catching U{bug #20873<https://web.archive.org/web/https://gna.org/bugs/?20873>}, the custom peak intensity reading with a list of spectrum_ids submitted by Troels E. Linnet."""
 
         # The path to the files.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'
@@ -95,7 +95,7 @@ class Peak_lists(SystemTestCase):
 
 
     def test_ccpn_analysis(self):
-        """Test U{bug #17341<https://gna.org/bugs/index.php?17341>}, the CCPN Analysis 2.1 peak list reading submitted by Madeleine Strickland."""
+        """Test U{bug #17341<https://web.archive.org/web/https://gna.org/bugs/index.php?17341>}, the CCPN Analysis 2.1 peak list reading submitted by Madeleine Strickland."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'peak_lists'+sep+'ccpn_analysis.py')

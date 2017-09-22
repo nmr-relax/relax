@@ -40,7 +40,7 @@ class Bruker(SystemTestCase):
 
 
     def test_bug_22411_T1_read_fail(self):
-        """Test catching U{bug #22411<https://gna.org/bugs/?22411>}, the failure in reading a Bruker DC T1 file as submitted by Olena Dobrovolska."""
+        """Test catching U{bug #22411<https://web.archive.org/web/https://gna.org/bugs/?22411>}, the failure in reading a Bruker DC T1 file as submitted by Olena Dobrovolska."""
 
         # The data path.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'bruker_files'

@@ -46,7 +46,7 @@ class Test_data(UnitTestCase):
     def test_calc_rotating_frame_params(self):
         """Unit test of the calc_rotating_frame_params() function for R1rho setup.
 
-        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        This uses the data of the saved state attached to U{bug #21344<https://web.archive.org/web/https://gna.org/bugs/?21344>}.
         """
 
         # Load the state.
@@ -66,7 +66,7 @@ class Test_data(UnitTestCase):
     def test_count_relax_times_cpmg(self):
         """Unit test of the count_relax_times() function.
 
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        This uses the data of the saved state attached to U{bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>}.
         """
 
         # Load the state.
@@ -108,7 +108,7 @@ class Test_data(UnitTestCase):
     def test_count_relax_times_r1rho(self):
         """Unit test of the count_relax_times() function.
 
-        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        This uses the data of the saved state attached to U{bug #21344<https://web.archive.org/web/https://gna.org/bugs/?21344>}.
         """
 
         # Load the state.
@@ -221,7 +221,7 @@ class Test_data(UnitTestCase):
     def test_find_intensity_keys_r1rho(self):
         """Unit test of the find_intensity_keys() function.
 
-        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        This uses the data of the saved state attached to U{bug #21344<https://web.archive.org/web/https://gna.org/bugs/?21344>}.
         """
 
         # Load the state.
@@ -324,7 +324,7 @@ class Test_data(UnitTestCase):
     def test_get_curve_type_cpmg(self):
         """Unit test of the get_curve_type() function.
 
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        This uses the data of the saved state attached to U{bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>}.
         """
 
         # Load the state.
@@ -340,7 +340,7 @@ class Test_data(UnitTestCase):
     def test_has_exponential_exp_type_cpmg(self):
         """Unit test of the has_exponential_exp_type() function.
 
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        This uses the data of the saved state attached to U{bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>}.
         """
 
         # Load the state.
@@ -356,7 +356,7 @@ class Test_data(UnitTestCase):
     def test_loop_exp_frq_cpmg(self):
         """Unit test of the loop_exp_frq() function.
 
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        This uses the data of the saved state attached to U{bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>}.
         """
 
         # Load the state.
@@ -402,7 +402,7 @@ class Test_data(UnitTestCase):
     def test_loop_exp_frq_offset_cpmg(self):
         """Unit test of the loop_exp_frq_offset() function.
 
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        This uses the data of the saved state attached to U{bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>}.
         """
 
         # Load the state.
@@ -452,7 +452,7 @@ class Test_data(UnitTestCase):
     def test_loop_exp_frq_offset_point_cpmg(self):
         """Unit test of the loop_exp_frq_offset_point() function.
 
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        This uses the data of the saved state attached to U{bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>}.
         """
 
         # Load the state.
@@ -511,7 +511,7 @@ class Test_data(UnitTestCase):
     def test_loop_exp_frq_offset_point_time_cpmg(self):
         """Unit test of the loop_exp_frq_offset_point_time() function.
 
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        This uses the data of the saved state attached to U{bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>}.
         """
 
         # Load the state.
@@ -572,7 +572,7 @@ class Test_data(UnitTestCase):
 
 
     def test_loop_exp_frq_offset_point_time_cpmg_setup(self):
-        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using minimise.calculate()."""
+        """U{Bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using minimise.calculate()."""
 
         # Load the state.
         statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
@@ -607,7 +607,7 @@ class Test_data(UnitTestCase):
     def test_loop_time_cpmg(self):
         """Unit test of the loop_time() function.
 
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        This uses the data of the saved state attached to U{bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>}.
         """
 
         # Load the state.
@@ -640,7 +640,7 @@ class Test_data(UnitTestCase):
     def test_loop_time_r1rho(self):
         """Unit test of the loop_time() function for R1rho setup.
 
-        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        This uses the data of the saved state attached to U{bug #21344<https://web.archive.org/web/https://gna.org/bugs/?21344>}.
         """
 
         # Load the state.
@@ -682,7 +682,7 @@ class Test_data(UnitTestCase):
     def test_return_offset_data(self):
         """Unit test of the return_offset_data() function for R1rho setup.
 
-        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        This uses the data of the saved state attached to U{bug #21344<https://web.archive.org/web/https://gna.org/bugs/?21344>}.
         """
 
         # Load the state.

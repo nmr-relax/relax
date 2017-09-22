@@ -28,7 +28,7 @@
 Description
 ===========
 
-This is the model of the numerical solution for the 3-site Bloch-McConnell equations.  It originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file U{https://gna.org/support/download.php?file_id=18404} attached to U{https://gna.org/task/?7712#comment5}).
+This is the model of the numerical solution for the 3-site Bloch-McConnell equations.  It originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file U{https://web.archive.org/web/https://gna.org/support/download.php?file_id=18404} attached to U{https://web.archive.org/web/https://gna.org/task/?7712#comment5}).
 
 
 References

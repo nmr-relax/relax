@@ -55,7 +55,7 @@ class General(GuiTestCase):
 
 
     def test_bug_21720_pipe_switching_with_tab_closure(self):
-        """Catch U{bug #20479<https://gna.org/bugs/?20479>}, the failure to switch pipes when closing non-last tabs."""
+        """Catch U{bug #20479<https://web.archive.org/web/https://gna.org/bugs/?20479>}, the failure to switch pipes when closing non-last tabs."""
 
         # NOE tab:  Simulate the new analysis wizard.
         analysis = self.new_analysis_wizard(analysis_type='noe', analysis_name='NOE test', pipe_name='noe', pipe_bundle='noe bundle')
@@ -74,7 +74,7 @@ class General(GuiTestCase):
 
 
     def test_bug_23187_residue_delete_gui(self):
-        """Catch U{bug #23187<https://gna.org/bugs/?23187>}, deleting residue in GUI, and then open spin viewer crashes relax."""
+        """Catch U{bug #23187<https://web.archive.org/web/https://gna.org/bugs/?23187>}, deleting residue in GUI, and then open spin viewer crashes relax."""
 
         # Mf tab:  Simulate the new analysis wizard.
         analysis = self.new_analysis_wizard(analysis_type='mf', analysis_name='Mf test', pipe_name='mf', pipe_bundle='mf bundle')

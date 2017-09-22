@@ -35,7 +35,7 @@ class Status_object(TestCase):
     def test_install_path(self):
         """Check that the relax installation path is set.
 
-        This is to catch bug #22037 U{https://gna.org/bugs/index.php?22037}, the failure to load graphics in the GUI due to the relax installation path not being set up correctly.
+        This is to catch bug #22037 U{https://web.archive.org/web/https://gna.org/bugs/index.php?22037}, the failure to load graphics in the GUI due to the relax installation path not being set up correctly.
         """
 
         # The installation path must be set.

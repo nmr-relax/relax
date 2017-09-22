@@ -37,7 +37,7 @@ This function is exact, just as the explicit Bloch-McConnell numerical treatment
 Code origin
 ===========
 
-The code originates as optimization function number 5 from the fitting_main_kex.py script from Mathilde Lescanne, Paul Schanda, and Dominique Marion (see U{http://thread.gmane.org/gmane.science.nmr.relax.devel/4138}, U{https://gna.org/task/?7712#comment2} and U{https://gna.org/support/download.php?file_id=18262}).
+The code originates as optimization function number 5 from the fitting_main_kex.py script from Mathilde Lescanne, Paul Schanda, and Dominique Marion (see U{http://thread.gmane.org/gmane.science.nmr.relax.devel/4138}, U{https://web.archive.org/web/https://gna.org/task/?7712#comment2} and U{https://web.archive.org/web/https://gna.org/support/download.php?file_id=18262}).
 
 Links to the copyright licensing agreements from all authors are:
 
@@ -53,10 +53,10 @@ Code evolution
 
 The complex path of the code from the original Maple to relax can be described as:
 
-    - p3.analytical (Maple input text file at U{https://gna.org/task/?7712#comment8}),
+    - p3.analytical (Maple input text file at U{https://web.archive.org/web/https://gna.org/task/?7712#comment8}),
     - Automatically generated FORTRAN,
-    - Manually converted to Matlab by Nikolai (sim_all.tar at U{https://gna.org/task/?7712#comment5})
-    - Manually converted to Python by Paul, Mathilde, and Dominique (fitting_main.py at U{https://gna.org/task/?7712#comment1})
+    - Manually converted to Matlab by Nikolai (sim_all.tar at U{https://web.archive.org/web/https://gna.org/task/?7712#comment5})
+    - Manually converted to Python by Paul, Mathilde, and Dominique (fitting_main.py at U{https://web.archive.org/web/https://gna.org/task/?7712#comment1})
     - Converted into Python code for relax (here).
 
 

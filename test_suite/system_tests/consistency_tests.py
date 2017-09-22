@@ -44,7 +44,7 @@ class Ct(SystemTestCase):
 
 
     def test_bug_20674_ct_analysis_failure(self):
-        """Test catching U{bug #20674<https://gna.org/bugs/?20674>}, the ct analysis failure submitted by Mengjun Xue."""
+        """Test catching U{bug #20674<https://web.archive.org/web/https://gna.org/bugs/?20674>}, the ct analysis failure submitted by Mengjun Xue."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_20674_ct_analysis_failure.py')

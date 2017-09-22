@@ -627,7 +627,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_20470_alternate_location_indicator(self):
-        """Catch U{bug #20470<https://gna.org/bugs/?20470>}, the alternate location indicator problem."""
+        """Catch U{bug #20470<https://web.archive.org/web/https://gna.org/bugs/?20470>}, the alternate location indicator problem."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -639,7 +639,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_21187_corrupted_pdb(self):
-        """Catch U{bug #21187<https://gna.org/bugs/?21187>}, the corrupted PDB with all proton atoms numbers set to zero."""
+        """Catch U{bug #21187<https://web.archive.org/web/https://gna.org/bugs/?21187>}, the corrupted PDB with all proton atoms numbers set to zero."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -657,9 +657,9 @@ class Structure(SystemTestCase):
 
 
     def test_bug_21522_master_record_atom_count(self):
-        """Catch U{bug #21522<https://gna.org/bugs/?21522>}, the structure.write_pdb user function creating an incorrect MASTER record.
+        """Catch U{bug #21522<https://web.archive.org/web/https://gna.org/bugs/?21522>}, the structure.write_pdb user function creating an incorrect MASTER record.
 
-        This also triggers U{bug #21520<https://gna.org/bugs/?21520>}, the failure of the structure.write_pdb user function when creating the MASTER record due to too many ATOM and HETATM records being present.
+        This also triggers U{bug #21520<https://web.archive.org/web/https://gna.org/bugs/?21520>}, the failure of the structure.write_pdb user function when creating the MASTER record due to too many ATOM and HETATM records being present.
         """
 
         # Create 2 models.
@@ -696,7 +696,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_21814_pdb_no_80_space_padding(self):
-        """Catch U{bug #21814<https://gna.org/bugs/?21814>}, the PDB reading failure when not padded to 80 spaces."""
+        """Catch U{bug #21814<https://web.archive.org/web/https://gna.org/bugs/?21814>}, the PDB reading failure when not padded to 80 spaces."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -706,7 +706,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_22041_atom_numbering(self):
-        """Catch U{bug #22041<https://gna.org/bugs/?22041>}, the atom serial number not being sequential from 1 onwards."""
+        """Catch U{bug #22041<https://web.archive.org/web/https://gna.org/bugs/?22041>}, the atom serial number not being sequential from 1 onwards."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -758,7 +758,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_22069_structure_delete_helix_attribute(self):
-        """Catch U{bug #22069<https://gna.org/bugs/?22069>}, the failure of the structure.delete user function with helix attribute errors."""
+        """Catch U{bug #22069<https://web.archive.org/web/https://gna.org/bugs/?22069>}, the failure of the structure.delete user function with helix attribute errors."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
@@ -771,7 +771,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_22070_structure_superimpose_after_deletion(self):
-        """Catch U{bug #22070<https://gna.org/bugs/?22070>}, the failure of the structure.superimpose user function after deleting atoms with structure.delete."""
+        """Catch U{bug #22070<https://web.archive.org/web/https://gna.org/bugs/?22070>}, the failure of the structure.superimpose user function after deleting atoms with structure.delete."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
@@ -796,7 +796,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_22860_CoM_after_deletion(self):
-        """Catch U{bug #22860<https://gna.org/bugs/?22860>}, the failure of the structure.com user function after calling structure.delete."""
+        """Catch U{bug #22860<https://web.archive.org/web/https://gna.org/bugs/?22860>}, the failure of the structure.com user function after calling structure.delete."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
@@ -810,7 +810,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_22861_PDB_writing_chainID_fail(self):
-        """Catch U{bug #22861<https://gna.org/bugs/?22861>}, the chain IDs in the structure.write_pdb user function PDB files are incorrect after calling structure.delete."""
+        """Catch U{bug #22861<https://web.archive.org/web/https://gna.org/bugs/?22861>}, the chain IDs in the structure.write_pdb user function PDB files are incorrect after calling structure.delete."""
 
         # Add one atom to two different molecules.
         self.interpreter.structure.add_atom(mol_name='A', atom_name='N', res_name='Phe', res_num=1, pos=[1.0, 1.0, 1.0], element='N')
@@ -844,7 +844,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_23293_missing_hetatm(self):
-        """Catch U{bug #23293<https://gna.org/bugs/?23293>}, the PDB HETATM loading error whereby the last HETATM record is sometimes not read from the PDB file."""
+        """Catch U{bug #23293<https://web.archive.org/web/https://gna.org/bugs/?23293>}, the PDB HETATM loading error whereby the last HETATM record is sometimes not read from the PDB file."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -896,7 +896,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_23294_multi_mol_automerge(self):
-        """Catch U{bug #23294<https://gna.org/bugs/?23294>}, the automatic merging of PDB molecules results in an IndexError."""
+        """Catch U{bug #23294<https://web.archive.org/web/https://gna.org/bugs/?23294>}, the automatic merging of PDB molecules results in an IndexError."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -930,7 +930,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_23295_ss_metadata_merge(self):
-        """Catch U{bug #23295<https://gna.org/bugs/?23295>}, the PDB secondary structure HELIX and SHEET records not updated when merging molecules."""
+        """Catch U{bug #23295<https://web.archive.org/web/https://gna.org/bugs/?23295>}, the PDB secondary structure HELIX and SHEET records not updated when merging molecules."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -1049,7 +1049,7 @@ class Structure(SystemTestCase):
 
 
     def test_bug_sr_2998_broken_conect_records(self):
-        """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
+        """Test the bug reported as the U{support request #2998<https://web.archive.org/web/https://gna.org/support/?2998>}, the broken CONECT records."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'

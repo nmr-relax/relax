@@ -42,7 +42,7 @@ class Jw(SystemTestCase):
 
 
     def test_bug_20674_jw_mapping(self):
-        """Catch U{bug #20674<https://gna.org/bugs/?20674>}, but for the J(w) mapping analysis."""
+        """Catch U{bug #20674<https://web.archive.org/web/https://gna.org/bugs/?20674>}, but for the J(w) mapping analysis."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_20674_jw_mapping.py')

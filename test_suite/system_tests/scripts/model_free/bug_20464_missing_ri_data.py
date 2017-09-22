@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Script for catching bug #20464, the failure due to missing relaxation data (https://gna.org/bugs/?20464)."""
+"""Script for catching bug #20464, the failure due to missing relaxation data (https://web.archive.org/web/https://gna.org/bugs/?20464)."""
 
 # Python module imports.
 from os import sep

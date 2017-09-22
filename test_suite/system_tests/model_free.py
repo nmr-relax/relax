@@ -239,28 +239,28 @@ class Mf(SystemTestCase):
 
 
     def test_bug_14872_unicode_selection(self):
-        """Test catching U{bug #14872<https://gna.org/bugs/?14872>}, the unicode string selection failure as submitted by Olivier Serve."""
+        """Test catching U{bug #14872<https://web.archive.org/web/https://gna.org/bugs/?14872>}, the unicode string selection failure as submitted by Olivier Serve."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14872_unicode_selection.py')
 
 
     def test_bug_14941_local_tm_global_selection(self):
-        """Test catching U{bug #14941<https://gna.org/bugs/?14941>}, the local tm global model selection problem as submitted by Mikaela Stewart (mikaela dot stewart att gmail dot com)."""
+        """Test catching U{bug #14941<https://web.archive.org/web/https://gna.org/bugs/?14941>}, the local tm global model selection problem as submitted by Mikaela Stewart (mikaela dot stewart att gmail dot com)."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection.py')
 
 
     def test_bug_15050(self):
-        """Test catching U{bug #15050<https://gna.org/bugs/?15050>}, 'PipeContainer' object has no attribute 'diff_tensor' error as submitted by U{Tiago Pais<https://gna.org/users/tpais>}."""
+        """Test catching U{bug #15050<https://web.archive.org/web/https://gna.org/bugs/?15050>}, 'PipeContainer' object has no attribute 'diff_tensor' error as submitted by U{Tiago Pais<https://web.archive.org/web/https://gna.org/users/tpais>}."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_15050.py')
 
 
     def test_bugs_12582_12591_12607(self):
-        """Test catching bugs U{#12582<https://gna.org/bugs/?12582>}, U{#12591<https://gna.org/bugs/?12591>} and U{#12607<https://gna.org/bugs/?12607>} as submitted by Chris Brosey."""
+        """Test catching bugs U{#12582<https://web.archive.org/web/https://gna.org/bugs/?12582>}, U{#12591<https://web.archive.org/web/https://gna.org/bugs/?12591>} and U{#12607<https://web.archive.org/web/https://gna.org/bugs/?12607>} as submitted by Chris Brosey."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bugs_12582_12591_12607.py')
@@ -270,14 +270,14 @@ class Mf(SystemTestCase):
 
 
     def test_bug_18790(self):
-        """Test catching U{bug #18790<https://gna.org/bugs/?18790>}, the negative relaxation data RelaxError reported by Vitaly Vostrikov."""
+        """Test catching U{bug #18790<https://web.archive.org/web/https://gna.org/bugs/?18790>}, the negative relaxation data RelaxError reported by Vitaly Vostrikov."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_18790_negative_error.py')
 
 
     def test_bug_20213_asn_sidechain(self):
-        """U{Bug #20213<https://gna.org/bugs/?20213>} catch, the model selection failure due to the presence of Asp and Gln sidechain N spins."""
+        """U{Bug #20213<https://web.archive.org/web/https://gna.org/bugs/?20213>} catch, the model selection failure due to the presence of Asp and Gln sidechain N spins."""
 
         # Create a temporary directory for dumping files.
         ds.tmpdir = mkdtemp()
@@ -287,7 +287,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20464_missing_ri_data(self):
-        """U{Bug #20464<https://gna.org/bugs/?20464>} catch, the failure due to missing relaxation data."""
+        """U{Bug #20464<https://web.archive.org/web/https://gna.org/bugs/?20464>} catch, the failure due to missing relaxation data."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -297,7 +297,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20563_missing_ri_error(self):
-        """U{Bug #20563<https://gna.org/bugs/?20563>} catch, the failure due to missing relaxation data errors."""
+        """U{Bug #20563<https://web.archive.org/web/https://gna.org/bugs/?20563>} catch, the failure due to missing relaxation data errors."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -307,7 +307,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20531_molmol_macro_write_relaxfault(self):
-        """U{Bug #20531<https://gna.org/bugs/?20531>} catch, the RelaxFault when creating the Molmol macros."""
+        """U{Bug #20531<https://web.archive.org/web/https://gna.org/bugs/?20531>} catch, the RelaxFault when creating the Molmol macros."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -369,7 +369,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20531_molmol_macro_write_relaxfault2(self):
-        """U{Bug #20531<https://gna.org/bugs/?20531>} catch, the RelaxFault when creating the Molmol macros.
+        """U{Bug #20531<https://web.archive.org/web/https://gna.org/bugs/?20531>} catch, the RelaxFault when creating the Molmol macros.
 
         This was the first attempt at catching the bug, but it failed.  However the code paths tested here are not tested in any other tests, so this system test will remain.
         """
@@ -455,7 +455,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20613_auto_mf_diff_tensor_pdb(self):
-        """U{Bug #20613<https://gna.org/bugs/?20613>} catch, the failure of the auto-analysis due to diffusion tensor PDB creation for the local tm global model."""
+        """U{Bug #20613<https://web.archive.org/web/https://gna.org/bugs/?20613>} catch, the failure of the auto-analysis due to diffusion tensor PDB creation for the local tm global model."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -465,7 +465,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_20683_bdc_inf_values(self):
-        """Catch U{bug #20683<https://gna.org/bugs/?20683>}, the model-free analysis failure due to infinite values in the Bruker Dynamics Centre files."""
+        """Catch U{bug #20683<https://web.archive.org/web/https://gna.org/bugs/?20683>}, the model-free analysis failure due to infinite values in the Bruker Dynamics Centre files."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -475,14 +475,14 @@ class Mf(SystemTestCase):
 
 
     def test_bug_21079_local_tm_global_selection(self):
-        """Test catching U{bug #21079<https://gna.org/bugs/?21079>}, the local tm global model selection."""
+        """Test catching U{bug #21079<https://web.archive.org/web/https://gna.org/bugs/?21079>}, the local tm global model selection."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_21079_local_tm_global_selection.py')
 
 
     def test_bug_23933_relax_data_read_ids(self):
-        """U{Bug #23933<https://gna.org/bugs/?23933>} catch, the global name 'ids' is not defined error when loading relaxation data."""
+        """U{Bug #23933<https://web.archive.org/web/https://gna.org/bugs/?23933>} catch, the global name 'ids' is not defined error when loading relaxation data."""
 
         # Path of the files.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'bug_23933_relax_data_read_ids'
@@ -501,7 +501,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_24131_bmrb_deposition(self):
-        """Test catching U{bug #24131<https://gna.org/bugs/?24131>}, the BMRB export failure with the SpinContainer object having no s2 value."""
+        """Test catching U{bug #24131<https://web.archive.org/web/https://gna.org/bugs/?24131>}, the BMRB export failure with the SpinContainer object having no s2 value."""
 
         # The output file.
         ds.tmpfile = mktemp()
@@ -511,7 +511,7 @@ class Mf(SystemTestCase):
 
 
     def test_bug_24131_missing_interaction(self):
-        """Test catching U{bug #24131<https://gna.org/bugs/?24131>}, the BMRB export failure with missing interatomic interactions."""
+        """Test catching U{bug #24131<https://web.archive.org/web/https://gna.org/bugs/?24131>}, the BMRB export failure with missing interatomic interactions."""
 
         # The output file.
         ds.tmpfile = mktemp()
@@ -1262,11 +1262,11 @@ class Mf(SystemTestCase):
             - Rex = 0.149 s^-1
 
         Relevant links for this test are:
-            - U{https://mail.gna.org/public/relax-devel/2009-05/msg00003.html}
-            - U{https://mail.gna.org/public/relax-users/2011-01/msg00029.html}
-            - U{http://gna.org/bugs/?12573}
-            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
-            - U{http://gna.org/bugs/?14173}
+            - U{https://web.archive.org/web/https://mail.gna.org/public/relax-devel/2009-05/msg00003.html}
+            - U{https://web.archive.org/web/https://mail.gna.org/public/relax-users/2011-01/msg00029.html}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573}
+            - U{https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14173}
         """
 
         # Setup the data pipe for optimisation.
@@ -1289,7 +1289,7 @@ class Mf(SystemTestCase):
         # f_count: 955
         # g_count: 209
 
-        # 32-bit i686 Linux (https://mail.gna.org/public/relax-devel/2009-05/msg00003.html).
+        # 32-bit i686 Linux (https://web.archive.org/web/https://mail.gna.org/public/relax-devel/2009-05/msg00003.html).
         # System: Linux
         # Release: 2.6.28-gentoo-r5
         # Version: #1 SMP Sat Apr 25 13:31:51 EDT 2009
@@ -1357,7 +1357,7 @@ class Mf(SystemTestCase):
         # h_count:                                     0
         # warning:                                  None
 
-        # 32-bit i686 Linux (https://mail.gna.org/public/relax-users/2011-01/msg00029.html).
+        # 32-bit i686 Linux (https://web.archive.org/web/https://mail.gna.org/public/relax-users/2011-01/msg00029.html).
         # System:           Linux
         # Release:          2.6.28-17-generic
         # Version:          #58-Ubuntu SMP Tue Dec 1 18:57:07 UTC 2009
@@ -1408,7 +1408,7 @@ class Mf(SystemTestCase):
         # f_count: 701
         # g_count: 163
 
-        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # 32-bit powerpc Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573, https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
         # System: Darwin
         # Release: 9.5.0
         # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; root:xnu-1228.7.58~1/RELEASE_PPC
@@ -1430,7 +1430,7 @@ class Mf(SystemTestCase):
         # h_count:  0
         # warning:  None
 
-        # 32-bit i386 Darwin (http://gna.org/bugs/?14173).
+        # 32-bit i386 Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14173).
         # System: Darwin
         # Release: 9.8.0
         # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
@@ -1452,7 +1452,7 @@ class Mf(SystemTestCase):
         # h_count: 0
         # warning: None 
 
-        # 64-bit i386 Darwin (http://gna.org/bugs/?14173).
+        # 64-bit i386 Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14173).
         # System: Darwin
         # Release: 9.8.0
         # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
@@ -1505,11 +1505,11 @@ class Mf(SystemTestCase):
             - Rex = 0.149 s^-1
 
         Relevant links for this test are:
-            - U{https://mail.gna.org/public/relax-devel/2009-05/msg00003.html}
-            - U{https://mail.gna.org/public/relax-users/2011-01/msg00029.html}
-            - U{http://gna.org/bugs/?12573}
-            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
-            - U{http://gna.org/bugs/?14174}
+            - U{https://web.archive.org/web/https://mail.gna.org/public/relax-devel/2009-05/msg00003.html}
+            - U{https://web.archive.org/web/https://mail.gna.org/public/relax-users/2011-01/msg00029.html}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573}
+            - U{https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14174}
         """
 
         # Setup the data pipe for optimisation.
@@ -1531,7 +1531,7 @@ class Mf(SystemTestCase):
         # f_count: 388
         # g_count: 388
 
-        # 32-bit i686 Linux (https://mail.gna.org/public/relax-devel/2009-05/msg00003.html).
+        # 32-bit i686 Linux (https://web.archive.org/web/https://mail.gna.org/public/relax-devel/2009-05/msg00003.html).
         # System: Linux
         # Release: 2.6.28-gentoo-r5
         # Version: #1 SMP Sat Apr 25 13:31:51 EDT 2009
@@ -1553,7 +1553,7 @@ class Mf(SystemTestCase):
         # h_count:  0
         # warning:  None
 
-        # 32-bit i686 Linux (https://mail.gna.org/public/relax-users/2011-01/msg00029.html).
+        # 32-bit i686 Linux (https://web.archive.org/web/https://mail.gna.org/public/relax-users/2011-01/msg00029.html).
         # System:           Linux
         # Release:          2.6.28-17-generic
         # Version:          #58-Ubuntu SMP Tue Dec 1 18:57:07 UTC 2009
@@ -1599,7 +1599,7 @@ class Mf(SystemTestCase):
         # h_count:                                     0
         # warning:                                  None
 
-        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # 32-bit powerpc Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573, https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
         # System: Darwin
         # Release: 9.5.0
         # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; 
@@ -1622,7 +1622,7 @@ class Mf(SystemTestCase):
         # h_count:  0
         # warning:  None
 
-        # 32-bit i386 Darwin (http://gna.org/bugs/?14174).
+        # 32-bit i386 Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14174).
         # System: Darwin
         # Release: 9.8.0
         # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
@@ -1644,7 +1644,7 @@ class Mf(SystemTestCase):
         # h_count: 0
         # warning: None 
 
-        # 64-bit i386 Darwin (http://gna.org/bugs/?14174).
+        # 64-bit i386 Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14174).
         # System: Darwin
         # Release: 9.8.0
         # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
@@ -1766,9 +1766,9 @@ class Mf(SystemTestCase):
             - Rex = 0.149 s^-1
 
         Relevant links for this test are:
-            - U{http://gna.org/bugs/?12573}
-            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
-            - U{http://gna.org/bugs/?14175}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573}
+            - U{https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14175}
         """
 
         # Setup the data pipe for optimisation.
@@ -1836,7 +1836,7 @@ class Mf(SystemTestCase):
         # h_count:                                     0
         # warning:                                  None
 
-        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # 32-bit powerpc Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573, https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
         # System: Darwin
         # Release: 9.5.0
         # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; 
@@ -1859,7 +1859,7 @@ class Mf(SystemTestCase):
         # h_count:  0
         # warning:  None
 
-        # 64-bit i386 Darwin (http://gna.org/bugs/?14175).
+        # 64-bit i386 Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14175).
         # System: Darwin
         # Release: 9.8.0
         # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
@@ -1913,9 +1913,9 @@ class Mf(SystemTestCase):
             - Rex = 0.149 s^-1
 
         Relevant links for this test are:
-            - U{http://gna.org/bugs/?12573}
-            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
-            - U{http://gna.org/bugs/?14177}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573}
+            - U{https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14177}
         """
 
         # Setup the data pipe for optimisation.
@@ -1983,7 +1983,7 @@ class Mf(SystemTestCase):
         # h_count:                                    18
         # warning:                                  None
         
-        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # 32-bit powerpc Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573, https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
         # System: Darwin
         # Release: 9.5.0
         # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; 
@@ -2006,7 +2006,7 @@ class Mf(SystemTestCase):
         # h_count:  18
         # warning:  None
 
-        # 64-bit i386 Darwin (http://gna.org/bugs/?14177).
+        # 64-bit i386 Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14177).
         # System: Darwin
         # Release: 9.8.0
         # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
@@ -2060,9 +2060,9 @@ class Mf(SystemTestCase):
             - Rex = 0.149 s^-1
 
         Relevant links for this test are:
-            - U{http://gna.org/bugs/?12573}
-            - U{https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
-            - U{http://gna.org/bugs/?14176}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573}
+            - U{https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html}
+            - U{https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14176}
         """
 
         # Setup the data pipe for optimisation.
@@ -2137,7 +2137,7 @@ class Mf(SystemTestCase):
         # f_count: 153
         # g_count: 153
 
-        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # 32-bit powerpc Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?12573, https://web.archive.org/web/https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
         # System: Darwin
         # Release: 9.5.0
         # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; 
@@ -2164,7 +2164,7 @@ class Mf(SystemTestCase):
         # f_count: 165
         # g_count: 165
 
-        # 32-bit i386 Darwin (http://gna.org/bugs/?14176).
+        # 32-bit i386 Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14176).
         # System: Darwin
         # Release: 9.8.0
         # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
@@ -2186,7 +2186,7 @@ class Mf(SystemTestCase):
         # h_count: 22
         # warning: None 
 
-        # 64-bit i386 Darwin (http://gna.org/bugs/?14176).
+        # 64-bit i386 Darwin (https://web.archive.org/web/https://web.archive.org/web/https://gna.org/bugs/?14176).
         # System: Darwin
         # Release: 9.8.0
         # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386

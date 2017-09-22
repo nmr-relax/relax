@@ -23,8 +23,8 @@
 """Script for catching a number of bugs as submitted by Michael Funk (mifu att nmr dot mpibpc dot mpg dot de).
 
 These include:
-    Bug #12670 (https://gna.org/bugs/index.php?12670).
-    Bug #12679 (https://gna.org/bugs/index.php?12679).
+    Bug #12670 (https://web.archive.org/web/https://gna.org/bugs/index.php?12670).
+    Bug #12679 (https://web.archive.org/web/https://gna.org/bugs/index.php?12679).
 """
 
 # Python module imports.

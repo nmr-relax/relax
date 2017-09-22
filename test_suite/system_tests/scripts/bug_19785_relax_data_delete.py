@@ -23,7 +23,7 @@
 """This system test script catches the relax_data.delete bug submitted by Martin Ballaschk.
 
 The bug is:
-    - Bug #19785 (https://gna.org/bugs/?19785).
+    - Bug #19785 (https://web.archive.org/web/https://gna.org/bugs/?19785).
 """
 
 # Python module imports.

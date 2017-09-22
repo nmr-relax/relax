@@ -153,7 +153,7 @@ class Relax_fit(SystemTestCase):
 
 
     def test_bug_12670_12679(self):
-        """Test the relaxation curve fitting, replicating U{bug #12670<https://gna.org/bugs/?12670>} and U{bug #12679<https://gna.org/bugs/?12679>}."""
+        """Test the relaxation curve fitting, replicating U{bug #12670<https://web.archive.org/web/https://gna.org/bugs/?12670>} and U{bug #12679<https://web.archive.org/web/https://gna.org/bugs/?12679>}."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
@@ -180,7 +180,7 @@ class Relax_fit(SystemTestCase):
 
 
     def test_bug_18789(self):
-        """Test for zero errors in Grace plots, replicating U{bug #18789<https://gna.org/bugs/?18789>}."""
+        """Test for zero errors in Grace plots, replicating U{bug #18789<https://web.archive.org/web/https://gna.org/bugs/?18789>}."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'curve_fitting'+sep+'bug_18789_no_grace_errors.py')
@@ -206,7 +206,7 @@ class Relax_fit(SystemTestCase):
 
 
     def test_bug_19887_curvefit_fail(self):
-        """Test for the failure of relaxation curve-fitting, replicating U{bug #19887<https://gna.org/bugs/?19887>}."""
+        """Test for the failure of relaxation curve-fitting, replicating U{bug #19887<https://web.archive.org/web/https://gna.org/bugs/?19887>}."""
 
         # Execute the script.
         try:
@@ -218,7 +218,7 @@ class Relax_fit(SystemTestCase):
 
 
     def test_bug_23244_Iinf_graph(self):
-        """Test that the auto-analysis creates the Iinf grace graphs, replicating U{bug #23244<https://gna.org/bugs/?23244>}."""
+        """Test that the auto-analysis creates the Iinf grace graphs, replicating U{bug #23244<https://web.archive.org/web/https://gna.org/bugs/?23244>}."""
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'curve_fitting'+sep+'relax_fit_inversion_recovery.py')

@@ -36,7 +36,7 @@ class Test_checks(UnitTestCase):
     def test_get_times_cpmg(self):
         """Unit test of the get_times() function.
 
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        This uses the data of the saved state attached to U{bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>}.
         """
 
         # Load the state.

@@ -147,7 +147,7 @@ class Relax_disp(SystemTestCase):
 
 
     def setup_bug_22146_unpacking_r2a_r2b_cluster(self, folder=None, model_analyse=None, places = 7):
-        """Setup data for the catch of U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered full dispersion models.
+        """Setup data for the catch of U{bug #22146<https://web.archive.org/web/https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered full dispersion models.
 
         @keyword folder:            The name of the folder for the test data.
         @type folder:               str
@@ -860,7 +860,7 @@ class Relax_disp(SystemTestCase):
     def test_baldwin_synthetic(self):
         """Test synthetic data of Andrew J. Baldwin B14 model  whereby the simplification R20A = R20B is assumed.
 
-        Support requst sr #3154 U{https://gna.org/support/index.php?3154}.
+        Support requst sr #3154 U{https://web.archive.org/web/https://gna.org/support/index.php?3154}.
 
         This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>} with R20A, R20B = 2. rad/s.
         """
@@ -1044,7 +1044,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_baldwin_synthetic_full(self):
-        """Test synthetic data of Andrew J. Baldwin B14 model. Support requst sr #3154 U{https://gna.org/support/index.php?3154}.
+        """Test synthetic data of Andrew J. Baldwin B14 model. Support requst sr #3154 U{https://web.archive.org/web/https://gna.org/support/index.php?3154}.
 
         This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>}.
         """
@@ -1233,7 +1233,7 @@ class Relax_disp(SystemTestCase):
 
 
     def x_test_bmrb_sub_cpmg(self):
-        """U{Task #7858: <https://gna.org/task/?7858>} Make it possible to submit CPMG experiments for BMRB.
+        """U{Task #7858: <https://web.archive.org/web/https://gna.org/task/?7858>} Make it possible to submit CPMG experiments for BMRB.
         This uses CPMG data from:
             - Webb H, Tynan-Connolly BM, Lee GM, Farrell D, O'Meara F, Soendergaard CR, Teilum K, Hewage C, McIntosh LP, Nielsen JE.
               Remeasuring HEWL pK(a) values by NMR spectroscopy: methods, analysis, accuracy, and implications for theoretical pK(a) calculations.
@@ -1269,7 +1269,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_21081_disp_cluster_fail(self):
-        """U{Bug #21081<https://gna.org/bugs/?21081>} catch, the failure of a cluster analysis when spins are deselected."""
+        """U{Bug #21081<https://web.archive.org/web/https://gna.org/bugs/?21081>} catch, the failure of a cluster analysis when spins are deselected."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -1283,7 +1283,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_21460_disp_cluster_fail(self):
-        """U{Bug #21460<https://gna.org/bugs/?21460>} catch, the failure due to a spectrometer frequency having no relaxation data."""
+        """U{Bug #21460<https://web.archive.org/web/https://gna.org/bugs/?21460>} catch, the failure due to a spectrometer frequency having no relaxation data."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -1299,7 +1299,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp(self):
-        """U{Bug #21665<https://gna.org/bugs/?21344>} catch, the failure of an analysis of a sparse acquired R1rho dataset with missing combinations of time and spin-lock field strengths using auto_analysis."""
+        """U{Bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21344>} catch, the failure of an analysis of a sparse acquired R1rho dataset with missing combinations of time and spin-lock field strengths using auto_analysis."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -1315,7 +1315,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_21665_cpmg_two_fields_two_delaytimes_fail_calc(self):
-        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using minimise.calculate()."""
+        """U{Bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using minimise.calculate()."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -1329,7 +1329,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_21665_cpmg_two_fields_two_delaytimes_fail_relax_disp(self):
-        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times using auto_analysis."""
+        """U{Bug #21665<https://web.archive.org/web/https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times using auto_analysis."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -1345,7 +1345,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_21715_clustered_indexerror(self):
-        """Catch U{bug #21715<https://gna.org/bugs/?21715>}, the failure of a clustered auto-analysis due to an IndexError."""
+        """Catch U{bug #21715<https://web.archive.org/web/https://gna.org/bugs/?21715>}, the failure of a clustered auto-analysis due to an IndexError."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -1362,35 +1362,35 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_22146_unpacking_r2a_r2b_cluster_B14(self):
-        """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered B14 full analysis."""
+        """Catch U{bug #22146<https://web.archive.org/web/https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered B14 full analysis."""
 
         # Base data setup.
         self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='B14_full', model_analyse = MODEL_B14_FULL)
 
 
     def test_bug_22146_unpacking_r2a_r2b_cluster_CR72(self):
-        """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered CR72 full analysis."""
+        """Catch U{bug #22146<https://web.archive.org/web/https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered CR72 full analysis."""
 
         # Base data setup.
         self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='CR72_full', model_analyse = MODEL_CR72_FULL)
 
 
     def test_bug_22146_unpacking_r2a_r2b_cluster_NS_3D(self):
-        """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered NS CPMG 2SITE 3D full analysis."""
+        """Catch U{bug #22146<https://web.archive.org/web/https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered NS CPMG 2SITE 3D full analysis."""
 
         # Base data setup.
         self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_3d_full', model_analyse = MODEL_NS_CPMG_2SITE_3D_FULL)
 
 
     def test_bug_22146_unpacking_r2a_r2b_cluster_NS_STAR(self):
-        """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered NS CPMG 2SITE STAR full analysis."""
+        """Catch U{bug #22146<https://web.archive.org/web/https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered NS CPMG 2SITE STAR full analysis."""
 
         # Base data setup.
         self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_star_full', model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL, places = 4)
 
 
     def test_bug_22477_grace_write_k_AB_mixed_analysis(self):
-        """Catch U{bug #22146<https://gna.org/bugs/?22477>}, the failure of issuing: grace.write(x_data_type='res_num', y_data_type=param) for a mixed CPMG analysis."""
+        """Catch U{bug #22146<https://web.archive.org/web/https://gna.org/bugs/?22477>}, the failure of issuing: grace.write(x_data_type='res_num', y_data_type=param) for a mixed CPMG analysis."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -1466,7 +1466,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_23186_cluster_error_calc_dw(self):
-        """Catch U{bug #23186<https://gna.org/bugs/?23186>}: Error calculation of individual parameter "dw" from Monte-Carlo, is based on first spin."""
+        """Catch U{bug #23186<https://web.archive.org/web/https://gna.org/bugs/?23186>}: Error calculation of individual parameter "dw" from Monte-Carlo, is based on first spin."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -1544,7 +1544,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(resi_0_dw_std, res0.dw_err)
         self.assertAlmostEqual(resi_86_dw_std, res1.dw_err)
 
-        # The following is for Bug #23619: (https://gna.org/bugs/index.php?23619): Stored chi2 sim values from Monte-Carlo simulations does not equal normal chi2 values.
+        # The following is for Bug #23619: (https://web.archive.org/web/https://gna.org/bugs/index.php?23619): Stored chi2 sim values from Monte-Carlo simulations does not equal normal chi2 values.
         # This is to show that this bug is invalid. The "very" different chi2 values stems from r2eff points being back-calculated values rather than original measured values.
 
         # Check calculates the same Monte-Carlo chi2 values 
@@ -1576,14 +1576,14 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_24601_r2eff_missing_data(self):
-        """Catch U{bug #24601<https://gna.org/bugs/?24601>}, the failure of optimisation of the 'R2eff' model with missing data."""
+        """Catch U{bug #24601<https://web.archive.org/web/https://gna.org/bugs/?24601>}, the failure of optimisation of the 'R2eff' model with missing data."""
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r2eff_missing_data.py')
 
 
     def test_bug_9999_slow_r1rho_r2eff_error_with_mc(self):
-        """Catch U{bug #9999<https://gna.org/bugs/?9999>}, The slow optimisation of R1rho R2eff error estimation with Monte Carlo simulations."""
+        """Catch U{bug #9999<https://web.archive.org/web/https://gna.org/bugs/?9999>}, The slow optimisation of R1rho R2eff error estimation with Monte Carlo simulations."""
 
         # Define path to data 
         prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"  +sep+ "R2eff"
@@ -2083,7 +2083,7 @@ class Relax_disp(SystemTestCase):
     def test_cpmg_synthetic_b14_to_ns3d_cluster(self):
         """Test synthetic cpmg data.  Created with B14, analysed with NS CPMG 2site 3D, for clustered analysis.
 
-        This is part of: U{Task #7807 <https://gna.org/task/index.php?7807>}: Speed-up of dispersion models for Clustered analysis.
+        This is part of: U{Task #7807 <https://web.archive.org/web/https://gna.org/task/index.php?7807>}: Speed-up of dispersion models for Clustered analysis.
 
         This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
         """
@@ -2229,7 +2229,7 @@ class Relax_disp(SystemTestCase):
     def test_cpmg_synthetic_b14_to_ns_star_cluster(self):
         """Test synthetic cpmg data.  Created with B14, analysed with NS CPMG 2site STAR, for clustered analysis.
 
-        This is part of: U{Task #7807 <https://gna.org/task/index.php?7807>}: Speed-up of dispersion models for Clustered analysis.
+        This is part of: U{Task #7807 <https://web.archive.org/web/https://gna.org/task/index.php?7807>}: Speed-up of dispersion models for Clustered analysis.
 
         This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
         """
@@ -2514,7 +2514,7 @@ class Relax_disp(SystemTestCase):
         """Test synthetic cpmg data.
 
         This script will produce synthetic CPMG R2eff values according to the NS CPMG 2-site 3D model, and the fit the data with B14.
-        Try to catch bug #22021 U{https://gna.org/bugs/index.php?22021}: Model B14 shows bad fitting to data.
+        Try to catch bug #22021 U{https://web.archive.org/web/https://gna.org/bugs/index.php?22021}: Model B14 shows bad fitting to data.
         """
 
         # Reset.
@@ -3287,7 +3287,7 @@ class Relax_disp(SystemTestCase):
     def test_dx_map_clustered_create_par_file(self):
         """Test making dx_map for residues under clustered calculation, and the creation of the parameter file.
 
-        U{Task #7860<https://gna.org/task/index.php?7860>} : When dx_map is issued, create a parameter file which maps parameters to chi2 value.
+        U{Task #7860<https://web.archive.org/web/https://gna.org/task/index.php?7860>} : When dx_map is issued, create a parameter file which maps parameters to chi2 value.
 
         This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.  Experiment in 0.48 M GuHCl (guanidine hydrochloride).
         """
@@ -3400,7 +3400,7 @@ class Relax_disp(SystemTestCase):
         """Test the user function for estimating R2eff errors from exponential curve fitting.
 
         This follows Task 7822.
-        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+        U{task #7822<https://web.archive.org/web/https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
 
         This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
         Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
@@ -3492,7 +3492,7 @@ class Relax_disp(SystemTestCase):
         """Test the user function for estimating R2eff errors from exponential curve fitting, via the auto_analyses menu.
 
         This follows Task 7822.
-        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+        U{task #7822<https://web.archive.org/web/https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
 
         This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
         Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
@@ -3592,13 +3592,13 @@ class Relax_disp(SystemTestCase):
         This is compared with a run where erros are estimated by 2000 Monte Carlo simulations.
 
         This follows Task 7822.
-        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+        U{task #7822<https://web.archive.org/web/https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
 
         This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
         Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
 
         NOTE: The difference in the methods was due to a bug in relax!
-        U{bug #22554<https://gna.org/bugs/index.php?22554>}. The distribution of intensity with errors in Monte-Carlo simulations are markedly more narrow than expected.
+        U{bug #22554<https://web.archive.org/web/https://gna.org/bugs/index.php?22554>}. The distribution of intensity with errors in Monte-Carlo simulations are markedly more narrow than expected.
 
         This dataset is old, and includes 2000 Monte-Carlo simulations, which is performed wrong.
         """
@@ -6507,7 +6507,7 @@ class Relax_disp(SystemTestCase):
     def test_repeat_cpmg(self):
         """Test the protocol for repeated dispersion analysis. The class: relax_disp_repeat_cpmg.
 
-        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        U{task #7826<https://web.archive.org/web/https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
         """
 
         # Reset.
@@ -7668,7 +7668,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_r20_from_min_r2eff_cpmg(self):
-        """Test speeding up grid search. Support requst sr #3151 U{https://gna.org/support/index.php?3151}.
+        """Test speeding up grid search. Support requst sr #3151 U{https://web.archive.org/web/https://gna.org/support/index.php?3151}.
 
         User function to set the R20 parameters in the default grid search using the minimum R2eff value.
 
@@ -7920,7 +7920,7 @@ class Relax_disp(SystemTestCase):
         This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
         Data is for experiment at 25 degree Celcius.
 
-        bug #21954 U{https://gna.org/bugs/index.php?21954}: Order of spectrum.error_analysis is important.
+        bug #21954 U{https://web.archive.org/web/https://gna.org/bugs/index.php?21954}: Order of spectrum.error_analysis is important.
         """
 
         # Base data setup.
@@ -8747,7 +8747,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_task_7882_monte_carlo_std_residual(self):
-        """Implementation of Task #7882 U{https://gna.org/task/?7882}: Implement Monte-Carlo simulation, where errors are generated with width of standard deviation or residuals"""
+        """Implementation of Task #7882 U{https://web.archive.org/web/https://gna.org/task/?7882}: Implement Monte-Carlo simulation, where errors are generated with width of standard deviation or residuals"""
 
         # First check that results are stored with minimisation, to make sure that Sum of Squares are stored (Chi2 without weighting) and degrees of freedom (dof) is stored.
 
@@ -8810,7 +8810,7 @@ class Relax_disp(SystemTestCase):
 
 
     def x_test_task_7882_kex_conf(self):
-        """Test related to Task #7882 U{https://gna.org/task/?7882}: Try making a confidence interval of kex.
+        """Test related to Task #7882 U{https://web.archive.org/web/https://gna.org/task/?7882}: Try making a confidence interval of kex.
         According to the regression book of Graphpad: U{http://www.graphpad.com/faq/file/Prism4RegressionBook.pdf}.
         Page 109-111.
         """
@@ -8947,7 +8947,7 @@ class Relax_disp(SystemTestCase):
         """System test of the value.write function to write intensities for an R1rho setup.
         This system test is to make sure, that modifying the API for special parameters theta and w_eff does not alter the functionality value.write.
 
-        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        This uses the data of the saved state attached to U{bug #21344<https://web.archive.org/web/https://gna.org/bugs/?21344>}.
         """
 
         # Load the state.
@@ -8995,7 +8995,7 @@ class Relax_disp(SystemTestCase):
     def test_value_write_calc_rotating_frame_params_theta(self):
         """System test of the value.write function to write return values of theta from calc_rotating_frame_params() function for an R1rho setup.
 
-        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        This uses the data of the saved state attached to U{bug #21344<https://web.archive.org/web/https://gna.org/bugs/?21344>}.
         """
 
         # Load the state.
@@ -9044,7 +9044,7 @@ class Relax_disp(SystemTestCase):
     def test_value_write_calc_rotating_frame_params_w_eff(self):
         """System test of the value.write function to write return values of w_eff from calc_rotating_frame_params() function for an R1rho setup.
 
-        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        This uses the data of the saved state attached to U{bug #21344<https://web.archive.org/web/https://gna.org/bugs/?21344>}.
         """
 
         # Load the state.
@@ -9093,7 +9093,7 @@ class Relax_disp(SystemTestCase):
     def test_value_write_calc_rotating_frame_params_auto_analysis(self):
         """System test of the auto_analysis value.write function to write theta and w_eff values for an R1rho setup.
 
-        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        This uses the data of the saved state attached to U{bug #21344<https://web.archive.org/web/https://gna.org/bugs/?21344>}.
         """
 
         # Load the state.
@@ -9346,7 +9346,7 @@ class Relax_disp(SystemTestCase):
         """Test the user function for estimating R2eff errors from exponential curve fitting, and compare it with Monte-Carlo simulations.
 
         This follows Task 7822.
-        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+        U{task #7822<https://web.archive.org/web/https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
 
         This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
         Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.

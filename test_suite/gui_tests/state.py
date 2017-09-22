@@ -51,9 +51,9 @@ class State(GuiTestCase):
 
 
     def test_bug_20480(self):
-        """Catch U{bug #20480<https://gna.org/bugs/?20480>}, the failure to load a relax state in the GUI.
+        """Catch U{bug #20480<https://web.archive.org/web/https://gna.org/bugs/?20480>}, the failure to load a relax state in the GUI.
 
-        This was reported by U{Stanislava Panova<https://gna.org/users/stacy>}.
+        This was reported by U{Stanislava Panova<https://web.archive.org/web/https://gna.org/users/stacy>}.
         """
 
         # Simulate the 'Open relax state' menu entry.

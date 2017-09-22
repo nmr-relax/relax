@@ -80,7 +80,7 @@ for i in range(len(align_list)):
     # The frequency.
     self._execute_uf(uf_name='spectrometer.frequency', id=align_list[i], frq=799.75376122 * 1e6)
 
-# Try to delete the RDC and PCS data (bug #20335, https://gna.org/bugs/?20335).
+# Try to delete the RDC and PCS data (bug #20335, https://web.archive.org/web/https://gna.org/bugs/?20335).
 self._execute_uf(uf_name='pcs.delete')
 self._execute_uf(uf_name='rdc.delete')
 

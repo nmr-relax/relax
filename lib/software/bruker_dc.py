@@ -143,7 +143,7 @@ def parse_file(file=None, dir=None):
         elif in_ri_data:
             # Skip the header.
             if row[0] == 'Peak name':
-                # Catch old PDC files (to fix https://gna.org/bugs/?20152).
+                # Catch old PDC files (to fix https://web.archive.org/web/https://gna.org/bugs/?20152).
                 pdc_file = False
                 if ri_type == 'R1' and not search('R1', line):
                     pdc_file = True

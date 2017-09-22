@@ -412,7 +412,7 @@ class Diffusion_tensor(SystemTestCase):
 
 
     def test_bug_21561_tensor_pdb_failure(self):
-        """Catch U{bug #21561<https://gna.org/bugs/?21561>} reported by Martin Ballaschk, the failure of the diffusion tensor PDB creation when Monte Carlo simulations are not present."""
+        """Catch U{bug #21561<https://web.archive.org/web/https://gna.org/bugs/?21561>} reported by Martin Ballaschk, the failure of the diffusion tensor PDB creation when Monte Carlo simulations are not present."""
 
         # Create a data pipe.
         self.interpreter.pipe.create('diff PDB', 'mf')

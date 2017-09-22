@@ -28,7 +28,7 @@
 Description
 ===========
 
-This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file U{https://gna.org/support/download.php?file_id=18404} attached to U{https://gna.org/task/?7712#comment5}).  That code is::
+This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file U{https://web.archive.org/web/https://gna.org/support/download.php?file_id=18404} attached to U{https://web.archive.org/web/https://gna.org/task/?7712#comment5}).  That code is::
 
     function residual = funNumrho(optpar)
 
@@ -183,7 +183,7 @@ m_R1 = array([
 def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, dw=None, omega=None, offset=None, w1=None, k_AB=None, k_BA=None, relax_time=None):
     """Definition of the multidimensional 3D exchange matrix, of rank [NE][NS][NM][NO][ND][6][6].
 
-    This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
+    This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://web.archive.org/web/https://gna.org/support/download.php?file_id=18404 attached to https://web.archive.org/web/https://gna.org/task/?7712#comment5).
 
 
     @keyword R1:            The longitudinal, spin-lattice relaxation rate.

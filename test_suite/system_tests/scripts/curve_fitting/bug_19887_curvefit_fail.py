@@ -23,7 +23,7 @@
 """This system test script catches the relaxation curve-fitting optimisation bug submitted by Romel Bobby.
 
 The bug is:
-    - Bug #19887 (https://gna.org/bugs/?19887).
+    - Bug #19887 (https://web.archive.org/web/https://gna.org/bugs/?19887).
 """
 
 # Python module imports.

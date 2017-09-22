@@ -62,7 +62,7 @@ class Relax_disp(GuiTestCase):
 
 
     def test_bug_20889_multi_col_peak_list(self):
-        """Test catching U{bug #20889<https://gna.org/bugs/?20889>}, the custom peak intensity reading with a list of spectrum_ids submitted by Troels E. Linnet."""
+        """Test catching U{bug #20889<https://web.archive.org/web/https://gna.org/bugs/?20889>}, the custom peak intensity reading with a list of spectrum_ids submitted by Troels E. Linnet."""
 
         # The path to the files.
         path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep
@@ -126,7 +126,7 @@ class Relax_disp(GuiTestCase):
 
 
     def test_bug_21076_multi_col_peak_list(self):
-        """Test catching U{bug #21076<https://gna.org/bugs/?21076>}, loading a multi-spectra NMRPipe seriesTab file through the GUI, Error messages occur."""
+        """Test catching U{bug #21076<https://web.archive.org/web/https://gna.org/bugs/?21076>}, loading a multi-spectra NMRPipe seriesTab file through the GUI, Error messages occur."""
 
         # The paths to the data files.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'dispersion' + sep + 'KTeilum_FMPoulsen_MAkke_2006' + sep + 'acbp_cpmg_disp_101MGuHCl_40C_041223' + sep
@@ -182,7 +182,7 @@ class Relax_disp(GuiTestCase):
 
 
     def test_bug_22501_close_all_analyses(self):
-        """Test catching U{bug #22501<https://gna.org/bugs/index.php?22501>}, 'Close all analyses' raises error."""
+        """Test catching U{bug #22501<https://web.archive.org/web/https://gna.org/bugs/index.php?22501>}, 'Close all analyses' raises error."""
 
         # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
         analysis = self.new_analysis_wizard(analysis_type='disp')
@@ -597,7 +597,7 @@ class Relax_disp(GuiTestCase):
 
 
     def test_r2eff_err_estimate(self):
-        """Test U{task #7822:<https://gna.org/task/?7822>}, Implement user function to estimate R2eff and associated errors for exponential curve fitting.."""
+        """Test U{task #7822:<https://web.archive.org/web/https://gna.org/task/?7822>}, Implement user function to estimate R2eff and associated errors for exponential curve fitting.."""
 
         # The paths to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep

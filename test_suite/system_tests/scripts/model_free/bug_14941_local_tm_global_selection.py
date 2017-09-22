@@ -23,7 +23,7 @@
 """This system test catches the local tm global model selection bug submitted by Mikaela Stewart (mikaela dot stewart att gmail dot com).
 
 The bug is:
-    - Bug #14941 (https://gna.org/bugs/?14941).
+    - Bug #14941 (https://web.archive.org/web/https://gna.org/bugs/?14941).
 """
 
 # Python module imports.
