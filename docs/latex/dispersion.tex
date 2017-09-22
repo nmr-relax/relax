@@ -2035,7 +2035,7 @@ For a description of gradients and Hessians, see Section~\ref{sect: gradient} on
 The relaxation dispersion model gradients or Hessians have have either not been calculated for the analytic models or cannot be calculated as the solution is not analytic.
 Numeric gradients and Hessians could be calculated but this is too computationally expensive, especially for the numeric models where this adds a second layer of numeric approximation.
 
-Optimisation in relax is via the minfx package \url{https://gna.org/projects/minfx/}.
+Optimisation in relax is via the minfx package \url{https://sourceforge.net/projects/minfx/}.
 This allows the Nelder-Mead simplex optimisation technique (see Section~\ref{sect: Nelder-Mead simplex} on page~\pageref{sect: Nelder-Mead simplex}) and the log-barrier constraint algorithm (see Section~\ref{sect: Log-barrier constraint algorithm} on page~\pageref{sect: Log-barrier constraint algorithm}) to be used.
 The advantage of these two techniques is that it enables extremely reliable and high precision optimisation without the use of gradients or Hessians, hence can significantly increase optimisation speeds.
 They however do not avoid the multiple local minimum problem present in the MMQ models -- for that a highly accurate grid search is a reasonable solution.

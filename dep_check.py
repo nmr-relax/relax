@@ -96,7 +96,7 @@ try:
         sys.stderr.write("Version %s of the 'minfx' dependency is too old, minfx >= %s is required.\n" % (minfx.__version__, min_version))
         sys.exit()
 except ImportError:
-    sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
+    sys.stderr.write("The dependency 'minfx' has not been installed (see https://sourceforge.net/projects/minfx/).\n")
     sys.exit()
 
 # Optional packages.

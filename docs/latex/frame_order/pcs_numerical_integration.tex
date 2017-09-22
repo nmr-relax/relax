@@ -319,7 +319,7 @@ This speeds up the calculation by two orders of magnitude.
 \subsubsection{The zooming grid search}
 \index{optimisation!algorithm!grid search!zooming|textbf}
 
-This is implemented in relax rather than in the \href{https://gna.org/projects/minfx/}{minfx optimisation library}\index{optimisation!minfx}.
+This is implemented in relax rather than in the \href{https://sourceforge.net/projects/minfx/}{minfx optimisation library}\index{optimisation!minfx}.
 As the grid search is parallelised to run on a cluster using OpenMPI\index{MPI!OpenMPI}, it can sometimes be advantageous to use a fine grid search to find a better optimisation starting position for the Nelder-Mead simplex algorithm\index{optimisation!algorithm!Nelder-Mead simplex}.
 Rather than simply increasing the number of increments in the grid search, iteratively performing the grid search while zooming into the optimised parameter values is a more efficient alternative.
 This zooming grid search can be seen in the frame order optimisation script on page~\pageref{sect: frame order analysis script}.

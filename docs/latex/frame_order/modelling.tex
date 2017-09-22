@@ -166,7 +166,7 @@ In the isotropic cone, the $\conethetax \equiv \conethetay$ condition collapses 
 The multiple minima correspond to permutations of the motional system - the eigenframe x, y and z-axes as well as the cone opening angles $\conethetax$, $\conethetay$, and $\conesmax$ associated with these axes.
 But as the mechanics of the cone angles is not identical to that of the torsion angle, only one of the three local minima is the global minimum.
 
-As the \href{https://gna.org/projects/minfx/}{minfx library} used in the frame order analysis currently only implements local optimisation algorithms, and because a global optimiser cannot be guaranteed to converge to the correct minima, a different approach is required:
+As the \href{https://sourceforge.net/projects/minfx/}{minfx library} used in the frame order analysis currently only implements local optimisation algorithms, and because a global optimiser cannot be guaranteed to converge to the correct minima, a different approach is required:
 \begin{itemize}
     \item Optimise to one solution.
     \item Duplicate the data pipe for the model as `permutation A'.
@@ -273,7 +273,7 @@ $\conesmax \le \conethetax \le \conethetay$ & Self\tnote{1} & $[\conethetax, \co
 \subsection{Linear constraints for the frame order models}
 \index{Frame order!linear constraints|textbf}
 
-Linear constraints are implemented for the frame order models using the log-barrier constraint algorithm in \href{https://gna.org/projects/minfx/}{minfx}, as this does not require the derivation of gradients.
+Linear constraints are implemented for the frame order models using the log-barrier constraint algorithm in \href{https://sourceforge.net/projects/minfx/}{minfx}, as this does not require the derivation of gradients.
 
 The pivot point and average domain position parameter constraints in \AA ngstrom are:
 \begin{subequations}
