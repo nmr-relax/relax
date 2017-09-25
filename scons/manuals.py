@@ -535,7 +535,7 @@ def version_file(target, source, env):
     text = version.version
     if text == 'repository checkout':
         if version.repo_type == 'git':
-            text += version.repo_head
+            text += ' %s' % version.repo_head
         else:
             text += ' r%s' % version.repo_head
 
