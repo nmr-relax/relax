@@ -202,6 +202,7 @@ BLACKLISTED_FILES = [
     'docs/latex/nth.sty',                                       # Public domain.
     'docs/latex/relax_version.tex',                             # Single line auto-generated file.
     'docs/latex/frame_order/compile_param_nesting',             # Trivial script.
+    'extern/sobol/COPYING.LESSER',                              # LGPLv3 licence text.
     'graphics/analyses/model_free/2I5O_trunc.pdb',              # Public domain.
     'graphics/misc/Rosenbrock_function/generate.py',            # Public domain.
     'graphics/relax_icons/png/chemical_shift/doc.aux',          # One line.
@@ -2428,6 +2429,8 @@ FALSE_NEG_YEARS = {
 
 # Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
 EXCLUDE = [
+    # 394388d8bed8f58f2176cc96c36f6c0b7f79f958.
+    "Added FSF recommended LGPLv3 licence notices to the top of all of the extern.sobol files. (2017-09-22 15:44:19 +0200)",
     # 93aea1f25e4af51d25909003f6158ba88b064fe4 - Copyright notice updates.
     "Update to FSF compliant copyright notices for the external numdifftools package. (2017-09-03 14:52:10 +0200)",
     # 90129abc13cb764c89a32c2fe2e38e532b859ac5 - Copyright notice updates.
