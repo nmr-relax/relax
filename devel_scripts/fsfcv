@@ -2195,7 +2195,7 @@ ADDITIONAL_COPYRIGHT_YEARS = {
 # False positives (copyright notices in files to ignore, as they are not in the git log).
 FALSE_POS = {
     'info.py':                                                          ["self.copyright.append(\"Copyright (C) 2001-2006 Edward d'Auvergne\")", "self.copyright.append(\"Copyright (C) 2006-2017 the relax development team\")", "self.copyright_short = \"Copyright (C) 2001-2017 the relax development team\""],
-    'devel_scripts/copyright_notices.py':                               ["Copyright (C) year1, year2, year3 copyright-holder"],
+    'devel_scripts/fsfcv':                                              ["Copyright (C) year1, year2, year3 copyright-holder"],
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/object-locked-unlocked.png':                      ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
     'graphics/wizards/oxygen-icon-weather-clear.png':                   ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
@@ -3748,10 +3748,6 @@ def extract_copyright(file_path):
         if "Copyright (C)" in line:
             # Skip README file copyright notices for other files.
             if 'README' in file_path and search(": *Copyright \(C\)", line):
-                continue
-
-            # Skip copyright notices in this script.
-            if 'copyright_notices.py' in file_path and search("\"", line):
                 continue
 
             # Strip leading and trailing comment characters, and all whitespace.
