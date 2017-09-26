@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                             %
-% Copyright (C) 2006,2008,2012-2014 Edward d'Auvergne                         %
+% Copyright (C) 2006,2008,2012-2014,2017 Edward d'Auvergne                    %
 %                                                                             %
 % This file is part of the program relax (http://www.nmr-relax.com).          %
 %                                                                             %
@@ -229,7 +229,7 @@ For classes relax uses a mix of camel case (for example all the \prompt{RelaxErr
 The first letter in all cases is always capitalised.
 Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.
 Examples include the RelaxError code, the threading code, and the relax data store code.
-All the data analysis specific code, generic code, interface code, etc.\ uses underscores between the words with only the first letter capitalised.
+All the data analysis specific code, data pipe control code, interface code, etc.\ uses underscores between the words with only the first letter capitalised.
 One exception is the space mapping class \pycode{OpenDX}, the reason being that the program is called \prompt{OpenDX}.
 An example is:
 
@@ -766,16 +766,19 @@ The core modular design of the program is shown in Figure~\ref{fig: core design}
 % The divisions of relax's source code.
 \subsection{The divisions of relax's source code}
 
-relax's source code can be divided into five major areas:  the initialisation code, the user interface (UI) code, the functional code, the number crunching code, and the code storing the program state.
+relax's source code can be divided into a few major categories:  the initialisation code, the user interface (UI) code, the functional code, the number crunching code, the code storing the program state, the multi-processor, auto-analyses, and the test suite.
 \begin{description}
   \item[Initialisation:]  The code belonging to this section initialises the program, processes the command-line arguments, and determines what mode the program will be run in including the choice of the UI.
   \item[UI:]  The current UI modes in relax include the prompt, the script and the GUI modes.
     These consist of separate code paths, all sitting on top of the underlying functional code.
-    In the future, a web-based interface may be added.
+    It includes the user function code with is shared by all UIs.
   \item[Functional code:]  This code is the main part of the program.
-    It includes anything which does not fit into the other sections and comprises the generic code, the specific code, and the specific setup code used as an interface between the two.
+    It includes anything which does not fit into the other sections and comprises the data pipe control code, the specific analysis code, and the relax library.
   \item[Number crunching:]  The computationally expensive code belongs in this section.
   \item[Program state:]  The state of the program is contained within the relax data store which is accessible from all parts of the program as a singleton object.
+  \item[Multi-processor:]  All relax execution passes through this interface which allows for uni-processor and OpenMPI multi-processor operations on code that has been specifically parallelised for this task.
+  \item[Auto-analyses:]  Although not shown, these are essentially advanced relax scripts to simplify data analyses for users.
+  \item[Test suite:]  If code paths in relax are not tested in the test suite, they are considered equivalent to not existing.
 \end{description}
 
 % Core relax design figure.
@@ -783,7 +786,7 @@ relax's source code can be divided into five major areas:  the initialisation co
   \centerline{
     \includegraphics[
       width=\textwidth,
-      bb=0 -1 389 476
+      bb=57 273 447 750
     ]
     {images/core_design}
   }
@@ -801,29 +804,28 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
   \item[relax:]  The top level module.
     This initialises the entire program, tests the dependencies, sets up the multi-processor framework and specific processor fabric, and prints the program's introduction message.
   \item[Command line arguments:]  This code processes the arguments supplied to the program and decides whether to print the help message, initialise the prompt, execute a script, initialise a different UI, run the program in test mode, or run the program as a slave thread.
-  \item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{User interface!prompt|textbf}.
-    The namespace of the interpreter contains the various user functions which are front ends to the generic code.
-    The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.
-    The code for the prompt is located in the directory \directory{prompt\ossep{}}.
+  \item[Prompt:]  The user interface consisting of a Python\index{Python} prompt\index{User interface!prompt|textbf}.
+    The namespace of the interpreter contains the various user functions which are front ends to the functional code.
+    The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the functional code.
+    The code for the prompt is located in the \directory{prompt\ossep{}} directory.
   \item[Script:]  If a script\index{User interface!scripting|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.
     Hence the script has access to all the user functions available at the relax prompt.
     This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
   \item[GUI:]  The graphical user interface\index{User interface!GUI|textbf} code base is located in the \directory{gui} directory.
   \item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax without modification of the current sources.
-    This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible back into relax later on.
-  \item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.
-    All this code is located in the directory \directory{pipe\osus{}control\ossep{}}.
-  \item[Specific setup:]  This code implements the internal interface between the generic and specific code.
-    The generic code calls the specific setup asking for a specific function for the given data pipe type.
-    For example by asking for the minimise function when the data pipe type is model-free analysis the model-free specific \pycode{minimise()} method is returned.
-    Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.
-    The code is located in the file \file{specific\osus{}fns\ossep{}specific\osus{}setup.py}.
-  \item[Specific code:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.
-    Each type is located in a separate file in the directory \directory{specific\osus{}fns\ossep{}}.
-  \item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.
-    The code may be written in Python however C code can be used to significantly increase the speed of the calculations.
+    This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible to merge back into relax later on.
+  \item[Pipe control code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.
+    This code is for manipulating the relax data store.
+    All this code is located in the \directory{pipe\osus{}control\ossep{}} directory.
+  \item[Specific analyses API:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.
+    Each type is located in a separate file in the \directory{specific\osus{}analyses\ossep{}} directory.
+  \item[The relax library:]  This is a diverse collection of functions located within the \directory{lib} directory.
+      Any function that does not touch the relax data store or is not specific to an analysis should be located within the relax library.
+      This standalone library can be used independently of relax and it is used by all parts of relax.
+  \item[Target functions:]  This is reserved for CPU intensive code involved in optimisations and calculations.
+    The code may be written in Python however C code can be used to increase the speed of the calculations.
     For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.
-    These functions are located in the directory \directory{maths\osus{}fns\ossep{}}.
+    These functions are located in the \directory{target\osus{}functions\ossep{}} directory.
   \item[Data:]  The program state stored in the relax data store singleton object.
     This class contains all the program data and is accessed by the generic and specific code.
     The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \file{data\ossep{}\_\_init\_\_.py}.
