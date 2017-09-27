@@ -1666,7 +1666,8 @@ GIT_START = {
 # Desc:  The key is the file and the value is a list of copyright statements.
 # Type:  dict of list of str
 ADDITIONAL_COPYRIGHT = {
-    'docs/latex/relax.bst' : ["Copyright (C) 1988, all rights reserved."],
+    'docs/latex/relax.bst':         ["Copyright (C) 1988, all rights reserved."],
+    'extern/numpy_future.py':       ["Copyright (C) 2005-2013, NumPy Developers."],
 }
 
 # Additional copyright years and authors to add to the list.

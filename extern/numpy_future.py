@@ -1,7 +1,6 @@
 #####################################################################################################################################################
 #                                                                                                                                                   #
-# Copyright (c) 2005-2013, NumPy Developers.                                                                                                        #
-# Copyright (c) 2014 Edward d'Auvergne                                                                                                              #
+# Copyright (C) 2005-2013, NumPy Developers.                                                                                                        #
 # Copyright (C) 2014 Troels E. Linnet                                                                                                               #
 #                                                                                                                                                   #
 # All rights reserved.                                                                                                                              #
