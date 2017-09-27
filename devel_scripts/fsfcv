@@ -345,6 +345,8 @@ class Validate:
 
                 # Count the file.
                 files_total += 1
+                if not self.args.verbose:
+                    self.progress_meter(files_total)
 
                 # Full path to the file.
                 if root[-1] == sep:
@@ -448,11 +450,16 @@ class Validate:
                 expected_copyright.sort()
                 recorded_copyright.sort()
 
+                # Clear the progress meter.
+                if not self.args.verbose:
+                    sys.stderr.write("\b")
+                    sys.stderr.flush()
+
                 # Missing copyright checks.
                 if self.args.missing:
                     # No copyright notices.
                     if not len(recorded_copyright):
-                        sys.stderr.write("Missing copyright notice: '%s'\n" % file_path)
+                        sys.stdout.write("Missing copyright notice: '%s'\n" % file_path)
                         files_nonvalid += 1
 
                     # Copyright present (though not necessarily correct).
@@ -484,17 +491,17 @@ class Validate:
                 files_nonvalid += 1
 
                 # Failure printout.
-                sys.stderr.write("File: '%s'\n" % file_path)
-                sys.stderr.write("Expected non-matching copyrights:\n")
+                sys.stdout.write("File: '%s'\n" % file_path)
+                sys.stdout.write("Expected non-matching copyrights:\n")
                 for i in range(len(expected_copyright)):
                     if expected_copyright[i] not in recorded_copyright:
-                        sys.stderr.write("    %s\n" % expected_copyright[i])
-                sys.stderr.write("Recorded non-matching copyrights:\n")
+                        sys.stdout.write("    %s\n" % expected_copyright[i])
+                sys.stdout.write("Recorded non-matching copyrights:\n")
                 for i in range(len(recorded_copyright)):
                     if recorded_copyright[i] not in expected_copyright:
-                        sys.stderr.write("    %s\n" % recorded_copyright[i])
-                sys.stderr.write("\n")
-                sys.stderr.flush()
+                        sys.stdout.write("    %s\n" % recorded_copyright[i])
+                sys.stdout.write("\n")
+                sys.stdout.flush()
 
         # Final printout.
         sys.stdout.write("\n\nStatistics:\n\n")
@@ -751,7 +758,7 @@ class Validate:
         # File check.
         full_path = "%s%s%s" % (repo_path, sep, file_path)
         if not path.exists(full_path):
-            sys.stderr.write("Warning, file missing from git: %s\n" % full_path)
+            sys.stdout.write("Warning, file missing from git: %s\n" % full_path)
             return
 
         # Date restrictions.
@@ -778,7 +785,7 @@ class Validate:
             if file_path in start_commit and start_commit[file_path] == commit_key:
                 history_stop = True
                 if self.args.debug:
-                    sys.stderr.write("  Git:  Terminating to stop false history.  Commit by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write("  Git:  Terminating to stop false history.  Commit by '%s': %s\n" % (committer, commit_key))
                 break
 
             # Obtain the committer and date info.
@@ -802,7 +809,7 @@ class Validate:
             # Commits to exclude.
             if commit_key in exclude:
                 if self.args.debug:
-                    sys.stderr.write("  Git:  Excluded commit by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write("  Git:  Excluded commit by '%s': %s\n" % (committer, commit_key))
                 i += 3
                 continue
 
@@ -816,20 +823,20 @@ class Validate:
             # Not significant.
             if newlines < self.config.SIG_CODE:
                 if self.args.debug:
-                    sys.stderr.write("  Git:  Not significant by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write("  Git:  Not significant by '%s': %s\n" % (committer, commit_key))
                 i += 3
                 continue
 
             # Skip svnmerge.py merges for svn->git migration repositories as these do not imply copyright ownership for the comitter.
             if search("^Merged revisions .* via svnmerge from", subject):
                 if self.args.debug:
-                    sys.stderr.write("  Git:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
+                    sys.stdout.write("  Git:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
                 i += 3
                 continue
 
             # Debugging printout.
             if self.args.debug:
-                sys.stderr.write("  Git:  Commit by '%s': %s\n" % (committer, commit_key))
+                sys.stdout.write("  Git:  Commit by '%s': %s\n" % (committer, commit_key))
 
             # Date already exists.
             if committer in committer_info and year in committer_info[committer]:
@@ -934,6 +941,34 @@ class Validate:
         # Turn on the verbosity flag in debug mode.
         if self.args.debug:
             self.args.verbose = True
+
+
+    def progress_meter(self, i, a=1, b=1000, file=sys.stderr):
+        """A simple progress write out (which defaults to the terminal STDERR).
+
+        @param i:       The current iteration.
+        @type i:        int
+        @keyword a:     The step size for spinning the spinner.
+        @type a:        int
+        @keyword b:     The step size for printing out the progress.
+        @type b:        int
+        @keyword file:  The file object to write the output to.
+        @type file:     file object
+        """
+
+        # The spinner characters.
+        chars = ['-', '\\', '|', '/']
+
+        # A spinner.
+        if i % a == 0:
+            file.write('\b%s' % chars[i%4])
+            if hasattr(file, 'flush'):
+                file.flush()
+
+        # Dump the progress.
+        if i % b == 0:
+            num = locale.format("%d", i, grouping=True)
+            file.write('\b%12s\n' % num)
 
 
     def readme_add_notice(self, file_name=None, file=None, notices=[]):
@@ -1061,7 +1096,7 @@ class Validate:
         full_path = "%s%s%s%s%s" % (repo_path, sep, svn_head, sep, file_path)
         if "://" not in full_path and not path.exists(full_path):
             if self.args.verbose:
-                sys.stderr.write("Warning, file missing from svn: %s\n" % full_path)
+                sys.stdout.write("Warning, file missing from svn: %s\n" % full_path)
             return
 
         # Date restrictions.
@@ -1102,7 +1137,7 @@ class Validate:
             if file_path in start_commit and start_commit[file_path] == commit_key:
                 history_stop = True
                 if self.args.debug:
-                    sys.stderr.write("  SVN:  Terminating to stop false history.  Commit by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write("  SVN:  Terminating to stop false history.  Commit by '%s': %s\n" % (committer, commit_key))
                 break
 
             # A new commit.
@@ -1187,19 +1222,19 @@ class Validate:
             # Commits to exclude.
             if commit_key in exclude:
                 if self.args.debug:
-                    sys.stderr.write("  SVN:  Excluded commit by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write("  SVN:  Excluded commit by '%s': %s\n" % (committer, commit_key))
                 continue
 
             # No diff found.
             if not in_diff:
                 if self.args.debug:
-                    sys.stderr.write("  SVN:  No diff found by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write("  SVN:  No diff found by '%s': %s\n" % (committer, commit_key))
                 continue
 
             # Not significant.
             if newlines < self.config.SIG_CODE:
                 if self.args.debug:
-                    sys.stderr.write("  SVN:  Not significant by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write("  SVN:  Not significant by '%s': %s\n" % (committer, commit_key))
                 continue
 
             # Date already exists.
@@ -1209,12 +1244,12 @@ class Validate:
             # Skip svnmerge commits.
             if search("^Merged revisions .* via svnmerge from", msg):
                 if self.args.debug:
-                    sys.stderr.write("  SVN:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
+                    sys.stdout.write("  SVN:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
                 continue
 
             # Debugging printout.
             if self.args.debug:
-                sys.stderr.write("  SVN:  Commit by '%s': %s\n" % (committer, commit_key))
+                sys.stdout.write("  SVN:  Commit by '%s': %s\n" % (committer, commit_key))
 
             # A new committer.
             if committer not in committer_info:
@@ -1314,9 +1349,9 @@ class Validate:
 
         # Errors.
         if missing:
-            sys.stderr.write("Missing files with copyright notices:\n")
+            sys.stdout.write("Missing files with copyright notices:\n")
             for i in range(len(missing)):
-                sys.stderr.write("    %s\n" % missing[i])
+                sys.stdout.write("    %s\n" % missing[i])
 
 
 
