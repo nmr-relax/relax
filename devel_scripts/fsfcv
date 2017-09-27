@@ -568,9 +568,10 @@ class Validate:
         # Loop over the file, finding the statements.
         statements = []
         for line in lines:
-            if "Copyright (C)" in line:
+            lower_line = line.lower()
+            if "copyright (c)" in lower_line:
                 # Skip README file copyright notices for other files.
-                if 'README' in file_path and search(": *Copyright \(C\)", line):
+                if 'README' in file_path and search(": *copyright \(c\)", lower_line):
                     continue
 
                 # Strip leading and trailing comment characters, and all whitespace.
