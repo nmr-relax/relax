@@ -524,6 +524,11 @@ class Validate:
                 sys.stdout.write("\n")
                 sys.stdout.flush()
 
+        # Statistics.
+        valid_sum = files_valid + files_missing + files_nonvalid
+        percent_missing = files_missing / valid_sum * 100
+        percent_nonvalid = files_nonvalid / valid_sum * 100
+
         # Final printout.
         sys.stdout.write("\n\nStatistics:\n\n")
         sys.stdout.write("    %-35s %8i\n" % ("All files:", files_total))
@@ -531,10 +536,10 @@ class Validate:
         if repo_flag:
             sys.stdout.write("    %-35s %8i\n" % ("Untracked files:", files_untracked))
         sys.stdout.write("\n")
-        sys.stdout.write("    %-35s %8i\n" % ("Validated file count:", files_valid+files_missing+files_nonvalid))
-        sys.stdout.write("    %-35s %8i\n" % ("Missing copyright notices:", files_missing))
+        sys.stdout.write("    %-35s %8i\n" % ("Validated file count:", valid_sum))
+        sys.stdout.write("    %-35s %8i %8.2f%%\n" % ("Missing copyright notices:", files_missing, percent_missing))
         if repo_flag and not self.args.missing:
-            sys.stdout.write("    %-35s %8i\n" % ("Non-matching copyright notices:", files_nonvalid))
+            sys.stdout.write("    %-35s %8i %8.2f%%\n" % ("Non-matching copyright notices:", files_nonvalid, percent_nonvalid))
 
 
     def committer_info_cleanup(self, file_path, committer_info):
