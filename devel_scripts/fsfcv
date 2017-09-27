@@ -365,15 +365,17 @@ class Validate:
                     pipe = Popen("svn info \"%s/%s/%s\"" % (self.config.REPOS[-1][0], self.config.REPOS[-1][4], file_path), shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
                 err = pipe.stderr.readlines()
                 if err:
-                    sys.stdout.write("Untracked file: %s (mimetype = '%s')\n" % (file_path, type))
-                    sys.stdout.flush()
+                    if self.args.verbose:
+                        sys.stdout.write("Untracked file: %s (mimetype = '%s')\n" % (file_path, type))
+                        sys.stdout.flush()
                     files_untracked += 1
                     continue
 
                 # Determine the file type.
                 type, encoding = mimetypes.guess_type(file_path)
-                sys.stdout.write("Checking: %s (mimetype = '%s')\n" % (file_path, type))
-                sys.stdout.flush()
+                if self.args.verbose:
+                    sys.stdout.write("Checking: %s (mimetype = '%s')\n" % (file_path, type))
+                    sys.stdout.flush()
 
                 # Public domain files.
                 if self.extract_public_domain_readme(file_name, root):
@@ -899,10 +901,14 @@ class Validate:
         parser.add_argument('-c', '--config', metavar='CONFIG_SCRIPT', dest='config', help="The configuration script.")
         parser.add_argument('--blank-config', action='store_true', dest='blank', default=False, help="Print out a blank configuration file for use with this program and then quit.")
         parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False, help="Verbose output.")
-        parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help="Activate the debugging mode.")
+        parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help="Activate the debugging mode (this will also turn on the verbosity flag).")
 
         # Parse and store the arguments.
         self.args = parser.parse_args()
+
+        # Turn on the verbosity flag in debug mode.
+        if self.args.debug:
+            self.args.verbose = True
 
 
     def readme_add_notice(self, file_name=None, file=None, notices=[]):
@@ -1006,7 +1012,8 @@ class Validate:
         # File check.
         full_path = "%s%s%s%s%s" % (repo_path, sep, svn_head, sep, file_path)
         if "://" not in full_path and not path.exists(full_path):
-            sys.stderr.write("Warning, file missing from svn: %s\n" % full_path)
+            if self.args.verbose:
+                sys.stderr.write("Warning, file missing from svn: %s\n" % full_path)
             return
 
         # Date restrictions.
@@ -1237,7 +1244,8 @@ class Validate:
             return
 
         # Printout.
-        sys.stdout.write("Validating: %s\n" % readme)
+        if self.args.verbose:
+            sys.stdout.write("Validating: %s\n" % readme)
 
         # Read the README file data.
         file = open(readme)
