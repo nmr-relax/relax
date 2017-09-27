@@ -20,7 +20,10 @@
 ###############################################################################
 
 # Module docstring.
-"""Configuration file for the FSF Copyright Notice Validation script."""
+"""Configuration file for the FSF Copyright Notice Validation script.
+
+This configuration file uses the concept of a commit ID, which is generated as the first line of the commit message followed by the ISO date in brackets.
+"""
 
 
 # The significant number of new lines of code added.
@@ -33,6 +36,7 @@ SIG_CODE = 8
 #       2 - The start date.
 #       3 - The end date.
 #       4 - The optional HEAD directory for svn.
+# Type:  list of [str, str, int, int, str or None]
 REPOS = [
 #    ["https://svn.code.sf.net/p/nmr-relax/code-svn-archive", "svn", 2001, 2016, "trunk"],    # The online repository, but far too slow to use.
     ["/data/relax/relax_sf_svn_archive", "svn", 2001, 2016, ""],
@@ -44,6 +48,9 @@ README_APPEND_NOTICE = False
 README_COMMITTER = "Edward d'Auvergne"
 
 # The committer name translation table.
+# This is for mapping the name in the copyright notice to the committers real name (e.g. handling non-ASCII characters, or different naming conventions).
+# Desc:  The key is the internally consistent name and the value is the name of the committer in the repository.
+# Type:  dict of str
 COMMITTERS = {
     "Michael Bieri": "Michael Bieri",
     "Edward d'Auvergne": "Edward d'Auvergne",
@@ -55,6 +62,8 @@ COMMITTERS = {
 }
 
 # The svn committer name translation table.
+# Desc:  The key is the svn repository committer name and the value is the internally consistent name of the committer.
+# Type:  dict of str
 SVN_COMMITTERS = {
     "michaelbieri": "Michael Bieri",
     "bugman": "Edward d'Auvergne",
@@ -68,12 +77,15 @@ SVN_COMMITTERS = {
 }
 
 # Alternative names for the committers.
+# Desc:  The key is the alternative committer name in the copyright notice and the value is the name of the committer in the repository.
+# Type:  dict of str
 COMMITTER_ALT = {
     "Gary S Thompson": "Gary Thompson",
     "Troels Schwartz-Linnet": "Troels E. Linnet",
 }
 
-# Blacklisted files.
+# Blacklisted files to avoid checking.
+# Type:  list of str
 BLACKLISTED_FILES = [
     '.gitignore',                                               # Trivial file list.
     'devel_scripts/byte_compile',                               # Trivial script.
@@ -122,6 +134,7 @@ BLACKLISTED_FILES = [
 ]
 
 # Directories to skip.
+# Type:  list of str
 DIR_SKIP = [
     '.git',
     '.svn',
@@ -129,6 +142,8 @@ DIR_SKIP = [
 ]
 
 # Add some new mimetypes.
+# Desc:  The list elements consist of the mimetype name and the file extension.
+# Type:  list of [str, str]
 NEW_MIMETYPES = [
     ['application/bruker', '.bk'],
     ['application/bruker', '.fid'],
@@ -141,7 +156,8 @@ NEW_MIMETYPES = [
     ['image/xcf', '.xcf'],
 ]
 
-# Binary mimetypes.
+# Specify binary mimetypes.
+# Type:  list of str.
 BINARY_MIMETYPES = [
     'application/bruker',
     'application/gromacs',
@@ -159,10 +175,14 @@ BINARY_MIMETYPES = [
 ]
 
 # Binary files (for those without a mimetype or extension).
+# Desc:  The values are the file names.
+# Type:  list of str
 BINARY_FILES = [
 ]
 
 # Stop incorrect svn history by specifying the first commit key of a file (i.e. svn copy but then a complete file replacement).
+# Desc:  The key is the file name and the value is the commit ID.
+# Type:  dict of str
 SVN_START = {
     "pipe_control/structure/__init__.py":
         "Started to create the structure package. (2008-04-04 09:25:38 +0000)",
@@ -251,6 +271,8 @@ SVN_START = {
 }
 
 # Stop incorrect git history by specifying the first commit key of a misidentified file.
+# Desc:  The key is the file name and the value is the commit ID.
+# Type:  dict of str
 GIT_START = {
     "dep_check.py":
         "Shifted the dependency checks into a new module. (2008-06-07 22:29:50 +0000)",
@@ -1641,11 +1663,15 @@ GIT_START = {
 }
 
 # Additional copyright notices that are not present in the git log.
+# Desc:  The key is the file and the value is a list of copyright statements.
+# Type:  dict of list of str
 ADDITIONAL_COPYRIGHT = {
     'docs/latex/relax.bst' : ["Copyright (C) 1988, all rights reserved."],
 }
 
-# Additional copyright years and authors to add to the list.  The keys are lists of lists of the year as an int and the author name as a string.
+# Additional copyright years and authors to add to the list.
+# Desc:  The key is the file and the value is a list of lists of the year as an int and the author name as a string.
+# Type:  dict of list of [int, str]
 ADDITIONAL_COPYRIGHT_YEARS = {
     'docs/html/icons/contents.png':                                     [[1993, "Nikos Drakos"]],
     'docs/html/icons/crossref.png':                                     [[1993, "Nikos Drakos"]],
@@ -2077,6 +2103,8 @@ ADDITIONAL_COPYRIGHT_YEARS = {
 }
 
 # False positives (copyright notices in files to ignore, as they are not in the git log).
+# Desc:  The key is the file and the value is the list of copyright statements to ignore.
+# Type:  dict of list of str
 FALSE_POS = {
     'info.py':                                                          ["self.copyright.append(\"Copyright (C) 2001-2006 Edward d'Auvergne\")", "self.copyright.append(\"Copyright (C) 2006-2017 the relax development team\")", "self.copyright_short = \"Copyright (C) 2001-2017 the relax development team\""],
     'devel_scripts/fsfcv':                                              ["Copyright (C) year1, year2, year3 copyright-holder"],
@@ -2115,8 +2143,14 @@ FALSE_POS = {
 }
 
 # False negatives (significant git log commits which do not imply copyright ownership).
+# Desc:  The key is the file and the value is the copyright statement.
+# Type:  dict of str
 FALSE_NEG = {
 }
+
+# False negatives (significant git log commits which do not imply copyright ownership).
+# Desc:  The key is the file and the value is a list of lists of the year as an int and the author name as a string.
+# Type:  dict of list of [int, str]
 FALSE_NEG_YEARS = {
     'docs/html/icons/contents.png':                                     [[2011, "Edward d'Auvergne"]],
     'docs/html/icons/crossref.png':                                     [[2011, "Edward d'Auvergne"]],
@@ -2311,7 +2345,9 @@ FALSE_NEG_YEARS = {
     'test_suite/shared_data/structures/lactose/lactose_MCMM4_S1_1.pdb':                                 [[2008, "Edward d'Auvergne"]],
 }
 
-# Commits to exclude as a list of commit keys - the first line of the commit message followed by the ISO date in brackets.
+# Commits to exclude as a list of commit IDs.
+# Desc:  The list items are the commit IDs.
+# Type:  list of str
 EXCLUDE = [
     # 394388d8bed8f58f2176cc96c36f6c0b7f79f958.
     "Added FSF recommended LGPLv3 licence notices to the top of all of the extern.sobol files. (2017-09-22 15:44:19 +0200)",
@@ -3067,6 +3103,7 @@ EXCLUDE = [
 #       0 - The comitter's name.
 #       1 - The real author.
 #       2 - The commit key, consisting of the first line of the commit message followed by the ISO date in brackets.
+# Type:  list of [str, str, str]
 AUTHOR_SWITCH = [
     # r26860 - 5ed60182fe5f70fac8040f37fb10e65615e7f68c.
     ["Edward d'Auvergne", "Sebastien Morin",
