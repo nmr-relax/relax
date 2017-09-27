@@ -132,6 +132,7 @@ import bz2
 from datetime import date, datetime
 import gzip
 from importlib.machinery import SourceFileLoader
+import locale
 import mimetypes
 from os import F_OK, access, getcwd, path, sep, walk
 from pytz import utc
