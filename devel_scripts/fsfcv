@@ -296,18 +296,26 @@ class Validate:
         if directory in [None, '']:
             directory = '.'
 
-        # Initial printout.
-        if file_arg:
-            sys.stdout.write("\nFSF copyright notice compliance checking for the file '%s%s%s'.\n\n" % (directory, sep, file_arg))
-        else:
-            sys.stdout.write("\nFSF copyright notice compliance checking for the directory '%s'.\n\n" % directory)
-        sys.stdout.flush()
-
         # Parse the configuration file, and perform the subsequent set up steps.
         self.parse_config(config_file=self.args.config)
         if not len(self.config.REPOS):
             self.setup_repo()
         self.setup_mimetypes()
+
+        # Check for a VC repository.
+        repo_flag = True
+        if not len(self.config.REPOS):
+            repo_flag = False
+
+        # Initial printout.
+        if file_arg:
+            sys.stdout.write("\nFSF copyright notice compliance checking for the file '%s%s%s'.\n" % (directory, sep, file_arg))
+        else:
+            sys.stdout.write("\nFSF copyright notice compliance checking for the directory '%s'.\n" % directory)
+        if not repo_flag:
+            sys.stdout.write("No version control repository found, only checking for missing copyrights!\n")
+        sys.stdout.write("\n")
+        sys.stdout.flush()
 
         # Counters.
         files_total = 0
@@ -371,17 +379,18 @@ class Validate:
                     sys.stdout.flush()
 
                 # Check for untracked files.
-                if self.config.REPOS[-1][1] == 'git':
-                    pipe = Popen("git ls-files \"%s\" --error-unmatch; echo $?" % file_path, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
-                else:
-                    pipe = Popen("svn info \"%s/%s/%s\"" % (self.config.REPOS[-1][0], self.config.REPOS[-1][4], file_path), shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
-                err = pipe.stderr.readlines()
-                if err:
-                    if self.args.verbose:
-                        sys.stdout.write("    Untracked file.\n")
-                        sys.stdout.flush()
-                    files_untracked += 1
-                    continue
+                if repo_flag:
+                    if self.config.REPOS[-1][1] == 'git':
+                        pipe = Popen("git ls-files \"%s\" --error-unmatch; echo $?" % file_path, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
+                    else:
+                        pipe = Popen("svn info \"%s/%s/%s\"" % (self.config.REPOS[-1][0], self.config.REPOS[-1][4], file_path), shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
+                    err = pipe.stderr.readlines()
+                    if err:
+                        if self.args.verbose:
+                            sys.stdout.write("    Untracked file.\n")
+                            sys.stdout.flush()
+                        files_untracked += 1
+                        continue
 
                 # Public domain files.
                 if self.extract_public_domain_readme(file_name, root):
@@ -460,11 +469,12 @@ class Validate:
                 if not len(recorded_copyright):
                     # Failure printout.
                     sys.stdout.write("Missing copyright notice: '%s'\n" % file_path)
-                    sys.stdout.write("Expected copyrights:\n")
-                    for i in range(len(expected_copyright)):
-                        sys.stdout.write("    %s\n" % expected_copyright[i])
-                    sys.stdout.write("\n")
-                    sys.stdout.flush()
+                    if repo_flag:
+                        sys.stdout.write("Expected copyrights:\n")
+                        for i in range(len(expected_copyright)):
+                            sys.stdout.write("    %s\n" % expected_copyright[i])
+                        sys.stdout.write("\n")
+                        sys.stdout.flush()
 
                     # Skip the rest of the validation process.
                     files_missing += 1
@@ -472,6 +482,11 @@ class Validate:
 
                 # If the missing command line argument has been supplied, mark all other files as valid.
                 elif self.args.missing:
+                    files_valid += 1
+                    continue
+
+                # No repository.
+                if not repo_flag:
                     files_valid += 1
                     continue
 
@@ -513,11 +528,12 @@ class Validate:
         sys.stdout.write("\n\nStatistics:\n\n")
         sys.stdout.write("    %-35s %8i\n" % ("All files:", files_total))
         sys.stdout.write("    %-35s %8i\n" % ("Blacklisted files:", files_blacklisted))
-        sys.stdout.write("    %-35s %8i\n" % ("Untracked files:", files_untracked))
+        if repo_flag:
+            sys.stdout.write("    %-35s %8i\n" % ("Untracked files:", files_untracked))
         sys.stdout.write("\n")
         sys.stdout.write("    %-35s %8i\n" % ("Validated file count:", files_valid+files_missing+files_nonvalid))
         sys.stdout.write("    %-35s %8i\n" % ("Missing copyright notices:", files_missing))
-        if not self.args.missing:
+        if repo_flag and not self.args.missing:
             sys.stdout.write("    %-35s %8i\n" % ("Non-matching copyright notices:", files_nonvalid))
 
 
