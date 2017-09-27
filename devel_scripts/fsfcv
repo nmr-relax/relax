@@ -561,10 +561,13 @@ class Validate:
         @rtype:             list of str
         """
 
-        # Read the file data.
-        file = self.open_read_file(file_path)
-        lines = file.readlines()
-        file.close()
+        # Read the file data, returning nothing if not a text file.
+        try:
+            file = self.open_read_file(file_path)
+            lines = file.readlines()
+            file.close()
+        except UnicodeDecodeError:
+            return []
 
         # Loop over the file, finding the statements.
         statements = []
