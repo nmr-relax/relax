@@ -303,8 +303,10 @@ class Validate:
             sys.stdout.write("\nFSF copyright notice compliance checking for the directory '%s'.\n\n" % directory)
         sys.stdout.flush()
 
-        # Parse the configuration file.
+        # Parse the configuration file, and perform the subsequent set up steps.
         self.parse_config(config_file=self.args.config)
+        if not len(self.config.REPOS):
+            self.setup_repo()
 
         # Counters.
         files_total = 0
@@ -982,6 +984,21 @@ class Validate:
             readme.write("=========\n\n")
             readme.write("These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:\n\n")
             readme.close()
+
+
+    def setup_repo(self):
+        """If not supplied, set up the repository info based on the current directory."""
+
+        # Determine the repository type.
+        type = None
+        if path.isdir('.git'):
+            type = 'git'
+        elif path.isdir('.svn'):
+            type = 'svn'
+
+        # Add the current repository.
+        if type:
+            self.config.REPOS.append(['.', type, None, None, None])
 
 
     def svn_log_data(self, file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], svn_head=None, committer_info={}, after=None, before=None, init=False):
