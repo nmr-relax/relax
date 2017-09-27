@@ -307,6 +307,7 @@ class Validate:
         self.parse_config(config_file=self.args.config)
         if not len(self.config.REPOS):
             self.setup_repo()
+        self.setup_mimetypes()
 
         # Counters.
         files_total = 0
@@ -360,6 +361,12 @@ class Validate:
                     files_blacklisted += 1
                     continue
 
+                # Determine the file type.
+                type, encoding = mimetypes.guess_type(file_path)
+                if self.args.verbose:
+                    sys.stdout.write("Checking: %s (mimetype = '%s')\n" % (file_path, type))
+                    sys.stdout.flush()
+
                 # Check for untracked files.
                 if self.config.REPOS[-1][1] == 'git':
                     pipe = Popen("git ls-files \"%s\" --error-unmatch; echo $?" % file_path, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
@@ -368,16 +375,10 @@ class Validate:
                 err = pipe.stderr.readlines()
                 if err:
                     if self.args.verbose:
-                        sys.stdout.write("Untracked file: %s (mimetype = '%s')\n" % (file_path, type))
+                        sys.stdout.write("    Untracked file.\n")
                         sys.stdout.flush()
                     files_untracked += 1
                     continue
-
-                # Determine the file type.
-                type, encoding = mimetypes.guess_type(file_path)
-                if self.args.verbose:
-                    sys.stdout.write("Checking: %s (mimetype = '%s')\n" % (file_path, type))
-                    sys.stdout.flush()
 
                 # Public domain files.
                 if self.extract_public_domain_readme(file_name, root):
@@ -1000,6 +1001,14 @@ class Validate:
             readme.write("=========\n\n")
             readme.write("These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:\n\n")
             readme.close()
+
+
+    def setup_mimetypes(self):
+        """Set up the mimetype handling."""
+
+        # Add any user supplied mimetypes.
+        for type, ext in self.config.NEW_MIMETYPES:
+            mimetypes.add_type(type, ext)
 
 
     def setup_repo(self):
