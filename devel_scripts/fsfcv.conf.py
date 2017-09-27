@@ -1671,8 +1671,8 @@ ADDITIONAL_COPYRIGHT = {
 }
 
 # Additional copyright years and authors to add to the list.
-# Desc:  The key is the file and the value is a list of lists of the year as an int and the author name as a string.
-# Type:  dict of list of [int, str]
+# Desc:  The key is the file and the value is a list of lists of the year as an int (or list of ints for multiple years) and the author name as a string.
+# Type:  dict of list of [int or list of int, str]
 ADDITIONAL_COPYRIGHT_YEARS = {
     'docs/html/icons/contents.png':                                     [[1993, "Nikos Drakos"]],
     'docs/html/icons/crossref.png':                                     [[1993, "Nikos Drakos"]],
