@@ -444,6 +444,20 @@ class Validate:
                 expected_copyright.sort()
                 recorded_copyright.sort()
 
+                # Missing copyright checks.
+                if self.args.missing:
+                    # No copyright notices.
+                    if not len(recorded_copyright):
+                        sys.stderr.write("Missing copyright notice: '%s'\n" % file_path)
+                        files_nonvalid += 1
+
+                    # Copyright present (though not necessarily correct).
+                    else:
+                        files_valid += 1
+
+                    # Skip the rest of the validation process.
+                    continue
+
                 # Validate.
                 if self.validate_copyright(expected_copyright, recorded_copyright):
                     files_valid += 1
@@ -901,6 +915,7 @@ class Validate:
         # Add the script arguments.
         parser.add_argument('directory', metavar='dir', type=str, nargs='?', default='.', help="The directory to check, defaulting to '.'.")
         parser.add_argument('-c', '--config', metavar='CONFIG_SCRIPT', dest='config', help="The configuration script.")
+        parser.add_argument('-m', '--missing', action='store_true', dest='missing', help="Only check for missing copyright notices (files marked as valid may nevertheless have incorrect notices).")
         parser.add_argument('--blank-config', action='store_true', dest='blank', default=False, help="Print out a blank configuration file for use with this program and then quit.")
         parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False, help="Verbose output.")
         parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help="Activate the debugging mode (this will also turn on the verbosity flag).")
