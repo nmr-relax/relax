@@ -131,12 +131,14 @@ from argparse import Action, ArgumentParser
 import bz2
 from datetime import date, datetime
 import gzip
+from importlib.machinery import SourceFileLoader
 import mimetypes
 from os import F_OK, access, getcwd, path, sep, walk
 from pytz import utc
 from re import search
 from subprocess import PIPE, Popen
 import sys
+from types import ModuleType
 
 
 BLANK_CONFIG = """\
@@ -301,6 +303,9 @@ class Validate:
             sys.stdout.write("\nFSF copyright notice compliance checking for the directory '%s'.\n\n" % directory)
         sys.stdout.flush()
 
+        # Parse the configuration file.
+        self.parse_config(config_file=self.args.config)
+
         # Counters.
         files_total = 0
         files_blacklisted = 0
@@ -318,7 +323,7 @@ class Validate:
 
             # Directory skip.
             skip = False
-            for name in DIR_SKIP:
+            for name in self.config.DIR_SKIP:
                 if name in root:
                     skip = True
                     break
@@ -349,15 +354,15 @@ class Validate:
                     file_path = file_path[2:]
 
                 # Blacklisted file.
-                if file_path in BLACKLISTED_FILES:
+                if file_path in self.config.BLACKLISTED_FILES:
                     files_blacklisted += 1
                     continue
 
                 # Check for untracked files.
-                if REPOS[-1][1] == 'git':
+                if self.config.REPOS[-1][1] == 'git':
                     pipe = Popen("git ls-files \"%s\" --error-unmatch; echo $?" % file_path, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
                 else:
-                    pipe = Popen("svn info \"%s/%s/%s\"" % (REPOS[-1][0], REPOS[-1][4], file_path), shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
+                    pipe = Popen("svn info \"%s/%s/%s\"" % (self.config.REPOS[-1][0], self.config.REPOS[-1][4], file_path), shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
                 err = pipe.stderr.readlines()
                 if err:
                     sys.stdout.write("Untracked file: %s (mimetype = '%s')\n" % (file_path, type))
@@ -378,25 +383,25 @@ class Validate:
                 # Get the committer and year information from the repository logs.
                 committer_info = {}
                 init = True
-                for repo_path, repo_type, repo_start, repo_end, repo_head in REPOS:
+                for repo_path, repo_type, repo_start, repo_end, repo_head in self.config.REPOS:
                     if repo_type == 'git':
-                        self.git_log_data(file_path, repo_path=repo_path, exclude=EXCLUDE, start_commit=GIT_START, author_switch=AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+                        self.git_log_data(file_path, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.GIT_START, author_switch=self.config.AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
                     else:
-                        self.svn_log_data(file_path, repo_path=repo_path, exclude=EXCLUDE, start_commit=SVN_START, author_switch=AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+                        self.svn_log_data(file_path, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.SVN_START, author_switch=self.config.AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
                     init = False
                 self.committer_info_cleanup(file_path, committer_info)
 
                 # Add any additional committer years.
-                if file_path in ADDITIONAL_COPYRIGHT_YEARS:
-                    for year, committer in ADDITIONAL_COPYRIGHT_YEARS[file_path]:
+                if file_path in self.config.ADDITIONAL_COPYRIGHT_YEARS:
+                    for year, committer in self.config.ADDITIONAL_COPYRIGHT_YEARS[file_path]:
                         if not committer in committer_info:
                             committer_info[committer] = []
                         if year not in committer_info[committer]:
                             committer_info[committer].append(year)
 
                 # Remove false negative years.
-                if file_path in FALSE_NEG_YEARS:
-                    for year, committer in FALSE_NEG_YEARS[file_path]:
+                if file_path in self.config.FALSE_NEG_YEARS:
+                    for year, committer in self.config.FALSE_NEG_YEARS[file_path]:
                         if committer in committer_info and year in committer_info[committer]:
                             committer_info[committer].pop(committer_info[committer].index(year))
                             if not len(committer_info[committer]):
@@ -409,24 +414,24 @@ class Validate:
                 recorded_copyright = self.extract_copyright_readme(file_name, root)
 
                 # Otherwise parse text files for the current copyright statements.
-                if not len(recorded_copyright) and type not in BINARY_MIMETYPES and file_path not in BINARY_FILES:
+                if not len(recorded_copyright) and type not in self.config.BINARY_MIMETYPES and file_path not in self.config.BINARY_FILES:
                     recorded_copyright = self.extract_copyright(file_path)
 
                 # Add any additional copyright notices.
-                if file_path in ADDITIONAL_COPYRIGHT:
-                    for notice in ADDITIONAL_COPYRIGHT[file_path]:
+                if file_path in self.config.ADDITIONAL_COPYRIGHT:
+                    for notice in self.config.ADDITIONAL_COPYRIGHT[file_path]:
                         expected_copyright.append(notice)
 
                 # Remove false positives and negatives.
-                if file_path in FALSE_POS:
-                    for i in range(len(FALSE_POS[file_path])):
+                if file_path in self.config.FALSE_POS:
+                    for i in range(len(self.config.FALSE_POS[file_path])):
                         for j in reversed(range(len(recorded_copyright))):
-                            if FALSE_POS[file_path][i] in recorded_copyright[j]:
+                            if self.config.FALSE_POS[file_path][i] in recorded_copyright[j]:
                                 recorded_copyright.pop(j)
-                if file_path in FALSE_NEG:
-                    for i in range(len(FALSE_NEG[file_path])):
+                if file_path in self.config.FALSE_NEG:
+                    for i in range(len(self.config.FALSE_NEG[file_path])):
                         for j in reversed(range(len(expected_copyright))):
-                            if FALSE_NEG[file_path][i] in expected_copyright[j]:
+                            if self.config.FALSE_NEG[file_path][i] in expected_copyright[j]:
                                 expected_copyright.pop(j)
 
                 # Remove duplicates and sort the lists.
@@ -441,7 +446,7 @@ class Validate:
                     continue
 
                 # README file copyright notice addition.
-                if README_APPEND_NOTICE:
+                if self.config.README_APPEND_NOTICE:
                     # Prepare the README file, if necessary.
                     readme = root + sep + 'README'
                     self.readme_setup(file=readme)
@@ -783,7 +788,7 @@ class Validate:
                 newlines = int(newlines)
 
             # Not significant.
-            if newlines < SIG_CODE:
+            if newlines < self.config.SIG_CODE:
                 if self.args.debug:
                     sys.stderr.write("  Git:  Not significant by '%s': %s\n" % (committer, commit_key))
                 i += 3
@@ -863,6 +868,26 @@ class Validate:
         return file_obj
 
 
+    def parse_config(self, config_file=None):
+        """Parse the configuration file, dropping back to the defaults if missing.
+
+        @keyword config_file:   The name of the optional configuration file.
+        @type config_file:      str or None
+        """
+
+        # Firstly, parse the blank config as a module.
+        self.config = ModuleType('config')
+        exec(BLANK_CONFIG, self.config.__dict__)
+
+        # Nothing left to do.
+        if config_file == None:
+            return
+
+        # Override the defaults.
+        loader = SourceFileLoader('config', config_file)
+        self.config = loader.load_module()
+
+
     def process_args(self):
         """Process all command line options."""
 
@@ -915,7 +940,7 @@ class Validate:
             now = datetime.now()
             readme.write("###############################################################################\n")
             readme.write("#                                                                             #\n")
-            readme.write("# Copyright (C) %i %-56s #\n" % (now.year, README_COMMITTER))
+            readme.write("# Copyright (C) %i %-56s #\n" % (now.year, self.config.README_COMMITTER))
             readme.write("#                                                                             #\n")
             readme.write("# This file is part of the program relax (http://www.nmr-relax.com).          #\n")
             readme.write("#                                                                             #\n")
@@ -1032,7 +1057,7 @@ class Validate:
 
                 # Extract the committer and year.
                 rev, svn_committer, date, length = lines[i].split(' | ')
-                committer = SVN_COMMITTERS[svn_committer]
+                committer = self.config.SVN_COMMITTERS[svn_committer]
                 year = int(date.split()[0].split('-')[0])
                 date = date.split(" (")[0]
                 date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
@@ -1117,7 +1142,7 @@ class Validate:
                 continue
 
             # Not significant.
-            if newlines < SIG_CODE:
+            if newlines < self.config.SIG_CODE:
                 if self.args.debug:
                     sys.stderr.write("  SVN:  Not significant by '%s': %s\n" % (committer, commit_key))
                 continue
@@ -1166,8 +1191,8 @@ class Validate:
         """
 
         # The name is in the translation table.
-        if committer in COMMITTERS:
-            return COMMITTERS[committer]
+        if committer in self.config.COMMITTERS:
+            return self.config.COMMITTERS[committer]
 
         # Or not.
         return committer
@@ -1186,9 +1211,9 @@ class Validate:
 
         # Replace alternative names in the recorded list.
         for i in range(len(recorded_copyright)):
-            for alt in COMMITTER_ALT:
+            for alt in self.config.COMMITTER_ALT:
                 if search(alt, recorded_copyright[i]):
-                    recorded_copyright[i] = recorded_copyright[i].replace(alt, COMMITTER_ALT[alt])
+                    recorded_copyright[i] = recorded_copyright[i].replace(alt, self.config.COMMITTER_ALT[alt])
 
         # Compare the lists.
         if expected_copyright == recorded_copyright:
