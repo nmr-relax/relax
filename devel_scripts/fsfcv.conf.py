@@ -2107,7 +2107,8 @@ ADDITIONAL_COPYRIGHT_YEARS = {
 # Type:  dict of list of str
 FALSE_POS = {
     'info.py':                                                          ["self.copyright.append(\"Copyright (C) 2001-2006 Edward d'Auvergne\")", "self.copyright.append(\"Copyright (C) 2006-2017 the relax development team\")", "self.copyright_short = \"Copyright (C) 2001-2017 the relax development team\""],
-    'devel_scripts/fsfcv':                                              ["Copyright (C) year1, year2, year3 copyright-holder"],
+    'devel_scripts/fsfcv':                                              ["Copyright (C) year1, year2, year3 copyright-holder", "\"Copyright (C)\"", "\"# Copyright (C)", "\"Copyright (C) %s %s\"", "\"copyright (c)\""],
+    'devel_scripts/fsfcv.conf.py':                                      ["\"Copyright ("],
     'docs/latex/bibliography.bib':                                      ["Copyright (c) 2014 The Author."],
     'docs/latex/frame_order/parameter_nesting.ps':                      ["Copyright (c) 1997, 2009 American Mathematical Society", "Copyright (c) 1997, 2009, 2011 American Mathematical Society"],
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    ["Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>", "Copyright (C) 2007 David Vignoni <david@icon-king.com>", "Copyright (C) 2007 David Miller <miller@oxygen-icons.org>", "Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>", "Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>", "Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>"],
