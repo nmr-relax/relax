@@ -23,9 +23,6 @@
 """Configuration file for the FSF Copyright Notice Validation script."""
 
 
-# Debugging modes.
-DEBUG = False
-
 # The significant number of new lines of code added.
 SIG_CODE = 8
 

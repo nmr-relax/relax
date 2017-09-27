@@ -127,6 +127,7 @@ reasonable time frame.
 """
 
 # Python module imports.
+from argparse import Action, ArgumentParser
 import bz2
 from datetime import date, datetime
 import gzip
@@ -241,16 +242,21 @@ class Validate:
     def __init__(self):
         """Run the validation."""
 
-        # The path to search.
-        if len(sys.argv) == 2:
-            directory = sys.argv[1]
-        else:
-            directory = getcwd()
+        # Process the command line options.
+        self.process_args()
+
+        # The blank configuration file argument.
+        if self.args.blank:
+            sys.stdout.write(BLANK_CONFIG)
+            return
 
         # Handle files as arguments.
+        directory = self.args.directory
         file_arg = None
         if path.isfile(directory):
             directory, file_arg = path.split(directory)
+        if directory in [None, '']:
+            directory = '.'
 
         # Initial printout.
         if file_arg:
@@ -704,7 +710,7 @@ class Validate:
                 break
             if file_path in start_commit and start_commit[file_path] == commit_key:
                 history_stop = True
-                if DEBUG:
+                if self.args.debug:
                     sys.stderr.write("  Git:  Terminating to stop false history.  Commit by '%s': %s\n" % (committer, commit_key))
                 break
 
@@ -728,7 +734,7 @@ class Validate:
 
             # Commits to exclude.
             if commit_key in exclude:
-                if DEBUG:
+                if self.args.debug:
                     sys.stderr.write("  Git:  Excluded commit by '%s': %s\n" % (committer, commit_key))
                 i += 3
                 continue
@@ -742,20 +748,20 @@ class Validate:
 
             # Not significant.
             if newlines < SIG_CODE:
-                if DEBUG:
+                if self.args.debug:
                     sys.stderr.write("  Git:  Not significant by '%s': %s\n" % (committer, commit_key))
                 i += 3
                 continue
 
             # Skip svnmerge.py merges for svn->git migration repositories as these do not imply copyright ownership for the comitter.
             if search("^Merged revisions .* via svnmerge from", subject):
-                if DEBUG:
+                if self.args.debug:
                     sys.stderr.write("  Git:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
                 i += 3
                 continue
 
             # Debugging printout.
-            if DEBUG:
+            if self.args.debug:
                 sys.stderr.write("  Git:  Commit by '%s': %s\n" % (committer, commit_key))
 
             # Date already exists.
@@ -819,6 +825,23 @@ class Validate:
 
         # Return the opened file.
         return file_obj
+
+
+    def process_args(self):
+        """Process all command line options."""
+
+        # Add script argument parsing.
+        parser = ArgumentParser(description="FSF Copyright Notice Validation.")
+
+        # Add the script arguments.
+        parser.add_argument('directory', metavar='dir', type=str, nargs='?', default='.', help="The directory to check, defaulting to '.'.")
+        parser.add_argument('-c', '--config', metavar='CONFIG_SCRIPT', dest='config', help="The configuration script.")
+        parser.add_argument('--blank-config', action='store_true', dest='blank', default=False, help="Print out a blank configuration file for use with this program and then quit.")
+        parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False, help="Verbose output.")
+        parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help="Activate the debugging mode.")
+
+        # Parse and store the arguments.
+        self.args = parser.parse_args()
 
 
     def readme_add_notice(self, file_name=None, file=None, notices=[]):
@@ -962,7 +985,7 @@ class Validate:
                 break
             if file_path in start_commit and start_commit[file_path] == commit_key:
                 history_stop = True
-                if DEBUG:
+                if self.args.debug:
                     sys.stderr.write("  SVN:  Terminating to stop false history.  Commit by '%s': %s\n" % (committer, commit_key))
                 break
 
@@ -1047,19 +1070,19 @@ class Validate:
 
             # Commits to exclude.
             if commit_key in exclude:
-                if DEBUG:
+                if self.args.debug:
                     sys.stderr.write("  SVN:  Excluded commit by '%s': %s\n" % (committer, commit_key))
                 continue
 
             # No diff found.
             if not in_diff:
-                if DEBUG:
+                if self.args.debug:
                     sys.stderr.write("  SVN:  No diff found by '%s': %s\n" % (committer, commit_key))
                 continue
 
             # Not significant.
             if newlines < SIG_CODE:
-                if DEBUG:
+                if self.args.debug:
                     sys.stderr.write("  SVN:  Not significant by '%s': %s\n" % (committer, commit_key))
                 continue
 
@@ -1069,12 +1092,12 @@ class Validate:
 
             # Skip svnmerge commits.
             if search("^Merged revisions .* via svnmerge from", msg):
-                if DEBUG:
+                if self.args.debug:
                     sys.stderr.write("  SVN:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
                 continue
 
             # Debugging printout.
-            if DEBUG:
+            if self.args.debug:
                 sys.stderr.write("  SVN:  Commit by '%s': %s\n" % (committer, commit_key))
 
             # A new committer.
