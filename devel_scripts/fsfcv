@@ -314,6 +314,7 @@ class Validate:
         files_blacklisted = 0
         files_untracked = 0
         files_valid = 0
+        files_missing = 0
         files_nonvalid = 0
 
         # Walk through the current dir, alphabetically.
@@ -455,18 +456,23 @@ class Validate:
                     sys.stderr.write("\b")
                     sys.stderr.flush()
 
-                # Missing copyright checks.
-                if self.args.missing:
-                    # No copyright notices.
-                    if not len(recorded_copyright):
-                        sys.stdout.write("Missing copyright notice: '%s'\n" % file_path)
-                        files_nonvalid += 1
-
-                    # Copyright present (though not necessarily correct).
-                    else:
-                        files_valid += 1
+                # Missing copyright notices.
+                if not len(recorded_copyright):
+                    # Failure printout.
+                    sys.stdout.write("Missing copyright notice: '%s'\n" % file_path)
+                    sys.stdout.write("Expected copyrights:\n")
+                    for i in range(len(expected_copyright)):
+                        sys.stdout.write("    %s\n" % expected_copyright[i])
+                    sys.stdout.write("\n")
+                    sys.stdout.flush()
 
                     # Skip the rest of the validation process.
+                    files_missing += 1
+                    continue
+
+                # If the missing command line argument has been supplied, mark all other files as valid.
+                elif self.args.missing:
+                    files_valid += 1
                     continue
 
                 # Validate.
@@ -509,8 +515,10 @@ class Validate:
         sys.stdout.write("    %-35s %8i\n" % ("Blacklisted files:", files_blacklisted))
         sys.stdout.write("    %-35s %8i\n" % ("Untracked files:", files_untracked))
         sys.stdout.write("\n")
-        sys.stdout.write("    %-35s %8i\n" % ("Validated file count:", files_valid+files_nonvalid))
-        sys.stdout.write("    %-35s %8i\n" % ("Non-matching copyright notices:", files_nonvalid))
+        sys.stdout.write("    %-35s %8i\n" % ("Validated file count:", files_valid+files_missing+files_nonvalid))
+        sys.stdout.write("    %-35s %8i\n" % ("Missing copyright notices:", files_missing))
+        if not self.args.missing:
+            sys.stdout.write("    %-35s %8i\n" % ("Non-matching copyright notices:", files_nonvalid))
 
 
     def committer_info_cleanup(self, file_path, committer_info):
