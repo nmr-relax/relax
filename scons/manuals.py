@@ -144,7 +144,7 @@ def compile_api_manual_html(target, source, env):
     #   HTML code for the project link in the navigation bar.  If left
     #   unspecified, the project link will be generated based on the
     #   project's name and URL.
-    #link = '<a href="http://www.nmr-relax.com">relax</a>'
+    link = '<a href="/">relax</a>'
 
     # top
     #   The "top" page for the documentation.  Can be a URL, the name
@@ -218,6 +218,8 @@ def compile_api_manual_html(target, source, env):
 
     # Program name, output, target, docformat, css, name, and url.
     epydoc_cmd = 'epydoc' + ' --' + output + ' -o ' + target + ' --docformat ' + docformat + ' --css ' + css + ' --name ' + name + ' --url ' + url
+    if 'link' in locals():
+        epydoc_cmd += ' --navlink \'%s\'' % link
 
     # Frames.
     if frames:
