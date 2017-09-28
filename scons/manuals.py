@@ -23,6 +23,7 @@
 """SCons targets for building the relax manuals."""
 
 # Python module imports.
+from datetime import datetime
 from glob import glob
 from os import F_OK, access, chdir, getcwd, listdir, path, remove, rename, sep, system
 from re import search
@@ -318,7 +319,23 @@ def compile_api_manual_html(target, source, env):
     ########################
 
     # Print out.
-    print("\n\nModifying the <head> tag of all HTML files.\n")
+    print("\n\nModifying the header of all HTML files.\n")
+
+    # Copyright notice.
+    today = datetime.today()
+    creator = "Edward d'Auvergne"
+    copyright = """\
+<!--
+    Copyright (C) %i %s
+
+    Permission is granted to copy, distribute and/or modify this document
+    under the terms of the GNU Free Documentation License, Version 1.3
+    or any later version published by the Free Software Foundation;
+    with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+    A copy of the license is included in the section titled "GNU
+    Free Documentation License" (fdl.html).
+-->
+""" % (today.year, creator)
 
     # The additional head tags.
     head_lines = []
@@ -347,19 +364,33 @@ def compile_api_manual_html(target, source, env):
         file = open(full_path, 'w')
 
         # Loop over the lines.
-        found = False
-        for i in range(len(lines)):
-            # Find the position of </head>.
-            if not found and search('</head>', lines[i]):
-                # Append the head lines.
+        i = 0
+        while 1:
+            # Termination.
+            if i > len(lines)-1:
+                break
+
+            # Pre-header copyright notice insertion.
+            if search('<head>', lines[i]):
+                file.write(copyright)
+
+            # Header insertions (e.g. Google analytics JS).
+            if search('</head>', lines[i]):
+                start = False
                 for j in range(len(head_lines)):
-                    file.write(head_lines[j])
+                    # Skip the copyright notice.
+                    if not start and search("Google analytics JS", head_lines[j]):
+                        start = True
 
-                # The found flag.
-                found = True
+                    # Write out the rest.
+                    if start:
+                        file.write(head_lines[j])
 
-            # Append the old line.
+            # Write out the content line.
             file.write(lines[i])
+
+            # Increment the line number.
+            i += 1
 
         # Close the file.
         file.close()
