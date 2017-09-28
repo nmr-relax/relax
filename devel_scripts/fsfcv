@@ -998,7 +998,7 @@ class Validate:
         # Dump the progress.
         if i % b == 0:
             num = locale.format("%d", i, grouping=True)
-            file.write('\b%12s\n' % num)
+            file.write('\b%s files validated.\n' % num)
 
 
     def readme_add_notice(self, file_name=None, file=None, notices=[]):
