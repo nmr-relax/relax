@@ -20,27 +20,6 @@
 ###############################################################################
 
 
-Licencing
-=========
-
-GPLv3+
-------
-
-These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
-
-test.log:                                                                               Copyright (C) 2012 Edward d'Auvergne
-
-
-LGPLv3+
--------
-
-These files are licensed under the terms of the GNU LGPL license, either version 3 of the License, or (at your option) any later version:
-
-sobol_test_output.txt:                                                                  Copyright (C) 2011 Corrado Chisari
-
-Please see the COPYING file.
-
-
 Origin
 ======
 

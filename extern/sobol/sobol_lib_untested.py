@@ -1,34 +1,15 @@
-###############################################################################
-#                                                                             #
-# Copyright (C) 2011 Corrado Chisari                                          #
-#                                                                             #
-# This program is free software: you can redistribute it and/or modify        #
-# it under the terms of the GNU Lesser General Public License as published by #
-# the Free Software Foundation, either version 3 of the License, or           #
-# (at your option) any later version.                                         #
-#                                                                             #
-# This program is distributed in the hope that it will be useful,             #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
-# GNU Lesser General Public License for more details.                         #
-#                                                                             #
-# You should have received a copy of the GNU Lesser General Public License    #
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
-#                                                                             #
-###############################################################################
-
-
 def r4_uniform_01 ( seed ):
+
 #*****************************************************************************80
 #
 ## R4_UNIFORM_01 is a uniform random number generator.
 #
-#	Discussion:
+#  Discussion:
 #
 #		This routine implements the recursion
 #
-#			seed = 16807 * seed mod ( 2**31 - 1 )
-#			r4_uniform_01 = seed / ( 2**31 - 1 )
+#			seed = 16807 * seed mod ( 2^31 - 1 )
+#			r4_uniform_01 = seed / ( 2^31 - 1 )
 #
 #		The integer arithmetic never requires more than 32 bits,
 #		including a sign bit.
@@ -42,20 +23,20 @@ def r4_uniform_01 ( seed ):
 #		 207482415	1790989824	0.833995
 #		1790989824	2035175616	0.947702
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#		This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
 #    		22 February 2011
 #
-#	Author:
+#  Author:
 #
 #		Original MATLAB version by John Burkardt.
 #		PYTHON version by Corrado Chisari
 #
-#	Reference:
+#  Reference:
 #
 #		Paul Bratley, Bennett Fox, Linus Schrage,
 #		A Guide to Simulation,
@@ -79,7 +60,7 @@ def r4_uniform_01 ( seed ):
 #		IBM Systems Journal,
 #		Volume 8, pages 136-143, 1969.
 #
-#	Parameters:
+#  Parameters:
 #
 #		Input, integer SEED, the integer "seed" used to generate
 #		the output random number.	SEED should not be 0.
@@ -106,29 +87,31 @@ def r4_uniform_01 ( seed ):
 	r = seed * 4.656612875E-10
 
 	return [ r, seed ]
+
 def r8mat_write ( output_filename, m, n, table ):
+
 #*****************************************************************************80
 #
 ## R8MAT_WRITE writes an R8MAT file.
 #
-#	Discussion:
+#  Discussion:
 #
 #		An R8MAT is an array of R8's.
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#		This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
 #    		22 February 2011
 #
-#	Author:
+#  Author:
 #
 #		Original MATLAB version by John Burkardt.
 #		PYTHON version by Corrado Chisari
 #
-#	Parameters:
+#  Parameters:
 #
 #		Input, string OUTPUT_FILENAME, the output filename.
 #
@@ -145,8 +128,8 @@ def r8mat_write ( output_filename, m, n, table ):
 	try:
 		output_unit = open ( output_filename, 'wt' )
 	except:
-		print('R8MAT_WRITE - Error!') 
-		print('	Could not open the output file.') 
+		print('R8MAT_WRITE - Error!')
+		print('	Could not open the output file.')
 		return
 #
 #	Write the data.
@@ -157,7 +140,7 @@ def r8mat_write ( output_filename, m, n, table ):
 #
 	for j in range(0, n):
 		for i in range (0, m):
-			output_unit.write('	%24.16f'%table[i, j] )
+			output_unit.write('	%24.16f'%table[i,j] )
 		output_unit.write('\n' )
 #
 #	Close the file.
@@ -165,13 +148,14 @@ def r8mat_write ( output_filename, m, n, table ):
 	output_unit.close()
 
 	return
+
 def tau_sobol ( dim_num ):
 
 #*****************************************************************************80
 #
 ## TAU_SOBOL defines favorable starting seeds for Sobol sequences.
 #
-#	Discussion:
+#  Discussion:
 #
 #		For spatial dimensions 1 through 13, this routine returns
 #		a "favorable" value TAU by which an appropriate starting point
@@ -183,21 +167,21 @@ def tau_sobol ( dim_num ):
 #		while for optimization problems, it is desirable that
 #			TAU < K.
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#		This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
 #    		22 February 2011
 #
-#	Author:
+#  Author:
 #
 #		Original FORTRAN77 version by Bennett Fox.
 #		MATLAB version by John Burkardt.
 #		PYTHON version by Corrado Chisari
 #
-#	Reference:
+#  Reference:
 #
 #		IA Antonov, VM Saleev,
 #		USSR Computational Mathematics and Mathematical Physics,
@@ -232,7 +216,7 @@ def tau_sobol ( dim_num ):
 #		Preprint IPM Akad. Nauk SSSR,
 #		Number 40, Moscow 1976.
 #
-#	Parameters:
+#  Parameters:
 #
 #		Input, integer DIM_NUM, the spatial dimension.	Only values
 #		of 1 through 13 will result in useful responses.

@@ -1,26 +1,8 @@
-###############################################################################
-#                                                                             #
-# Copyright (C) 2011 Corrado Chisari                                          #
-#                                                                             #
-# This program is free software: you can redistribute it and/or modify        #
-# it under the terms of the GNU Lesser General Public License as published by #
-# the Free Software Foundation, either version 3 of the License, or           #
-# (at your option) any later version.                                         #
-#                                                                             #
-# This program is distributed in the hope that it will be useful,             #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
-# GNU Lesser General Public License for more details.                         #
-#                                                                             #
-# You should have received a copy of the GNU Lesser General Public License    #
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
-#                                                                             #
-###############################################################################
-
 import math
 from numpy import bitwise_xor, mod, round, transpose, zeros
 
 def i4_bit_hi1 ( n ):
+
 #*****************************************************************************80
 #
 ## I4_BIT_HI1 returns the position of the high 1 bit base 2 in an integer.
@@ -32,7 +14,7 @@ def i4_bit_hi1 ( n ):
 #       0           0     0
 #       1           1     1
 #       2          10     2
-#       3          11     2 
+#       3          11     2
 #       4         100     3
 #       5         101     3
 #       6         110     3
@@ -51,35 +33,37 @@ def i4_bit_hi1 ( n ):
 #    1024 10000000000    11
 #    1025 10000000001    11
 #
-#  	Licensing:
+#  Licensing:
 #
-#    		This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original MATLAB version by John Burkardt.
+#    PYTHON version by Corrado Chisari
 #
-#  	Parameters:
+#  Parameters:
 #
-#    		Input, integer N, the integer to be measured.
-#    		N should be nonnegative.  If N is nonpositive, the value will always be 0.
+#    Input, integer N, the integer to be measured.
+#    N should be nonnegative.  If N is nonpositive, the value will always be 0.
 #
-#    		Output, integer BIT, the number of bits base 2.
+#    Output, integer BIT, the number of bits base 2.
 #
-	i = math.floor ( n )
-	bit = 0
-	while ( 1 ):
-		if ( i <= 0 ):
-			break
-		bit += 1
-		i = math.floor ( i / 2. )
-	return bit
+  i = int ( n )
+  bit = 0
+  while ( True ):
+    if ( i <= 0 ):
+      break
+    bit += 1
+    i = ( i // 2 )
+  return bit
+
 def i4_bit_lo0 ( n ):
+
 #*****************************************************************************80
 #
 ## I4_BIT_LO0 returns the position of the low 0 bit base 2 in an integer.
@@ -91,7 +75,7 @@ def i4_bit_lo0 ( n ):
 #       0           0     1
 #       1           1     2
 #       2          10     1
-#       3          11     3 
+#       3          11     3
 #       4         100     1
 #       5         101     2
 #       6         110     1
@@ -110,135 +94,138 @@ def i4_bit_lo0 ( n ):
 #    1024 10000000000     1
 #    1025 10000000001     1
 #
-#  	Licensing:
+#  Licensing:
 #
-#    This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original MATLAB version by John Burkardt.
+#    Python version by Corrado Chisari
 #
 #  Parameters:
 #
-#    		Input, integer N, the integer to be measured.
-#    		N should be nonnegative.
+#    Input, integer N, the integer to be measured.
+#    N should be nonnegative.
 #
-#    		Output, integer BIT, the position of the low 1 bit.
+#    Output, integer BIT, the position of the low 1 bit.
 #
-	bit = 0
-	i = math.floor ( n )
-	while ( 1 ):
-		bit = bit + 1
-		i2 = math.floor ( i / 2. )
-		if ( i == 2 * i2 ):
-			break
+  bit = 0
+  i = int ( n )
+  while ( 1 ):
+    bit = bit + 1
+    i2 = ( i // 2 )
+    if ( i == 2 * i2 ):
+      break
+    i = i2
 
-		i = i2
-	return bit
-	
+  return bit
+
 def i4_sobol_generate ( m, n, skip ):
+
 #*****************************************************************************80
 #
 ## I4_SOBOL_GENERATE generates a Sobol dataset.
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original MATLAB version by John Burkardt.
+#    PYTHON version by Corrado Chisari
 #
-#	Parameters:
+#  Parameters:
 #
-#		Input, integer M, the spatial dimension.
+#    Input, integer M, the spatial dimension.
 #
-#		Input, integer N, the number of points to generate.
+#    Input, integer N, the number of points to generate.
 #
-#		Input, integer SKIP, the number of initial points to skip.
+#    Input, integer SKIP, the number of initial points to skip.
 #
-#		Output, real R(M,N), the points.
+#    Output, real R(M,N), the points.
 #
 	r=zeros((m, n))
 	for j in range (1, n+1):
 		seed = skip + j - 2
 		[ r[0:m, j-1], seed ] = i4_sobol ( m, seed )
 	return r
+
 def i4_sobol ( dim_num, seed ):
+
 #*****************************************************************************80
 #
 ## I4_SOBOL generates a new quasirandom Sobol vector with each call.
 #
-#	Discussion:
+#  Discussion:
 #
-#		The routine adapts the ideas of Antonov and Saleev.
+#    The routine adapts the ideas of Antonov and Saleev.
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original FORTRAN77 version by Bennett Fox.
-#		MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original FORTRAN77 version by Bennett Fox.
+#    MATLAB version by John Burkardt.
+#    PYTHON version by Corrado Chisari
 #
-#	Reference:
+#  Reference:
 #
-#		Antonov, Saleev,
-#		USSR Computational Mathematics and Mathematical Physics,
-#		Volume 19, 1980, pages 252 - 256.
+#    Antonov, Saleev,
+#    USSR Computational Mathematics and Mathematical Physics,
+#    olume 19, 1980, pages 252 - 256.
 #
-#		Paul Bratley, Bennett Fox,
-#		Algorithm 659:
-#		Implementing Sobol's Quasirandom Sequence Generator,
-#		ACM Transactions on Mathematical Software,
-#		Volume 14, Number 1, pages 88-100, 1988.
+#    Paul Bratley, Bennett Fox,
+#    Algorithm 659:
+#    Implementing Sobol's Quasirandom Sequence Generator,
+#    ACM Transactions on Mathematical Software,
+#    Volume 14, Number 1, pages 88-100, 1988.
 #
-#		Bennett Fox,
-#		Algorithm 647:
-#		Implementation and Relative Efficiency of Quasirandom 
-#		Sequence Generators,
-#		ACM Transactions on Mathematical Software,
-#		Volume 12, Number 4, pages 362-376, 1986.
+#    Bennett Fox,
+#    Algorithm 647:
+#    Implementation and Relative Efficiency of Quasirandom
+#    Sequence Generators,
+#    ACM Transactions on Mathematical Software,
+#    Volume 12, Number 4, pages 362-376, 1986.
 #
-#		Ilya Sobol,
-#		USSR Computational Mathematics and Mathematical Physics,
-#		Volume 16, pages 236-242, 1977.
+#    Ilya Sobol,
+#    USSR Computational Mathematics and Mathematical Physics,
+#    Volume 16, pages 236-242, 1977.
 #
-#		Ilya Sobol, Levitan, 
-#		The Production of Points Uniformly Distributed in a Multidimensional 
-#		Cube (in Russian),
-#		Preprint IPM Akad. Nauk SSSR, 
-#		Number 40, Moscow 1976.
+#    Ilya Sobol, Levitan,
+#    The Production of Points Uniformly Distributed in a Multidimensional
+#    Cube (in Russian),
+#    Preprint IPM Akad. Nauk SSSR,
+#    Number 40, Moscow 1976.
 #
-#	Parameters:
+#  Parameters:
 #
-#		Input, integer DIM_NUM, the number of spatial dimensions.
-#		DIM_NUM must satisfy 1 <= DIM_NUM <= 40.
+#    Input, integer DIM_NUM, the number of spatial dimensions.
+#    DIM_NUM must satisfy 1 <= DIM_NUM <= 40.
 #
-#		Input/output, integer SEED, the "seed" for the sequence.
-#		This is essentially the index in the sequence of the quasirandom
-#		value to be generated.	On output, SEED has been set to the
-#		appropriate next value, usually simply SEED+1.
-#		If SEED is less than 0 on input, it is treated as though it were 0.
-#		An input value of 0 requests the first (0-th) element of the sequence.
+#    Input/output, integer SEED, the "seed" for the sequence.
+#    This is essentially the index in the sequence of the quasirandom
+#    value to be generated.	On output, SEED has been set to the
+#    appropriate next value, usually simply SEED+1.
+#    If SEED is less than 0 on input, it is treated as though it were 0.
+#    An input value of 0 requests the first (0-th) element of the sequence.
 #
-#		Output, real QUASI(DIM_NUM), the next quasirandom vector.
+#    Output, real QUASI(DIM_NUM), the next quasirandom vector.
 #
 	global atmost
 	global dim_max
@@ -252,7 +239,7 @@ def i4_sobol ( dim_num, seed ):
 	global seed_save
 	global v
 
-	if ( not 'initialized' in globals() ):
+	if ( not 'initialized' in globals().keys() ):
 		initialized = 0
 		dim_num_save = -1
 
@@ -289,7 +276,7 @@ def i4_sobol ( dim_num, seed ):
 			1, 3, 7, 9, 5, 13, 13, 11, 3, 15, \
 			5, 3, 15, 7, 9, 13, 9, 1, 11, 7, \
 			5, 15, 1, 15, 11, 5, 3, 1, 7, 9 ])
-	
+
 		v[7:40, 4] = transpose([ \
 			9, 3, 27, \
 			15, 29, 21, 23, 19, 11, 25, 7, 13, 17, \
@@ -449,62 +436,64 @@ def i4_sobol ( dim_num, seed ):
 	seed = seed + 1
 
 	return [ quasi, seed ]
+
 def i4_uniform ( a, b, seed ):
+
 #*****************************************************************************80
 #
 ## I4_UNIFORM returns a scaled pseudorandom I4.
 #
-#	Discussion:
+#  Discussion:
 #
-#		The pseudorandom number will be scaled to be uniformly distributed
-#		between A and B.
+#    The pseudorandom number will be scaled to be uniformly distributed
+#    between A and B.
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original MATLAB version by John Burkardt.
+#    PYTHON version by Corrado Chisari
 #
-#	Reference:
+#  Reference:
 #
-#		Paul Bratley, Bennett Fox, Linus Schrage,
-#		A Guide to Simulation,
-#		Springer Verlag, pages 201-202, 1983.
+#    Paul Bratley, Bennett Fox, Linus Schrage,
+#    A Guide to Simulation,
+#    Springer Verlag, pages 201-202, 1983.
 #
-#		Pierre L'Ecuyer,
-#		Random Number Generation,
-#		in Handbook of Simulation,
-#		edited by Jerry Banks,
-#		Wiley Interscience, page 95, 1998.
+#    Pierre L'Ecuyer,
+#    Random Number Generation,
+#    in Handbook of Simulation,
+#    edited by Jerry Banks,
+#    Wiley Interscience, page 95, 1998.
 #
-#		Bennett Fox,
-#		Algorithm 647:
-#		Implementation and Relative Efficiency of Quasirandom
-#		Sequence Generators,
-#		ACM Transactions on Mathematical Software,
-#		Volume 12, Number 4, pages 362-376, 1986.
+#    Bennett Fox,
+#    Algorithm 647:
+#    Implementation and Relative Efficiency of Quasirandom
+#    Sequence Generators,
+#    ACM Transactions on Mathematical Software,
+#    Volume 12, Number 4, pages 362-376, 1986.
 #
-#		Peter Lewis, Allen Goodman, James Miller
-#		A Pseudo-Random Number Generator for the System/360,
-#		IBM Systems Journal,
-#		Volume 8, pages 136-143, 1969.
+#    Peter Lewis, Allen Goodman, James Miller
+#    A Pseudo-Random Number Generator for the System/360,
+#    IBM Systems Journal,
+#    Volume 8, pages 136-143, 1969.
 #
-#	Parameters:
+#  Parameters:
 #
-#		Input, integer A, B, the minimum and maximum acceptable values.
+#    Input, integer A, B, the minimum and maximum acceptable values.
 #
-#		Input, integer SEED, a seed for the random number generator.
+#    Input, integer SEED, a seed for the random number generator.
 #
-#		Output, integer C, the randomly chosen integer.
+#    Output, integer C, the randomly chosen integer.
 #
-#		Output, integer SEED, the updated seed.
+#    Output, integer SEED, the updated seed.
 #
 	if ( seed == 0 ):
 		print('I4_UNIFORM - Fatal error!')
@@ -542,47 +531,48 @@ def i4_uniform ( a, b, seed ):
 	c = value
 
 	return [ int(c), int(seed) ]
+
 def prime_ge ( n ):
+
 #*****************************************************************************80
 #
 ## PRIME_GE returns the smallest prime greater than or equal to N.
 #
+#  Example:
 #
-#	Example:
+#      N    PRIME_GE
 #
-#		N		 PRIME_GE
+#    -10     2
+#      1     2
+#      2     2
+#      3     3
+#      4     5
+#      5     5
+#      6     7
+#      7     7
+#      8    11
+#      9    11
+#     10    11
 #
-#		-10		2
-#			1		2
-#			2		2
-#			3		3
-#			4		5
-#			5		5
-#			6		7
-#			7		7
-#			8	 11
-#			9	 11
-#		 10	 11
+#  Licensing:
 #
-#	Licensing:
+#    This code is distributed under the MIT license.
 #
-#		This code is distributed under the GNU LGPL license.
+#  Modified:
 #
-#	Modified:
+#    22 February 2011
 #
-#    		22 February 2011
+#  Author:
 #
-#	Author:
+#    Original MATLAB version by John Burkardt.
+#    PYTHON version by Corrado Chisari
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#  Parameters:
 #
-#	Parameters:
+#    Input, integer N, the number to be bounded.
 #
-#		Input, integer N, the number to be bounded.
-#
-#		Output, integer P, the smallest prime number that is greater
-#		than or equal to N.	
+#    Output, integer P, the smallest prime number that is greater
+#    than or equal to N.
 #
 	p = max ( math.ceil ( n ), 2 )
 	while ( not isprime ( p ) ):
@@ -591,28 +581,28 @@ def prime_ge ( n ):
 	return p
 
 def isprime(n):
-	#*****************************************************************************80
+
+#*****************************************************************************80
 #
 ## IS_PRIME returns True if N is a prime number, False otherwise
 #
+#  Licensing:
 #
-#	Licensing:
+#    This code is distributed under the MIT license.
 #
-#		This code is distributed under the GNU LGPL license.
+#  Modified:
 #
-#	Modified:
+#    22 February 2011
 #
-#    		22 February 2011
+#  Author:
 #
-#	Author:
+#    Corrado Chisari
 #
-#		Corrado Chisari
+#  Parameters:
 #
-#	Parameters:
+#    Input, integer N, the number to be checked.
 #
-#		Input, integer N, the number to be checked.
-#
-#		Output, boolean value, True or False
+#    Output, boolean value, True or False
 #
 	if n!=int(n) or n<1:
 		return False
@@ -621,5 +611,6 @@ def isprime(n):
 		if n%p==0:
 			return False
 		p+=1
+
 	return True
-	
+

@@ -22,7 +22,7 @@
 # Package docstring.
 """The SOBOL library.
 
-This is the unmodified code of John Burkardt and Corrado Chisari from http://people.sc.fsu.edu/~jburkardt/py_src/sobol/sobol.html.  The code is licenced under the GNU LGPL.
+This is the unmodified code of John Burkardt and Corrado Chisari from http://people.sc.fsu.edu/~jburkardt/py_src/sobol/sobol.html.  The code is licenced under the MIT licence.
 """
 
 __all__ = [ 'sobol_lib' ]

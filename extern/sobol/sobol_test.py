@@ -1,82 +1,66 @@
-#!/usr/bin/python
-###############################################################################
-#                                                                             #
-# Copyright (C) 2011 Corrado Chisari                                          #
-#                                                                             #
-# This program is free software: you can redistribute it and/or modify        #
-# it under the terms of the GNU Lesser General Public License as published by #
-# the Free Software Foundation, either version 3 of the License, or           #
-# (at your option) any later version.                                         #
-#                                                                             #
-# This program is distributed in the hope that it will be useful,             #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
-# GNU Lesser General Public License for more details.                         #
-#                                                                             #
-# You should have received a copy of the GNU Lesser General Public License    #
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
-#                                                                             #
-###############################################################################
-
 from numpy import bitwise_xor
 from extern.sobol.sobol_lib import i4_bit_hi1, i4_bit_lo0, i4_sobol, i4_uniform, prime_ge
 import datetime
+
 def sobol_test01 ( ):
+
 #*****************************************************************************80
 #
-## SOBOL_TEST01 tests BITXOR.
+## SOBOL_TEST01 tests BITWISE_XOR.
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original MATLAB version by John Burkardt.
+#    Python version by Corrado Chisari
 #
-	print('\nSOBOL_TEST01') 
-	print('  BITXOR is a MATLAB intrinsic function which returns') 
-	print('  the bitwise exclusive OR of two integers.') 
-	print('\n     I     J     BITXOR(I,J)\n') 
+  print ( '' )
+  print ( 'SOBOL_TEST01'  )
+  print ( '  BITWISE_XOR returns the bitwise exclusive OR of two integers.' )
+  print ( '' )
+  print ('     I     J     BITXOR(I,J)' )
+  print ( ''  )
 
-	seed = 123456789
+  seed = 123456789
 
-	for test in range(0, 10):
+  for test in range ( 0, 10 ):
 
-		[ i, seed ] = i4_uniform ( 0, 100, seed )
-		[ j, seed ] = i4_uniform ( 0, 100, seed )
-		k = bitwise_xor ( i, j )
+    i, seed = i4_uniform ( 0, 100, seed )
+    j, seed = i4_uniform ( 0, 100, seed )
+    k = bitwise_xor ( i, j )
 
-		print('  %6d  %6d  %6d'%( i, j, k ))
+    print ( '  %6d  %6d  %6d' ) % ( i, j, k ) )
 
-	return
-
+  return
 
 def sobol_test02 ( ):
+
 #*****************************************************************************80
 #
 ## SOBOL_TEST02 tests I4_BIT_HI1.
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original MATLAB version by John Burkardt.
+#  PYTHON version by Corrado Chisari
 #
-	print('\nSOBOL_TEST02') 
-	print('  I4_BIT_HI1 returns the location of the high 1 bit.') 
+	print('\nSOBOL_TEST02')
+	print('  I4_BIT_HI1 returns the location of the high 1 bit.')
 	print('\n     I     I4_BIT_HI1(I)\n')
 
 	seed = 123456789
@@ -89,25 +73,25 @@ def sobol_test02 ( ):
 
 		print('%6d %6d'%( i, j ))
 	return
-	
 
 def sobol_test03 ( ):
+
 #*****************************************************************************80
 #
 ## SOBOL_TEST03 tests I4_BIT_LO0.
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original MATLAB version by John Burkardt.
+#    PYTHON version by Corrado Chisari
 #
 	print('\nSOBOL_TEST03')
 	print('  I4_BIT_LO0 returns the location of the low 0 bit.')
@@ -124,25 +108,24 @@ def sobol_test03 ( ):
 		print('%6d %6d'%( i, j ))
 	return
 
-
 def sobol_test04 ( ):
 
 #*****************************************************************************80
 #
 ## SOBOL_TEST04 tests I4_SOBOL.
 #
-#	Licensing:
+#  Licensing:
 #
-#		This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original MATLAB version by John Burkardt.
+#    PYTHON version by Corrado Chisari
 #
 	print('\nSOBOL_TEST04')
 	print('  I4_SOBOL returns the next element')
@@ -171,25 +154,24 @@ def sobol_test04 ( ):
 			seed = seed_out
 	return
 
-
-
 def sobol_test05 ( ):
+
 #*****************************************************************************80
 #
 ## SOBOL_TEST05 tests I4_SOBOL.
 #
-#  	Licensing:
+#  Licensing:
 #
-#    		This code is distributed under the GNU LGPL license.
+#    This code is distributed under the MIT license.
 #
-#  	Modified:
+#  Modified:
 #
-#    		22 February 2011
+#    22 February 2011
 #
-#	Author:
+#  Author:
 #
-#		Original MATLAB version by John Burkardt.
-#		PYTHON version by Corrado Chisari
+#    Original MATLAB version by John Burkardt.
+#    Python version by Corrado Chisari
 #
   print('')
   print('SOBOL_TEST05')
@@ -203,7 +185,7 @@ def sobol_test05 ( ):
   dim_num = 3
 
   print('')
-  print('  Using dimension DIM_NUM =   %d\n'%dim_num) 
+  print('  Using dimension DIM_NUM =   %d\n'%dim_num)
 
   seed = 0
 
@@ -216,7 +198,7 @@ def sobol_test05 ( ):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out= '%6d %6d  '%( seed, seed_out )
     for j in range( 1, dim_num+1):
-      out+= '%10f  '% r[j-1] 
+      out+= '%10f  '% r[j-1]
     print(out)
     seed = seed_out
 
@@ -235,7 +217,7 @@ def sobol_test05 ( ):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out='%6d %6d  '%( seed, seed_out)
     for j in range( 1, dim_num+1):
-      out+= '%10f  '% r[j-1] 
+      out+= '%10f  '% r[j-1]
     print(out)
     seed = seed_out
   print('')
@@ -253,7 +235,7 @@ def sobol_test05 ( ):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out='%6d %6d  '%( seed, seed_out)
     for j in range( 1, dim_num+1):
-      out+= '%10f  '% r[j-1] 
+      out+= '%10f  '% r[j-1]
     print(out)
     seed = seed_out
 
@@ -272,33 +254,52 @@ def sobol_test05 ( ):
     [ r, seed_out ] = i4_sobol ( dim_num, seed )
     out= '%6d %6d  '%( seed, seed_out )
     for j in range( 1, dim_num+1):
-      out+= '%10f  '%r[j-1] 
+      out+= '%10f  '%r[j-1]
     print(out)
     seed = seed_out
 
   return
 
-
-
-
 ##############MAIN#############
-def main(argv=None):
-	d=datetime.datetime.today()
-	print(d.strftime("%d-%b-%Y %H:%M:%S"))
-	print('\nSOBOL_TEST')
-	print('  Test the MATLAB SOBOL routines.')
 
-	sobol_test01()
-	sobol_test02()
-	sobol_test03()
-	sobol_test04()
-	sobol_test05()
-	
-	print('SOBOL_TEST')
-	print('  Normal end of execution.')
+def main ( argv = None ):
 
-	d=datetime.datetime.today()
-	print(d.strftime("%d-%b-%Y %H:%M:%S"))
+#*****************************************************************************80
+#
+## SOBOL_TEST tests the SOBOL library.
+#
+#  Licensing:
+#
+#    This code is distributed under the MIT license.
+#
+#  Modified:
+#
+#    25 October 2016
+#
+#  Author:
+#
+#    Original MATLAB version by John Burkardt.
+#    Python version by Corrado Chisari
+#
+  d=datetime.datetime.today()
+  print(d.strftime("%d-%b-%Y %H:%M:%S"))
+
+  print ( '' )
+  print ( 'SOBOL_TEST' )
+  print ( '  Test the SOBOL routines.' )
+
+  sobol_test01 ( )
+  sobol_test02 ( )
+  sobol_test03 ( )
+  sobol_test04 ( )
+  sobol_test05 ( )
+
+  print ( '' )
+  print ( 'SOBOL_TEST' )
+  print ( '  Normal end of execution.' )
+
+  d = datetime.datetime.today ( )
+  print(d.strftime("%d-%b-%Y %H:%M:%S"))
 
 if __name__ == "__main__":
-	main()
+	main ( )
