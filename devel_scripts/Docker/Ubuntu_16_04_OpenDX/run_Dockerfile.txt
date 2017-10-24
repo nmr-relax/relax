@@ -13,7 +13,7 @@ docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $PWD:/h
 # On mac
 open -a XQuartz
 xhost + `ipconfig getifaddr en1`
-docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer/pwd opendx
+docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer opendx
 
 # https://docs.docker.com/v1.11/engine/reference/commandline/run/
 # -t : Allocate a pseudo-TTY
