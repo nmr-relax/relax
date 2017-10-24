@@ -90,14 +90,25 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
     # Find index of assignment ASS.
     ass_i = varsline.index('ASS')
 
-    # Find index of assignment VOL.
-    if int_col == None or type(int_col) == list:
+    # If a list of int_col is given, make sure it only is one value
+    if type(int_col) == list:
+        # Make a set of all int columns
+        set_int_col = list(set(int_col))
+
+        # If there is only integer column
+        if len(set_int_col) == 1:
+            int_col = set_int_col[0]
+        else:
+            warn(RelaxWarning("Multiple int_col is set to '%s'. I only accept a list of same values."%(int_col )))
+
+    # Find index of assignment HEIGHT or VOL.
+    if int_col == None:
         if "HEIGHT" in varsline:
             int_type = "HEIGHT"
         elif "VOL" in varsline:
             int_type = "VOL"
         else:
-            raise RelaxError("The int_col is set to '%s'. Cannot determine which column to multiply with.")
+            raise RelaxError("The int_col is set to '%s'. Cannot determine which column to multiply with."%(int_col))
         warn(RelaxWarning("The int_col is set to '%s'. Looking for the '%s' index."%(int_col, int_type) ))
         int_col = varsline.index('%s'%int_type) + 1
         warn(RelaxWarning("The int_col is set to '%i' from the '%s' index."%(int_col, int_type) ))
