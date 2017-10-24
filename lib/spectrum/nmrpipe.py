@@ -91,7 +91,7 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
     ass_i = varsline.index('ASS')
 
     # Find index of assignment VOL.
-    if int_col == None:
+    if int_col == None or type(int_col) == list:
         if "HEIGHT" in varsline:
             int_type = "HEIGHT"
         elif "VOL" in varsline:
