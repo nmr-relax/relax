@@ -88,7 +88,7 @@ class SplitFormats(Action):
 parser = ArgumentParser(description="Scripted conversion of Grace *.agr graphs into vector or bitmap graphics files.")
 
 # Add the script arguments.
-parser.add_argument('types', action=SplitFormats, nargs='?', default='EPS', help="The different image types to convert to.  E.g. execute script with: %s -t JPG,EPS,SVG,PNG ..." % (sys.argv[0]))
+parser.add_argument('types', action=SplitFormats, nargs='?', default='EPS', help="The different image types to convert to.  E.g. execute script with:  python %s PNG,EPS,SVG,JPG" % (sys.argv[0]))
 parser.add_argument('-g', action='store_true', dest='relax_gui', default=False, help="Allow the script to be run through the relax GUI via the 'User-functions -> script' submenu, by only allowing for PNG conversions.")
 
 # Parse the arguments.
