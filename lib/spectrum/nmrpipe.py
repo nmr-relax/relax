@@ -90,6 +90,18 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
     # Find index of assignment ASS.
     ass_i = varsline.index('ASS')
 
+    # Find index of assignment VOL.
+    if int_col == None:
+        if "HEIGHT" in varsline:
+            int_type = "HEIGHT"
+        elif "VOL" in varsline:
+            int_type = "VOL"
+        else:
+            raise RelaxError("The int_col is set to '%s'. Cannot determine which column to multiply with.")
+        warn(RelaxWarning("The int_col is set to '%s'. Looking for the '%s' index."%(int_col, int_type) ))
+        int_col = varsline.index('%s'%int_type) + 1
+        warn(RelaxWarning("The int_col is set to '%i' from the '%s' index."%(int_col, int_type) ))
+
     # Chemical shifts preparation.
     w1_col = None
     w2_col = None
@@ -117,6 +129,12 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
         # Skip non-assigned peaks.
         if line[ass_i] == '?-?':
             continue
+
+        # Standard assign if None
+        if line[ass_i] == 'None':
+            new_line_ass_i = "A%sN-HN"%line[0]
+            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file. The spin assignment column 'ASS' is set to '%s'. Setting to %s." % (line[ass_i], new_line_ass_i)))
+            line[ass_i] = new_line_ass_i
 
         # First split by the 2D separator.
         assign1, assign2 = re.split('-', line[ass_i])
@@ -174,7 +192,7 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
             intensities = []
             for i in range(len(spectra)):
                 # The intensity is given by column multiplication.
-                intensities.append(float(line[spectra_i[i]])*float(line[5]))
+                intensities.append( float(line[spectra_i[i]]) * float(line[int_col-1]) )
 
         # Bad data.
         except ValueError:
