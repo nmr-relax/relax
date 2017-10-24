@@ -2061,6 +2061,22 @@ class Relax_disp(SystemTestCase):
         # Read the spectrum from NMRSeriesTab file. The "auto" will generate spectrum name of form: Z_A{i}
         self.interpreter.spectrum.read_intensities(file="peaks.ser", dir=data_path, spectrum_id='auto', int_method='height')
 
+        first_spec_ids =  ['Z_A0', 'Z_A1', 'Z_A2', 'Z_A3', 'Z_A4', 'Z_A5', 'Z_A6', 'Z_A7', 'Z_A8', 'Z_A9',
+                            'Z_A10', 'Z_A11', 'Z_A12', 'Z_A13', 'Z_A14', 'Z_A15', 'Z_A16', 'Z_A17', 'Z_A18',
+                            'Z_A19', 'Z_A20', 'Z_A21', 'Z_A22', 'Z_A23', 'Z_A24', 'Z_A25', 'Z_A26', 'Z_A27',
+                            'Z_A28', 'Z_A29', 'Z_A30', 'Z_A31', 'Z_A32', 'Z_A33', 'Z_A34', 'Z_A35', 'Z_A36',
+                            'Z_A37', 'Z_A38', 'Z_A39', 'Z_A40', 'Z_A41']
+
+        # Try reading and determine id
+        new_spec_ids =  ['Z_B0', 'Z_B1', 'Z_B2', 'Z_B3', 'Z_B4', 'Z_B5', 'Z_B6', 'Z_B7', 'Z_B8', 'Z_B9',
+                            'Z_B10', 'Z_B11', 'Z_B12', 'Z_B13', 'Z_B14', 'Z_B15', 'Z_B16', 'Z_B17', 'Z_B18',
+                            'Z_B19', 'Z_B20', 'Z_B21', 'Z_B22', 'Z_B23', 'Z_B24', 'Z_B25', 'Z_B26', 'Z_B27',
+                            'Z_B28', 'Z_B29', 'Z_B30', 'Z_B31', 'Z_B32', 'Z_B33', 'Z_B34', 'Z_B35', 'Z_B36',
+                            'Z_B37', 'Z_B38', 'Z_B39', 'Z_B40', 'Z_B41']
+
+        # Read the spectrum from NMRSeriesTab file. With intensity columns.
+        self.interpreter.spectrum.read_intensities(file="peaks.ser", dir=data_path, int_method='height', spectrum_id=new_spec_ids, int_col=len(new_spec_ids)*[20])
+
         # Loop over spins
         print("Now looping over spin_ids:")
         spin_int_arr = []
@@ -2084,14 +2100,15 @@ class Relax_disp(SystemTestCase):
         # Check resn
         self.assertEqual(spin_int_arr[0][1], "A")
         # Check id array
-        self.assertEqual(spin_int_arr[0][3], ['Z_A0', 'Z_A1', 'Z_A2', 'Z_A3', 'Z_A4', 'Z_A5', 'Z_A6', 'Z_A7', 'Z_A8', 'Z_A9',
-                                                'Z_A10', 'Z_A11', 'Z_A12', 'Z_A13', 'Z_A14', 'Z_A15', 'Z_A16', 'Z_A17', 'Z_A18',
-                                                'Z_A19', 'Z_A20', 'Z_A21', 'Z_A22', 'Z_A23', 'Z_A24', 'Z_A25', 'Z_A26', 'Z_A27',
-                                                'Z_A28', 'Z_A29', 'Z_A30', 'Z_A31', 'Z_A32', 'Z_A33', 'Z_A34', 'Z_A35', 'Z_A36',
-                                                'Z_A37', 'Z_A38', 'Z_A39', 'Z_A40', 'Z_A41'])
+        self.assertEqual(spin_int_arr[0][3], first_spec_ids + new_spec_ids)
         # Check intensity array
         self.assertEqual(spin_int_arr[0][4][0], 8.618266e+06 * 1)
         self.assertEqual(spin_int_arr[0][4][1], 8.618266e+06 * 0.3993)
+
+        # Get index of intensity
+        int_index = spin_int_arr[0][3].index(new_spec_ids[0])
+        self.assertEqual(spin_int_arr[0][4][int_index], 6.595774e+07 * 1)
+        self.assertEqual(spin_int_arr[0][4][int_index+1], 6.595774e+07 * 0.3993)
 
 
     def test_check_missing_r1(self):
