@@ -102,7 +102,7 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
             warn(RelaxWarning("Multiple int_col is set to '%s'. I only accept a list of same values."%(int_col )))
 
     # Find index of assignment HEIGHT or VOL.
-    if int_col == None:
+    if int_col == None or type(int_col) == list:
         if "HEIGHT" in varsline:
             int_type = "HEIGHT"
         elif "VOL" in varsline:
