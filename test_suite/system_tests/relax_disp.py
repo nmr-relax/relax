@@ -44,7 +44,7 @@ from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_lo
 from pipe_control.minimise import assemble_scaling_matrix
 from specific_analyses.relax_disp.checks import check_missing_r1
 from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff
-from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
+from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_spectrum_ids, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import models_info, nesting_param
 from specific_analyses.relax_disp.parameters import linear_constraints
@@ -2041,6 +2041,57 @@ class Relax_disp(SystemTestCase):
                 self.assertEqual(len(cur_spin.r2eff), 14)
             else:
                 self.assertEqual(len(cur_spin.r2eff), 15)
+
+
+    def test_bug_seriestab_format(self):
+        """Test data, where the format of SeriesTab format is different.
+        """
+
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Schwarz-Linnet_2017'
+
+        # Create the spins
+        self.interpreter.spectrum.read_spins(file="peaks.ser", dir=data_path)
+
+        # Name the isotope for field strength scaling.
+        self.interpreter.spin.isotope(isotope='15N')
+
+        # Assert error, when there is no column of 'HEIGHT' or 'VOL'
+        self.assertRaises(RelaxError, self.interpreter.spectrum.read_intensities, file="peaks_without_int_info.ser", dir=data_path, spectrum_id='auto', int_method='height')
+
+        # Read the spectrum from NMRSeriesTab file. The "auto" will generate spectrum name of form: Z_A{i}
+        self.interpreter.spectrum.read_intensities(file="peaks.ser", dir=data_path, spectrum_id='auto', int_method='height')
+
+        # Loop over spins
+        print("Now looping over spin_ids:")
+        spin_int_arr = []
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # store
+            id_arr = []
+            int_arr = []
+
+            # Loop over the spectrum ids
+            for spectrum_id in loop_spectrum_ids():
+                # Append data
+                id_arr.append(spectrum_id)
+                int_arr.append(cur_spin.peak_intensity[spectrum_id])
+
+            # Store
+            spin_int_arr.append([resi, resn, spin_id, id_arr, int_arr])
+
+        # Test
+        # Check resi
+        self.assertEqual(spin_int_arr[0][0], 1)
+        # Check resn
+        self.assertEqual(spin_int_arr[0][1], "A")
+        # Check id array
+        self.assertEqual(spin_int_arr[0][3], ['Z_A0', 'Z_A1', 'Z_A2', 'Z_A3', 'Z_A4', 'Z_A5', 'Z_A6', 'Z_A7', 'Z_A8', 'Z_A9',
+                                                'Z_A10', 'Z_A11', 'Z_A12', 'Z_A13', 'Z_A14', 'Z_A15', 'Z_A16', 'Z_A17', 'Z_A18',
+                                                'Z_A19', 'Z_A20', 'Z_A21', 'Z_A22', 'Z_A23', 'Z_A24', 'Z_A25', 'Z_A26', 'Z_A27',
+                                                'Z_A28', 'Z_A29', 'Z_A30', 'Z_A31', 'Z_A32', 'Z_A33', 'Z_A34', 'Z_A35', 'Z_A36',
+                                                'Z_A37', 'Z_A38', 'Z_A39', 'Z_A40', 'Z_A41'])
+        # Check intensity array
+        self.assertEqual(spin_int_arr[0][4][0], 8.618266e+06 * 1)
+        self.assertEqual(spin_int_arr[0][4][1], 8.618266e+06 * 0.3993)
 
 
     def test_check_missing_r1(self):
