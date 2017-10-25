@@ -1,0 +1,61 @@
+Made from http://fabiorehm.com/blog/2014/09/11/running-gui-apps-with-docker/
+Also read: https://blog.jessfraz.com/post/docker-containers-on-the-desktop/
+
+# Build with:
+docker build -t relax .
+
+# https://docs.docker.com/v1.11/engine/reference/commandline/build/
+# -t : --tag=[]  Name and optionally a tag in the 'name:tag' format
+# PATH
+
+# Run with
+docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $PWD:/home/developer/work --name ubuntu_relax relax
+
+# On mac, first make sure XQuartz is running
+open -a XQuartz
+# In XQuartz -> Preferences > Security, make sure the tick "Allow connections from network clients" is ON.
+
+# Then set DISPLAY options
+xhost + `ipconfig getifaddr en1`
+docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer/work --name ubuntu_relax relax
+
+# You can run different commands from the docker:
+alias dr='docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer/work --name ubuntu_relax relax'
+# Start relax
+dr relax
+# Start relax in GUI
+dr relax -g
+# Start OpenDX
+dr dx
+# Try OpenMPI
+dr mpirun --version
+dr mpirun -np 2 echo "hello world"
+dr mpirun --report-bindings -np 2 echo "hello world"
+
+# https://docs.docker.com/v1.11/engine/reference/commandline/run/
+# -t : Allocate a pseudo-TTY
+# -i : interactive. Keep STDIN open even if not attached
+# --rm : Automatically remove the container when it exits
+# -e : --env=[]  Set environment variables
+# -v : --volume=[host-src:]container-dest[:<options>]. Bind mount a volume.
+# --name : Assign a name to the container
+# IMAGE
+
+# To open a bash terminal in the container, when it is running
+docker exec -it ubuntu_relax bash
+
+####
+#This will destroy all your images and containers. It will not be possible to restore them!
+####
+
+# Delete all containers
+docker ps
+docker rm $(docker ps -a -q)
+
+# Delete all dangling images
+docker images -f dangling=true
+docker rmi $(docker images -qf dangling=true)
+
+# Delete all images
+docker images
+docker rmi $(docker images -q)
