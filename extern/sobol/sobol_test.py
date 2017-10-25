@@ -1,3 +1,27 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2005,2009-2010 John Burkardt
+# Copyright (C) 2011 Corrado Chisari
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+
 from numpy import bitwise_xor
 from extern.sobol.sobol_lib import i4_bit_hi1, i4_bit_lo0, i4_sobol, i4_uniform, prime_ge
 import datetime
@@ -20,6 +44,10 @@ def sobol_test01 ( ):
 #
 #    Original MATLAB version by John Burkardt.
 #    Python version by Corrado Chisari
+#
+#  Origin:
+#
+#    MATLAB file sobol_test01.m, Copyright (c) 19 February 2005 John Burkardt
 #
   print ( '' )
   print ( 'SOBOL_TEST01'  )
@@ -59,6 +87,10 @@ def sobol_test02 ( ):
 #    Original MATLAB version by John Burkardt.
 #  PYTHON version by Corrado Chisari
 #
+#  Origin:
+#
+#    MATLAB file sobol_test02.m, Copyright (c) 19 February 2005 John Burkardt
+#
 	print('\nSOBOL_TEST02')
 	print('  I4_BIT_HI1 returns the location of the high 1 bit.')
 	print('\n     I     I4_BIT_HI1(I)\n')
@@ -93,6 +125,10 @@ def sobol_test03 ( ):
 #    Original MATLAB version by John Burkardt.
 #    PYTHON version by Corrado Chisari
 #
+#  Origin:
+#
+#    MATLAB file sobol_test03.m, Copyright (c) 16 February 2005 John Burkardt
+#
 	print('\nSOBOL_TEST03')
 	print('  I4_BIT_LO0 returns the location of the low 0 bit.')
 	print('\n     I     I4_BIT_LO0(I)')
@@ -126,6 +162,10 @@ def sobol_test04 ( ):
 #
 #    Original MATLAB version by John Burkardt.
 #    PYTHON version by Corrado Chisari
+#
+#  Origin:
+#
+#    MATLAB file sobol_test04.m, Copyright (c) 14 December 2009 John Burkardt
 #
 	print('\nSOBOL_TEST04')
 	print('  I4_SOBOL returns the next element')
@@ -172,6 +212,10 @@ def sobol_test05 ( ):
 #
 #    Original MATLAB version by John Burkardt.
 #    Python version by Corrado Chisari
+#
+#  Origin:
+#
+#    MATLAB file sobol_test05.m, Copyright (c) 14 December 2009 John Burkardt
 #
   print('')
   print('SOBOL_TEST05')
@@ -280,6 +324,10 @@ def main ( argv = None ):
 #
 #    Original MATLAB version by John Burkardt.
 #    Python version by Corrado Chisari
+#
+#  Origin:
+#
+#    MATLAB file sobol_test.m, Copyright (c) 15 January 2010 John Burkardt
 #
   d=datetime.datetime.today()
   print(d.strftime("%d-%b-%Y %H:%M:%S"))

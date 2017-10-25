@@ -1,3 +1,27 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2003-2006,2009,2011 John Burkardt
+# Copyright (C) 2011 Corrado Chisari
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+
 import math
 from numpy import bitwise_xor, mod, round, transpose, zeros
 
@@ -52,6 +76,11 @@ def i4_bit_hi1 ( n ):
 #    N should be nonnegative.  If N is nonpositive, the value will always be 0.
 #
 #    Output, integer BIT, the number of bits base 2.
+#
+#  Origin:
+#
+#    FORTRAN file sobol.f90, Copyright (c) 28 May 2004 John Burkardt
+#    MATLAB file i4_bit_hi1.m, Copyright (c) 16 February 2005 John Burkardt
 #
   i = int ( n )
   bit = 0
@@ -114,6 +143,11 @@ def i4_bit_lo0 ( n ):
 #
 #    Output, integer BIT, the position of the low 1 bit.
 #
+#  Origin:
+#
+#    FORTRAN file sobol.f90, Copyright (c) 28 May 2004 John Burkardt
+#    MATLAB file i4_bit_lo0.m, Copyright (c) 16 February 2005 John Burkardt
+#
   bit = 0
   i = int ( n )
   while ( 1 ):
@@ -153,6 +187,11 @@ def i4_sobol_generate ( m, n, skip ):
 #    Input, integer SKIP, the number of initial points to skip.
 #
 #    Output, real R(M,N), the points.
+#
+#  Origin:
+#
+#    FORTRAN file sobol.f90, Copyright (c) 17 January 2005 John Burkardt
+#    MATLAB file i4_sobol_generate.m, Copyright (c) 12 December 2009 John Burkardt
 #
 	r=zeros((m, n))
 	for j in range (1, n+1):
@@ -226,6 +265,11 @@ def i4_sobol ( dim_num, seed ):
 #    An input value of 0 requests the first (0-th) element of the sequence.
 #
 #    Output, real QUASI(DIM_NUM), the next quasirandom vector.
+#
+#  Origin:
+#
+#    FORTRAN file sobol.f90, Copyright (c) 17 February 2009 John Burkardt
+#    MATLAB file i4_sobol_generate.m, Copyright (c) 12 December 2009 John Burkardt
 #
 	global atmost
 	global dim_max
@@ -495,6 +539,11 @@ def i4_uniform ( a, b, seed ):
 #
 #    Output, integer SEED, the updated seed.
 #
+#  Origin:
+#
+#    FORTRAN file sobol.f90, Copyright (c) 12 November 2006 John Burkardt
+#    MATLAB file i4_uniform.m, Copyright (c) 12 November 2006 John Burkardt
+#
 	if ( seed == 0 ):
 		print('I4_UNIFORM - Fatal error!')
 		print('	Input SEED = 0!')
@@ -574,6 +623,11 @@ def prime_ge ( n ):
 #    Output, integer P, the smallest prime number that is greater
 #    than or equal to N.
 #
+#  Origin:
+#
+#    MATLAB file prime_ge.m, Copyright (c) 15 March 2003 John Burkardt
+#
+
 	p = max ( math.ceil ( n ), 2 )
 	while ( not isprime ( p ) ):
 		p = p + 1
@@ -603,6 +657,10 @@ def isprime(n):
 #    Input, integer N, the number to be checked.
 #
 #    Output, boolean value, True or False
+#
+#  Origin:
+#
+#    Python file sobol_lib.py, Copyright (c) 22 February 2011 John Burkardt
 #
 	if n!=int(n) or n<1:
 		return False

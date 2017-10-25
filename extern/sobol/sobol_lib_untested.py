@@ -1,3 +1,27 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2006,2009 John Burkardt
+# Copyright (C) 2011 Corrado Chisari
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+
 def r4_uniform_01 ( seed ):
 
 #*****************************************************************************80
@@ -70,6 +94,10 @@ def r4_uniform_01 ( seed ):
 #		Output, integer SEED, the updated seed.	This would
 #		normally be used as the input seed on the next call.
 #
+#  Origin:
+#
+#    MATLAB file r4_uniform_01.m, Copyright (c) 05 July 2006 John Burkardt
+#
 	seed = math.floor ( seed )
 
 	seed = mod ( seed, 2147483647 )
@@ -120,6 +148,10 @@ def r8mat_write ( output_filename, m, n, table ):
 #		Input, integer N, the number of points.
 #
 #		Input, real TABLE(M,N), the points.
+#
+#  Origin:
+#
+#    MATLAB file r8mat_write.m, Copyright (c) 11 August 2009 John Burkardt
 #
 
 #
@@ -222,6 +254,10 @@ def tau_sobol ( dim_num ):
 #		of 1 through 13 will result in useful responses.
 #
 #		Output, integer TAU, the value TAU.
+#
+#  Origin:
+#
+#    MATLAB file tau_sobol.m, Copyright (c) 12 December 2009 John Burkardt
 #
 	dim_max = 13
 
