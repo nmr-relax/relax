@@ -10,8 +10,12 @@ docker build -t opendx .
 
 # Run with
 docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $PWD:/home/developer/pwd opendx
-# On mac
+
+# On mac, first make sure XQuartz is running
 open -a XQuartz
+# In XQuartz -> Preferences > Security, make sure the tick "Allow connections from network clients" is ON.
+
+# Then set DISPLAY options
 xhost + `ipconfig getifaddr en1`
 docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer opendx
 
