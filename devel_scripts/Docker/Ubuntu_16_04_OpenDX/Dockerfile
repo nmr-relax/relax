@@ -11,7 +11,8 @@ RUN useradd -ms /bin/bash developer
 # -s : User's login shell, which defaults to /bin/bash
 
 USER developer
-WORKDIR /home/developer
+RUN mkdir -p $HOME/work
+WORKDIR /home/developer/work
 
 # Run command
 CMD /usr/bin/dx
