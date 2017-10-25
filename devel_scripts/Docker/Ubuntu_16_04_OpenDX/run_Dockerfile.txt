@@ -9,7 +9,7 @@ docker build -t opendx .
 # PATH
 
 # Run with
-docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $PWD:/home/developer/pwd opendx
+docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $PWD:/home/developer/pwd --name ubuntu_dx opendx
 
 # On mac, first make sure XQuartz is running
 open -a XQuartz
@@ -17,7 +17,7 @@ open -a XQuartz
 
 # Then set DISPLAY options
 xhost + `ipconfig getifaddr en1`
-docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer opendx
+docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer --name ubuntu_dx opendx
 
 # https://docs.docker.com/v1.11/engine/reference/commandline/run/
 # -t : Allocate a pseudo-TTY
@@ -25,12 +25,25 @@ docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tm
 # --rm : Automatically remove the container when it exits
 # -e : --env=[]  Set environment variables
 # -v : --volume=[host-src:]container-dest[:<options>]. Bind mount a volume.
+# --name : Assign a name to the container
 # IMAGE
 
+# To open a bash terminal in the container, when it is running
+docker exec -it ubuntu_dx bash
+
+
+####
 #This will destroy all your images and containers. It will not be possible to restore them!
+####
+
 # Delete all containers
-docker ps -a -q
+docker ps
 docker rm $(docker ps -a -q)
+
+# Delete all dangling images
+docker images -f dangling=true
+docker rmi $(docker images -qf dangling=true)
+
 # Delete all images
 docker images
-docker rmi $(docker images -q)s
+docker rmi $(docker images -q)
