@@ -2075,7 +2075,7 @@ class Relax_disp(SystemTestCase):
                             'Z_B37', 'Z_B38', 'Z_B39', 'Z_B40', 'Z_B41']
 
         # Read the spectrum from NMRSeriesTab file. With intensity columns.
-        self.interpreter.spectrum.read_intensities(file="peaks.ser", dir=data_path, int_method='height', spectrum_id=new_spec_ids, int_col=len(new_spec_ids)*[20])
+        self.interpreter.spectrum.read_intensities(file="peaks.ser", dir=data_path, int_method='height', spectrum_id=new_spec_ids, int_col=len(new_spec_ids)*[18])
 
         # Loop over spins
         print("Now looping over spin_ids:")
@@ -2102,13 +2102,13 @@ class Relax_disp(SystemTestCase):
         # Check id array
         self.assertEqual(spin_int_arr[0][3], first_spec_ids + new_spec_ids)
         # Check intensity array
-        self.assertEqual(spin_int_arr[0][4][0], 8.618266e+06 * 1)
-        self.assertEqual(spin_int_arr[0][4][1], 8.618266e+06 * 0.3993)
+        self.assertEqual(spin_int_arr[0][4][0], 6.595774e+07 * 1)
+        self.assertEqual(spin_int_arr[0][4][1], 6.595774e+07 * 0.3993)
 
         # Get index of intensity
         int_index = spin_int_arr[0][3].index(new_spec_ids[0])
-        self.assertEqual(spin_int_arr[0][4][int_index], 6.595774e+07 * 1)
-        self.assertEqual(spin_int_arr[0][4][int_index+1], 6.595774e+07 * 0.3993)
+        self.assertEqual(spin_int_arr[0][4][int_index], 8.618266e+06 * 1)
+        self.assertEqual(spin_int_arr[0][4][int_index+1], 8.618266e+06 * 0.3993)
 
 
     def test_check_missing_r1(self):
