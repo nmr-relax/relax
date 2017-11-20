@@ -396,7 +396,7 @@ class Main:
         temp_extns = ['so', 'sconsign', 'dll', 'pyd']
 
         # Print out.
-        print("\nRemoving the files ending in " + temp_extns + ".\n")
+        print("\nRemoving the files ending in " + str(temp_extns) + ".\n")
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
@@ -432,7 +432,7 @@ class Main:
         temp_extns = ['pyc', 'pyo', 'bak', 'o', 'os', 'obj', 'exp', 'lib']
 
         # Print out.
-        print("\nRemoving the files ending in " + temp_extns + ".\n")
+        print("\nRemoving the files ending in " + str(temp_extns) + ".\n")
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
