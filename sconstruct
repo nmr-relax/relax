@@ -396,7 +396,7 @@ class Main:
         temp_extns = ['so', 'sconsign', 'dll', 'pyd']
 
         # Print out.
-        print("\nRemoving the files ending in " + `temp_extns` + ".\n")
+        print("\nRemoving the files ending in " + temp_extns + ".\n")
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
@@ -432,7 +432,7 @@ class Main:
         temp_extns = ['pyc', 'pyo', 'bak', 'o', 'os', 'obj', 'exp', 'lib']
 
         # Print out.
-        print("\nRemoving the files ending in " + `temp_extns` + ".\n")
+        print("\nRemoving the files ending in " + temp_extns + ".\n")
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
@@ -594,7 +594,7 @@ class Main:
 
         # Construct the python include path (for Python.h).
         py_include_minpath = sys.prefix + path.sep + 'include'
-        py_include_fullpath = py_include_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
+        py_include_fullpath = py_include_minpath + path.sep + 'python' + str(sys.version_info[0]) + '.' + str(sys.version_info[1])
 
         # Test if Python.h resides here.
         f_name_pyth = py_include_fullpath + path.sep + 'Python.h'
@@ -610,7 +610,7 @@ class Main:
 
         # Construct the python bin path.
         py_bin_minpath = sys.prefix + path.sep + 'bin'
-        py_bin_fullpath = py_bin_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
+        py_bin_fullpath = py_bin_minpath + path.sep + 'python' + str(sys.version_info[0]) + '.' + str(sys.version_info[1])
 
         # Relaxation curve fitting build environment.
         env = Environment(TARGET_ARCH=TARGET_ARCH)
@@ -683,7 +683,7 @@ class Main:
             string = string + "###########################\n"
             string = string + "# Compiling the C modules #\n"
             string = string + "###########################\n\n\n"
-            string = string + "Building the relaxation curve fitting module " + `str(self.relax_fit_object[0])` + "\n"
+            string = string + "Building the relaxation curve fitting module " + str(self.relax_fit_object[0]) + "\n"
             return string
 
         # Add the printout as an action to take before constructing the first object.
