@@ -1052,6 +1052,8 @@ GIT_START = {
         "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
     "test_suite/shared_data/dispersion/Paul_Schanda_2015_Nov/README":
         "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
+    "test_suite/shared_data/dispersion/Schwarz-Linnet_2017/README":
+        "Updated some copyright notices for recently added files. (2018-03-04 19:59:31 +0100)",
     "test_suite/shared_data/dispersion/Sprangers_ClpP/README":
         "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
     "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/README":

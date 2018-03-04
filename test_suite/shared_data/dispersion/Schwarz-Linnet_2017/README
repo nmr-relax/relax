@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2017 Troels Schwarz-Linnet                                    #
+# Copyright (C) 2018 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -15,25 +15,15 @@
 # GNU General Public License for more details.                                #
 #                                                                             #
 # You should have received a copy of the GNU General Public License           #
-# along with relax; if not, write to the Free Software                        #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
 
-# https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/
 
-FROM ubuntu:16.04
+Licensing
+=========
 
-RUN apt-get update && \
-    apt-get install -y \
-        dx
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
 
-RUN useradd -ms /bin/bash developer
-# -m : Create the home directory if it does not exist.
-# -s : User's login shell, which defaults to /bin/bash
-
-USER developer
-RUN mkdir -p $HOME/work
-WORKDIR /home/developer/work
-
-# Run command
-CMD /usr/bin/dx
+peaks.ser:                                  Copyright (C) 2017 Troels Schwarz-Linnet
+peaks_without_int_info.ser:                 Copyright (C) 2017 Troels Schwarz-Linnet
