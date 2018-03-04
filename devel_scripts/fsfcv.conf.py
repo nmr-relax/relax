@@ -1057,9 +1057,9 @@ GIT_START = {
     "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/README":
         "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
     "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/MMQ CR72/grace2images.py":
-        "Added a script and results files for optimising Sprangers' ClpP MQ CPMG data to the 'MQ CR72' model. (2013-10-16 11:38:06 +0000)",
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
     "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/NS MMQ 2-site/grace2images.py":
-        "Added a script and results files for optimising Sprangers' ClpP MQ CPMG data to the 'MQ CR72' model. (2013-10-16 11:38:06 +0000)",
+        "Renamed the 'MQ CR72' dispersion model to 'MMQ CR72'. (2013-12-04 14:02:36 +0000)",
     "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/No Rex/README":
         "Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory. (2017-08-21 23:37:02 +0200)",
     "test_suite/shared_data/dispersion/Sprangers_ClpP/analysis/No Rex/grace2images.py":
@@ -2209,6 +2209,7 @@ FALSE_POS = {
     'lib/dispersion/two_point.py':                                      ["Copyright (C) 2009 Sebastien Morin"],
     'lib/plotting/grace.py':                                            ["Copyright (C) 2013,2017 Edward d'Auvergne"],
     'sample_scripts/model_free/final_data_extraction.py':               ["Copyright (C) 2009-2011 Michael Bieri"],
+    'scons/manuals.py':                                                 ["Copyright (C) %i %s"],
     'specific_analyses/model_free/api.py':                              ["Copyright (C) 2007 Gary S Thompson"],
     'specific_analyses/model_free/data.py':                             ["Copyright (C) 2007 Gary S Thompson"],
     'specific_analyses/model_free/optimisation.py':                     ["Copyright (C) 2007 Gary S Thompson"],
