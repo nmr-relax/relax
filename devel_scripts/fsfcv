@@ -467,7 +467,7 @@ class Validate:
                     sys.stderr.flush()
 
                 # Missing copyright notices.
-                if not len(recorded_copyright):
+                if not len(recorded_copyright) and len(expected_copyright):
                     # Failure printout.
                     sys.stdout.write("Missing copyright notice: '%s'\n" % file_path)
                     if repo_flag:
