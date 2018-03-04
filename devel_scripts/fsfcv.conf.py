@@ -138,7 +138,6 @@ BLACKLISTED_FILES = [
 DIR_SKIP = [
     '.git',
     '.svn',
-    'graphics/oxygen_icons',                                    # External source, copyright documented as much as possible.
 ]
 
 # Add some new mimetypes.
