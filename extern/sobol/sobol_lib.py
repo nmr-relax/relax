@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2003-2006,2009,2011 John Burkardt
+# Copyright (C) 2003-2006,2009,2011 John Burkardt
 # Copyright (C) 2011 Corrado Chisari
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
