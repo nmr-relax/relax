@@ -2181,7 +2181,7 @@ ADDITIONAL_COPYRIGHT_YEARS = {
 FALSE_POS = {
     'info.py':                                                          ["self.copyright.append(\"Copyright (C) 2001-2006 Edward d'Auvergne\")", "self.copyright.append(\"Copyright (C) 2006-2017 the relax development team\")", "self.copyright_short = \"Copyright (C) 2001-2017 the relax development team\""],
     'devel_scripts/fsfcv':                                              ["Copyright (C) year1, year2, year3 copyright-holder", "\"Copyright (C)\"", "\"# Copyright (C)", "\"Copyright (C) %s %s\"", "\"copyright (c)\""],
-    'devel_scripts/fsfcv.conf.py':                                      ["\"Copyright ("],
+    'devel_scripts/fsfcv.conf.py':                                      ["\"Copyright (", "Copyright (c)"],
     'docs/latex/bibliography.bib':                                      ["Copyright (c) 2014 The Author."],
     'docs/latex/frame_order/parameter_nesting.ps':                      ["Copyright (c) 1997, 2009 American Mathematical Society", "Copyright (c) 1997, 2009, 2011 American Mathematical Society"],
     'extern/sobol/sobol_lib.py':                                        ["FORTRAN file sobol.f90, Copyright (c) 12 November 2006 John Burkardt", "FORTRAN file sobol.f90, Copyright (c) 17 February 2009 John Burkardt", "FORTRAN file sobol.f90, Copyright (c) 17 January 2005 John Burkardt", "FORTRAN file sobol.f90, Copyright (c) 28 May 2004 John Burkardt", "MATLAB file i4_bit_hi1.m, Copyright (c) 16 February 2005 John Burkardt", "MATLAB file i4_bit_lo0.m, Copyright (c) 16 February 2005 John Burkardt", "MATLAB file i4_sobol_generate.m, Copyright (c) 12 December 2009 John Burkardt", "MATLAB file i4_uniform.m, Copyright (c) 12 November 2006 John Burkardt", "MATLAB file prime_ge.m, Copyright (c) 15 March 2003 John Burkardt", "Python file sobol_lib.py, Copyright (c) 22 February 2011 John Burkardt"],
@@ -3085,6 +3085,8 @@ FALSE_NEG_YEARS = {
 # Desc:  The list items are the commit IDs.
 # Type:  list of str
 EXCLUDE = [
+    # fd705e3cb5ea619409bdfad3e9f5322dbd62e285.
+    "Updated some copyright notices for recently added files. (2018-03-04 19:59:31 +0100)",
     # f8f416e768dfdd697daaffc9778523f60ce83552.
     "Added the MIT licence with copyright notices to the top of all files. (2017-10-25 09:24:59 +0200)",
     # f8abd2744c3a5ef5f01d2c69e81aabc57fbfeec4.
