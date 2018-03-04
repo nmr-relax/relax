@@ -1758,14 +1758,10 @@ ADDITIONAL_COPYRIGHT_YEARS = {
     'docs/html/icons/prev.png':                                         [[1993, "Nikos Drakos"]],
     'docs/html/icons/up_g.png':                                         [[1993, "Nikos Drakos"]],
     'docs/html/icons/up.png':                                           [[1993, "Nikos Drakos"]],
-    'extern/sobol/sobol_test.py':                                       [[2012, "Edward d'Auvergne"]],
-    'extern/sobol/sobol_lib-not_tested.py':                             [[2012, "Edward d'Auvergne"]],
-    'extern/sobol/sobol_test_output.txt':                               [[2012, "Edward d'Auvergne"]],
-    'extern/sobol/sobol_lib.py':                                        [[2012, "Edward d'Auvergne"]],
-    'extern/sobol/sobol_test.py':                                       [[2011, "Corrado Chisari"]],
-    'extern/sobol/sobol_lib-not_tested.py':                             [[2011, "Corrado Chisari"]],
-    'extern/sobol/sobol_test_output.txt':                               [[2011, "Corrado Chisari"]],
-    'extern/sobol/sobol_lib.py':                                        [[2011, "Corrado Chisari"]],
+    'extern/sobol/sobol_lib.py':                                        [[2003, "John Burkardt"], [2004, "John Burkardt"], [2005, "John Burkardt"], [2006, "John Burkardt"], [2009, "John Burkardt"], [2011, "John Burkardt"], [2011, "Corrado Chisari"], [2012, "Edward d'Auvergne"]],
+    'extern/sobol/sobol_lib_untested.py':                               [[2006, "John Burkardt"], [2009, "John Burkardt"], [2011, "Corrado Chisari"]],
+    'extern/sobol/sobol_test.py':                                       [[2005, "John Burkardt"], [2009, "John Burkardt"], [2010, "John Burkardt"], [2011, "Corrado Chisari"], [2012, "Edward d'Auvergne"]],
+    'extern/sobol/sobol_test_output.txt':                               [[2012, "Edward d'Auvergne"], [2014, "John Burkardt"]],
     'graphics/README':                                                  [[2017, "Edward d'Auvergne"]],
     'graphics/analyses/README':                                         [[2017, "Edward d'Auvergne"]],
     'graphics/misc/README':                                             [[2017, "Edward d'Auvergne"]],
@@ -2186,6 +2182,9 @@ FALSE_POS = {
     'devel_scripts/fsfcv.conf.py':                                      ["\"Copyright ("],
     'docs/latex/bibliography.bib':                                      ["Copyright (c) 2014 The Author."],
     'docs/latex/frame_order/parameter_nesting.ps':                      ["Copyright (c) 1997, 2009 American Mathematical Society", "Copyright (c) 1997, 2009, 2011 American Mathematical Society"],
+    'extern/sobol/sobol_lib.py':                                        ["FORTRAN file sobol.f90, Copyright (c) 12 November 2006 John Burkardt", "FORTRAN file sobol.f90, Copyright (c) 17 February 2009 John Burkardt", "FORTRAN file sobol.f90, Copyright (c) 17 January 2005 John Burkardt", "FORTRAN file sobol.f90, Copyright (c) 28 May 2004 John Burkardt", "MATLAB file i4_bit_hi1.m, Copyright (c) 16 February 2005 John Burkardt", "MATLAB file i4_bit_lo0.m, Copyright (c) 16 February 2005 John Burkardt", "MATLAB file i4_sobol_generate.m, Copyright (c) 12 December 2009 John Burkardt", "MATLAB file i4_uniform.m, Copyright (c) 12 November 2006 John Burkardt", "MATLAB file prime_ge.m, Copyright (c) 15 March 2003 John Burkardt", "Python file sobol_lib.py, Copyright (c) 22 February 2011 John Burkardt"],
+    'extern/sobol/sobol_lib_untested.py':                               ["MATLAB file r4_uniform_01.m, Copyright (c) 05 July 2006 John Burkardt", "MATLAB file r8mat_write.m, Copyright (c) 11 August 2009 John Burkardt", "MATLAB file tau_sobol.m, Copyright (c) 12 December 2009 John Burkardt"],
+    'extern/sobol/sobol_test.py':                                       ["MATLAB file sobol_test.m, Copyright (c) 15 January 2010 John Burkardt", "MATLAB file sobol_test01.m, Copyright (c) 19 February 2005 John Burkardt", "MATLAB file sobol_test02.m, Copyright (c) 19 February 2005 John Burkardt", "MATLAB file sobol_test03.m, Copyright (c) 16 February 2005 John Burkardt", "MATLAB file sobol_test04.m, Copyright (c) 14 December 2009 John Burkardt", "MATLAB file sobol_test05.m, Copyright (c) 14 December 2009 John Burkardt"],
     'graphics/wizards/dipole_pair/VectorFieldPlot.py':                  ["Copyright (C) 2010 Geek3"],
     'lib/dispersion/b14.py':                                            ["Copyright (C) 2014 Andrew Baldwin"],
     'lib/dispersion/cr72.py':                                           ["Copyright (C) 2009 Sebastien Morin"],
@@ -3083,6 +3082,10 @@ FALSE_NEG_YEARS = {
 # Desc:  The list items are the commit IDs.
 # Type:  list of str
 EXCLUDE = [
+    # f8f416e768dfdd697daaffc9778523f60ce83552.
+    "Added the MIT licence with copyright notices to the top of all files. (2017-10-25 09:24:59 +0200)",
+    # f8abd2744c3a5ef5f01d2c69e81aabc57fbfeec4.
+    "Updated the extern.sobol package to the latest upstream code. (2017-10-24 11:25:33 +0200)",
     # 394388d8bed8f58f2176cc96c36f6c0b7f79f958.
     "Added FSF recommended LGPLv3 licence notices to the top of all of the extern.sobol files. (2017-09-22 15:44:19 +0200)",
     # 93aea1f25e4af51d25909003f6158ba88b064fe4 - Copyright notice updates.
