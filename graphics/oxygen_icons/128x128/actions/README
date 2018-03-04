@@ -1,0 +1,348 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2018 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+GPLv3+
+------
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+archive-extract.eps.gz:                 Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+archive-extract.eps.gz:                 Copyright (C) 2007 David Vignoni <david@icon-king.com>
+archive-extract.eps.gz:                 Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+archive-extract.eps.gz:                 Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+archive-extract.eps.gz:                 Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+archive-extract.eps.gz:                 Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+archive-extract.png:                    Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+archive-extract.png:                    Copyright (C) 2007 David Vignoni <david@icon-king.com>
+archive-extract.png:                    Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+archive-extract.png:                    Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+archive-extract.png:                    Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+archive-extract.png:                    Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+chronometer.eps.gz:                     Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+chronometer.eps.gz:                     Copyright (C) 2007 David Vignoni <david@icon-king.com>
+chronometer.eps.gz:                     Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+chronometer.eps.gz:                     Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+chronometer.eps.gz:                     Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+chronometer.eps.gz:                     Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+chronometer.png:                        Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+chronometer.png:                        Copyright (C) 2007 David Vignoni <david@icon-king.com>
+chronometer.png:                        Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+chronometer.png:                        Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+chronometer.png:                        Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+chronometer.png:                        Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+dialog-cancel.eps.gz:                   Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-cancel.eps.gz:                   Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-cancel.eps.gz:                   Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-cancel.eps.gz:                   Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-cancel.eps.gz:                   Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-cancel.eps.gz:                   Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+dialog-cancel.png:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-cancel.png:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-cancel.png:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-cancel.png:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-cancel.png:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-cancel.png:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+dialog-close.eps.gz:                    Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-close.eps.gz:                    Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-close.eps.gz:                    Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-close.eps.gz:                    Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-close.eps.gz:                    Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-close.eps.gz:                    Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+dialog-close.png:                       Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-close.png:                       Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-close.png:                       Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-close.png:                       Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-close.png:                       Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-close.png:                       Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+dialog-ok.eps.gz:                       Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-ok.eps.gz:                       Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-ok.eps.gz:                       Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-ok.eps.gz:                       Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-ok.eps.gz:                       Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-ok.eps.gz:                       Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+dialog-ok.png:                          Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-ok.png:                          Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-ok.png:                          Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-ok.png:                          Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-ok.png:                          Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-ok.png:                          Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-edit.eps.gz:                   Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-edit.eps.gz:                   Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-edit.eps.gz:                   Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-edit.eps.gz:                   Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-edit.eps.gz:                   Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-edit.eps.gz:                   Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-edit.png:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-edit.png:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-edit.png:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-edit.png:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-edit.png:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-edit.png:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-open.eps.gz:                   Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-open.eps.gz:                   Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-open.eps.gz:                   Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-open.eps.gz:                   Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-open.eps.gz:                   Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-open.eps.gz:                   Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-open.png:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-open.png:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-open.png:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-open.png:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-open.png:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-open.png:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-preview-archive.eps.gz:        Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-preview-archive.eps.gz:        Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-preview-archive.eps.gz:        Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-preview-archive.eps.gz:        Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-preview-archive.eps.gz:        Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-preview-archive.eps.gz:        Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-preview-archive.png:           Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-preview-archive.png:           Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-preview-archive.png:           Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-preview-archive.png:           Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-preview-archive.png:           Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-preview-archive.png:           Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-preview.eps.gz:                Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-preview.eps.gz:                Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-preview.eps.gz:                Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-preview.eps.gz:                Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-preview.eps.gz:                Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-preview.eps.gz:                Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-preview.png:                   Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-preview.png:                   Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-preview.png:                   Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-preview.png:                   Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-preview.png:                   Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-preview.png:                   Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-save.eps.gz:                   Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-save.eps.gz:                   Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-save.eps.gz:                   Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-save.eps.gz:                   Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-save.eps.gz:                   Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-save.eps.gz:                   Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-save.png:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-save.png:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-save.png:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-save.png:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-save.png:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-save.png:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+documentation.eps.gz:                   Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+documentation.eps.gz:                   Copyright (C) 2007 David Vignoni <david@icon-king.com>
+documentation.eps.gz:                   Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+documentation.eps.gz:                   Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+documentation.eps.gz:                   Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+documentation.eps.gz:                   Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+documentation.png:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+documentation.png:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+documentation.png:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+documentation.png:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+documentation.png:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+documentation.png:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+edit-delete.eps.gz:                     Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+edit-delete.eps.gz:                     Copyright (C) 2007 David Vignoni <david@icon-king.com>
+edit-delete.eps.gz:                     Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+edit-delete.eps.gz:                     Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+edit-delete.eps.gz:                     Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+edit-delete.eps.gz:                     Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+edit-delete.png:                        Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+edit-delete.png:                        Copyright (C) 2007 David Vignoni <david@icon-king.com>
+edit-delete.png:                        Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+edit-delete.png:                        Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+edit-delete.png:                        Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+edit-delete.png:                        Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+edit-rename.eps.gz:                     Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+edit-rename.eps.gz:                     Copyright (C) 2007 David Vignoni <david@icon-king.com>
+edit-rename.eps.gz:                     Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+edit-rename.eps.gz:                     Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+edit-rename.eps.gz:                     Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+edit-rename.eps.gz:                     Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+edit-rename.png:                        Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+edit-rename.png:                        Copyright (C) 2007 David Vignoni <david@icon-king.com>
+edit-rename.png:                        Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+edit-rename.png:                        Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+edit-rename.png:                        Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+edit-rename.png:                        Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+edit-select.eps.gz:                     Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+edit-select.eps.gz:                     Copyright (C) 2007 David Vignoni <david@icon-king.com>
+edit-select.eps.gz:                     Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+edit-select.eps.gz:                     Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+edit-select.eps.gz:                     Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+edit-select.eps.gz:                     Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+edit-select.png:                        Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+edit-select.png:                        Copyright (C) 2007 David Vignoni <david@icon-king.com>
+edit-select.png:                        Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+edit-select.png:                        Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+edit-select.png:                        Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+edit-select.png:                        Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+help-about.eps.gz:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+help-about.eps.gz:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+help-about.eps.gz:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+help-about.eps.gz:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+help-about.eps.gz:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+help-about.eps.gz:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+help-about.png:                         Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+help-about.png:                         Copyright (C) 2007 David Vignoni <david@icon-king.com>
+help-about.png:                         Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+help-about.png:                         Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+help-about.png:                         Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+help-about.png:                         Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+list-add.eps.gz:                        Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+list-add.eps.gz:                        Copyright (C) 2007 David Vignoni <david@icon-king.com>
+list-add.eps.gz:                        Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+list-add.eps.gz:                        Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+list-add.eps.gz:                        Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+list-add.eps.gz:                        Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+list-add-relax-blue.eps.gz:             Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+list-add-relax-blue.eps.gz:             Copyright (C) 2007 David Vignoni <david@icon-king.com>
+list-add-relax-blue.eps.gz:             Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+list-add-relax-blue.eps.gz:             Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+list-add-relax-blue.eps.gz:             Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+list-add-relax-blue.eps.gz:             Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+list-add-relax-blue.eps.gz:             Copyright (C) 2012 Edward d'Auvergne
+
+list-add-relax-blue.png:                Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+list-add-relax-blue.png:                Copyright (C) 2007 David Vignoni <david@icon-king.com>
+list-add-relax-blue.png:                Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+list-add-relax-blue.png:                Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+list-add-relax-blue.png:                Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+list-add-relax-blue.png:                Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+list-add-relax-blue.png:                Copyright (C) 2012 Edward d'Auvergne
+
+list-add.png:                           Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+list-add.png:                           Copyright (C) 2007 David Vignoni <david@icon-king.com>
+list-add.png:                           Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+list-add.png:                           Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+list-add.png:                           Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+list-add.png:                           Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+list-remove.eps.gz:                     Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+list-remove.eps.gz:                     Copyright (C) 2007 David Vignoni <david@icon-king.com>
+list-remove.eps.gz:                     Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+list-remove.eps.gz:                     Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+list-remove.eps.gz:                     Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+list-remove.eps.gz:                     Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+list-remove.png:                        Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+list-remove.png:                        Copyright (C) 2007 David Vignoni <david@icon-king.com>
+list-remove.png:                        Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+list-remove.png:                        Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+list-remove.png:                        Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+list-remove.png:                        Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+office-chart-pie.eps.gz:                Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+office-chart-pie.eps.gz:                Copyright (C) 2007 David Vignoni <david@icon-king.com>
+office-chart-pie.eps.gz:                Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+office-chart-pie.eps.gz:                Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+office-chart-pie.eps.gz:                Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+office-chart-pie.eps.gz:                Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+office-chart-pie.png:                   Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+office-chart-pie.png:                   Copyright (C) 2007 David Vignoni <david@icon-king.com>
+office-chart-pie.png:                   Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+office-chart-pie.png:                   Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+office-chart-pie.png:                   Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+office-chart-pie.png:                   Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+roll.png:                               Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+roll.png:                               Copyright (C) 2007 David Vignoni <david@icon-king.com>
+roll.png:                               Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+roll.png:                               Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+roll.png:                               Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+roll.png:                               Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+roll-relax-blue.eps.gz:                 Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+roll-relax-blue.eps.gz:                 Copyright (C) 2007 David Vignoni <david@icon-king.com>
+roll-relax-blue.eps.gz:                 Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+roll-relax-blue.eps.gz:                 Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+roll-relax-blue.eps.gz:                 Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+roll-relax-blue.eps.gz:                 Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+roll-relax-blue.eps.gz:                 Copyright (C) 2012 Edward d'Auvergne
+
+roll-relax-blue.png:                    Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+roll-relax-blue.png:                    Copyright (C) 2007 David Vignoni <david@icon-king.com>
+roll-relax-blue.png:                    Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+roll-relax-blue.png:                    Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+roll-relax-blue.png:                    Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+roll-relax-blue.png:                    Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+roll-relax-blue.png:                    Copyright (C) 2012 Edward d'Auvergne
+
+system-switch-user.eps.gz:              Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+system-switch-user.eps.gz:              Copyright (C) 2007 David Vignoni <david@icon-king.com>
+system-switch-user.eps.gz:              Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+system-switch-user.eps.gz:              Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+system-switch-user.eps.gz:              Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+system-switch-user.eps.gz:              Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+system-switch-user.png:                 Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+system-switch-user.png:                 Copyright (C) 2007 David Vignoni <david@icon-king.com>
+system-switch-user.png:                 Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+system-switch-user.png:                 Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+system-switch-user.png:                 Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+system-switch-user.png:                 Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+zoom-in.eps.gz:                         Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+zoom-in.eps.gz:                         Copyright (C) 2007 David Vignoni <david@icon-king.com>
+zoom-in.eps.gz:                         Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+zoom-in.eps.gz:                         Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+zoom-in.eps.gz:                         Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+zoom-in.eps.gz:                         Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+zoom-in.png:                            Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+zoom-in.png:                            Copyright (C) 2007 David Vignoni <david@icon-king.com>
+zoom-in.png:                            Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+zoom-in.png:                            Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+zoom-in.png:                            Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+zoom-in.png:                            Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>

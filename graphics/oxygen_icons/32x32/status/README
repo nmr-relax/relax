@@ -1,0 +1,72 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2018 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+GPLv3+
+------
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+dialog-warning.png:                     Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-warning.png:                     Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-warning.png:                     Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-warning.png:                     Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-warning.png:                     Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-warning.png:                     Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+dialog-warning-relax-blue.png:          Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-warning-relax-blue.png:          Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-warning-relax-blue.png:          Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-warning-relax-blue.png:          Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-warning-relax-blue.png:          Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-warning-relax-blue.png:          Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+dialog-warning-relax-blue.png:          Copyright (C) 2011 Edward d'Auvergne
+
+object-locked.png:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+object-locked.png:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+object-locked.png:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+object-locked.png:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+object-locked.png:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+object-locked.png:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+object-unlocked.png:                    Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+object-unlocked.png:                    Copyright (C) 2007 David Vignoni <david@icon-king.com>
+object-unlocked.png:                    Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+object-unlocked.png:                    Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+object-unlocked.png:                    Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+object-unlocked.png:                    Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+user-busy.png:                          Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+user-busy.png:                          Copyright (C) 2007 David Vignoni <david@icon-king.com>
+user-busy.png:                          Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+user-busy.png:                          Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+user-busy.png:                          Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+user-busy.png:                          Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+weather-clear.png:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+weather-clear.png:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+weather-clear.png:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+weather-clear.png:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+weather-clear.png:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+weather-clear.png:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>

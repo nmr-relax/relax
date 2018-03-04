@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2018 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,50 +19,25 @@
 #                                                                             #
 ###############################################################################
 
+
 Licensing
 =========
 
-All of the oxygen icons are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+GPLv3+
+------
 
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
 
-Origin
-======
+folder-development.png:                 Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+folder-development.png:                 Copyright (C) 2007 David Vignoni <david@icon-king.com>
+folder-development.png:                 Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+folder-development.png:                 Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+folder-development.png:                 Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+folder-development.png:                 Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
 
-The oxygen icons:
-
-    https://api.kde.org/frameworks/oxygen-icons5/html/index.html
-
-were obtained from r1421027 of the SVN repository:
-
-    svn://anonsvn.kde.org/home/kde/trunk/kdesupport/oxygen-icons
-
-prior to the conversion to git.
-
-
-relax versions
-==============
-
-The following changes (performed in the GIMP) were used to create the *-relax-blue.png versions of the oxygen icons:
-
-Original colour     Master hue 
-Green               97
-Yellow              ?
-
-Original colour     Green   Yellow
-Master hue          97      180
-Y hue               .       .
-Y lightness         .       -44
-Y saturation        .       -36
-R hue               .       .
-R lightness         .       -44
-R saturation        .       100
-
-
-For the roll.png icons, the image was transformed to RGB, the colours inverted, and colour balance midtones set to:
-    Cyan - Red = -100
-    Magenta - Green = 10
-    Yellow - Blue = 100
-The colour balance highlights were set to:
-    Cyan - Red = -100
-    Magenta - Green = 0
-    Yellow - Blue = 100
+folder-favorites.png:                   Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+folder-favorites.png:                   Copyright (C) 2007 David Vignoni <david@icon-king.com>
+folder-favorites.png:                   Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+folder-favorites.png:                   Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+folder-favorites.png:                   Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+folder-favorites.png:                   Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>

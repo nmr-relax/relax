@@ -1,0 +1,85 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2018 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+Licensing
+=========
+
+GPLv3+
+------
+
+These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
+
+chronometer.svgz:                       Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+chronometer.svgz:                       Copyright (C) 2007 David Vignoni <david@icon-king.com>
+chronometer.svgz:                       Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+chronometer.svgz:                       Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+chronometer.svgz:                       Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+chronometer.svgz:                       Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+dialog-cancel.svgz:                     Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-cancel.svgz:                     Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-cancel.svgz:                     Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-cancel.svgz:                     Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-cancel.svgz:                     Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-cancel.svgz:                     Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+dialog-close.svgz:                      Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+dialog-close.svgz:                      Copyright (C) 2007 David Vignoni <david@icon-king.com>
+dialog-close.svgz:                      Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+dialog-close.svgz:                      Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+dialog-close.svgz:                      Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+dialog-close.svgz:                      Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-preview-archive.svgz:          Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-preview-archive.svgz:          Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-preview-archive.svgz:          Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-preview-archive.svgz:          Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-preview-archive.svgz:          Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-preview-archive.svgz:          Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+document-save.svgz:                     Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+document-save.svgz:                     Copyright (C) 2007 David Vignoni <david@icon-king.com>
+document-save.svgz:                     Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+document-save.svgz:                     Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+document-save.svgz:                     Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+document-save.svgz:                     Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+edit-delete.svgz:                       Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+edit-delete.svgz:                       Copyright (C) 2007 David Vignoni <david@icon-king.com>
+edit-delete.svgz:                       Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+edit-delete.svgz:                       Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+edit-delete.svgz:                       Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+edit-delete.svgz:                       Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+edit-rename.svgz:                       Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+edit-rename.svgz:                       Copyright (C) 2007 David Vignoni <david@icon-king.com>
+edit-rename.svgz:                       Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+edit-rename.svgz:                       Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+edit-rename.svgz:                       Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+edit-rename.svgz:                       Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+
+list-add.svgz:                          Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+list-add.svgz:                          Copyright (C) 2007 David Vignoni <david@icon-king.com>
+list-add.svgz:                          Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+list-add.svgz:                          Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+list-add.svgz:                          Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+list-add.svgz:                          Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
