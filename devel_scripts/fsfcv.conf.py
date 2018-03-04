@@ -81,7 +81,7 @@ SVN_COMMITTERS = {
 # Type:  dict of str
 COMMITTER_ALT = {
     "Gary S Thompson": "Gary Thompson",
-    "Troels Schwarz-Linnet": "Troels E. Linnet",
+    "Troels E. Linnet": "Troels Schwarz-Linnet",
 }
 
 # Blacklisted files to avoid checking.
