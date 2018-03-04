@@ -2,14 +2,14 @@ Made from http://fabiorehm.com/blog/2014/09/11/running-gui-apps-with-docker/
 Also read: https://blog.jessfraz.com/post/docker-containers-on-the-desktop/
 
 # Build with:
-docker build -t opendx .
+docker build -t relax .
 
 # https://docs.docker.com/v1.11/engine/reference/commandline/build/
 # -t : --tag=[]  Name and optionally a tag in the 'name:tag' format
 # PATH
 
 # Run with
-docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $PWD:/home/developer/work --name ubuntu_dx opendx
+docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $PWD:/home/developer/work --name ubuntu_relax relax
 
 # On mac, first make sure XQuartz is running
 open -a XQuartz
@@ -17,7 +17,20 @@ open -a XQuartz
 
 # Then set DISPLAY options
 xhost + `ipconfig getifaddr en1`
-docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer/work --name ubuntu_dx opendx
+docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer/work --name ubuntu_relax relax
+
+# You can run different commands from the docker:
+alias dr='docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tmp/.X11-unix -v $PWD:/home/developer/work --name ubuntu_relax relax'
+# Start relax
+dr relax
+# Start relax in GUI
+dr relax -g
+# Start OpenDX
+dr dx
+# Try OpenMPI
+dr mpirun --version
+dr mpirun -np 2 echo "hello world"
+dr mpirun --report-bindings -np 2 echo "hello world"
 
 # https://docs.docker.com/v1.11/engine/reference/commandline/run/
 # -t : Allocate a pseudo-TTY
@@ -29,8 +42,7 @@ docker run -ti --rm -e DISPLAY=$(ipconfig getifaddr en1):0 -v /tmp/.X11-unix:/tm
 # IMAGE
 
 # To open a bash terminal in the container, when it is running
-docker exec -it ubuntu_dx bash
-
+docker exec -it ubuntu_relax bash
 
 ####
 #This will destroy all your images and containers. It will not be possible to restore them!

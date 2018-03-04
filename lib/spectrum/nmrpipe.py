@@ -103,10 +103,10 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
 
     # Find index of assignment HEIGHT or VOL.
     if int_col == None or type(int_col) == list:
-        if "HEIGHT" in varsline:
-            int_type = "HEIGHT"
-        elif "VOL" in varsline:
+        if "VOL" in varsline:
             int_type = "VOL"
+        elif "HEIGHT" in varsline:
+            int_type = "HEIGHT"
         else:
             raise RelaxError("The int_col is set to '%s'. Cannot determine which column to multiply with."%(int_col))
         warn(RelaxWarning("The int_col is set to '%s'. Looking for the '%s' index."%(int_col, int_type) ))

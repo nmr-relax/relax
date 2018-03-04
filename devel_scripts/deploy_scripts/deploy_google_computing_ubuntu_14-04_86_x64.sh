@@ -84,7 +84,7 @@ function dopiplocal {
   # Install bmrblib
   mkdir -p $HOME/Downloads
   cd $HOME/Downloads
-  curl https://iweb.dl.sourceforge.net/project/bmrblib/$VMIN/bmrblib-$VMIN.tar.gz -o bmrblib-$VMIN.tar.gz
+  curl https://iweb.dl.sourceforge.net/project/bmrblib/$VBMR/bmrblib-$VBMR.tar.gz -o bmrblib-$VBMR.tar.gz
   tar -xzf bmrblib-$VBMR.tar.gz
   cd bmrblib-$VBMR
   sudo pip install .
@@ -95,7 +95,7 @@ function dopiplocal {
 function getlatest {
   cd $HOME
   if [ ! -d "$HOME/relax-$VREL" ]; then
-    curl https://iweb.dl.sourceforge.net/project/relax/$VMIN/relax-$VMIN.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
+    curl https://iweb.dl.sourceforge.net/project/relax/$VREL/relax-$VREL.GNU-Linux.x86_64.tar.bz2 -o relax-$VREL.GNU-Linux.x86_64.tar.bz2
     tar xvjf relax-$VREL.GNU-Linux.x86_64.tar.bz2
     rm relax-$VREL.GNU-Linux.x86_64.tar.bz2
   fi
@@ -151,4 +151,3 @@ function installandcheck {
 
 # Do functions
 #installandcheck
-
