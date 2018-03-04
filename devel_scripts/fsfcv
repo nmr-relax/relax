@@ -710,6 +710,20 @@ class Validate:
         # Init.
         statements = []
 
+        # Replace alternative names.
+        committers = list(committer_info.keys())
+        for committer in committers:
+            if committer in self.config.COMMITTER_ALT:
+                # Add the standard name of the committer if required.
+                if self.config.COMMITTER_ALT[committer] not in committer_info:
+                    committer_info[self.config.COMMITTER_ALT[committer]] = []
+
+                # Copyright merger.
+                committer_info[self.config.COMMITTER_ALT[committer]] += committer_info[committer]
+
+                # Remove the alternative name.
+                committer_info.pop(committer)
+
         # Loop over each committer.
         for committer in committer_info:
             # Format the year string.
