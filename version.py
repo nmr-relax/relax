@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006,2009,2012-2014,2017 Edward d'Auvergne                    #
+# Copyright (C) 2006,2009,2012-2014,2017-2018 Edward d'Auvergne               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,6 +30,7 @@ except ImportError:
     PIPE, Popen = None, None
 
 # relax module imports.
+from lib.compat import SYSTEM
 import lib.structure.internal.object
 from status import Status; status = Status()
 
@@ -56,13 +57,18 @@ def repo_information():
     if Popen == None:
         return
 
+    # Command separator.
+    symbol = ";"
+    if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
+        symbol = "&&"
+
     # The command to use.
     cmd = None
     if access(status.install_path+sep+'.git'+sep+'svn'+sep+'refs', F_OK):
-        cmd = 'cd %s; git svn info' % status.install_path
+        cmd = 'cd %s %s git svn info' % (status.install_path, symbol)
         repo_type = 'git-svn'
     elif access(status.install_path+sep+'.git', F_OK):
-        cmd = 'cd %s; git rev-parse HEAD; git remote -v' % status.install_path
+        cmd = 'cd %s %s git rev-parse HEAD %s git remote -v' % (status.install_path, symbol, symbol)
         repo_type = 'git'
     elif access(status.install_path+sep+'.svn', F_OK):
         cmd = 'svn info %s' % status.install_path
