@@ -135,11 +135,17 @@ from importlib.machinery import SourceFileLoader
 import locale
 import mimetypes
 from os import F_OK, access, getcwd, path, sep, walk
+import platform
 from pytz import utc
 from re import search
 from subprocess import PIPE, Popen
 import sys
 from types import ModuleType
+
+# The operating system.
+SYSTEM = platform.uname()[0]
+if SYSTEM == 'Microsoft':
+    SYSTEM == 'Windows'
 
 
 BLANK_CONFIG = """\
@@ -364,6 +370,9 @@ class Validate:
                 else:
                     file_path = root + sep + file_name
 
+                # Convert MS Windows path separators.
+                file_path = file_path.replace("\\", "/")
+
                 # Strip any './' characters from the start.
                 if len(file_path) >= 2 and file_path[:2] == './':
                     file_path = file_path[2:]
@@ -382,7 +391,12 @@ class Validate:
                 # Check for untracked files.
                 if repo_flag:
                     if self.config.REPOS[-1][1] == 'git':
-                        pipe = Popen("git ls-files \"%s\" --error-unmatch; echo $?" % file_path, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
+                        cmd = 'git ls-files --error-unmatch "%s"' % file_path
+                        if SYSTEM == "Windows":
+                            cmd += "&& echo %%ERRORLEVEL%%"
+                        else:
+                            cmd += "; echo $?"
+                        pipe = Popen(cmd, shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
                     else:
                         pipe = Popen("svn info \"%s/%s/%s\"" % (self.config.REPOS[-1][0], self.config.REPOS[-1][4], file_path), shell=True, stderr=PIPE, stdout=PIPE, close_fds=False)
                     err = pipe.stderr.readlines()
@@ -527,8 +541,12 @@ class Validate:
 
         # Statistics.
         valid_sum = files_valid + files_missing + files_nonvalid
-        percent_missing = files_missing / valid_sum * 100
-        percent_nonvalid = files_nonvalid / valid_sum * 100
+        percent_missing = 0
+        if valid_sum:
+            percent_missing = files_missing / valid_sum * 100
+        percent_nonvalid = 0
+        if valid_sum:
+            percent_nonvalid = files_nonvalid / valid_sum * 100
 
         # Final printout.
         sys.stdout.write("\n\nStatistics:\n\n")
@@ -814,7 +832,7 @@ class Validate:
             before_opt = '--before=%i-12-31' % before
 
         # Exec.
-        pipe = Popen("git log %s %s --numstat --follow --pretty='%%an Ø %%ad Ø %%H Ø %%s' --date=iso \"%s\"" % (after_opt, before_opt, full_path), shell=True, stdout=PIPE, close_fds=False)
+        pipe = Popen("git log %s %s --numstat --follow --pretty=\"%%an xyzyx %%ad xyzyx %%H xyzyx %%s\" --date=iso \"%s\"" % (after_opt, before_opt, full_path), shell=True, stdout=PIPE, close_fds=False)
 
         # Get the data.
         lines = pipe.stdout.readlines()
@@ -833,7 +851,7 @@ class Validate:
                 break
 
             # Obtain the committer and date info.
-            committer, date, commit_hash, subject = lines[i].decode().split(' Ø ')
+            committer, date, commit_hash, subject = lines[i].decode().split(' xyzyx ')
             year = int(date.split('-')[0])
             commit_key = "%s (%s)" % (subject.strip(), date)
 
