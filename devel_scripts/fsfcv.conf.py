@@ -2179,7 +2179,7 @@ ADDITIONAL_COPYRIGHT_YEARS = {
 # Desc:  The key is the file and the value is the list of copyright statements to ignore.
 # Type:  dict of list of str
 FALSE_POS = {
-    'info.py':                                                          ["self.copyright.append(\"Copyright (C) 2001-2006 Edward d'Auvergne\")", "self.copyright.append(\"Copyright (C) 2006-2017 the relax development team\")", "self.copyright_short = \"Copyright (C) 2001-2017 the relax development team\""],
+    'info.py':                                                          ["self.copyright.append(\"Copyright (C) 2001-2006 Edward d'Auvergne\")", "self.copyright.append(\"Copyright (C) 2006-%s the relax development team\" % self.copyright_final_year)", "self.copyright_short = \"Copyright (C) 2001-%s the relax development team\" % self.copyright_final_year"],
     'devel_scripts/fsfcv':                                              ["Copyright (C) year1, year2, year3 copyright-holder", "\"Copyright (C)\"", "\"# Copyright (C)", "\"Copyright (C) %s %s\"", "\"copyright (c)\""],
     'devel_scripts/fsfcv.conf.py':                                      ["\"Copyright (", "Copyright (c)"],
     'docs/latex/bibliography.bib':                                      ["Copyright (c) 2014 The Author."],
