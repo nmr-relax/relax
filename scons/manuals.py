@@ -30,6 +30,7 @@ from re import search
 import sys
 
 # relax module imports.
+from info import Info_box
 from status import Status; status = Status()
 import version
 
@@ -44,17 +45,20 @@ def clean_manual_files(target, source, env):
     print("##########################################\n\n")
 
     # File list to remove.
-    files = ["relax.bbl",
-             "relax.blg",
-             "relax.dvi",
-             "relax.idx",
-             "relax.ilg",
-             "relax.ind",
-             "relax.lof",
-             "relax.log",
-             "relax.lot",
-             "relax.out",
-             "relax.toc"]
+    files = [
+        "relax.bbl",
+        "relax.blg",
+        "relax.dvi",
+        "relax.idx",
+        "relax.ilg",
+        "relax.ind",
+        "relax.lof",
+        "relax.log",
+        "relax.lot",
+        "relax.out",
+        "relax.toc",
+        "copyright.tex"
+    ]
 
     # Add the LaTeX directory.
     for i in range(len(files)):
@@ -498,6 +502,35 @@ def compile_user_manual_pdf(target, source, env, convert=True):
 
     # Return to the base directory.
     chdir(base_dir)
+
+    # Final printout.
+    print("\n\n\n")
+
+
+def copyright_file(target, source, env):
+    """Builder action for creating the LaTeX copyright notice file."""
+
+    # Print out.
+    print('')
+    print("##################################################")
+    print("# Creating the LaTeX relax copyright notice file #")
+    print("##################################################")
+
+    # The LaTeX file.
+    file = open(env['LATEX_DIR'] + sep + 'copyright.tex', 'w')
+
+    # Initialise the info box.
+    info = Info_box()
+
+    # The notice.
+    file.write("\\noindent %s\n\n" % info.copyright_latex)
+    file.write("\\vspace{5px}\n\n")
+
+    # The text.
+    file.write("\\noindent Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License (GPL), Version 3 or any later version published by the Free Software Foundation.")
+
+    # Close the file.
+    file.close()
 
     # Final printout.
     print("\n\n\n")
