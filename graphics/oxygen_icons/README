@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012,2018 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,7 +22,17 @@
 Licensing
 =========
 
-All of the oxygen icons are licensed under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+LGPLv3+
+-------
+
+All of the oxygen icons and files are licensed under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  See the file COPYING for details.  LGPLv3+ licensed files in this directory include:
+
+AUTHORS:                                Copyright (C) 2007 Nuno Pinheiro <nuno@oxygen-icons.org>
+AUTHORS:                                Copyright (C) 2007 David Vignoni <david@icon-king.com>
+AUTHORS:                                Copyright (C) 2007 David Miller <miller@oxygen-icons.org>
+AUTHORS:                                Copyright (C) 2007 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+AUTHORS:                                Copyright (C) 2007 Kenneth Wimer <kwwii@bootsplash.org>
+AUTHORS:                                Copyright (C) 2007 Riccardo Iaconelli <riccardo@oxygen-icons.org>
 
 
 Origin
