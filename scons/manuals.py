@@ -527,7 +527,9 @@ def copyright_file(target, source, env):
     file.write("\\vspace{5px}\n\n")
 
     # The text.
-    file.write("\\noindent Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License (GPL), Version 3 or any later version published by the Free Software Foundation.")
+    file.write("\\noindent Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License (GPL), Version 3 or any later version published by the Free Software Foundation.\n")
+    file.write("\\vspace{5px}\n\n")
+    file.write("\\noindent The Oxygen Icons used herein are licensed under the terms of the GNU Lesser General Public License (GPL), Version 3 or any later version published by the Free Software Foundation.\n")
 
     # Close the file.
     file.close()
