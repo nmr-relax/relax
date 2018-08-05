@@ -19,6 +19,50 @@
 #                                                                             #
 ###############################################################################
 
+Copyright and public domain notices
+===================================
+
+PDB notices
+-----------
+
+Although the REMARK records of the PDB format could be used to identify the copyright or public domain status of the work, often these records conform to a strict format defined by the software creating the 3D structure.  As relax is designed for interoperability with all other NMR-related software, the preservation of this format is very important.  Hence the copyright status is placed within the README files rather than the PDB text file.  This ensures a strict conformation to the PDB and all software specific formats within the PDB.
+
+For PDB files obtained from the Protein Data Bank archive, the copyright to the 3D structure has been waivered.  All authors agree to waiver their copyright upon submission of their data.  Hence the PDB repository contents are public domain.  From the RCSB PDB Policies & References (https://www.rcsb.org/pdb/static.do?p=general_information/about_pdb/policies_references.html):
+
+"""
+Usage Policies
+
+Data files contained in the PDB archive (ftp://ftp.wwpdb.org) are free of all copyright restrictions and made fully and freely available for both non-commercial and commercial use.  Users of the data should attribute the original authors of that structural data.  By using the materials available in the PDB archive, the user agrees to abide by the conditions described in the PDB Advisory Notice.
+"""
+
+From within in the Full Privacy Statement (https://www.rcsb.org/pages/privacy-policy):
+
+"""
+RCSB PDB operates an open-access portal for public domain information about the 3D shapes of proteins, nucleic acids, and complex assemblies that helps researchers, educators, and students understand fundamental biology, biomedicine, and bioenergy.
+"""
+
+From the Worldwide PDB website (http://www.wwpdb.org/):
+
+"""
+Mission
+
+Ensure open access to public domain experimentally determined structural biology data.
+"""
+
+The PDB files from the archive always identify all authors of the corresponding peer-reviewed scientific publication.  This publication is a strict requirement for deposited data, and almost all scientific journals conversely require the data to be deposited as public domain to the PDB when publishing a paper about a 3D structure.  Identifying the pre-waiver copyright holders is not possible.
+
+
+XYZ notices
+-----------
+
+The XYZ text file format for 3D structures is very strict.  The single comment line is for the name of the organic molecule and is not suitable for copyright notices.  Hence the notices are placed in this README file.
+
+
+Gaussian log file notices
+-------------------------
+
+The Gaussian *.log text files are the direct output of the software.  These cannot be modified without breaking the output format, hence copyright notices are placed within this README file.
+
 
 Licensing
 =========
