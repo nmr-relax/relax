@@ -63,6 +63,7 @@ from numpy.linalg import matrix_power
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential
+from lin.errors import RelaxError
 
 # Repetitive calculations (to speed up calculations).
 # R20.
@@ -168,6 +169,10 @@ def rmmq_3site_rankN(R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_
     #matrix[2, 1] = k_BC
     #matrix[2, 2] = -k_CB - k_CA + 1.j*dw_AC - R20C
 
+    if None in [R20A,R20B,R20C,dw_AB,dw_AC,k_AB,k_BA,k_BC,k_CB,k_AC,k_CA]:
+        raise RelaxError('trying to start NS MMQ 3-site RankN with None values')
+
+
     # Pre-multiply with tcp.
     r20a_tcp = R20A * tcp
     r20b_tcp = R20B * tcp
@@ -263,6 +268,10 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
+
+    if None in [R20A,R20B,R20C,pA,pB,dw_AB,dw_BC,dwH_AB,dwH_BC,kex_AB,kex_BC,kex_AC]:
+        raise RelaxError('trying to start r20eff NS MMQ 3-site with None values')
+
 
     # Once off parameter conversions.
     dw_AC = dw_AB + dw_BC
@@ -448,6 +457,9 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
+    if None in [R20A,R20B,R20C,pA,pB,dw_AB,dw_BC,dwH_AB,dwH_BC,kex_AB,kex_BC,kex_AC]:
+        raise RelaxError('trying to start r20eff NS MMQ 3-site with None values')
+
 
     # Once off parameter conversions.
     dw_AC = dw_AB + dw_BC

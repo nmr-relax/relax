@@ -54,6 +54,8 @@ from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
 
+from lib.errors import RelaxError
+
 
 def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None):
     """The CR72 model extended to MMQ CPMG data.
@@ -80,6 +82,11 @@ def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=Non
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy float array of rank [NS][NM][NO][ND]
     """
+
+    #parameters must be assigned. If none present raise exception
+    if None in [r20,pA,dw,dwH,kex]:
+        raise RelaxError('trying to start MMQ_CR72 with None values')
+
 
     # Once off parameter conversions.
     pB = 1.0 - pA

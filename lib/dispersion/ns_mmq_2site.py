@@ -57,6 +57,7 @@ from numpy.linalg import matrix_power
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential
+from lib.errors import RelaxError
 
 # Repetitive calculations (to speed up calculations).
 m_r20a = array([
@@ -98,6 +99,9 @@ def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=No
     @return:                The relaxation matrix.
     @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][2][2]
     """
+    if None in [R20A,R20B,dw,k_AB,k_BA]:
+        raise RelaxError('trying to start NS MQ-2site with None values')
+
 
     # Pre-multiply with tcp.
     r20a_tcp = R20A * tcp
@@ -172,6 +176,8 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
 
+    if None in [R20A,R20B,dw,dwH,kex]:
+        raise RelaxError('trying to start NS MQ-2site with None values')
     # Once off parameter conversions.
     pB = 1.0 - pA
     k_BA = pA * kex
@@ -333,6 +339,10 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), R20A=N
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
+
+    if None in [R20A,R20B,dw,dwH,pA,kex]:
+        raise RelaxError('trying to start NS MQ-2site with None values')
+
 
     # Once off parameter conversions.
     pB = 1.0 - pA
