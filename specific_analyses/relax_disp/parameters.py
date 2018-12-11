@@ -919,6 +919,7 @@ def param_num(spins=None):
                     num += 1
 
     # Count the number of spin specific parameters for all spins.
+    #last edit
     spin_params = ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH','dw_AB','dw_BC','pA','pB','kex_AB', 'kex_BC', 'dwH_AB', 'dwH_BC']
     for spin in spins:
         # Skip deselected spins.
