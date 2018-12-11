@@ -99,14 +99,14 @@ def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=No
     @return:                The relaxation matrix.
     @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][2][2]
     """
-    for x in [R20A,R20B,dw,k_AB,k_BA]:
-        if isinstance(x,'float'):
+    for x in [R20A, R20B, dw, k_AB, k_BA]:
+        if isinstance(x, float):
             pass
-        if isinstance(x,'array'):
+        if isinstance(x, list):
             for v in x:
-                if isinstance(v,'None'):
+                if v is None:
                     raise RelaxError('trying to start NS MMQ 2 sites with None values')
-        if isinstance(x,'None'):
+        if x is None:
             raise RelaxError('trying to start NS MMQ 2 sites with None values')
 
 
@@ -183,9 +183,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
     for x in [R20A,R20B,dw,dwH,kex]:
-        if isinstance(x,float):
+        if isinstance(x, float):
             pass
-        if isinstance(x,list):
+        if isinstance(x, list):
             for v in x:
                 if v is None:
                     raise RelaxError('trying to start NS MMQ 2 sites with None values')
@@ -354,11 +354,11 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), R20A=N
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
     for x in [R20A,R20B,dw,dwH,pA,kex]:
-        if isinstance(x,float):
+        if isinstance(x, float):
             pass
-        if isinstance(x,list):
+        if isinstance(x, list):
             for v in x:
-                if isinstance(v,float):
+                if isinstance(v, float):
                     raise RelaxError('trying to start NS MMQ 2 sites with None values')
         if x is None:
             raise RelaxError('trying to start NS MMQ 2 sites with None values')
