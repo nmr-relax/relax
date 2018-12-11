@@ -1289,7 +1289,7 @@ uf.add_keyarg(
     default = False,
     py_type = "bool",
     desc_short = "atomic-level RMSD flag",
-    desc = "A flag which if if True will allow for per-atom RMSDs to be additionally calculated."
+    desc = "A flag which if True will allow for per-atom RMSDs to be additionally calculated."
 )
 # Description.
 uf.desc.append(Desc_container())

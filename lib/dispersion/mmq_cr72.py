@@ -84,9 +84,15 @@ def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=Non
     """
 
     #parameters must be assigned. If none present raise exception
-    if None in [r20,pA,dw,dwH,kex]:
-        raise RelaxError('trying to start MMQ_CR72 with None values')
-
+    for x in  [r20,pA,dw,dwH,kex]:
+        if isinstance(x,float):
+            pass
+        if isinstance(x,list):
+            for v in x:
+                if v is None:
+                    raise RelaxError('trying to start MMQ_CR72 with None values')
+        if x is None:
+            raise RelaxError('trying to start MMQ_CR72 with None values')
 
     # Once off parameter conversions.
     pB = 1.0 - pA

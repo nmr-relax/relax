@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # This script is used to batch convert the Grace *.agr files into graphics bitmap files using the
 # Grace program itself.  Therefore you will need to install on your system xmgrace,

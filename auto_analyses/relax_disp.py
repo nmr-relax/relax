@@ -208,7 +208,9 @@ class Relax_disp:
         """Check for numerical model using numpy version under 1.8.  This will result in slow "for loop" calculation through data, making the analysis 5-6 times slower."""
 
         # Some warning for the user if the pure numeric solution is selected.
-        if float(version.version[:3]) < 1.8:
+        vers = version.version.split('.')
+        vvers = vers[0]+'.'+vers[1]
+        if float(vvers) < 1.08:
             # Store which models are in numeric.
             models = []
 

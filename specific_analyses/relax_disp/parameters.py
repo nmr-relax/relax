@@ -800,7 +800,8 @@ def param_conversion(key=None, spins=None, sim_index=None):
     for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
         # Get the value.
         value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, r20_key=r20_key)
-
+        if value == None:
+            print('key {}, spins {} sim_index {}, para_name {} spin_index {} r20_key {}'.format(key,spins,sim_index,param_name,spin_index,r20_key))
         # The pA to pB to pC conversion.
         if param_name == 'pA':
             # 3-site exchange.
