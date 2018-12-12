@@ -51,7 +51,8 @@ More information on the NS MMQ 2-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, complex128, dot, einsum, float64, log, multiply
+from numpy import array, conj, complex128, dot, einsum, float64, log, multiply, isnan, any
+from numpy.ma import fix_invalid
 from numpy.linalg import matrix_power
 
 # relax module imports.
@@ -137,6 +138,10 @@ def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=No
 
     # Collect matrix.
     matrix = (m_r20a_tcp + m_r20b_tcp + m_k_AB_tcp + m_k_BA_tcp + m_dw_tcp_C)
+
+    isit = any(isnan(matrix))
+    if isit == True:
+        fix_invalid(matrix, copy=False, fill_value=1e100)
 
     return matrix
 

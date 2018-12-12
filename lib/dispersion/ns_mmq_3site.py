@@ -57,7 +57,8 @@ More information on the NS MMQ 3-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, dot, einsum, float64, log, multiply
+from numpy import array, conj, dot, einsum, float64, log, multiply, isnan, any
+from numpy.ma import fix_invalid
 from numpy.linalg import matrix_power
 
 # relax module imports.
@@ -217,6 +218,13 @@ def rmmq_3site_rankN(R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_
             + m_dw_AB_C_tcp + m_dw_AC_C_tcp
             + m_k_AB_tcp + m_k_BA_tcp + m_k_BC_tcp
             + m_k_CB_tcp + m_k_AC_tcp + m_k_CA_tcp)
+
+    #print(matrix)
+    #thismask = isnan(matrix)
+    isit = any(isnan(matrix))
+    if isit == True:
+        fix_invalid(matrix, copy=False, fill_value=1e100)
+
 
     return matrix
 

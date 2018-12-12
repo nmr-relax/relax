@@ -527,9 +527,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
     j = 0
 
     # Loop over the parameters of the cluster.
-    print(list(loop_parameters(spins=spins)))
     for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
-        print(param_name,param_index,len(A),n,)
         # Effective transversal relaxation rate.
         if param_name == 'r2eff':
             A.append(zero_array * 0.0)
@@ -917,10 +915,9 @@ def param_num(spins=None):
             if spin.params[i] in PARAMS_R20:
                 for exp_type, frq in loop_exp_frq():
                     num += 1
-
+    #'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB' (one per spin).
     # Count the number of spin specific parameters for all spins.
-    #last edit
-    spin_params = ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH','dw_AB','dw_BC','pA','pB','kex_AB', 'kex_BC', 'dwH_AB', 'dwH_BC']
+    spin_params = ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH','dw_AB', 'dw_BC', 'dw_AC', 'dwH_AB', 'dwH_AC', 'dwH_BC']
     for spin in spins:
         # Skip deselected spins.
         if not spin.select:
