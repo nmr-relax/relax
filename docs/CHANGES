@@ -11237,7 +11237,7 @@ http://svn.gna.org/svn/relax/tags/1.2.9
         N/A
 
     Changes:
-        * For Mac OS X compatibility, the interpreter has been changed from '/usr/bin/python' to '/usr/bin/env python3'.
+        * For Mac OS X compatibility, the interpreter has been changed from '/usr/bin/python' to '/usr/bin/env python'.
 
     Bugfixes:
         * The infinite chi-squared RelaxError when the chi-squared value is zero has been fixed. (see bug #7641)

@@ -61,13 +61,13 @@ function testopenmpi {
   mpirun --report-bindings -np 2 python --version
   echo ""
 
-  echo "> mpirun --report-bindings -np 2 /usr/bin/env python3 --version"
-  mpirun --report-bindings -np 2 /usr/bin/env python3 --version
+  echo "> mpirun --report-bindings -np 2 /usr/bin/env python --version"
+  mpirun --report-bindings -np 2 /usr/bin/env python --version
   echo ""
 
   echo "Testing python, mpi4py and mpirun"
   python --version
-  /usr/bin/env python3 --version
+  /usr/bin/env python --version
   python -c "import mpi4py; print mpi4py.__version__"
   mpirun -np 2 python -c "import mpi4py; from mpi4py import MPI; print('Mpi4py %s process %d of %d on %s.' %(mpi4py.__version__, MPI.COMM_WORLD.Get_rank(),MPI.COMM_WORLD.Get_size(), MPI.Get_processor_name()))"
   echo ""
