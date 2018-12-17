@@ -51,8 +51,7 @@ More information on the NS MMQ 2-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, complex128, dot, einsum, float64, log, multiply, isnan, any
-from numpy.ma import fix_invalid
+from numpy import array, conj, complex128, dot, einsum, float64, log, multiply
 from numpy.linalg import matrix_power
 
 # relax module imports.
@@ -100,15 +99,8 @@ def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=No
     @return:                The relaxation matrix.
     @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][2][2]
     """
-    for x in [R20A, R20B, dw, k_AB, k_BA]:
-        if isinstance(x, float):
-            pass
-        if isinstance(x, list):
-            for v in x:
-                if v is None:
-                    raise RelaxError('trying to start NS MMQ 2 sites with None values')
-        if x is None:
-            raise RelaxError('trying to start NS MMQ 2 sites with None values')
+    if None in [R20A,R20B,dw,k_AB,k_BA]:
+        raise RelaxError('trying to start NS MQ-2site with None values')
 
 
     # Pre-multiply with tcp.
@@ -138,10 +130,6 @@ def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=No
 
     # Collect matrix.
     matrix = (m_r20a_tcp + m_r20b_tcp + m_k_AB_tcp + m_k_BA_tcp + m_dw_tcp_C)
-
-    isit = any(isnan(matrix))
-    if isit == True:
-        fix_invalid(matrix, copy=False, fill_value=1e100)
 
     return matrix
 
@@ -187,16 +175,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
-    for x in [R20A,R20B,dw,dwH,kex]:
-        if isinstance(x, float):
-            pass
-        if isinstance(x, list):
-            for v in x:
-                if v is None:
-                    raise RelaxError('trying to start NS MMQ 2 sites with None values')
-        if x is None:
-            raise RelaxError('trying to start NS MMQ 2 sites with None values')
 
+    if None in [R20A,R20B,dw,dwH,kex]:
+        raise RelaxError('trying to start NS MQ-2site with None values')
     # Once off parameter conversions.
     pB = 1.0 - pA
     k_BA = pA * kex
@@ -358,15 +339,9 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), R20A=N
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
-    for x in [R20A,R20B,dw,dwH,pA,kex]:
-        if isinstance(x, float):
-            pass
-        if isinstance(x, list):
-            for v in x:
-                if isinstance(v, float):
-                    raise RelaxError('trying to start NS MMQ 2 sites with None values')
-        if x is None:
-            raise RelaxError('trying to start NS MMQ 2 sites with None values')
+
+    if None in [R20A,R20B,dw,dwH,pA,kex]:
+        raise RelaxError('trying to start NS MQ-2site with None values')
 
 
     # Once off parameter conversions.
