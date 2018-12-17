@@ -1,0 +1,922 @@
+<html>
+<head>
+  <title>NMR-STAR dictionary: detail of EntityExperimentalSrc table</title>
+</head>
+<body  ALINK="#999966" BGCOLOR="#FFFFCC" LINK="#666633" TEXT="#660000" VLINK="#999966" >
+<h2>NMR-STAR dictionary: database table: <A HREF='TablePage.html#EntityExperimentalSrc' >EntityExperimentalSrc</A></h2>
+<EM>Detailed description of the fields</EM>
+
+<A NAME='_Entity_experimental_src.ID'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.ID <EM>(EntityExperimentalSrcID)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.ID</em></strong><br>
+An integer value that uniquely identifies each experimental source in the list of experimental sources.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>EntityExperimentalSrcID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>yes: This tag contains the identifier for this saveframe in the entry.&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>yes: This tag contains the index of this row in the loop, which is used when the data is loaded into a database which has a relational model in which ordering doesn't matter&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Experimental source list ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Entity_ID'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Entity_ID <EM>(EntityID)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Entity_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Entity_ID</em></strong><br>
+Pointer to '_Entity.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>EntityID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#ID' >Entity, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Entity ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Entity_label'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Entity_label <EM>(EntityLabel)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Entity_label&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Entity_label</em></strong><br>
+Pointer to a saveframe of the category 'entity.'  This is the label assigned to the molecular entity by the author when completing the molecular entity portion of the deposition.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>EntityLabel&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#Sf_framecode' >Entity, Sf_framecode</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Label for a molecular entity
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>lysozyme
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Entity_chimera_segment_ID'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Entity_chimera_segment_ID <EM>(EntityChimeraSegmentID)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Entity_chimera_segment_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Entity_chimera_segment_ID</em></strong><br>
+Pointer to '_Entity_chimera_segment.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>EntityChimeraSegmentID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#ID' >Entity_chimera_segment, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>The ID for a molecular entity fragment.
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Production_method'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Production_method <EM>(ProductionMethod)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Production_method&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Production_method</em></strong><br>
+The laboratory method used to obtain the biopolymers studied. This could include one of the following; recombinant technology, chemical synthesis, purified from the natural source, and others.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ProductionMethod&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Enumerations</TH><TD><A HREF="enum__Entity_experimental_src.Production_method.html" TARGET="enum_popup">[click for a list of enumerations]</A><BR><EM>This is an open enumeration.  The list of values are only suggestions.  They are not enforced.</EM>&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Production method
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>recombinant technology
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_scientific_name'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_scientific_name <EM>(HostOrgScientificName)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_scientific_name&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_scientific_name</em></strong><br>
+The scientific name of the organism that served as host for the production of the entity.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgScientificName&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Enumerations</TH><TD><A HREF="enum__Entity_experimental_src.Host_org_scientific_name.html" TARGET="enum_popup">[click for a list of enumerations]</A><BR><EM>This is an open enumeration.  The list of values are only suggestions.  They are not enforced.</EM>&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Host organism's scientific name
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>Escherichia coli
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_name_common'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_name_common <EM>(HostOrgNameCommon)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_name_common&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_name_common</em></strong><br>
+Common name for the organism used as a host in producing a biopolymer.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgNameCommon&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Host organism name common
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>E. coli
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_details'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_details <EM>(HostOrgDetails)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_details&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_details</em></strong><br>
+Additional information or comments regarding the host organism.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgDetails&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>TEXT&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Host organism details
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_NCBI_taxonomy_ID'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_NCBI_taxonomy_ID <EM>(HostOrgNCBITaxonomyID)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_NCBI_taxonomy_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_NCBI_taxonomy_ID</em></strong><br>
+Unique ID assigned by the NCBI to organisms.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgNCBITaxonomyID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>CHAR(12)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NCBI taxonomy ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_genus'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_genus <EM>(HostOrgGenus)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_genus&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_genus</em></strong><br>
+Genus of the host organism
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgGenus&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Genus of host organism
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>Escherichia
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_species'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_species <EM>(HostOrgSpecies)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_species&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_species</em></strong><br>
+Scientific name for the species of the organism as defined by NCBI taxonomists whenever possible.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgSpecies&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Species of host organism
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>coli
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_strain'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_strain <EM>(HostOrgStrain)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_strain&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_strain</em></strong><br>
+The scientific name for the strain of an organism.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgStrain&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Strain of the host organism
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>K12
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_variant'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_variant <EM>(HostOrgVariant)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_variant&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_variant</em></strong><br>
+Name used to classify the variant of an organism.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgVariant&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Variant strain of the host organism
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_subvariant'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_subvariant <EM>(HostOrgSubvariant)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_subvariant&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_subvariant</em></strong><br>
+In the hierarchy of organism nomenclature, the name or code designating a subvariant of the organism used to express the entity. These may specific hosts designed with mutations to knock out proteases or other enzymes deleterious to the production of the entity.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgSubvariant&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Subvariant of the host organism
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_organ'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_organ <EM>(HostOrgOrgan)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_organ&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_organ</em></strong><br>
+Cell lines used as hosts in producing macromolecules often originate from a particular organ (e.g. chinese hamster ovary cells).  If this is true for the system used in this study please enter the name of the organ that was the source for the cell line used.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgOrgan&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Organ of the host organism
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_tissue'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_tissue <EM>(HostOrgTissue)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_tissue&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_tissue</em></strong><br>
+The tissue from an organism that is the natural or experimental source of the molecule.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgTissue&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Tissue of the host organism
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_tissue_fraction'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_tissue_fraction <EM>(HostOrgTissueFraction)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_tissue_fraction&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_tissue_fraction</em></strong><br>
+The fraction of the tissue which expressed the molecule.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgTissueFraction&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Tissue fraction
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_cell_line'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_cell_line <EM>(HostOrgCellLine)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_cell_line&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_cell_line</em></strong><br>
+The name for the cell line used in producing the biopolymer.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgCellLine&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Cell line
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>hela
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_cell_type'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_cell_type <EM>(HostOrgCellType)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_cell_type&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_cell_type</em></strong><br>
+Specific type of cell if used to produce the biopolymer.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgCellType&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Cell type
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_cellular_location'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_cellular_location <EM>(HostOrgCellularLocation)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_cellular_location&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_cellular_location</em></strong><br>
+Identifies the location inside (or outside) the cell which expressed the molecule. Proteins may be excreted from a production host or produced in the periplasmic space as opposed to the cytoplasm.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgCellularLocation&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Cellular location
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>cytoplasm
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_organelle'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_organelle <EM>(HostOrgOrganelle)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_organelle&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_organelle</em></strong><br>
+Specific organelle which expressed the molecule.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgOrganelle&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Organelle
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>mitochondria
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_gene'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_gene <EM>(HostOrgGene)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_gene&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_gene</em></strong><br>
+Specific gene which expressed the molecule.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgGene&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Gene
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>HIV-1 pol
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_culture_collection'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_culture_collection <EM>(HostOrgCultureCollection)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_culture_collection&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_culture_collection</em></strong><br>
+Culture collection of the expression system.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgCultureCollection&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Culture collection
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_ATCC_number'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_ATCC_number <EM>(HostOrgATCCNumber)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_ATCC_number&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_ATCC_number</em></strong><br>
+Organism culture number defined in the American Type Culture Collection.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgATCCNumber&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>ATCC number
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>27355
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Vector_type'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Vector_type <EM>(VectorType)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Vector_type&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Vector_type</em></strong><br>
+The kind of biological vector used to insert a gene into a host organism for the production of a biological molecule studied in the entry.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>VectorType&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Enumerations</TH><TD><A HREF="enum__Entity_experimental_src.Vector_type.html" TARGET="enum_popup">[click for a list of enumerations]</A><BR><EM>This is an open enumeration.  The list of values are only suggestions.  They are not enforced.</EM>&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Type of vector used (if applicable)
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>'plasmid'
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.PDBview_host_org_vector_name'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.PDBview_host_org_vector_name <EM>(PDBviewHostOrgVectorName)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.PDBview_host_org_vector_name&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.PDBview_host_org_vector_name</em></strong><br>
+Enter the name of a vector used to insert a gene into a eukaryotic host to express the biopolymer used in the experiments.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>PDBviewHostOrgVectorName&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Vector name
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>baculovirus
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.PDBview_plasmid_name'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.PDBview_plasmid_name <EM>(PDBviewPlasmidName)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.PDBview_plasmid_name&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.PDBview_plasmid_name</em></strong><br>
+Enter the name of a plasmid used in a bacterial system to generate the protein or nucleic acid used in the experiments.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>PDBviewPlasmidName&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Plasmid name
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>pBR322
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Vector_name'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Vector_name <EM>(VectorName)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Vector_name&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Vector_name</em></strong><br>
+Name given to the vector used to insert a gene into a host organism.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>VectorName&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Vector name (if applicable)
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>pBR322
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Vector_details'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Vector_details <EM>(VectorDetails)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Vector_details&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Vector_details</em></strong><br>
+Text comments regarding the vector used to produce the biopolymer.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>VectorDetails&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>TEXT&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Vector details
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Vendor_name'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Vendor_name <EM>(VendorName)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Vendor_name&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Vendor_name</em></strong><br>
+Commercial or academic vendor that supplied the defined item.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>VendorName&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Vendor name
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>Aldrich
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Host_org_dev_stage'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Host_org_dev_stage <EM>(HostOrgDevStage)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Host_org_dev_stage&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Host_org_dev_stage</em></strong><br>
+A string to indicate the life-cycle or cell development cycle in which the gene is expressed and the mature protein is active.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>HostOrgDevStage&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>TEXT&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Development stage details
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Details'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Details <EM>(Details)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Details&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Details</em></strong><br>
+Additional information relevant to the data in the current saveframe or to a specific data item is entered as a value to this tag.  The information entered must supplement information already present.  Whenever possible data should associated with specific data tags and not included in the value to a '_Details' tag.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>Details&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>TEXT&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Details
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Citation_ID'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Citation_ID <EM>(CitationID)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Citation_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Citation_ID</em></strong><br>
+Pointer to '_Citation.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>CitationID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#ID' >Citation, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Citation ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Citation_label'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Citation_label <EM>(CitationLabel)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Citation_label&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Citation_label</em></strong><br>
+Pointer to a saveframe of the category 'citation.' The citation would describe how, for example, the vector was constructed and the host organism picked.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>CitationLabel&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#Sf_framecode' >Citation, Sf_framecode</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Citation label
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Sf_ID'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Sf_ID <EM>(SfID)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Sf_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Sf_ID</em></strong><br>
+Pointer to '_Entity_experimental_src_list.Sf_ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SfID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#Sf_ID' >Entity_experimental_src_list, Sf_ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>yes<BR><FONT COLOR=black><STRONG>This field's data is for internal use only and should be hidden in public versiond of the data.</STRONG></FONT>&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sf ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Entry_ID'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Entry_ID <EM>(EntryID)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Entry_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Entry_ID</em></strong><br>
+Pointer to '_Entry.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>EntryID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>CHAR(12)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#Entry_ID' >Entity_experimental_src_list, Entry_ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Entry ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Entity_experimental_src.Entity_experimental_src_list_ID'></A>
+<A NAME='EntityExperimentalSrc'></A>
+<H3>_Entity_experimental_src.Entity_experimental_src_list_ID <EM>(EntityExperimentalSrcListID)</EM></H3>
+<A HREF='TablePage.html#EntityExperimentalSrc' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Entity_experimental_src.Entity_experimental_src_list_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Entity_experimental_src.Entity_experimental_src_list_ID</em></strong><br>
+Pointer to '_Entity_experimental_src_list.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>EntityExperimentalSrcListID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='EntityExperimentalSrc.html#ID' >Entity_experimental_src_list, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Entity experimental src list ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+</body>
+</head>

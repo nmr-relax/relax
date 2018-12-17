@@ -1,0 +1,332 @@
+<html>
+<head>
+  <title>NMR-STAR dictionary: detail of ConstraintFile table</title>
+</head>
+<body  ALINK="#999966" BGCOLOR="#FFFFCC" LINK="#666633" TEXT="#660000" VLINK="#999966" >
+<h2>NMR-STAR dictionary: database table: <A HREF='TablePage.html#ConstraintFile' >ConstraintFile</A></h2>
+<EM>Detailed description of the fields</EM>
+
+<A NAME='_Constraint_file.ID'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.ID <EM>(ConstraintFileID)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.ID</em></strong><br>
+?
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ConstraintFileID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Constraint_filename'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Constraint_filename <EM>(ConstraintFilename)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Constraint_filename&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Constraint_filename</em></strong><br>
+Name of the uploaded file that contains the constraint data.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ConstraintFilename&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Name of the file with the following constraints
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>sns_restraints.txt
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Software_ID'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Software_ID <EM>(SoftwareID)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Software_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Software_ID</em></strong><br>
+Pointer to '_Software.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SoftwareID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#ID' >Software, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Software ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Software_label'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Software_label <EM>(SoftwareLabel)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Software_label&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Software_label</em></strong><br>
+Please enter the name of the software application for which the constraint data file has been formatted. If the software application has been entered above in the 'Software description' section, its name will appear in a pull down list. This information will allow a constraint report to be generated and statistics to be calculated automatically.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SoftwareLabel&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#Sf_framecode' >Software, Sf_framecode</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Software file format
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>X-PLOR NIH
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Software_name'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Software_name <EM>(SoftwareName)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Software_name&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Software_name</em></strong><br>
+?
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SoftwareName&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Software name
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Block_ID'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Block_ID <EM>(BlockID)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Block_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Block_ID</em></strong><br>
+An integer value assigned to a group (block) of restraints extracted from a file containing the restraints used to carry out a structure calculation.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>BlockID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Block indentification number
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>5
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Constraint_type'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Constraint_type <EM>(ConstraintType)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Constraint_type&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Constraint_type</em></strong><br>
+The general type of constraint (distance, torsion angle, RDC, etc.)
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ConstraintType&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Enumerations</TH><TD><A HREF="enum__Constraint_file.Constraint_type.html" TARGET="enum_popup">[click for a list of enumerations]</A><BR><EM>This is an open enumeration.  The list of values are only suggestions.  They are not enforced.</EM>&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>General type of constraint
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>distance
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Constraint_subtype'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Constraint_subtype <EM>(ConstraintSubtype)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Constraint_subtype&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Constraint_subtype</em></strong><br>
+Specific type of constraint.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ConstraintSubtype&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(31)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Enumerations</TH><TD><A HREF="enum__Constraint_file.Constraint_subtype.html" TARGET="enum_popup">[click for a list of enumerations]</A><BR><EM>This is an open enumeration.  The list of values are only suggestions.  They are not enforced.</EM>&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Specific type of constraint
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>NOE
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Constraint_subsubtype'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Constraint_subsubtype <EM>(ConstraintSubsubtype)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Constraint_subsubtype&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Constraint_subsubtype</em></strong><br>
+Another level of description of the type of constraints in the file (simple, ambiguous, etc.)
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ConstraintSubsubtype&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(31)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Enumerations</TH><TD><A HREF="enum__Constraint_file.Constraint_subsubtype.html" TARGET="enum_popup">[click for a list of enumerations]</A><BR><EM>This is a closed enumeration.  The list of values are the only ones allowed.</EM>&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Ambiguous constraints of this kind present
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>yes
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Constraint_number'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Constraint_number <EM>(ConstraintNumber)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Constraint_number&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Constraint_number</em></strong><br>
+Number of constraints of this type and subtype in the file.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ConstraintNumber&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Number of constraints of this kind in the file
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>2045
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Sf_ID'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Sf_ID <EM>(SfID)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Sf_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Sf_ID</em></strong><br>
+Pointer to '_Constraint_stat_list.Sf_ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SfID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#Sf_ID' >Constraint_stat_list, Sf_ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>yes<BR><FONT COLOR=black><STRONG>This field's data is for internal use only and should be hidden in public versiond of the data.</STRONG></FONT>&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sf ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Entry_ID'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Entry_ID <EM>(EntryID)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Entry_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Entry_ID</em></strong><br>
+Pointer to '_Entry.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>EntryID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>CHAR(12)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#ID' >Entry, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Entry ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Constraint_file.Constraint_stat_list_ID'></A>
+<A NAME='ConstraintFile'></A>
+<H3>_Constraint_file.Constraint_stat_list_ID <EM>(ConstraintStatListID)</EM></H3>
+<A HREF='TablePage.html#ConstraintFile' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Constraint_file.Constraint_stat_list_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Constraint_file.Constraint_stat_list_ID</em></strong><br>
+Pointer to '_Constraint_stat_list.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ConstraintStatListID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='ConstraintFile.html#ID' >Constraint_stat_list, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Constraint stat list ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+</body>
+</head>

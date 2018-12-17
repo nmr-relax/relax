@@ -1,0 +1,594 @@
+<html>
+<head>
+  <title>NMR-STAR dictionary: detail of Experiment table</title>
+</head>
+<body  ALINK="#999966" BGCOLOR="#FFFFCC" LINK="#666633" TEXT="#660000" VLINK="#999966" >
+<h2>NMR-STAR dictionary: database table: <A HREF='TablePage.html#Experiment' >Experiment</A></h2>
+<EM>Detailed description of the fields</EM>
+
+<A NAME='_Experiment.ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.ID <EM>(ExperimentID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.ID</em></strong><br>
+Unique identifier for each experiment
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ExperimentID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>yes: This tag contains the identifier for this saveframe in the entry.&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>yes: This tag contains the index of this row in the loop, which is used when the data is loaded into a database which has a relational model in which ordering doesn't matter&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Name'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Name <EM>(Name)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Name&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Name</em></strong><br>
+Enter the name of an NMR experiment carried out in this study. A pull-down list of experiment names commonly found in the literature is provided.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>Name&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Enumerations</TH><TD><A HREF="enum__Experiment.Name.html" TARGET="enum_popup">[click for a list of enumerations]</A><BR><EM>This is an open enumeration.  The list of values are only suggestions.  They are not enforced.</EM>&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR experiment name
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>1H-15N HSQC
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Raw_data_flag'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Raw_data_flag <EM>(RawDataFlag)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Raw_data_flag&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Raw_data_flag</em></strong><br>
+The value for this tag is a flag to indicate if time-domain (raw) NMR data have been deposited for this experiment.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>RawDataFlag&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(3)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Enumerations</TH><TD><A HREF="enum__Experiment.Raw_data_flag.html" TARGET="enum_popup">[click for a list of enumerations]</A><BR><EM>This is a closed enumeration.  The list of values are the only ones allowed.</EM>&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Time-domain data provided
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>yes
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.NMR_spec_expt_ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.NMR_spec_expt_ID <EM>(NMRSpecExptID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.NMR_spec_expt_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.NMR_spec_expt_ID</em></strong><br>
+Pointer to '_NMR_spec_expt.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>NMRSpecExptID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#ID' >NMR_spec_expt, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR spec expt ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.NMR_spec_expt_label'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.NMR_spec_expt_label <EM>(NMRSpecExptLabel)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.NMR_spec_expt_label&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.NMR_spec_expt_label</em></strong><br>
+Pointer to a saveframe of category 'NMR_spectrometer_expt'.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>NMRSpecExptLabel&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#Sf_framecode' >NMR_spec_expt, Sf_framecode</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR spec expt label
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sample_ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sample_ID <EM>(SampleID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sample_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sample_ID</em></strong><br>
+Pointer to '_Sample.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SampleID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#ID' >Sample, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sample ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sample_label'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sample_label <EM>(SampleLabel)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sample_label&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sample_label</em></strong><br>
+Enter the label assigned to one sample listed above in the section where samples and their contents were entered. A pull down list of sample labels should appear, if the samples have been defined above. If the same NMR experiment was carried out with more than one sample, enter a new row in the table for each time the NMR experiment was carried out. For example, if a 1H-15N HSQC experiment was run on an 15N labeled sample and a 15N-13C labeled sample, two rows should be entered one with the 15N sample indicated and one with the 15N-13C sample indicated.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SampleLabel&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#Sf_framecode' >Sample, Sf_framecode</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sample label
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>sample_1
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sample_state'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sample_state <EM>(SampleState)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sample_state&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sample_state</em></strong><br>
+Physical state of the sample anisotropic or isotropic for solution studies and solid for solid-state studies.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SampleState&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(31)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Enumerations</TH><TD><A HREF="enum__Experiment.Sample_state.html" TARGET="enum_popup">[click for a list of enumerations]</A><BR><EM>This is an open enumeration.  The list of values are only suggestions.  They are not enforced.</EM>&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sample state
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>isotropic
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sample_volume'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sample_volume <EM>(SampleVolume)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sample_volume&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sample_volume</em></strong><br>
+?
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SampleVolume&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>FLOAT&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sample volume
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sample_volume_units'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sample_volume_units <EM>(SampleVolumeUnits)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sample_volume_units&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sample_volume_units</em></strong><br>
+?
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SampleVolumeUnits&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(31)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sample volume units
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sample_condition_list_ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sample_condition_list_ID <EM>(SampleConditionListID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sample_condition_list_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sample_condition_list_ID</em></strong><br>
+Pointer to '_Sample_condition_list.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SampleConditionListID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#ID' >Sample_condition_list, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sample condition list ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sample_condition_list_label'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sample_condition_list_label <EM>(SampleConditionListLabel)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sample_condition_list_label&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sample_condition_list_label</em></strong><br>
+Enter the label assigned to one set of sample conditions entered in the section above where sample conditions were entered. A pull down list of sample condition labels should appear, if the sample conditions have been defined above. Only one sample conditions set should be entered here. If the same NMR experiment was carried out at more than one conditions (i.e., two different temperatures or two different pH values), a new row should be entered in the table for each of the different conditions.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SampleConditionListLabel&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#Sf_framecode' >Sample_condition_list, Sf_framecode</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sample conditions label
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>sample_conditions_1
+&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sample_spinning_rate'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sample_spinning_rate <EM>(SampleSpinningRate)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sample_spinning_rate&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sample_spinning_rate</em></strong><br>
+?
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SampleSpinningRate&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>FLOAT&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sample spinning rate
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sample_angle'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sample_angle <EM>(SampleAngle)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sample_angle&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sample_angle</em></strong><br>
+?
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SampleAngle&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>FLOAT&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sample angle
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.NMR_tube_type'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.NMR_tube_type <EM>(NMRTubeType)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.NMR_tube_type&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.NMR_tube_type</em></strong><br>
+?
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>NMRTubeType&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#' >, </A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR tube type
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.NMR_spectrometer_ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.NMR_spectrometer_ID <EM>(NMRSpectrometerID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.NMR_spectrometer_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.NMR_spectrometer_ID</em></strong><br>
+Pointer to '_NMR_spectrometer.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>NMRSpectrometerID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#ID' >NMR_spectrometer, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR spectrometer ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.NMR_spectrometer_label'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.NMR_spectrometer_label <EM>(NMRSpectrometerLabel)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.NMR_spectrometer_label&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.NMR_spectrometer_label</em></strong><br>
+Pointer to a saveframe of category 'NMR_spectrometer'.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>NMRSpectrometerLabel&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#Sf_framecode' >NMR_spectrometer, Sf_framecode</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR spectrometer label
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.NMR_spectrometer_probe_ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.NMR_spectrometer_probe_ID <EM>(NMRSpectrometerProbeID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.NMR_spectrometer_probe_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.NMR_spectrometer_probe_ID</em></strong><br>
+Pointer to '_NMR_spectrometer_probe.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>NMRSpectrometerProbeID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#ID' >NMR_spectrometer_probe, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR spectrometer probe ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.NMR_spectrometer_probe_label'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.NMR_spectrometer_probe_label <EM>(NMRSpectrometerProbeLabel)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.NMR_spectrometer_probe_label&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.NMR_spectrometer_probe_label</em></strong><br>
+Pointer to saveframe of category 'NMR_spectrometer_probe'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>NMRSpectrometerProbeLabel&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#Sf_framecode' >NMR_spectrometer_probe, Sf_framecode</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR spectrometer probe label
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.NMR_spectral_processing_ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.NMR_spectral_processing_ID <EM>(NMRSpectralProcessingID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.NMR_spectral_processing_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.NMR_spectral_processing_ID</em></strong><br>
+Pointer to '_NMR_spectral_processing.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>NMRSpectralProcessingID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#ID' >NMR_spectral_processing, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR spectral processing ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.NMR_spectral_processing_label'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.NMR_spectral_processing_label <EM>(NMRSpectralProcessingLabel)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.NMR_spectral_processing_label&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.NMR_spectral_processing_label</em></strong><br>
+Pointer to a saveframe of category 'NMR_spectral_processing'.
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>NMRSpectralProcessingLabel&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>VARCHAR(127)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#Sf_framecode' >NMR_spectral_processing, Sf_framecode</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>NMR spectral processing label
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Sf_ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Sf_ID <EM>(SfID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Sf_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Sf_ID</em></strong><br>
+Pointer to '_Experiment_list.Sf_ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>SfID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#Sf_ID' >Experiment_list, Sf_ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>yes<BR><FONT COLOR=black><STRONG>This field's data is for internal use only and should be hidden in public versiond of the data.</STRONG></FONT>&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Sf ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Entry_ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Entry_ID <EM>(EntryID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Entry_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Entry_ID</em></strong><br>
+Pointer to '_Entry.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>EntryID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>CHAR(12)&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#Entry_ID' >Experiment_list, Entry_ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Entry ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+<A NAME='_Experiment.Experiment_list_ID'></A>
+<A NAME='Experiment'></A>
+<H3>_Experiment.Experiment_list_ID <EM>(ExperimentListID)</EM></H3>
+<A HREF='TablePage.html#Experiment' >(go to parent tag category listing)</A>
+<TABLE BORDER=1>
+  <TR><TH>NMR-STAR tag name</TH><TD>_Experiment.Experiment_list_ID&nbsp;</TD></TR>
+  <TR><TH>Description</TH><TD><strong>NMR-STAR name: <em>_Experiment.Experiment_list_ID</em></strong><br>
+Pointer to '_Experiment_list.ID'
+&nbsp;</TD></TR>
+  <TR><TH>Database field name</TH><TD>ExperimentListID&nbsp;</TD></TR>
+  <TR><TH>SQL Database type</TH><TD>INTEGER&nbsp;</TD></TR>
+  <TR><TH>Part of primary Key</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Foreign Key on table, column</TH><TD><A HREF='Experiment.html#ID' >Experiment_list, ID</A>&nbsp;</TD></TR>
+  <TR><TH>Saveframe ID </TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Row Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Secondary Index</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Internal Flag</TH><TD>no&nbsp;</TD></TR>
+  <TR><TH>Nulls allowed in database?</TH><TD>yes&nbsp;</TD></TR>
+  <TR><TH>Prompt</TH><TD>Experiment list ID
+&nbsp;</TD></TR>
+  <TR><TH>Examples</TH><TD>?&nbsp;</TD></TR>
+  <TR><TH>Help text</TH><TD>&nbsp;</TD></TR>
+</TABLE>
+<P>
+</body>
+</head>
