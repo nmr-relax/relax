@@ -44,7 +44,7 @@ RUN VMIN=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_minfx" 
     echo "Installing current version of minfx: $VMIN" && \
     mkdir -p $HOME/Downloads && \
     cd $HOME/Downloads && \
-    curl https://iweb.dl.sourceforge.net/project/minfx/$VMIN/minfx-$VMIN.tar.gz -o minfx-$VMIN.tar.gz && \
+    curl -L https://iweb.dl.sourceforge.net/project/minfx/$VMIN/minfx-$VMIN.tar.gz -o minfx-$VMIN.tar.gz && \
     tar -xzf minfx-$VMIN.tar.gz && \
     cd minfx-$VMIN && \
     pip install . && \
@@ -54,7 +54,7 @@ RUN VBMR=`lynx -dump "http://wiki.nmr-relax.com/Template:Current_version_bmrblib
     echo "Installing current version of bmrblib: $VBMR" && \
     mkdir -p $HOME/Downloads && \
     cd $HOME/Downloads && \
-    curl https://iweb.dl.sourceforge.net/project/bmrblib/$VBMR/bmrblib-$VBMR.tar.gz -o bmrblib-$VBMR.tar.gz && \
+    curl -L https://iweb.dl.sourceforge.net/project/bmrblib/$VBMR/bmrblib-$VBMR.tar.gz -o bmrblib-$VBMR.tar.gz && \
     tar -xzf bmrblib-$VBMR.tar.gz && \
     cd bmrblib-$VBMR && \
     pip install . && \
@@ -71,7 +71,7 @@ WORKDIR /home/developer/work
 # Get relax
 RUN cd $HOME && \
     pwd && \
-    git clone git://git.code.sf.net/p/nmr-relax/code relax && \
+    git clone https://git.code.sf.net/p/nmr-relax/code relax && \
     cd $HOME/relax && \
     git pull && \
     scons && \
