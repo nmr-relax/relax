@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015,2018 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -1742,6 +1742,76 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.sobol_points_used, 20)
 
 
+    def test_decompose_free_rotor_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the free rotor model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_free_rotor_z_axis(type='decomp')
+
+
+    def test_decompose_iso_cone_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the isotropic cone model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_z_axis(type='decomp')
+
+
+    def test_decompose_iso_cone_xz_plane_tilt(self):
+        """Check the frame_order.decompose user function PDB file for the isotropic cone model with a xz-plane tilt."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_xz_plane_tilt(type='decomp')
+
+
+    def test_decompose_iso_cone_free_rotor_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the free rotor isotropic cone model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_free_rotor_z_axis(type='decomp')
+
+
+    def test_decompose_iso_cone_torsionless_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the torsionless isotropic cone model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_torsionless_z_axis(type='decomp')
+
+
+    def test_decompose_pseudo_ellipse_xz_plane_tilt(self):
+        """Check the frame_order.decompose user function PDB file for the pseudo-ellipse model with a xz-plane tilt."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_xz_plane_tilt(type='decomp')
+
+
+    def test_decompose_pseudo_ellipse_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_z_axis(type='decomp')
+
+
+    def test_decompose_pseudo_ellipse_free_rotor_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the free rotor pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_free_rotor_z_axis(type='decomp')
+
+
+    def test_decompose_pseudo_ellipse_torsionless_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the torsionless pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_torsionless_z_axis(type='decomp')
+
+
+    def test_decompose_rotor_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the rotor model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_rotor_z_axis(type='decomp')
+
+
     def test_distribute_free_rotor_z_axis(self):
         """Check the frame_order.distribute user function PDB file for the free rotor model along the z-axis."""
 
@@ -1771,7 +1841,7 @@ class Frame_order(SystemTestCase):
 
 
     def test_distribute_pseudo_ellipse_xz_plane_tilt(self):
-        """Check the frame_order.distribute user function PDB file for the pseudo-ellipse model along the z-axis."""
+        """Check the frame_order.distribute user function PDB file for the pseudo-ellipse model with a xz-plane tilt."""
 
         # Call the equivalent frame_order.simulate user function system test to do everything.
         self.test_simulate_pseudo_ellipse_xz_plane_tilt(type='dist')
@@ -3265,87 +3335,99 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # X vector maxima.
-        X_theta_min = cartesian_to_spherical([100, 0, 200])[1]
-        X_theta_max = cartesian_to_spherical([-100, 0, 0])[1] + pi
-        print("X vector theta range of [%.5f, %.5f]" % (X_theta_min, X_theta_max))
+            # X vector maxima.
+            X_theta_min = cartesian_to_spherical([100, 0, 200])[1]
+            X_theta_max = cartesian_to_spherical([-100, 0, 0])[1] + pi
+            print("X vector theta range of [%.5f, %.5f]" % (X_theta_min, X_theta_max))
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # Check the X and nX vectors.
-                if res_name in ['X', 'nX']:
-                    self.assert_(theta >= X_theta_min - epsilon)
-                    self.assert_(theta <= X_theta_max + epsilon)
-                    if phi < 0.1:
-                        self.assertAlmostEqual(phi, 0.0, 3)
-                    else:
-                        self.assertAlmostEqual(phi, pi, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    # Check the X and nX vectors.
+                    if res_name in ['X', 'nX']:
+                        self.assert_(theta >= X_theta_min - epsilon)
+                        self.assert_(theta <= X_theta_max + epsilon)
+                        if phi < 0.1:
+                            self.assertAlmostEqual(phi, 0.0, 3)
+                        else:
+                            self.assertAlmostEqual(phi, pi, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assert_(r/100.0 >= 1.0 - epsilon)
-                    self.assert_(theta >= pi/4.0 - epsilon)
-                    self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
-                    self.assertAlmostEqual(new_pos[1], 100.0, 3)
-
-                # Check the Z vector (should not move).
-                elif res_name == 'Z':
-                    self.assert_(r/100.0 >= 1.0 - epsilon)
-                    self.assertAlmostEqual(new_pos[0], -70.711, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 70.711, 3)
-
-                # Check the nY vector.
-                elif res_name == 'nY':
-                    self.assert_(r/100.0 >= 1.0 - epsilon)
-                    self.assert_(theta >= pi/4.0 - epsilon)
-                    self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
-                    self.assertAlmostEqual(new_pos[1], -100.0, 3)
-
-                # Check the nZ vector (should not move).
-                elif res_name == 'nZ':
-                    self.assert_(r/100.0 >= 1.0 - epsilon)
-                    self.assert_(theta >= pi/4.0 - epsilon)
-                    self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assert_(r/100.0 <= 1.4142135623730951 + epsilon)
-                    if not (new_pos[0] == 0.0 and new_pos[1] == 0.0 and new_pos[2] == 0.0):
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assert_(r/100.0 >= 1.0 - epsilon)
                         self.assert_(theta >= pi/4.0 - epsilon)
                         self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 100.0, 3)
 
-                # Check the origin.
-                elif res_name == '0':
-                    self.assertAlmostEqual(r, 34.641016151377549, 4)
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the Z vector (should not move).
+                    elif res_name == 'Z':
+                        self.assert_(r/100.0 >= 1.0 - epsilon)
+                        self.assertAlmostEqual(new_pos[0], -70.711, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 70.711, 3)
+
+                    # Check the nY vector.
+                    elif res_name == 'nY':
+                        self.assert_(r/100.0 >= 1.0 - epsilon)
+                        self.assert_(theta >= pi/4.0 - epsilon)
+                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertAlmostEqual(new_pos[1], -100.0, 3)
+
+                    # Check the nZ vector (should not move).
+                    elif res_name == 'nZ':
+                        self.assert_(r/100.0 >= 1.0 - epsilon)
+                        self.assert_(theta >= pi/4.0 - epsilon)
+                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assert_(r/100.0 <= 1.4142135623730951 + epsilon)
+                        if not (new_pos[0] == 0.0 and new_pos[1] == 0.0 and new_pos[2] == 0.0):
+                            self.assert_(theta >= pi/4.0 - epsilon)
+                            self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+
+                    # Check the origin.
+                    elif res_name == '0':
+                        self.assertAlmostEqual(r, 34.641016151377549, 4)
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
     def test_simulate_double_rotor_mode1_z_axis(self, type='sim'):
@@ -3369,87 +3451,99 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # X vector maxima.
-        X_theta_min = cartesian_to_spherical([100, 0, 200])[1]
-        X_theta_max = cartesian_to_spherical([-100, 0, 0])[1] + pi
-        print("X vector theta range of [%.5f, %.5f]" % (X_theta_min, X_theta_max))
+            # X vector maxima.
+            X_theta_min = cartesian_to_spherical([100, 0, 200])[1]
+            X_theta_max = cartesian_to_spherical([-100, 0, 0])[1] + pi
+            print("X vector theta range of [%.5f, %.5f]" % (X_theta_min, X_theta_max))
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # Check the X and nX vectors.
-                if res_name in ['X', 'nX']:
-                    self.assert_(theta >= X_theta_min - epsilon)
-                    self.assert_(theta <= X_theta_max + epsilon)
-                    if phi < 0.1:
-                        self.assertAlmostEqual(phi, 0.0, 3)
-                    else:
-                        self.assertAlmostEqual(phi, pi, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    # Check the X and nX vectors.
+                    if res_name in ['X', 'nX']:
+                        self.assert_(theta >= X_theta_min - epsilon)
+                        self.assert_(theta <= X_theta_max + epsilon)
+                        if phi < 0.1:
+                            self.assertAlmostEqual(phi, 0.0, 3)
+                        else:
+                            self.assertAlmostEqual(phi, pi, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assert_(r/100.0 >= 1.0 - epsilon)
-                    self.assert_(theta >= pi/4.0 - epsilon)
-                    self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
-                    self.assertAlmostEqual(new_pos[1], 100.0, 3)
-
-                # Check the Z vector (should not move).
-                elif res_name == 'Z':
-                    self.assert_(r/100.0 >= 1.0 - epsilon)
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 100.0, 3)
-
-                # Check the nY vector.
-                elif res_name == 'nY':
-                    self.assert_(r/100.0 >= 1.0 - epsilon)
-                    self.assert_(theta >= pi/4.0 - epsilon)
-                    self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
-                    self.assertAlmostEqual(new_pos[1], -100.0, 3)
-
-                # Check the nZ vector (should not move).
-                elif res_name == 'nZ':
-                    self.assert_(r/100.0 >= 1.0 - epsilon)
-                    self.assert_(theta >= pi/4.0 - epsilon)
-                    self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assert_(r/100.0 <= 1.4142135623730951 + epsilon)
-                    if not (new_pos[0] == 0.0 and new_pos[1] == 0.0 and new_pos[2] == 0.0):
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assert_(r/100.0 >= 1.0 - epsilon)
                         self.assert_(theta >= pi/4.0 - epsilon)
                         self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 100.0, 3)
 
-                # Check the origin.
-                elif res_name == '0':
-                    self.assertAlmostEqual(r, 34.641016151377549, 4)
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the Z vector (should not move).
+                    elif res_name == 'Z':
+                        self.assert_(r/100.0 >= 1.0 - epsilon)
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 100.0, 3)
+
+                    # Check the nY vector.
+                    elif res_name == 'nY':
+                        self.assert_(r/100.0 >= 1.0 - epsilon)
+                        self.assert_(theta >= pi/4.0 - epsilon)
+                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertAlmostEqual(new_pos[1], -100.0, 3)
+
+                    # Check the nZ vector (should not move).
+                    elif res_name == 'nZ':
+                        self.assert_(r/100.0 >= 1.0 - epsilon)
+                        self.assert_(theta >= pi/4.0 - epsilon)
+                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assert_(r/100.0 <= 1.4142135623730951 + epsilon)
+                        if not (new_pos[0] == 0.0 and new_pos[1] == 0.0 and new_pos[2] == 0.0):
+                            self.assert_(theta >= pi/4.0 - epsilon)
+                            self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+
+                    # Check the origin.
+                    elif res_name == '0':
+                        self.assertAlmostEqual(r, 34.641016151377549, 4)
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
     def test_simulate_double_rotor_mode2_xz_plane_tilt(self, type='sim'):
@@ -3473,94 +3567,106 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # Check the X vector.
-                if res_name == 'X':
-                    self.assertAlmostEqual(new_pos[0], 70.711, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 70.711, 3)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        self.assertAlmostEqual(new_pos[0], 70.711, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 70.711, 3)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assertAlmostEqual(r/100.0, 1.0, 3)
-                    self.assert_(new_pos[0] >= -70.711 - epsilon)
-                    self.assert_(new_pos[0] <= 70.711 + epsilon)
-                    self.assert_(new_pos[1] >= 0.0 - epsilon)
-                    self.assert_(new_pos[1] <= 100.0 + epsilon)
-                    self.assert_(new_pos[2] >= -70.711 - epsilon)
-                    self.assert_(new_pos[2] <= 70.711 + epsilon)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assertAlmostEqual(r/100.0, 1.0, 3)
+                        self.assert_(new_pos[0] >= -70.711 - epsilon)
+                        self.assert_(new_pos[0] <= 70.711 + epsilon)
+                        self.assert_(new_pos[1] >= 0.0 - epsilon)
+                        self.assert_(new_pos[1] <= 100.0 + epsilon)
+                        self.assert_(new_pos[2] >= -70.711 - epsilon)
+                        self.assert_(new_pos[2] <= 70.711 + epsilon)
 
-                # Check the Z vector (should not move).
-                elif res_name == 'Z':
-                    self.assertAlmostEqual(r/100.0, 1.0, 3)
-                    self.assert_(new_pos[0] >= -70.711 - epsilon)
-                    self.assert_(new_pos[0] <= 0.0 + epsilon)
-                    self.assert_(new_pos[1] >= -100.0 - epsilon)
-                    self.assert_(new_pos[1] <= 100.0 + epsilon)
-                    self.assert_(new_pos[2] >= 0.0 - epsilon)
-                    self.assert_(new_pos[2] <= 70.711 + epsilon)
+                    # Check the Z vector (should not move).
+                    elif res_name == 'Z':
+                        self.assertAlmostEqual(r/100.0, 1.0, 3)
+                        self.assert_(new_pos[0] >= -70.711 - epsilon)
+                        self.assert_(new_pos[0] <= 0.0 + epsilon)
+                        self.assert_(new_pos[1] >= -100.0 - epsilon)
+                        self.assert_(new_pos[1] <= 100.0 + epsilon)
+                        self.assert_(new_pos[2] >= 0.0 - epsilon)
+                        self.assert_(new_pos[2] <= 70.711 + epsilon)
 
-                # Check the nX vector.
-                elif res_name == 'nX':
-                    self.assertAlmostEqual(new_pos[0], -70.711, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], -70.711, 3)
+                    # Check the nX vector.
+                    elif res_name == 'nX':
+                        self.assertAlmostEqual(new_pos[0], -70.711, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], -70.711, 3)
 
-                # Check the nY vector.
-                elif res_name == 'nY':
-                    self.assertAlmostEqual(r/100.0, 1.0, 3)
-                    self.assert_(new_pos[0] >= -70.711 - epsilon)
-                    self.assert_(new_pos[0] <= 70.711 + epsilon)
-                    self.assert_(new_pos[1] >= -100.0 - epsilon)
-                    self.assert_(new_pos[1] <= 0.0 + epsilon)
-                    self.assert_(new_pos[2] >= -70.711 - epsilon)
-                    self.assert_(new_pos[2] <= 70.711 + epsilon)
+                    # Check the nY vector.
+                    elif res_name == 'nY':
+                        self.assertAlmostEqual(r/100.0, 1.0, 3)
+                        self.assert_(new_pos[0] >= -70.711 - epsilon)
+                        self.assert_(new_pos[0] <= 70.711 + epsilon)
+                        self.assert_(new_pos[1] >= -100.0 - epsilon)
+                        self.assert_(new_pos[1] <= 0.0 + epsilon)
+                        self.assert_(new_pos[2] >= -70.711 - epsilon)
+                        self.assert_(new_pos[2] <= 70.711 + epsilon)
 
-                # Check the nZ vector (should not move).
-                elif res_name == 'nZ':
-                    self.assertAlmostEqual(r/100.0, 1.0, 3)
-                    self.assert_(new_pos[0] >= 0.0 - epsilon)
-                    self.assert_(new_pos[0] <= 70.711 + epsilon)
-                    self.assert_(new_pos[1] >= -100.0 - epsilon)
-                    self.assert_(new_pos[1] <= 100.0 + epsilon)
-                    self.assert_(new_pos[2] >= -70.711 - epsilon)
-                    self.assert_(new_pos[2] <= 0.0 + epsilon)
+                    # Check the nZ vector (should not move).
+                    elif res_name == 'nZ':
+                        self.assertAlmostEqual(r/100.0, 1.0, 3)
+                        self.assert_(new_pos[0] >= 0.0 - epsilon)
+                        self.assert_(new_pos[0] <= 70.711 + epsilon)
+                        self.assert_(new_pos[1] >= -100.0 - epsilon)
+                        self.assert_(new_pos[1] <= 100.0 + epsilon)
+                        self.assert_(new_pos[2] >= -70.711 - epsilon)
+                        self.assert_(new_pos[2] <= 0.0 + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 3)
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 3)
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == '0':
-                    self.assertAlmostEqual(pos[0], 20.0, 3)
-                    self.assertAlmostEqual(pos[1], 20.0, 3)
-                    self.assertAlmostEqual(pos[2], -20.0, 3)
+                    # Check the origin.
+                    elif res_name == '0':
+                        self.assertAlmostEqual(pos[0], 20.0, 3)
+                        self.assertAlmostEqual(pos[1], 20.0, 3)
+                        self.assertAlmostEqual(pos[2], -20.0, 3)
 
 
     def test_simulate_double_rotor_mode2_z_axis(self, type='sim'):
@@ -3584,90 +3690,102 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # Check the X and nX vectors.
-                if res_name == 'X':
-                    self.assertAlmostEqual(new_pos[0], 100.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the X and nX vectors.
+                    if res_name == 'X':
+                        self.assertAlmostEqual(new_pos[0], 100.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assertAlmostEqual(r/100.0, 1.0, 3)
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assert_(new_pos[1] >= 0.0 - epsilon)
-                    self.assert_(new_pos[1] <= 100.0 + epsilon)
-                    self.assert_(new_pos[2] >= -100.0 - epsilon)
-                    self.assert_(new_pos[2] <= 100.0 + epsilon)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assertAlmostEqual(r/100.0, 1.0, 3)
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assert_(new_pos[1] >= 0.0 - epsilon)
+                        self.assert_(new_pos[1] <= 100.0 + epsilon)
+                        self.assert_(new_pos[2] >= -100.0 - epsilon)
+                        self.assert_(new_pos[2] <= 100.0 + epsilon)
 
-                # Check the Z vector (should not move).
-                elif res_name == 'Z':
-                    self.assertAlmostEqual(r/100.0, 1.0, 3)
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assert_(new_pos[1] >= -100.0 - epsilon)
-                    self.assert_(new_pos[1] <= 100.0 + epsilon)
-                    self.assert_(new_pos[2] >= 0.0 - epsilon)
-                    self.assert_(new_pos[2] <= 100.0 + epsilon)
+                    # Check the Z vector (should not move).
+                    elif res_name == 'Z':
+                        self.assertAlmostEqual(r/100.0, 1.0, 3)
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assert_(new_pos[1] >= -100.0 - epsilon)
+                        self.assert_(new_pos[1] <= 100.0 + epsilon)
+                        self.assert_(new_pos[2] >= 0.0 - epsilon)
+                        self.assert_(new_pos[2] <= 100.0 + epsilon)
 
-                # Check the X and nX vectors.
-                elif res_name == 'nX':
-                    self.assertAlmostEqual(new_pos[0], -100.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the X and nX vectors.
+                    elif res_name == 'nX':
+                        self.assertAlmostEqual(new_pos[0], -100.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the nY vector.
-                elif res_name == 'nY':
-                    self.assertAlmostEqual(r/100.0, 1.0, 3)
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assert_(new_pos[1] >= -100.0 - epsilon)
-                    self.assert_(new_pos[1] <= 0.0 + epsilon)
-                    self.assert_(new_pos[2] >= -100.0 - epsilon)
-                    self.assert_(new_pos[2] <= 100.0 + epsilon)
+                    # Check the nY vector.
+                    elif res_name == 'nY':
+                        self.assertAlmostEqual(r/100.0, 1.0, 3)
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assert_(new_pos[1] >= -100.0 - epsilon)
+                        self.assert_(new_pos[1] <= 0.0 + epsilon)
+                        self.assert_(new_pos[2] >= -100.0 - epsilon)
+                        self.assert_(new_pos[2] <= 100.0 + epsilon)
 
-                # Check the nZ vector (should not move).
-                elif res_name == 'nZ':
-                    self.assertAlmostEqual(r/100.0, 1.0, 3)
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assert_(new_pos[1] >= -100.0 - epsilon)
-                    self.assert_(new_pos[1] <= 100.0 + epsilon)
-                    self.assert_(new_pos[2] >= -100.0 - epsilon)
-                    self.assert_(new_pos[2] <= 0.0 + epsilon)
+                    # Check the nZ vector (should not move).
+                    elif res_name == 'nZ':
+                        self.assertAlmostEqual(r/100.0, 1.0, 3)
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assert_(new_pos[1] >= -100.0 - epsilon)
+                        self.assert_(new_pos[1] <= 100.0 + epsilon)
+                        self.assert_(new_pos[2] >= -100.0 - epsilon)
+                        self.assert_(new_pos[2] <= 0.0 + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 3)
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 3)
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == '0':
-                    self.assertAlmostEqual(pos[0], 20.0, 3)
-                    self.assertAlmostEqual(pos[1], 20.0, 3)
-                    self.assertAlmostEqual(pos[2], -20.0, 3)
+                    # Check the origin.
+                    elif res_name == '0':
+                        self.assertAlmostEqual(pos[0], 20.0, 3)
+                        self.assertAlmostEqual(pos[1], 20.0, 3)
+                        self.assertAlmostEqual(pos[2], -20.0, 3)
 
 
     def test_simulate_free_rotor_z_axis(self, type='sim'):
@@ -3688,62 +3806,73 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='free rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X vector.
-                if res_name == 'X':
-                    self.assertAlmostEqual(theta, pi/2.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        self.assertAlmostEqual(theta, pi/2.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assertAlmostEqual(theta, pi/2.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assertAlmostEqual(theta, pi/2.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the Z vector (should not move).
-                elif res_name == 'Z':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 100.0, 3)
+                    # Check the Z vector (should not move).
+                    elif res_name == 'Z':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 100.0, 3)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
     def test_simulate_iso_cone_z_axis(self, type='sim'):
@@ -3764,72 +3893,85 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='iso cone', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        max_phi = 0.0
-        lateral_slide = 0.07
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            max_phi = 0.0
+            lateral_slide = 0.07
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X vector.
-                if res_name == 'X':
-                    if abs(phi) > max_phi:
-                        max_phi = abs(phi)
-                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                    self.assert_(phi >= -cone_sigma_max - lateral_slide)
-                    self.assert_(phi <= cone_sigma_max + lateral_slide)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        if abs(phi) > max_phi:
+                            max_phi = abs(phi)
+                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assert_(phi >= -cone_sigma_max - lateral_slide)
+                        self.assert_(phi <= cone_sigma_max + lateral_slide)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                    self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
-                    self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                        self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
 
-                # Check the Z vector (should be in the cone defined by theta).
-                elif res_name == 'Z':
-                    self.assert_(theta <= cone_theta + epsilon)
+                    # Check the Z vector (should be in the cone defined by theta).
+                    elif res_name == 'Z':
+                        self.assert_(theta <= cone_theta + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
-        # Print out the maximum phi value.
-        print("Maximum phi for X and Y: %s" % max_phi)
+            # Print out the maximum phi value.
+            print("Maximum phi for X and Y: %s" % max_phi)
 
 
     def test_simulate_iso_cone_xz_plane_tilt(self, type='sim'):
@@ -3853,72 +3995,85 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='iso cone', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=axis_theta, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        max_phi = 0.0
-        lateral_slide = 0.07
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            max_phi = 0.0
+            lateral_slide = 0.07
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X vector.
-                if res_name == 'X':
-                    if abs(phi) > max_phi:
-                        max_phi = abs(phi)
-                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                    self.assert_(phi >= -cone_sigma_max - lateral_slide)
-                    self.assert_(phi <= cone_sigma_max + lateral_slide)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        if abs(phi) > max_phi:
+                            max_phi = abs(phi)
+                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assert_(phi >= -cone_sigma_max - lateral_slide)
+                        self.assert_(phi <= cone_sigma_max + lateral_slide)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                    self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
-                    self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                        self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
 
-                # Check the Z vector (should be in the cone defined by theta).
-                elif res_name == 'Z':
-                    self.assert_(theta <= cone_theta + epsilon)
+                    # Check the Z vector (should be in the cone defined by theta).
+                    elif res_name == 'Z':
+                        self.assert_(theta <= cone_theta + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
-        # Print out the maximum phi value.
-        print("Maximum phi for X and Y: %s" % max_phi)
+            # Print out the maximum phi value.
+            print("Maximum phi for X and Y: %s" % max_phi)
 
 
     def test_simulate_iso_cone_free_rotor_z_axis(self, type='sim'):
@@ -3938,61 +4093,74 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='iso cone, free rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X vector.
-                if res_name == 'X':
-                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
 
-                # Check the Z vector (should be in the cone defined by theta).
-                elif res_name == 'Z':
-                    self.assert_(theta <= cone_theta + epsilon)
+                    # Check the Z vector (should be in the cone defined by theta).
+                    elif res_name == 'Z':
+                        self.assert_(theta <= cone_theta + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
     def test_simulate_iso_cone_torsionless_z_axis(self, type='sim'):
@@ -4012,80 +4180,92 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='iso cone, torsionless', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        max_phi = 0.0
-        lateral_slide = 0.07
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            max_phi = 0.0
+            lateral_slide = 0.07
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X vector.
-                if res_name == 'X':
-                    if abs(phi) > max_phi:
-                        max_phi = abs(phi)
-                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                    self.assert_(phi >= -lateral_slide)
-                    self.assert_(phi <= lateral_slide)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        if abs(phi) > max_phi:
+                            max_phi = abs(phi)
+                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assert_(phi >= -lateral_slide)
+                        self.assert_(phi <= lateral_slide)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                    self.assert_(phi-pi/2.0 >= -lateral_slide)
-                    self.assert_(phi-pi/2.0 <= lateral_slide)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assert_(phi-pi/2.0 >= -lateral_slide)
+                        self.assert_(phi-pi/2.0 <= lateral_slide)
 
-                # Check the Z vector (should be in the cone defined by theta).
-                elif res_name == 'Z':
-                    self.assert_(theta <= cone_theta + epsilon)
+                    # Check the Z vector (should be in the cone defined by theta).
+                    elif res_name == 'Z':
+                        self.assert_(theta <= cone_theta + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
-        # Print out the maximum phi value.
-        print("Maximum phi for X and Y: %s" % max_phi)
+            # Print out the maximum phi value.
+            print("Maximum phi for X and Y: %s" % max_phi)
 
 
     def test_simulate_pseudo_ellipse_xz_plane_tilt(self, type='sim'):
-        """Check the frame_order.simulate user function PDB file for the pseudo-ellipse model along the z-axis."""
+        """Check the frame_order.simulate user function PDB file for the pseudo-ellipse model with a xz-plane tilt."""
 
         # Init.
-        cone_theta_x = 2.0
-        cone_theta_y = 0.5
+        cone_theta_x = 0.5
+        cone_theta_y = 0.2
         cone_sigma_max = 0.1
         pivot = array([1, 0, -2], float64)
         l = 50.0
@@ -4101,72 +4281,85 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='pseudo-ellipse', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        max_phi = 0.0
-        lateral_slide = 0.17
-        vertical_slide = 0.02
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            max_phi = 0.0
+            lateral_slide = 0.17
+            vertical_slide = 0.02
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X vector.
-                if res_name == 'X':
-                    self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    if abs(phi-pi/2.0) > max_phi:
-                        max_phi = abs(phi-pi/2.0)
-                    self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
-                    self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
-                    self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
-                    self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        if abs(phi-pi/2.0) > max_phi:
+                            max_phi = abs(phi-pi/2.0)
+                        self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
+                        self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
+                        self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                        self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
 
-                # Check the Z vector (should be in the cone defined by theta).
-                elif res_name == 'Z':
-                    theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
-                    self.assert_(theta <= theta_max + epsilon)
+                    # Check the Z vector (should be in the cone defined by theta).
+                    elif res_name == 'Z':
+                        theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
+                        self.assert_(theta <= theta_max + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
-        # Print out the maximum phi value.
-        print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
+            # Print out the maximum phi value.
+            print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
 
     def test_simulate_pseudo_ellipse_z_axis(self, type='sim'):
@@ -4187,80 +4380,93 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='pseudo-ellipse', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        max_phi = 0.0
-        lateral_slide = 0.17
-        vertical_slide = 0.02
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            max_phi = 0.0
+            lateral_slide = 0.17
+            vertical_slide = 0.02
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X vector.
-                if res_name == 'X':
-                    self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    if abs(phi-pi/2.0) > max_phi:
-                        max_phi = abs(phi-pi/2.0)
-                    self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
-                    self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
-                    self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
-                    self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        if abs(phi-pi/2.0) > max_phi:
+                            max_phi = abs(phi-pi/2.0)
+                        self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
+                        self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
+                        self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                        self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
 
-                # Check the Z vector (should be in the cone defined by theta).
-                elif res_name == 'Z':
-                    theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
-                    self.assert_(theta <= theta_max + epsilon)
+                    # Check the Z vector (should be in the cone defined by theta).
+                    elif res_name == 'Z':
+                        theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
+                        self.assert_(theta <= theta_max + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
-        # Print out the maximum phi value.
-        print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
+            # Print out the maximum phi value.
+            print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
 
     def test_simulate_pseudo_ellipse_free_rotor_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the free rotor pseudo-ellipse model along the z-axis."""
 
         # Init.
-        cone_theta_x = 2.0
-        cone_theta_y = 0.5
+        cone_theta_x = 0.5
+        cone_theta_y = 0.2
         pivot = array([1, 0, -2], float64)
         l = 50.0
         sim_num = 500
@@ -4272,61 +4478,74 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, free rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        max_phi = 0.0
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            max_phi = 0.0
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X and Y vectors.
-                if res_name in ['X', 'Y']:
-                    self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+                    # Check the X and Y vectors.
+                    if res_name in ['X', 'Y']:
+                        self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
 
-                # Check the Z vector (should be in the cone defined by theta).
-                elif res_name == 'Z':
-                    theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
-                    self.assert_(theta <= theta_max + epsilon)
+                    # Check the Z vector (should be in the cone defined by theta).
+                    elif res_name == 'Z':
+                        theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
+                        self.assert_(theta <= theta_max + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
-        # Print out the maximum phi value.
-        print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
+            # Print out the maximum phi value.
+            print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
 
     def test_simulate_pseudo_ellipse_torsionless_z_axis(self, type='sim'):
@@ -4346,72 +4565,84 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, torsionless', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        epsilon = 1e-3
-        max_phi = 0.0
-        lateral_slide = 0.23
-        vertical_slide = 0.02
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            epsilon = 1e-3
+            max_phi = 0.0
+            lateral_slide = 0.23
+            vertical_slide = 0.02
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X vector.
-                if res_name == 'X':
-                    self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
-                    self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
+                        self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    if abs(phi-pi/2.0) > max_phi:
-                        max_phi = abs(phi-pi/2.0)
-                    self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
-                    self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
-                    self.assert_(phi-pi/2.0 >= -lateral_slide)
-                    self.assert_(phi-pi/2.0 <= lateral_slide)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        if abs(phi-pi/2.0) > max_phi:
+                            max_phi = abs(phi-pi/2.0)
+                        self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
+                        self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
+                        self.assert_(phi-pi/2.0 >= -lateral_slide)
+                        self.assert_(phi-pi/2.0 <= lateral_slide)
 
-                # Check the Z vector (should be in the cone defined by theta).
-                elif res_name == 'Z':
-                    theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
-                    self.assert_(theta <= theta_max + epsilon)
+                    # Check the Z vector (should be in the cone defined by theta).
+                    elif res_name == 'Z':
+                        theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
+                        self.assert_(theta <= theta_max + epsilon)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
-        # Print out the maximum phi value.
-        print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
+            # Print out the maximum phi value.
+            print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
 
     def test_simulate_rotor_z_axis(self, type='sim'):
@@ -4433,66 +4664,77 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
+        files = []
         if type == 'sim':
-            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            file = 'simulation.pdb'
+            self.interpreter.frame_order.simulate(file=file, dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+            files.append(file)
         elif type == 'dist':
-            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
+            file = 'distribution.pdb'
+            self.interpreter.frame_order.distribute(file=file, dir=ds.tmpdir, total=sim_num)
+            files.append(file)
+        elif type == 'decomp':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
 
-        # Delete all structural data.
-        self.interpreter.structure.delete()
+        # Check each PDB.
+        for file in files:
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=file, dir=ds.tmpdir)
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Loop over all positions.
-            for i in range(sim_num):
-                # Shift the position back to the origin, and decompose into spherical coordinates.
-                new_pos = pos[i] - pivot
-                r, theta, phi = cartesian_to_spherical(new_pos)
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            num_pos = cdp.structure.num_models()
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Loop over all positions.
+                for i in range(num_pos):
+                    # Shift the position back to the origin, and decompose into spherical coordinates.
+                    new_pos = pos[i] - pivot
+                    r, theta, phi = cartesian_to_spherical(new_pos)
 
-                # Printout.
-                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+                    # Printout.
+                    print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector lengths.
-                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
-                    self.assertAlmostEqual(r/100.0, 1.0, 4)
-                elif res_name == 'C':
-                    self.assertAlmostEqual(r, 0.0, 4)
+                    # The vector lengths.
+                    if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                        self.assertAlmostEqual(r/100.0, 1.0, 4)
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(r, 0.0, 4)
 
-                # Check the X vector.
-                if res_name == 'X':
-                    self.assertAlmostEqual(theta, pi/2.0, 3)
-                    self.assert_(phi >= -cone_sigma_max)
-                    self.assert_(phi <= cone_sigma_max)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the X vector.
+                    if res_name == 'X':
+                        self.assertAlmostEqual(theta, pi/2.0, 3)
+                        self.assert_(phi >= -cone_sigma_max)
+                        self.assert_(phi <= cone_sigma_max)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the Y vector.
-                elif res_name == 'Y':
-                    self.assertAlmostEqual(theta, pi/2.0, 3)
-                    self.assert_(phi-pi/2.0 >= -cone_sigma_max)
-                    self.assert_(phi-pi/2.0 <= cone_sigma_max)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the Y vector.
+                    elif res_name == 'Y':
+                        self.assertAlmostEqual(theta, pi/2.0, 3)
+                        self.assert_(phi-pi/2.0 >= -cone_sigma_max)
+                        self.assert_(phi-pi/2.0 <= cone_sigma_max)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the Z vector (should not move).
-                elif res_name == 'Z':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 100.0, 3)
+                    # Check the Z vector (should not move).
+                    elif res_name == 'Z':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 100.0, 3)
 
-                # Check the centre.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
-                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+                    # Check the centre.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                        self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
-                # Check the origin.
-                elif res_name == 'C':
-                    self.assertAlmostEqual(pos[0], 0.0, 3)
-                    self.assertAlmostEqual(pos[1], 0.0, 3)
-                    self.assertAlmostEqual(pos[2], 0.0, 3)
+                    # Check the origin.
+                    elif res_name == 'C':
+                        self.assertAlmostEqual(pos[0], 0.0, 3)
+                        self.assertAlmostEqual(pos[1], 0.0, 3)
+                        self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
     def test_sobol_setup(self):
