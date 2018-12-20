@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2010,2012-2015 Edward d'Auvergne                         #
+# Copyright (C) 2009-2010,2012-2015,2018 Edward d'Auvergne                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,7 +33,7 @@ else:
 from graphics import WIZARD_IMAGE_PATH
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from specific_analyses.frame_order.optimisation import count_sobol_points
-from specific_analyses.frame_order.uf import distribute, sobol_setup, pdb_model, permute_axes, pivot, quad_int, ref_domain, select_model, simulate
+from specific_analyses.frame_order.uf import decompose, distribute, sobol_setup, pdb_model, permute_axes, pivot, quad_int, ref_domain, select_model, simulate
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -58,6 +58,61 @@ uf.backend = count_sobol_points
 uf.menu_text = "&count_sobol_points"
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_size = (800, 400)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
+
+
+# The frame_order.decompose user function.
+uf = uf_info.add_uf('frame_order.decompose')
+uf.title = "Structural representation of the individual frame order motional components."
+uf.title_short = "Frame order motional components."
+uf.add_keyarg(
+    name = "root",
+    default = "decomposed",
+    py_type = "str",
+    arg_type = "str",
+    desc_short = "PDB file root",
+    desc = "The file root for the PDB files created.  Each motional component will be represented by a different PDB file appended with '_mode1.pdb', '_mode2.pdb', '_mode3.pdb', etc.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the files are to be saved.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string to allow the representation to be applied to a subset of all atoms.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "model",
+    default = 1,
+    min = 1,
+    py_type = "int",
+    desc_short = "original structural model",
+    desc = "Only one model from an analysed ensemble of structures can be used for the representation, as the decomposition PDB files consist of one model per state.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which, if set to True, will overwrite the any pre-existing file."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("An alternative way to visualise the frame order motions is to decompose the motions and visualise each mode separately.  This user function will create a uniform distribution of structures shifted from the original position and rotated around the eigenvector for that motional mode.  Each distribution will be output to a PDB file appended with '_modeX.pdb', where X are the discrete motional modes ordered from largest to smallest.  The curved line of positions will extend over the full distribution of structures.")
+uf.backend = decompose
+uf.menu_text = "&decompose"
+uf.gui_icon = "oxygen.actions.document-save"
+uf.wizard_height_desc = 420
+uf.wizard_size = (900, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
