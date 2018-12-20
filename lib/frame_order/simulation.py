@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2014-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2014-2015,2018 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,8 +23,8 @@
 """Module for simulating the frame order motions."""
 
 # Python module imports.
-from math import cos, pi, sin, sqrt
-from numpy import dot, eye, float64, transpose, zeros
+from math import cos, modf, pi, sin, sqrt
+from numpy import arange, dot, eye, float64, transpose, zeros
 import sys
 from warnings import warn
 
@@ -211,6 +211,73 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
 
     # Save the result.
     structure.write_pdb(file=file)
+
+
+def mode_distribution(file=None, structure=None, axis=None, angle=None, pivot=None, atom_id=None, angle_inc=2*pi/360):
+    """Linear distribution of a single component of the frame order motions.
+
+    @keyword file:          The opened and writable file object to place the PDB models of the representation into.
+    @type file:             str
+    @keyword structure:     The internal structural object to convert into an ensemble along the mode of motion.
+    @type structure:        lib.structure.internal.object.Internal instance
+    @keyword axis:          The rotation axis.
+    @type axis:             numpy 3D float64 array
+    @keyword angle:         The rotation angle in radian (structures will be rotated +/- this angle).
+    @type angle:            float
+    @keyword pivot:         The pivot point for the given motional mode.
+    @type pivot:            numpy 3D float64 array
+    @keyword atom_id:       The atom ID string for the atoms in the structure to rotate - i.e. the moving domain.
+    @type atom_id:          None or str
+    @keyword angle_inc:     The angle between rotated representations.  The default is 1 degree.
+    @type angle_inc:        float
+    """
+
+    # Check the structural object.
+    if structure.num_models() > 1:
+        raise RelaxError("Only a single model is supported.")
+
+    # Set the model number.
+    structure.set_model(model_orig=None, model_new=1)
+
+    # Generate the internal structural selection object.
+    selection = structure.selection(atom_id)
+
+    # Initialise the rotation matrix data structures.
+    R = eye(3, dtype=float64)
+
+    # The range of angles.
+    count = int(angle/angle_inc)
+    inner = arange(-count*angle_inc, (count+1)*angle_inc, angle_inc)
+    if inner[-1] > angle:
+        inner = inner[:-1]
+    if modf(angle/angle_inc)[0] > 1e-7:
+        print("Bracketing the representation.")
+        angles = zeros(len(inner)+2, float64)
+        angles[0] = -angle
+        angles[1:-1] = inner
+        angles[-1] = angle
+    else:
+        print("No bracketing of the representation required.")
+        angles = inner
+
+    # Generate the structures.
+    current_model = 1
+    for i in range(len(angles)):
+        # The rotation matrix.
+        axis_angle_to_R(axis, angles[i], R)
+
+        # Increment the snapshot number.
+        current_model += 1
+
+        # Copy the original structural data.
+        structure.add_model(model=current_model, coords_from=1)
+
+        # Rotate the model.
+        structure.rotate(R=R, origin=pivot, model=current_model, selection=selection)
+
+    # Save the result.
+    structure.write_pdb(file=file)
+    print("")
 
 
 def uniform_distribution(file=None, model=None, structure=None, parameters={}, eigenframe=None, pivot=None, atom_id=None, total=1000, max_rotations=100000):

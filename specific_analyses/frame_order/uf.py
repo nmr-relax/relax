@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2011,2013-2015 Edward d'Auvergne                         #
+# Copyright (C) 2009-2011,2013-2015,2018 Edward d'Auvergne                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,14 +25,14 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import array, float64, ones, transpose, zeros
+from numpy import argsort, array, float64, ones, transpose, zeros
 from warnings import warn
 
 # relax module imports.
 from lib.arg_check import is_float_array
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFault
-from lib.frame_order.simulation import brownian, uniform_distribution
+from lib.frame_order.simulation import brownian, mode_distribution, uniform_distribution
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_ISO_CONE, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_RIGID
 from lib.geometry.coord_transform import cartesian_to_spherical
 from lib.geometry.rotations import R_to_euler_zyz
@@ -44,6 +44,89 @@ from specific_analyses.frame_order.data import domain_moving, generate_pivot
 from specific_analyses.frame_order.geometric import average_position, create_ave_pos, create_geometric_rep, generate_axis_system
 from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
+
+
+def decompose(root="decomposed", dir=None, atom_id=None, model=1, force=True):
+    """Structural representation of the individual frame order motional components.
+
+    @keyword root:          The file root for the PDB files created.  Each motional component will be represented by a different PDB file appended with '_mode1.pdb', '_mode2.pdb', '_mode3.pdb', etc.
+    @type root:             str
+    @keyword dir:           The directory name to place the file into.
+    @type dir:              str or None
+    @keyword atom_id:       The atom identification string to allow the decomposition to be applied to subset of all atoms.
+    @type atom_id:          None or str
+    @keyword model:         Only one model from an analysed ensemble of structures can be used for the decomposition, as the corresponding PDB file consists of one model per state.
+    @type model:            int
+    @keyword force:         A flag which, if set to True, will overwrite the any pre-existing file.
+    @type force:            bool
+    """
+
+    # Printout.
+    print("PDB representation of the individual components of the frame order motions.")
+
+    # Checks.
+    check_pipe()
+    check_model()
+    check_domain()
+    check_parameters()
+    check_pivot()
+
+    # Skip any unsupported models.
+    unsupported = [MODEL_RIGID, MODEL_DOUBLE_ROTOR]
+    if cdp.model in unsupported:
+        print("Skipping the unsupported '%s' model." % cdp.model)
+        return
+
+    # Initialise the angle vector (cone opening angle 1, cone opening angle 2, torsion angle).
+    angles = zeros(3, float64)
+
+    # Cone opening.
+    if cdp.model in MODEL_LIST_ISO_CONE:
+        angles[0] = angles[1] = cdp.cone_theta
+    elif cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
+        angles[0] = cdp.cone_theta_y
+        angles[1] = cdp.cone_theta_x
+
+    # Non-zero torsion angle.
+    if cdp.model in MODEL_LIST_FREE_ROTORS:
+        angles[2] = pi
+    elif cdp.model in MODEL_LIST_RESTRICTED_TORSION:
+        angles[2] = cdp.cone_sigma_max
+
+    # The motional eigenframe.
+    frame = generate_axis_system()
+
+    # Mode ordering from largest to smallest.
+    indices = argsort(angles)
+    angles = angles[indices[::-1]]
+    frame = transpose(transpose(frame)[indices[::-1]])
+
+    # The pivot point.
+    pivot = generate_pivot(order=1, pdb_limit=True)
+
+    # Loop over each mode.
+    for i in range(3):
+        # Skip modes with no motion.
+        if angles[i] < 1e-7:
+            continue
+
+        # Open the output file.
+        file_name = "%s_mode%i.pdb" % (root, i+1)
+        file = open_write_file(file_name=file_name, dir=dir, force=force)
+
+        # The structure.
+        structure = deepcopy(cdp.structure)
+        if structure.num_models() > 1:
+            structure.collapse_ensemble(model_num=model)
+
+        # Shift to the average position.
+        average_position(structure=structure, models=[None])
+
+        # Create the representation.
+        mode_distribution(file=file, structure=structure, axis=frame[:,i], angle=angles[i], pivot=pivot, atom_id=domain_moving())
+
+        # Close the file.
+        file.close()
 
 
 def distribute(file="distribution.pdb.bz2", dir=None, atom_id=None, total=1000, max_rotations=100000, model=1, force=True):
