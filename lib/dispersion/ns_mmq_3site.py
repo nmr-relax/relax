@@ -57,12 +57,14 @@ More information on the NS MMQ 3-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, dot, einsum, float64, log, multiply
+from numpy import array, conj, dot, einsum, float64, log, multiply, isnan, any
+from numpy.ma import fix_invalid
 from numpy.linalg import matrix_power
 
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential
+from lib.errors import RelaxError
 
 # Repetitive calculations (to speed up calculations).
 # R20.
@@ -167,6 +169,16 @@ def rmmq_3site_rankN(R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_
     #matrix[2, 0] = k_AC
     #matrix[2, 1] = k_BC
     #matrix[2, 2] = -k_CB - k_CA + 1.j*dw_AC - R20C
+    for x in [R20A,R20B,R20C,dw_AB,dw_AC,k_AB,k_BA,k_BC,k_CB,k_AC,k_CA]:
+        if isinstance(x,float):
+            pass
+        if isinstance(x,list):
+            for v in x:
+                if v is None:
+                    raise RelaxError('trying to start NS MMQ 3 sites rankN with None values')
+        if x is None:
+            raise RelaxError('trying to start NS MMQ 3 sites rankN with None values')
+
 
     # Pre-multiply with tcp.
     r20a_tcp = R20A * tcp
@@ -206,6 +218,13 @@ def rmmq_3site_rankN(R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_
             + m_dw_AB_C_tcp + m_dw_AC_C_tcp
             + m_k_AB_tcp + m_k_BA_tcp + m_k_BC_tcp
             + m_k_CB_tcp + m_k_AC_tcp + m_k_CA_tcp)
+
+    #print(matrix)
+    #thismask = isnan(matrix)
+    isit = any(isnan(matrix))
+    if isit == True:
+        fix_invalid(matrix, copy=False, fill_value=1e100)
+
 
     return matrix
 
@@ -263,6 +282,17 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
+
+    for x in [R20A,R20B,R20C,pA,pB,dw_AB,dw_BC,dwH_AB,dwH_BC,kex_AB,kex_BC,kex_AC]:
+        if isinstance(x,float):
+            pass
+        if isinstance(x,list):
+            for v in x:
+                if v is None:
+                    raise RelaxError('trying to start NS MMQ 3 sites with None values')
+        if x is None:
+            raise RelaxError('trying to start NS MMQ 3 sites with None values')
+
 
     # Once off parameter conversions.
     dw_AC = dw_AB + dw_BC
@@ -448,6 +478,16 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
+    for x in [R20A,R20B,R20C,pA,pB,dw_AB,dw_BC,dwH_AB,dwH_BC,kex_AB,kex_BC,kex_AC]:
+        if isinstance(x,float):
+            pass
+        if isinstance(x,list):
+            for v in x:
+                if v is None:
+                    raise RelaxError('trying to start NS MMQ 3 sites with None values')
+        if x is None:
+            raise RelaxError('trying to start NS MMQ 3 sites with None values')
+
 
     # Once off parameter conversions.
     dw_AC = dw_AB + dw_BC

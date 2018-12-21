@@ -41,12 +41,12 @@ echo "> mpirun --report-bindings -np 2 echo $A hello world $A"; mpirun --report-
 
 echo "> mpirun --report-bindings -np 2 python -c $A print "\""hello"\"" $A"; mpirun --report-bindings -np 2 python -c "print $A hello $A"; echo ""
 
-echo "> mpirun --report-bindings -np 2 python --version"; mpirun --report-bindings -np 2 python --version; echo ""
+echo "> mpirun --report-bindings -np 2 python --version"; mpirun --report-bindings -np 2 python3 --version; echo ""
 
 echo "> mpirun --report-bindings -np 2 /usr/bin/env python --version"; mpirun --report-bindings -np 2 /usr/bin/env python --version; echo ""
 
-echo "Testing python, mpi4py and mpirun"; python --version; /usr/bin/env python --version; python -c "import mpi4py; print mpi4py.__version__"
+echo "Testing python, mpi4py and mpirun"; python3 --version; /usr/bin/env python --version; python3 -c "import mpi4py; print mpi4py.__version__"
 
-mpirun -np 2 python -c "import mpi4py; from mpi4py import MPI; print($A Mpi4py %s process %d of %d on %s.$A %(mpi4py.__version__, MPI.COMM_WORLD.Get_rank(),MPI.COMM_WORLD.Get_size(), MPI.Get_processor_name()))"
+mpirun -np 2 python3 -c "import mpi4py; from mpi4py import MPI; print($A Mpi4py %s process %d of %d on %s.$A %(mpi4py.__version__, MPI.COMM_WORLD.Get_rank(),MPI.COMM_WORLD.Get_size(), MPI.Get_processor_name()))"
 
 echo "Done"

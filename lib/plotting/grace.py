@@ -38,7 +38,7 @@ from lib.io import get_file_path, open_write_file
 # This script is used to batch convert the Grace *.agr files into graphics files using the Grace
 # program itself.
 GRACE2IMAGES = """\
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 ###############################################################################
 #                                                                             #

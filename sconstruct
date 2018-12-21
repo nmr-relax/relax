@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # That line was just so programs like gvim or emacs will understand that this is Python code!  Don't
 # make this file executable.
 
