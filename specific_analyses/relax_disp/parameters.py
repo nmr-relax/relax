@@ -780,7 +780,7 @@ def loop_parameters(spins=None):
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r1', 'r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
+            if not param in ['r1', 'r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AC', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AC']:
                 param_index += 1
                 yield param, param_index, None, None
 
@@ -800,8 +800,7 @@ def param_conversion(key=None, spins=None, sim_index=None):
     for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
         # Get the value.
         value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, r20_key=r20_key)
-        if value == None:
-            print('key {}, spins {} sim_index {}, para_name {} spin_index {} r20_key {}'.format(key,spins,sim_index,param_name,spin_index,r20_key))
+
         # The pA to pB to pC conversion.
         if param_name == 'pA':
             # 3-site exchange.
@@ -915,6 +914,7 @@ def param_num(spins=None):
             if spin.params[i] in PARAMS_R20:
                 for exp_type, frq in loop_exp_frq():
                     num += 1
+
     # Count the number of spin specific parameters for all spins.
     spin_params = ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH','dw_AB', 'dw_BC', 'dw_AC', 'dwH_AB', 'dwH_AC', 'dwH_BC']
     for spin in spins:
