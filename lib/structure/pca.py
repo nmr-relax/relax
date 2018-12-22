@@ -45,7 +45,7 @@ def calc_covariance_matrix(coord=None, weights=None):
     # Init.
     M = len(coord)
     N = len(coord[0])
-    if weights == None:
+    if weights is None:
         weights = ones(M, float64)
     else:
         weights = array(weights, float64)

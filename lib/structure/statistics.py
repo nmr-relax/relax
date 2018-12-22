@@ -98,7 +98,7 @@ def calc_mean_structure(coord=None, mean=None, weights=None):
     # The number of atoms.
     N = len(coord[0])
     M = len(coord)
-    if weights == None:
+    if weights is None:
         weights = ones(M, float64)
     else:
         weights = array(weights, float64)

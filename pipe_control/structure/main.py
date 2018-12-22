@@ -896,7 +896,7 @@ def load_spins(spin_id=None, str_id=None, from_mols=None, mol_name_target=None, 
         spin_names.append(atom_name)
 
         # Position vector.
-        if hasattr(spin_cont, 'pos') and spin_cont.pos != None and (spin_cont.pos.shape != pos.shape or (spin_cont.pos != pos).any()):
+        if hasattr(spin_cont, 'pos') and spin_cont.pos is not None and (spin_cont.pos.shape != pos.shape or (spin_cont.pos != pos).any()):
             warn(RelaxWarning("Positional information already exists for the spin %s, appending the new positions." % id))
             spin_cont.pos = concatenate((spin_cont.pos, pos))
         else:
