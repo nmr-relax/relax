@@ -1894,6 +1894,7 @@ class Dispersion:
         pB = params[self.end_index[4]+2]
         kex_BC = params[self.end_index[4]+3]
         kex_AC = params[self.end_index[4]+4]
+        #print('before opt >> R20 {}, dwAB {} dw_BC {} dwH_AB {} dwH_BC {} pA {} kex_AB {} pB {} kex_BC {} kex_AC {}'.format(R20,dw_AB,dw_BC,dwH_AB,dwH_BC,pA,kex_AB,pB,kex_BC,kex_AC))
 
         # Calculate and return the chi-squared value.
         return self.calc_ns_mmq_3site_chi2(R20A=R20, R20B=R20, R20C=R20, dw_AB=dw_AB, dw_BC=dw_BC, dwH_AB=dwH_AB, dwH_BC=dwH_BC, pA=pA, pB=pB, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC)

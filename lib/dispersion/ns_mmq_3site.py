@@ -167,6 +167,16 @@ def rmmq_3site_rankN(R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_
     #matrix[2, 0] = k_AC
     #matrix[2, 1] = k_BC
     #matrix[2, 2] = -k_CB - k_CA + 1.j*dw_AC - R20C
+    #
+    # #heee
+    # if dw_AB.any() > 10.:
+    #     dw_AB = array([1.] * len(dw_AB))
+    # if dw_AB.any() < -10:
+    #     dw_AB = array([-1.]*len(dw_AB))
+    # if dw_AC.any() > 10.:
+    #     dw_AC = array([1.]*len(dw_AC))
+    # if dw_AC.any() < -10:
+    #     dw_AC = array([-1.] * len(dw_AC))
 
     # Pre-multiply with tcp.
     r20a_tcp = R20A * tcp
@@ -270,9 +280,36 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
     # Once off parameter conversions.
     #print('starting with vals >>\nR20A {} R20B {} R20C {}  \npA {} pB {} \ndw_AB {} dw_BC {} \ndwH_AB {} dwH_BC {}\n kex_AB {} kex_BC {}  kex_AC {} \n '.format(
     #    R20A, R20B, R20C, pA, pB, dw_AB, dw_BC, dwH_AB, dwH_BC, kex_AB, kex_BC, kex_AC))
+    #
+    # if dw_AB.any() > 10.:
+    #     dw_AB = array([1.] * len(dw_AB))
+    #
+    # if dw_AB.any() < -10:
+    #     dw_AB = array([-1.]*len(dw_AB))
+    #
+    # if dw_BC.any() > 10.:
+    #     dw_BC = array([1.]*len(dw_BC))
+    #
+    # if dw_BC.any() < -10:
+    #     dw_BC = array([-1.] * len(dw_BC))
+    #
+    # if dwH_AB.any() > 10.:
+    #     dwH_AB = array([1.] * len(dwH_AB))
+    #
+    # if dw_AB.any() < -10:
+    #     dwH_AB = array([-1.]*len(dwH_AB))
+    #
+    # if dwH_BC.any() > 10.:
+    #     dwH_BC = array([1.]*len(dwH_BC))
+    #
+    # if dwH_BC.any() < -10:
+    #     dwH_BC = array([-1.] * len(dwH_BC))
 
     dw_AC = dw_AB + dw_BC
     dwH_AC = dwH_AB + dwH_BC
+
+
+
     pC = 1.0 - pA - pB
     pA_pB = pA + pB
     pA_pC = pA + pC
@@ -286,6 +323,9 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
     else:
         k_CB = pB * kex_BC / pB_pC
         k_BC = pC * kex_BC / pB_pC
+
+
+
     k_CA = pA * kex_AC / pA_pC
     k_AC = pC * kex_AC / pA_pC
 
@@ -465,6 +505,32 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20
     """
 
     # Once off parameter conversions.
+
+    # if dw_AB.any() > 10.:
+    #     dw_AB = array([1.] * len(dw_AB))
+    #
+    # if dw_AB.any() < -10:
+    #     dw_AB = array([-1.]*len(dw_AB))
+    #
+    # if dw_BC.any() > 10.:
+    #     dw_BC = array([1.]*len(dw_BC))
+    #
+    # if dw_BC.any() < -10:
+    #     dw_BC = array([-1.] * len(dw_BC))
+    #
+    # if dwH_AB.any() > 10.:
+    #     dwH_AB = array([1.] * len(dwH_AB))
+    #
+    # if dw_AB.any() < -10:
+    #     dwH_AB = array([-1.]*len(dwH_AB))
+    #
+    # if dwH_BC.any() > 10.:
+    #     dwH_BC = array([1.]*len(dwH_BC))
+    #
+    # if dwH_BC.any() < -10:
+    #     dwH_BC = array([-1.] * len(dwH_BC))
+
+
     dw_AC = dw_AB + dw_BC
     pC = 1.0 - pA - pB
     pA_pB = pA + pB
