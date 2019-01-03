@@ -1,1 +1,2 @@
 scons
+https://iweb.dl.sourceforge.net/project/minfx/$VMIN/minfx-1.0.12.tar.gz
