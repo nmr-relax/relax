@@ -31,8 +31,9 @@ build: ## Build relax
 	$(info $$PYTHON_INCLUDE_DIR is [${PYTHON_INCLUDE_DIR}])
 	$(info $$VIRTUAL_ENV is [${VIRTUAL_ENV}])
 	scons
+	./relax -i
 
-build-env: ## Make a build environment by installing build dependencies with pip
+install-env: ## Make a install environment by installing dependencies with pip
 	pip install -r devel_scripts/travis-ci/requirements.txt
 
 test: ## Make a test run
