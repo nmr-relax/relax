@@ -32,6 +32,7 @@ help:
 
 build: ## Build relax
 	export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
+	echo $PYTHON_INCLUDE_DIR
 	scons
 
 build-docker: DARGS?=
