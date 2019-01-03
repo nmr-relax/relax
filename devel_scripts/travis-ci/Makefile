@@ -35,4 +35,4 @@ build: ## Build relax
 
 test: ## Make a test run
 	./relax --time --unit-tests
-	#./relax --time --system-tests
+	./relax --time --system-tests
