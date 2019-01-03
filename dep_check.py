@@ -76,17 +76,17 @@ try:
     import numpy
     if version_comparison(numpy.version.version, '1.6') == -1:
         sys.stderr.write("Version %s of the 'numpy' dependency is not supported, numpy >= 1.6 is required.\n" % numpy.version.version)
-        sys.exit()
+        sys.exit(1)
 except ImportError:
     sys.stderr.write("The dependency 'numpy' has not been installed.\n")
-    sys.exit()
+    sys.exit(1)
 
 # Command line option parser.
 try:
     import optparse
 except ImportError:
     sys.stderr.write("The dependency 'Optik' has not been installed.\n")
-    sys.exit()
+    sys.exit(1)
 
 # Minfx python package check.
 try:
@@ -94,10 +94,10 @@ try:
     min_version = '1.0.11'
     if not minfx.__version__ == 'trunk' and version_comparison(minfx.__version__, min_version) == -1:
         sys.stderr.write("Version %s of the 'minfx' dependency is too old, minfx >= %s is required.\n" % (minfx.__version__, min_version))
-        sys.exit()
+        sys.exit(1)
 except ImportError:
     sys.stderr.write("The dependency 'minfx' has not been installed (see https://sourceforge.net/projects/minfx/).\n")
-    sys.exit()
+    sys.exit(1)
 
 # Optional packages.
 ####################
