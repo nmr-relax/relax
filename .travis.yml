@@ -1,0 +1,39 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2019 Troels Schwarz-Linnet                                    #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+language: python
+python:
+#    - 2.6 # To difficult to get to work
+    - 2.7
+##    - 3.3
+##    - 3.4
+    - 3.5
+    - 3.6
+
+install:
+    - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then echo "[global]" > $VIRTUAL_ENV/pip.conf && echo "trusted-host = pypi.python.org" >> $VIRTUAL_ENV/pip.conf && echo "               svwh.dl.sourceforge.net" >> $VIRTUAL_ENV/pip.conf && cat $VIRTUAL_ENV/pip.conf; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install importlib; fi
+    - pip install -r devel_scripts/travis-ci/requirements.txt
+    - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
+
+script:
+    - set -e
+    - make -f devel_scripts/travis-ci/Makefile build
+    - make -f devel_scripts/travis-ci/Makefile test
