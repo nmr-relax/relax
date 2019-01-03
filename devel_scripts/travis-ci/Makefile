@@ -38,3 +38,4 @@ install-env: ## Make a install environment by installing dependencies with pip
 
 test: ## Make a test run
 	./relax -u
+	#./relax -s
