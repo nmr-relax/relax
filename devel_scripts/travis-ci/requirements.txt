@@ -3,4 +3,3 @@ https://sourceforge.net/projects/minfx/files/1.0.12/minfx-1.0.12.tar.gz/download
 https://sourceforge.net/projects/bmrblib/files/1.0.4/bmrblib-1.0.4.tar.gz/download
 numpy
 scipy
-matplotlib
