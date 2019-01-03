@@ -31,7 +31,7 @@ help:
 	@grep -E '^[a-zA-Z0-9_%/-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 build: ## Build relax
-	setenv PYTHON_INCLUDE_DIR $(python -c "from distutils import sysconfig; print(sysconfig.get_python_inc())")
+	export PYTHON_INCLUDE_DIR=$(python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())')
 	scons
 
 build-docker: DARGS?=
