@@ -32,3 +32,4 @@ install:
 script:
     - set -e
     - make -f devel_scripts/travis-ci/Makefile build
+    - make -f devel_scripts/travis-ci/Makefile test

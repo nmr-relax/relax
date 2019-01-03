@@ -18,11 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-.PHONY: help build dev test test-env
+.PHONY: help build build-env test
 
-# Docker image name and tag
-IMAGE:=tlinnet/csharp-notebook
-TAG?=latest
 # Shell that make should use
 SHELL:=bash
 
@@ -35,22 +32,8 @@ build: ## Build relax
 	$(info $$VIRTUAL_ENV is [${VIRTUAL_ENV}])
 	scons
 
-build-docker: DARGS?=
-build-docker: ## Make the latest build of the image
-	#docker build $(DARGS) --rm --force-rm -t $(IMAGE):$(TAG) .
-	docker build $(DARGS) --rm --force-rm -t $(IMAGE):$(TAG) -f devel_scripts/travis-ci/Dockerfile_build .
-
 build-env: ## Make a build environment by installing build dependencies with pip
 	pip install -r devel_scripts/travis-ci/requirements.txt
 
-dev-docker: ARGS?=
-dev-docker: DARGS?=
-dev-docker: PORT?=8888
-dev-docker: ## Make a container from a tagged image image
-	docker run -it --rm -p $(PORT):8888 $(DARGS) $(REPO) $(ARGS)
-
-test: ## Make a test run against the latest image
-	pytest devel_scripts/travis-ci/tests
-
-test-env: ## Make a test environment by installing test dependencies with pip
-	pip install -r devel_scripts/travis-ci/requirements-test.txt
+test: ## Make a test run
+	relax -u
