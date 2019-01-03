@@ -21,13 +21,14 @@
 language: python
 python:
     - 2.6
-    - 2.7
-#    - 3.3
-#    - 3.4
-    - 3.5
-    - 3.6
+#    - 2.7
+##    - 3.3
+##    - 3.4
+#    - 3.5
+#    - 3.6
 
 install:
+    - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then echo "[global]" > $VIRTUAL_ENV/pip.conf && echo "trusted-host = pypi.python.org" >> $VIRTUAL_ENV/pip.conf; fi
     - make -f devel_scripts/travis-ci/Makefile install-env
     - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
 
