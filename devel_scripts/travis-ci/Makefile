@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-.PHONY: help build build-env test
+.PHONY: help build install-env test
 
 # Shell that make should use
 SHELL:=bash
@@ -37,5 +37,5 @@ install-env: ## Make a install environment by installing dependencies with pip
 	pip install -r devel_scripts/travis-ci/requirements.txt
 
 test: ## Make a test run
-	./relax -u
-	#./relax -s
+	./relax --time --unit-tests
+	#./relax --time --system-tests
