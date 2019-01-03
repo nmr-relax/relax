@@ -36,4 +36,4 @@ build-env: ## Make a build environment by installing build dependencies with pip
 	pip install -r devel_scripts/travis-ci/requirements.txt
 
 test: ## Make a test run
-	relax -u
+	./relax -u
