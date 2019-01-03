@@ -27,6 +27,8 @@ sudo: required
 install:
     #- make -f devel_scripts/travis-ci/Makefile test-env
     - make -f devel_scripts/travis-ci/Makefile build-env
+    - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
+
 script:
     - set -e
     - make -f devel_scripts/travis-ci/Makefile build
