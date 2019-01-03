@@ -29,7 +29,7 @@ python:
 
 install:
     - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then echo "[global]" > $VIRTUAL_ENV/pip.conf && echo "trusted-host = pypi.python.org" >> $VIRTUAL_ENV/pip.conf && echo "               svwh.dl.sourceforge.net" >> $VIRTUAL_ENV/pip.conf && cat $VIRTUAL_ENV/pip.conf; fi
-    - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install importlib; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install importlib subprocess; fi
     - make -f devel_scripts/travis-ci/Makefile install-env
     - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
 
