@@ -52,8 +52,8 @@ class Relax_disp:
     """The relaxation dispersion auto-analysis."""
 
     # Some class variables.
-    opt_func_tol = 1e-4
-    opt_max_iterations = int(1e6)
+    opt_func_tol = 1e-25
+    opt_max_iterations = int(1e7)
 
     def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, exp_mc_sim_num=None, modsel='AIC', pre_run_dir=None, optimise_r2eff=False, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True, set_grid_r20=False, r1_fit=False):
         """Perform a full relaxation dispersion analysis for the given list of models.
@@ -374,7 +374,7 @@ class Relax_disp:
         if model not in [MODEL_R2EFF, MODEL_NOREX]:
             self.interpreter.relax_disp.insignificance(level=self.insignificance)
 
-        # Speed-up grid-search by using minium R2eff value.
+        # Speed-up grid-search by using minimum R2eff value.
         if self.set_grid_r20 and model != MODEL_R2EFF:
             self.interpreter.relax_disp.r20_from_min_r2eff(force=True)
 

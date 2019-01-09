@@ -534,7 +534,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             A[j+1][param_index] = -1.0
-            b.append(5.0)
+            b.append(0.0)
             b.append(-200.0 / scaling_matrix[param_index, param_index])
             j += 2
 
