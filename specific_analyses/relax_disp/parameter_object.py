@@ -122,6 +122,29 @@ def pB_lower(incs=None, model_info=None):
         return 0.0
 
 
+def pA_upper(incs=None, model_info=None):
+    """Determine the upper grid bound for the pA parameter.
+
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
+    @keyword model_info:    The spin containers and the spin ID strings from the model_loop() specific API method.
+    @type model_info:       list of SpinContainer instances, list of str
+    @return:                The lower grid search bound for the pA parameter.
+    @rtype:                 float
+    """
+    # meant to prevent error divide by zero in ms_mmq_3site.py determination of K_BC/CB
+    # Fetch the first spin container.
+    spin0 = return_spin(spin_id=model_info[0])
+
+    # The MMQ models.
+    if spin0.model in [MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_MMQ_3SITE]:
+        return 0.99
+
+    # All other models.
+    else:
+        return 1.0
+
+
 def i0_upper(incs=None, model_info=None):
     """Find the maximum peak intensity for the cluster.
 
@@ -287,7 +310,7 @@ class Relax_disp_params(Param_list):
             py_type = float,
             set = 'params',
             grid_lower = pA_lower,
-            grid_upper = 1.0,
+            grid_upper=pA_upper,
             grace_string = '\\qp\\sA\\N\\Q',
             err = True,
             sim = True
