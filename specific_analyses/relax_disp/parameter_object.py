@@ -24,7 +24,7 @@
 """The module for the relaxation dispersion parameter list object."""
 
 # relax module imports.
-from lib.dispersion.variables import MODEL_LIST_MMQ, MODEL_M61B
+from lib.dispersion.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR
 from lib.mathematics import round_to_next_order
 from pipe_control.mol_res_spin import return_spin
 from specific_analyses.parameter_object import Param_list
@@ -97,6 +97,29 @@ def pA_lower(incs=None, model_info=None):
     # All other models.
     else:
         return 0.5
+
+
+def pB_lower(incs=None, model_info=None):
+    """Determine the lower grid bound for the pB parameter.
+
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
+    @keyword model_info:    The spin containers and the spin ID strings from the model_loop() specific API method.
+    @type model_info:       list of SpinContainer instances, list of str
+    @return:                The lower grid search bound for the pA parameter.
+    @rtype:                 float
+    """
+    # meant to prevent error divide by zero in ms_mmq_3site.py determination of K_BC/CB
+    # Fetch the first spin container.
+    spin0 = return_spin(spin_id=model_info[0])
+
+    # The MMQ models.
+    if spin0.model in [MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_MMQ_3SITE]:
+        return 0.01
+
+    # All other models.
+    else:
+        return 0.0
 
 
 def i0_upper(incs=None, model_info=None):
@@ -276,7 +299,7 @@ class Relax_disp_params(Param_list):
             desc = 'The population for state B',
             py_type = float,
             set = 'params',
-            grid_lower = 0.0,
+            grid_lower=pB_lower,
             grid_upper = 0.5,
             grace_string = '\\qp\\sB\\N\\Q',
             err = True,

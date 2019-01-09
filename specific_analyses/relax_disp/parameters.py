@@ -250,7 +250,6 @@ def copy(pipe_from=None, pipe_to=None):
             elif 'pA' in spin_from.params:
                 spin_to.pA = pA
                 spin_to.pB = 1.0 - pA
-
             if 'kex' in spin_from.params:
                 spin_to.kex = kex
             if 'kex_AB' in spin_from.params:
@@ -319,15 +318,6 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
                 spin.r2b_sim[sim_index] = {}
             else:
                 spin.r2b = {}
-
-        # The pC parameter.
-        if 'pC' in spin.params:
-            if sim_index != None:
-                spin.pC_sim[sim_index] = {}
-            else:
-                spin.pC = {}
-
-
 
     # Loop over the parameters of the cluster, setting the values.
     for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
@@ -820,7 +810,7 @@ def param_conversion(key=None, spins=None, sim_index=None):
 
                 # Set the pC value.
                 pC = 1.0 - value - pB
-                set_value(value=pC, key=key, spins=spins, sim_index=sim_index, param_name='pC', spin_index=spin_index)#, r20_key=r20_key)
+                set_value(value=pC, key=key, spins=spins, sim_index=None, param_name='pC', spin_index=spin_index)
 
             # 2-site exchange.
             else:
@@ -1038,17 +1028,8 @@ def set_value(value=None, key=None, spins=None, sim_index=None, param_name=None,
 
             # Set the simulation value.
             if sim_index != None:
-                #sim_obj = getattr(spin, param_name + '_sim')
-                #sim_obj[sim_index] = value
-                try:
-                   sim_obj = getattr(spin, param_name+'_sim')
-                   sim_obj[sim_index] = value
-                except AttributeError:
-                   print('catching missing {}_sim value'.format(param_name))
-                   sim_obj = getattr(spin, param_name)
-                   #print(sim_obj)
-                   setattr(spin, param_name, sim_obj)
-                   #sim_obj[sim_index] = value
+                sim_obj = getattr(spin, param_name + '_sim')
+                sim_obj[sim_index] = value
 
             # Set the normal value.
             else:
