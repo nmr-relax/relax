@@ -548,7 +548,7 @@ def fetch_docstrings(target, source, env):
     print("###############################################\n\n")
 
     # Import the fetch_docstrings module (needs to be done here so that Sconstruct doesn't need to load the entire program each time).
-    sys.path.append(getcwd())
+    sys.path.insert(0, getcwd())
     from docs.latex.fetch_docstrings import Fetch_docstrings
 
     # Get the docstrings.
@@ -571,7 +571,7 @@ def replicate_title_check(target, source, env):
     print("#######################################################\n\n")
 
     # Import the find_replicate_titles module (needs to be done here so that Sconstruct doesn't need to load the entire program each time).
-    sys.path.append(getcwd())
+    sys.path.insert(0, getcwd())
     from docs.latex.find_replicate_titles import Replicated_titles
 
     # Find the replicates.

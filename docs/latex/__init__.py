@@ -23,4 +23,7 @@
 """The directory of LaTeX files for building the relax manual."""
 
 # The list of all package modules.
-__all__ = [ 'fetch_docstrings' ]
+__all__ = [
+    'fetch_docstrings',
+    'find_replicate_titles'
+]

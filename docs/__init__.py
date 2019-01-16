@@ -23,4 +23,6 @@
 """Directory containing all of relax's documentation."""
 
 
-__all__ = [ ]
+__all__ = [
+    'latex'
+]
