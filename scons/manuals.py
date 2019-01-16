@@ -601,7 +601,7 @@ def version_file(target, source, env):
 
     # Add the repository revision if not a normal release.
     text = version.version
-    if text == 'repository checkout':
+    if text == 'repository commit':
         if version.repo_type == 'git':
             text += ' %s' % version.repo_head
         else:

@@ -35,7 +35,7 @@ import lib.structure.internal.object
 from status import Status; status = Status()
 
 
-version = "repository checkout"
+version = "repository commit"
 repo_head = None
 repo_type = None
 repo_url = None
@@ -128,7 +128,7 @@ def version_full():
     ver = version
 
     # Repository version.
-    if ver == 'repository checkout':
+    if ver == 'repository commit':
         # The global variables
         global repo_head
         global repo_type

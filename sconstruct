@@ -710,7 +710,7 @@ class Main:
         print("Version number: " + version + "\n")
 
         # Test.
-        if version == "repository checkout":
+        if version == "repository commit":
             sys.stderr.write("The program version number has not been set.\n\n")
             sys.exit()
 

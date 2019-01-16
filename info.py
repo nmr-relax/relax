@@ -73,7 +73,7 @@ class Info_box(object):
 
         This class generates a container with the following objects:
             - title:  The program title 'relax'
-            - version:  For example 'repository checkout' or '1.3.8'.
+            - version:  For example 'repository commit' or '1.3.8'.
             - desc:  The short program description.
             - copyright:  A list of copyright statements.
             - licence:  Text pertaining to the licencing.
@@ -291,7 +291,7 @@ class Info_box(object):
         intro_string = '\n\n\n'
 
         # Program name and version - subversion code.
-        if version == 'repository checkout':
+        if version == 'repository commit':
             if repo_type == 'git':
                 text = "%s %s" % (self.title, self.version)
                 text2 = "%s" % repo_head
