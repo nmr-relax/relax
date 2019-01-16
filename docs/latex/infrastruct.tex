@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                             %
-% Copyright (C) 2006,2014,2017 Edward d'Auvergne                              %
+% Copyright (C) 2006,2014,2017,2019 Edward d'Auvergne                         %
 %                                                                             %
 % This file is part of the program relax (http://www.nmr-relax.com).          %
 %                                                                             %
@@ -25,14 +25,48 @@
 
 \chapter{Free software infrastructure} \label{ch: free software}
 
-\section{Note:  Gna!\ shutdown}
+\section{History}
 
-\textbf{Without much warning, the \href{https://en.wikipedia.org/wiki/Gna!}{Gna! open source infrastructure} that relax relied upon was permanently shut down at the start of 2017.
-A migration of relax's infrastructure is in progress, however both the bug tracker and the mailing lists are currently missing.
-These will hopefully soon be back in place.
-The old mailing list archives should nevertheless be accessible.
-The information in this section is hence out of date and will be updated once a full migration to new infrastructure has taken place.
-}
+Starting with the initial code in November 2001, the relax sources were not stored within a version control repository.
+Instead version control was performed by creating a log-less \file{*.tar.gz} file backup after each change.
+In June 2005, these backup files were imported into a new Subversion (SVN) repository.
+
+Corresponding with the switch to the SVN version control repository, relax was made public by shifting development onto the \href{https://en.wikipedia.org/wiki/Gna!}{Gna!\ free software infrastructure}.
+This allowed for the following new infrastructure to be set up:
+\begin{itemize}
+    \item Hosting for the relax website.
+    \item File download services for the relax distribution files (and PDF manual).
+    \item The relax mailing lists.
+    \item Access to the relax source code.
+    \item Bug, support request, task, and patch trackers.
+    \item News feed.
+\end{itemize}
+An archive of \href{https://web.archive.org/web/20170301004608/https://gna.org/projects/relax/}{relax's old Gna!\ website can be found on the Internet Archive}.
+
+In May 2017, without much warning, the \href{https://en.wikipedia.org/wiki/Gna!}{Gna! infrastructure} that relax relied upon was permanently shut down.
+This lead to a long period with no open source infrastructure.
+During this time, the relax SVN repository was painstakingly converted into a git version control repository with all branches and history preserved.
+To ensure that relax would be accessible for a long time into the future, this new git repository was mirrored to a number of free software/open source infrastructures:
+\begin{itemize}
+    \item \href{https://bitbucket.org/nmr-relax/}{relax at Bitbucket}
+    \item \href{https://github.com/nmr-relax}{relax at GitHub}
+    \item \href{https://gitlab.com/nmr-relax}{relax at GitLab}
+    \item \href{https://sourceforge.net/projects/nmr-relax/}{relax at SourceForge}
+\end{itemize}
+The webpages were also migrated with history from the SVN repository where they were located alongside the relax source code to a separate git repository.
+
+From January 2019, relax moved to the \href{https://sourceforge.net/projects/nmr-relax/}{SourceForge open source infrastructure}.  This provides the following relax infrastructure.
+\begin{itemize}
+    \item Hosting for the relax website.
+    \item File download services for the relax distribution files (and PDF manual).
+    \item The relax mailing lists.
+    \item Access to the relax source code, web pages, and relax demo files.
+    \item Bug, support request, and task trackers.
+    \item SVN support for hosting the old and archived SVN repository.
+    \item Backend shell log in (shell services).
+    \item MySQL and PHP support (possibly allowing for the relax Mediawiki to be migrated here in the future).
+\end{itemize}
+
 
 
 % The relax web sites.
