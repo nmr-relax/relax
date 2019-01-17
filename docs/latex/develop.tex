@@ -35,31 +35,31 @@ Anyone interested in joining the project should subscribe to all four lists.
 
 
 
-% Version control using Subversion.
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Version control using git.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\section{Version control using Subversion}\label{svn repository}
+\section{Version control using git}\label{git repository}
 
-The development of relax requires the use of the Subversion\index{Subversion|textbf} (SVN)\index{SVN|textbf} version control software downloadable from \href{http://subversion.tigris.org/}{http://subversion.tigris.org/}.
-The source code to relax is stored in an SVN repository located at \href{http://svn.gna.org/svn/relax/}{http://svn.gna.org/svn/relax/}.
-Every single change which has ever made to the program is recorded within this repository\index{repository}.
+The development of relax requires the use of the git\index{git|textbf} version control software downloadable from \url{https://git-scm.com/downloads}.
+The source code to relax is stored in a git repository located at \url{\relaxCodeWebInterfaceURL}.
+Every single change which has ever been made to the program is recorded within this repository\index{repository}.
 For more information see the free software infrastructure chapter~\ref{ch: free software} on page~\pageref{ch: free software}.
 
-Although the downloadable distribution archives\index{distribution archive} can be modified it is best that the most current and up to date revision (the \textit{head} revision) is modified instead.
-More information about the basics of version control and how this is implemented in Subversion can be found in the Subversion book located at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/}.
+Although the downloadable distribution archives\index{distribution archive} can be modified it is best that the most current and up to date code from the repository be modified instead.
+More information about the basics of version control and how this is implemented in git can be found in the \href{https://git-scm.com/docs}{git reference manual}.
 
-If you are not currently a relax developer you can check out the head revision by typing
+If you are not currently a relax developer you can obtain the repository by typing
 
-\example{\$ svn co svn://svn.gna.org/svn/relax/trunk relax-trunk}
+\example{\$ git clone \relaxCodeURL\ relax}
 
-Otherwise if you are a developer type
+Otherwise, if you already are a developer, type
 
-\example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/trunk relax-trunk}
+\example{\$ git clone \relaxCodeURLDeveloper\ relax}
 
-replacing \prompt{xxxxx} with your Gna!\ login name.
-If your version is out of date it can be updated to the latest revision by typing
+replacing \prompt{[username]} with your login name.
+If your version is out of date it can be updated to the latest commit by typing
 
-\example{\$ svn up}
+\example{\$ git pull}
 
 Modifications can be made to these sources.
 
@@ -359,7 +359,7 @@ If the original sources are located in the directory \directory{relax\osus{}orig
 
 If possible changes to the latest sources is preferred.
 Using the most up to date sources from the relax SVN repository will significantly aid the relax developers to incorporate your changes back into the main development line.
-To check out the current development line see section~\ref{svn repository} on page~\pageref{svn repository} for details.
+To check out the current development line see section~\ref{git repository} on page~\pageref{git repository} for details.
 Prior to submitting a patch to the mailing list your sources should be updated to include the most recent changes.
 To do this type
 
