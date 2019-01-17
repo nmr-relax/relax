@@ -83,7 +83,7 @@ It significantly decreases the barrier of entry into the relax source code for N
 
 \index{indentation|textbf}
 Indentation should be set to four spaces rather than a tab character.
-This is the recommendation given in the Python style guide found at \href{http://www.python.org/doc/essays/styleguide.html}{http://www.python.org/doc/essays/styleguide.html}.
+This is the recommendation given in the Python style guide found at \url{http://www.python.org/doc/essays/styleguide.html}.
 Emacs should automatically set the tabstop correctly.
 For vi add the following lines to the \file{vimrc} file:
 
@@ -155,8 +155,8 @@ def aic(chi2, k, n):
 \end{lstlisting}
 
 In addition to the text descriptions, the docstrings use the \href{http://epydoc.sourceforge.net/}{Epydoc}\index{epydoc} markup language to describe arguments, return values, and other information about the code.
-See \href{http://epydoc.sourceforge.net/fields.html}{http://epydoc.sourceforge.net/fields.html} for a listing of all the epydoc fields allowed.
-This mark up language is important for the creation of the \href{http://www.nmr-relax.com/api/}{API documentation}\index{API documentation} and to help developers understand the purpose and operation of the code.
+See \url{http://epydoc.sourceforge.net/fields.html} for a listing of all the epydoc fields allowed.
+This markup language is important for the creation of the \href{http://www.nmr-relax.com/api/}{API documentation}\index{API documentation} and to help developers understand the purpose and operation of the code.
 
 
 % Variable, function, and class names.
@@ -261,12 +261,12 @@ For example naming the parameter vector \pycode{self.param\_vector}, the relaxat
 
 The following conventions are for general code cleanliness and readability:
 \begin{itemize}
-  \item Trailing whitespace should be avoided, although this is not very important.
+  \item Trailing whitespace is to be avoided.
   \item All functions should be preceded by two empty lines.
     The only exception is the first function of the class definition.
   \item Function arguments should be separated by a comma followed by a single space.
   \item The assignment operator should be surrounded by spaces, for example \verb*!tm = 1e-8!.
-    The exception is function arguments where for example \verb*!self.classic\_colour(res\_num=None, width=0.3)!.
+    The exception is function arguments, for example \verb*!self.classic\_colour(res\_num=None, width=0.3)!.
   \item The comparison operators should also be surrounded by spaces, e.g.\ \verb*! < !, \verb*! > !, \verb*! == !, \verb*! <= !, \verb*! => !, \verb*! <> !, \verb*! != !, \verb*! is !, and \verb*! in !.
 \end{itemize}
 
@@ -308,13 +308,12 @@ class Internal:
 
 Comments are a very important component within relax.
 In the current source code the percentage of comment lines relative to lines of code ranges from 15\% to over 30\% for different files.
-The average comment density would be close to 25\%.
+The average comment density is close to 25\%.
 The purpose of having so many comment lines, much more than you would expect from source code, is so that the relax's code is fully self documented.
 It allows someone who is not familiar with the codebase to read the code and quickly understand what is happening.
 It simplifies the process of learning and allows NMR spectroscopists who are not coders to dive into the code.
-If writing code for relax, please attempt to maintain the tradition by aiming towards a 25\% comment ratio.
-The comment should be descriptive of what the code below it is supposed to do.
-Most importantly the comment explains why that code exists.
+When writing code for relax, please attempt to maintain the tradition by aiming towards a 25\% comment ratio.
+The comment should be descriptive and explain the intent of the code below.
 The script \file{scripts\ossep{}code\osus{}validator} can be used to check the comment density.
 
 
