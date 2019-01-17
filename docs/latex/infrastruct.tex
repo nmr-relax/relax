@@ -163,22 +163,15 @@ If you do wish to play with the source code and try to fix the issue see the rel
 \section{Latest sources -- the relax repositories}
 \index{repository|textbf}
 
-relax's source code is kept within a version control system called Subversion\index{Subversion|textbf} (\href{http://subversion.tigris.org/}{http://subversion.tigris.org/}).
-Subversion or SVN\index{SVN|textbf} allows fine control over the development of the program.
+relax's source code is kept within a version control system called \href{https://git-scm.com/}{git}\index{git|textbf}.
+This system allows for fine control over the development of the program.
 The repository contains all information about every change ever made to the program.
-To learn more about the system the Subversion book\index{Subversion!book} located at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} is a good place to start.
-The contents of the relax repository can be viewed on-line at \href{http://svn.gna.org/viewcvs/relax/}{http://svn.gna.org/viewcvs/relax/}.
-The current sources can be downloaded using the SVN protocol by typing
+To learn more about the system, the \href{https://git-scm.com/docs}{git Reference Manual}\index{git!manual} is a good place to start.
+The \href{\relaxCodeWebInterfaceURL}{contents of the relax repository can be viewed online}.
+The current sources can be downloaded using the git protocol by typing
 
-\example{\$ svn co svn://svn.gna.org/svn/relax/trunk relax-trunk}
-\index{Subversion!check out}
-
-however if this does not work, try the command
-
-\example{\$ svn co http://svn.gna.org/svn/relax/trunk relax-trunk}
-\index{Subversion!check out}
-
-to download using the HTTP protocol.
+\example{\$ git clone \relaxCodeURL\ relax}
+\index{git!clone}
 
 
 
