@@ -181,32 +181,26 @@ The current sources can be downloaded using the git protocol by typing
 \section{The relax distribution archives}
 \index{distribution archive}
 
-The relax distribution archives, the files to download to install relax, can be found at \href{http://download.gna.org/relax/}{http://download.gna.org/relax/}.
-If a compiled binary distribution for your architecture does not exist you are welcome to create this distribution yourself and submit it for inclusion in the relax project.
+The relax distribution archives are the files to \href{\relaxDistributionURL}{download to install relax}.
+If a compiled binary distribution for your architecture does not exist, you are welcome to create this distribution yourself and submit it for inclusion in the relax project.
 To do this a number of steps are required.
-Firstly, the code to each relax release or version resides in the `tags' directory of the relax repository.
-To check out version 2.1.1 for example type
+Firstly, the code to each relax release or version resides in a git repository `tag'.
+To check out version 4.0.3, for example, within an existing git repository clone type
 
-\example{\$ svn co svn://svn.gna.org/svn/relax/tags/2.1.1 relax}
-\index{Subversion!check out}
+\example{\$ git checkout 4.0.3}
+\index{git!checkout}
 
-Again the sources are available through HTTP by typing
-
-\example{\$ svn co http://svn.gna.org/svn/relax/tags/2.1.1 relax}
-\index{Subversion!check out}
-
-The binary distribution can then be created for your architecture by shifting to the main directory of the checked out sources and typing
+The binary distribution can then be created for your architecture by typing
 
 \begin{exampleenv}
-\$ cd relax \\
 \$ scons binary\_dist
 \end{exampleenv}
 \index{SCons!binary distribution}
 
 At the end SCons\index{SCons} will attempt to make a GPG signature\index{GPG!signature} for the newly created archive.
 However this will fail as the current relax private GPG key\index{GPG!key} is not available for security reasons.
-If the SCons command fails, excluding the GPG signing, please submit a bug report\index{bug!tracker} with as much information possible including the details described next to \href{https://web.archive.org/web/https://gna.org/bugs/?group=relax\&func=additem}{https://web.archive.org/web/https://gna.org/bugs/?group=relax\&func=additem} (the python and SCons version numbers may also be useful).
+If the SCons command fails, excluding the GPG signing, please \href{\relaxBugTrackerSubmitURL}{submit a bug report}\index{bug!tracker} with as much information possible (the Python and SCons version numbers may also be useful).
 Once the file has been created post a message to the relax development mailing list\index{mailing list!relax-devel} describing the compilation and the creation of the archive, the relax version number, the machine architecture, operating system, and the name of the new file.
 Do not attach the file though.
 You will then receive a response explaining where to send the file to.
-For security the archive will be thoroughly checked and if the source code is identical to that in the repository and the C modules are okay, the file will be GPG signed\index{GPG!signature} and uploaded to \href{http://download.gna.org/relax/}{http://download.gna.org/relax/}.
+For security the archive will be thoroughly checked and if the source code is identical to that in the repository and the C modules are okay, the file will be GPG signed\index{GPG!signature} and uploaded to \href{\relaxDistributionURL}{\relaxDistributionURL}.
