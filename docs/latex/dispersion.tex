@@ -2329,14 +2329,13 @@ Missing features include:
     It is currently handled by assuming each state is a separate spin system but this means that $\dw$, $\dwH$ and related parameters are not shared as they should be.
   \item The van't Hoff analysis of multi-temperature dispersion data (see \url{https://en.wikipedia.org/wiki/Van\_\%27t\_Hoff\_equation}).
   \item The \citet{Korzhnev05a} correction for constant-time $\Ronerho$ experiments for the analytic models ($\Ronerho$ = $-\lambda_1 -1/\Trelax\log{a_1}$, where $a_1$ = $1 - \pB\cos^2(\theta_A - \theta_B)$, and $\theta_A$ = $\arctan(\omegaone/\omegaA)$ and $\theta_B$ = $\arctan(\omegaone/\omegaB)$.
-  \item Calculation of the dispersion $\alpha$ value from \cite{Millet00} (see \url{https://gna.org/task/?7800}).
+  \item Calculation of the dispersion $\alpha$ value from \cite{Millet00}.
   \item Support for CEST-type data.
   \item Offset support for the ground state chemical shift rather than the observed peak position.
-    See \url{http://thread.gmane.org/gmane.science.nmr.relax.devel/5414/focus=5457}.
     This is really only needed for $\Ronerho$-type data.
 \end{itemize}
 
-If you would like one of these features, please contact the ``relax-devel at gna.org''\index{mailing list!relax-devel} mailing list.
+If you would like one of these features, please contact the ``\relaxDevelML''\index{mailing list!relax-devel} mailing list.
 The most useful would be if you have synthetic data whereby you know what the true solution should be.
 This can then be incorporated into a relax system test and the feature implemented to allow the test to pass.
 Note that such data should never be emailed to a public mailing list!
@@ -2346,8 +2345,8 @@ Some of the missing models include:
 \begin{description}
   \item[`TP04':]\index{relaxation dispersion!TP04 model}  The $\Ronerho$-type data \citet{TrottPalmer04} N-site analytic equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pone, \dots, \pN, \aveomega, \konetwo, \dots\, \koneN\}$.
   \item[`* $\Ronerho$':]  All of the 3-site and N-site models as summarised in Table~1 of \citet{PalmerMassi06}.
-  \item[`BK13':]\index{relaxation dispersion!BK13 model}  The $\Ronerho$-type data \citet{Baldwin2013} off-resonance 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  For details and code, see \url{https://gna.org/support/?3155}.
-  \item[`BK13 full':]\index{relaxation dispersion!BK13 full model}  The $\Ronerho$-type data full \citet{Baldwin2013} off-resonance 2-site equation for all time scales with parameters $\{\RonerhoprimeA, \RonerhoprimeB, \dots, \pA, \dw, \kex\}$.  For details and code, see \url{https://gna.org/support/?3155}.
+  \item[`BK13':]\index{relaxation dispersion!BK13 model}  The $\Ronerho$-type data \citet{Baldwin2013} off-resonance 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  For details and code, see the \href{https://web.archive.org/https://gna.org/support/?3155}{archived Gna!\ support request \#3155}.
+  \item[`BK13 full':]\index{relaxation dispersion!BK13 full model}  The $\Ronerho$-type data full \citet{Baldwin2013} off-resonance 2-site equation for all time scales with parameters $\{\RonerhoprimeA, \RonerhoprimeB, \dots, \pA, \dw, \kex\}$.  For details and code, see the \href{https://web.archive.org/https://gna.org/support/?3155}{archived Gna!\ support request \#3155}.
 \end{description}
 
 Information for how these can be added is given in the next section.
@@ -2393,7 +2392,7 @@ There is currently support in relax for generating the input files for CPMGFit, 
 The features of the different software are compared in Table~\ref{table: dispersion software} on page~\pageref{table: dispersion software}.
 Note that this table is likely to be incomplete so please see the websites of the respective software for an up to date list of features.
 The aim of this table is to provide a fair comparison between all of the available dispersion software.
-Therefore if you do find deficiencies or errors in this table please report these either to the relax users mailing list at ``relax-users at gna.org''\index{mailing list!relax-users}, submit a bug report\index{bug!report} (see section~\ref{reporting bugs} on page~\pageref{reporting bugs}), or send a private message to one of the relax developers (\url{http://gna.org/project/memberlist.php?group=relax}) so that the details can be corrected.
+Therefore if you do find deficiencies or errors in this table please report these either to the relax users mailing list at ``\relaxUsersML''\index{mailing list!relax-users} or submit a bug report\index{bug!report} (see section~\ref{reporting bugs} on page~\pageref{reporting bugs}) so that the details can be corrected.
 
 \clearpage
 \input{dispersion_software}
