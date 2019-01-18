@@ -35,17 +35,17 @@ Anyone interested in joining the project should subscribe to all four lists.
 
 
 
-% Version control using git.
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% The relax source code repositories.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\section{Version control using git}\label{git repository}
+\section{The relax source code repositories} \label{git repository}
 
 The development of relax requires the use of the git\index{git|textbf} version control software downloadable from \url{https://git-scm.com/downloads}.
-The source code to relax is stored in a git repository located at \url{\relaxCodeWebInterfaceURL}.
+The source code to relax is stored in a git repository currently located at \url{\relaxCodeWebInterfaceURL}.
 Every single change which has ever been made to the program is recorded within this repository\index{repository}.
 For more information see the free software infrastructure chapter~\ref{ch: free software} on page~\pageref{ch: free software}.
 
-Although the downloadable distribution archives\index{distribution archive} can be modified it is best that the most current and up to date code from the repository be modified instead.
+Although the downloadable distribution archives\index{distribution archive} can be modified, it is best that the most current and up to date code from the repository be modified instead.
 More information about the basics of version control and how this is implemented in git can be found in the \href{https://git-scm.com/docs}{git reference manual}.
 
 If you are not currently a relax developer you can obtain the repository by typing
@@ -56,12 +56,72 @@ Otherwise, if you already are a developer, type
 
 \example{\$ git clone \relaxCodeURLDeveloper\ relax}
 
-replacing \prompt{[username]} with your login name.
+replacing \prompt{[username]} with your registered \relaxHome\ login name.
 If your version is out of date it can be updated to the latest commit by typing
 
 \example{\$ git pull}
 
-Modifications can be made to these sources.
+Modifications by relax developers should be made to these sources.
+If you are not currently a registered relax developer, changes can be made to forks of the repository (all details are below)
+
+
+
+% Git mirrors.
+%~~~~~~~~~~~~~
+
+\subsection{Git mirrors}
+
+The relax developers are expected to develop directly on the relax repository.
+The primary repository is located at \relaxHome.
+However, for future longevity of relax, this repository is mirrored on multiple free software/open source infrastructures.
+As a relax developer, you should set these all as remotes and push all changes to all mirrors.
+Firstly rename the default remote name \example{origin}:
+
+\begin{exampleenv}
+\$ git remote rename origin \relaxHomeRemoteName
+\end{exampleenv}
+
+Then add all remotes not already present:
+
+\begin{exampleenv}
+\$ git remote add bb \relaxMirrorBBCodeURLDeveloper \\
+\$ git remote add gh \relaxMirrorGHCodeURLDeveloper \\
+\$ git remote add gl \relaxMirrorGLCodeURLDeveloper \\
+\$ git remote add sf \relaxMirrorSFCodeURLDeveloper
+\end{exampleenv}
+
+You will need to be registered at these sites to be able to push to them:
+\begin{itemize}
+    \item \href{\relaxMirrorBBRegisterURL}{Bitbucket account registration}
+    \item \href{\relaxMirrorGHRegisterURL}{GitHub account registration}
+    \item \href{\relaxMirrorGLRegisterURL}{GitLab account registration}
+    \item \href{\relaxMirrorSFRegisterURL}{SourceForge account registration}
+\end{itemize}
+
+Other mirrors may be added in the future.
+To push all changes to the mirrors, type
+
+\begin{exampleenv}
+\$ git push --mirror bb \\
+\$ git push --mirror gh \\
+\$ git push --mirror gl \\
+\$ git push --mirror sf
+\end{exampleenv}
+
+This can be simplified by using a git alias, by adding the following alias to the git configuration file (e.g. \file{.gitconfig})
+
+\begin{footnotesize}
+\begin{verbatim}
+[alias]
+        pushremotes = !git remote | grep -v local_backup | xargs -L1 git push
+\end{verbatim}
+\end{footnotesize}
+
+and instead typing
+
+\begin{exampleenv}
+\$ git pushremotes --mirror
+\end{exampleenv}
 
 
 
@@ -321,7 +381,7 @@ The script \file{scripts\ossep{}code\osus{}validator} can be used to check the c
 % Committers.
 %~~~~~~~~~~~~
 
-\section{Committers}
+\section{Committers} \label{sect: committers}
 
 
 % Becoming a committer.
