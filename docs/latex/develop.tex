@@ -40,6 +40,9 @@ Anyone interested in joining the project should subscribe to all four lists.
 
 \section{The relax source code repositories} \label{git repository}
 
+% Primary relax repository.
+\subsection{Primary relax repository}
+
 The development of relax requires the use of the git\index{git|textbf} version control software downloadable from \url{https://git-scm.com/downloads}.
 The source code to relax is stored in a git repository currently located at \url{\relaxCodeWebInterfaceURL}.
 Every single change which has ever been made to the program is recorded within this repository\index{repository}.
@@ -57,31 +60,28 @@ Otherwise, if you already are a developer, type
 \example{\$ git clone \relaxCodeURLDeveloper\ relax}
 
 replacing \prompt{[username]} with your registered \relaxHome\ login name.
-If your version is out of date it can be updated to the latest commit by typing
+If your version is out of date, it can be updated to the latest commit by typing
 
 \example{\$ git pull}
 
-Modifications by relax developers should be made to these sources.
 If you are not currently a registered relax developer, changes can be made to forks of the repository (all details are below)
 
 
 
-% Git mirrors.
-%~~~~~~~~~~~~~
+% Mirrors of the relax repository.
+\subsection{Mirrors of the relax repository}
 
-\subsection{Git mirrors}
-
-The relax developers are expected to develop directly on the relax repository.
-The primary repository is located at \relaxHome.
-However, for future longevity of relax, this repository is mirrored on multiple free software/open source infrastructures.
-As a relax developer, you should set these all as remotes and push all changes to all mirrors.
-Firstly rename the default remote name \example{origin}:
+The relax developers are expected to push all changes to the primary relax repository currently located at \relaxHome.
+However, for the future longevity of relax, this repository is mirrored on multiple free software/open source infrastructures.
+This should ensure access to relax for decades to come.
+As a relax developer, you can set these all as remotes and push all changes to all mirrors.
+Firstly rename the default remote name \example{origin} with
 
 \begin{exampleenv}
 \$ git remote rename origin \relaxHomeRemoteName
 \end{exampleenv}
 
-Then add all remotes not already present:
+Then add all remotes not already present by typing
 
 \begin{exampleenv}
 \$ git remote add bb \relaxMirrorBBCodeURLDeveloper \\
@@ -112,8 +112,9 @@ To push all changes to the mirrors, type
 \$ git push --tags sf
 \end{exampleenv}
 
-This can be simplified by using a git alias, by adding the following alias to the git configuration file.
-For example on POSIX systems, in the file \file{.gitconfig} add:
+The first commands only push the changes present on the currently checked out branch (creating the remote branch if necessary), and the second set push all tags.
+This can be simplified by using a git alias set in the git configuration file.
+For example on POSIX systems, in the file \file{.gitconfig} add
 
 \begin{footnotesize}
 \begin{verbatim}
