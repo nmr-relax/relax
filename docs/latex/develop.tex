@@ -324,60 +324,6 @@ The script \file{scripts\ossep{}code\osus{}validator} can be used to check the c
 \section{Submitting changes to the relax project}
 
 
-% Submitting changes as a patch.
-\subsection{Submitting changes as a patch}
-\index{patch|textbf}
-
-The preferred method for submitting fixes and improvements to the relax source code is by the creation of a patch.
-If your changes are a fix make sure you have submitted a bug report\index{bug!report} to the bug tracker\index{bug!tracker} located at \href{https://web.archive.org/web/https://gna.org/bugs/?group=relax}{https://web.archive.org/web/https://gna.org/bugs/?group=relax} first.
-See section~\ref{reporting bugs} on page~\pageref{reporting bugs} for more details.
-Two methods can be used to generate the patch -- the Unix command \file{diff} or the Subversion program.
-The resultant file \file{patch} of either the \file{diff} or \file{svn} command described below can be posted to the ``relax-devel at gna.org'' mailing list\index{mailing list!relax-devel}.
-Please label within your post which version of relax you modified or which revision the patch is for.
-Also try to create a commit log\index{commit log} message according to the format described in section~\ref{commit log format} on page~\pageref{commit log format} for one of the relax committers to use as a template for committing the change.
-
-
-
-% Modification of official releases -- creating patches with diff.
-\subsection{Modification of official releases -- creating patches with diff}
-\index{patch!diff|textbf}
-
-If your modifications have been made to the source code of one of the official relax releases (for example 2.1.1) then the Unix command \file{diff} can be used to create a patch.
-A patch file is simply the output of the diff command run with the recursive flag and presented in the `unified' format.
-Therefore two directories need to be compared.
-If the original sources are located in the directory \directory{relax\osus{}orig} and the modified sources in \directory{relax\osus{}mod} then the patch can be created by typing
-
-\example{\$ diff -ur relax\_orig relax\_mod > patch}
-
-
-
-% Modification of the latest sources -- creating patches with Subversion.
-\subsection{Modification of the latest sources -- creating patches with Subversion}
-\index{patch!Subversion|textbf}
-\index{Subversion!patch|textbf}
-
-If possible changes to the latest sources is preferred.
-Using the most up to date sources from the relax SVN repository will significantly aid the relax developers to incorporate your changes back into the main development line.
-To check out the current development line see section~\ref{git repository} on page~\pageref{git repository} for details.
-Prior to submitting a patch to the mailing list your sources should be updated to include the most recent changes.
-To do this type
-
-\example{\$ svn up}
-
-and note the revision number to include in your post.
-The update may cause a conflict if changes added to the repository clash with your modifications.
-If this occurs see the Subversion book at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} for details on how to resolve the conflict or submit a message to the rela\mbox{x-d}evel list\index{mailing list!relax-devel}.
-
-Once the sources are up to date your changes can be can be converted into the patch text file.
-Using SVN creating a patch is easy.
-Just type
-
-\example{\$ svn diff > patch}
-
-in the base relax directory.
-
-
-
 % Committers.
 %~~~~~~~~~~~~
 
