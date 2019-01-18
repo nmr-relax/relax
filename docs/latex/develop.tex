@@ -102,13 +102,18 @@ Other mirrors may be added in the future.
 To push all changes to the mirrors, type
 
 \begin{exampleenv}
-\$ git push --mirror bb \\
-\$ git push --mirror gh \\
-\$ git push --mirror gl \\
-\$ git push --mirror sf
+\$ git push bb \\
+\$ git push gh \\
+\$ git push gl \\
+\$ git push sf \\
+\$ git push --tags bb \\
+\$ git push --tags gh \\
+\$ git push --tags gl \\
+\$ git push --tags sf
 \end{exampleenv}
 
-This can be simplified by using a git alias, by adding the following alias to the git configuration file (e.g. \file{.gitconfig})
+This can be simplified by using a git alias, by adding the following alias to the git configuration file.
+For example on POSIX systems, in the file \file{.gitconfig} add:
 
 \begin{footnotesize}
 \begin{verbatim}
@@ -117,10 +122,11 @@ This can be simplified by using a git alias, by adding the following alias to th
 \end{verbatim}
 \end{footnotesize}
 
-and instead typing
+Then instead type
 
 \begin{exampleenv}
-\$ git pushremotes --mirror
+\$ git pushremotes \\
+\$ git pushremotes --tags
 \end{exampleenv}
 
 
