@@ -125,7 +125,7 @@ def start(mode=None, profile_flag=False):
         # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
         profile.runctx('processor.run()', globals(), locals())
-        
+
 
 
 class Relax:
@@ -216,7 +216,8 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            runner.run_all_tests()
+            res = runner.run_all_tests()
+            sys.exit(not res)
 
         # Execute the relax system tests.
         elif self.mode == 'system tests':
@@ -229,7 +230,8 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            runner.run_system_tests()
+            res = runner.run_system_tests()
+            sys.exit(not res)
 
         # Execute the relax unit tests.
         elif self.mode == 'unit tests':
@@ -238,7 +240,8 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            runner.run_unit_tests()
+            res = runner.run_unit_tests()
+            sys.exit(not res)
 
         # Execute the relax GUI tests.
         elif self.mode == 'GUI tests':
@@ -247,7 +250,8 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            runner.run_gui_tests()
+            res = runner.run_gui_tests()
+            sys.exit(not res)
 
         # Execute the relax verification tests.
         elif self.mode == 'verification tests':
@@ -256,7 +260,8 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            runner.run_verification_tests()
+            res = runner.run_verification_tests()
+            sys.exit(not res)
 
         # Test mode.
         elif self.mode == 'test':
