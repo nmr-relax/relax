@@ -40,16 +40,32 @@ Anyone interested in joining the project should subscribe to all four lists.
 
 \section{The relax source code repositories} \label{git repository}
 
+Although the downloadable distribution archives\index{distribution archive} can be modified, it is best that the most current and up to date code from relax's version control repositories be modified instead.
+
+
+% relax repositories.
+\subsection{relax repositories}
+
+The source and data files for relax are stored in version control repositories.
+This allows every single change which has ever been made to be recorded within the repository\index{repository}.
+Originally a single Subversion repository was used to hold the source code and webpages but, since the Gna!\ free software infrastructure shutdown, the sources and data were migrated to git\index{git|textbf} repositories (see Section~\ref{sect: infrastructure history} on page~\pageref{sect: infrastructure history} for a detailed history).
+If not already installed, you can download git from \url{https://git-scm.com/downloads}.
+More information about the basics of version control and how this is implemented in git can be found in the \href{https://git-scm.com/docs}{git reference manual}.
+
+The source and data files are currently organised into the following repositories:
+\begin{itemize}
+    \item The relax source code git repository, viewable at \url{\relaxCodeWebInterfaceURL}.
+    \item The relax website git repository, viewable at \url{\relaxWebsiteWebInterfaceURL}.
+    \item The relax demonstration file git repository, viewable at \url{\relaxDemoWebInterfaceURL}.
+    \item The archived relax source code and website SVN repository, viewable at \url{\relaxSVNArchiveWebInterfaceURL}.
+\end{itemize}
+
+
 % Primary relax repository.
 \subsection{Primary relax repository}
 
-The development of relax requires the use of the git\index{git|textbf} version control software downloadable from \url{https://git-scm.com/downloads}.
-The source code to relax is stored in a git repository currently located at \url{\relaxCodeWebInterfaceURL}.
-Every single change which has ever been made to the program is recorded within this repository\index{repository}.
+relax is currently hosted on the \relaxHome\ open source infrastructure.
 For more information see the free software infrastructure chapter~\ref{ch: free software} on page~\pageref{ch: free software}.
-
-Although the downloadable distribution archives\index{distribution archive} can be modified, it is best that the most current and up to date code from the repository be modified instead.
-More information about the basics of version control and how this is implemented in git can be found in the \href{https://git-scm.com/docs}{git reference manual}.
 
 If you are not currently a relax developer you can obtain the repository by typing
 
@@ -138,6 +154,10 @@ Then instead type
 \$ git pushremotes \\
 \$ git pushremotes --tags
 \end{exampleenv}
+
+To download any changes present in any one of the mirrors, type
+
+\example{\$ git fetch --all}
 
 
 
