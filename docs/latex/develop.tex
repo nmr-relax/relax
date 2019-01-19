@@ -85,17 +85,17 @@ If you are not currently a registered relax developer, changes can be made to fo
 
 
 % Mirrors of the relax repository.
-\subsection{Mirrors of the relax repository}
+\subsection{Mirrors of the relax repository} \label{sect: relax mirrors}
 
 The relax developers are expected to push all changes to the primary relax repository currently located at \relaxHome.
 However, for the future longevity of relax, this repository is mirrored on multiple free software/open source infrastructures.
 This should ensure access to relax for decades to come.
 The web interfaces to the current mirrors are:
 \begin{itemize}
-    \item \href{\relaxMirrorBBCodeWebInterfaceURL}{nmr-relax at Bitbucket}
-    \item \href{\relaxMirrorGHCodeWebInterfaceURL}{nmr-relax at GitHub}
-    \item \href{\relaxMirrorGLCodeWebInterfaceURL}{nmr-relax at GitLab}
-    \item \href{\relaxMirrorSFCodeWebInterfaceURL}{nmr-relax at SourceForge}
+    \item \href{\relaxMirrorBBWebInterfaceURL}{nmr-relax at Bitbucket}
+    \item \href{\relaxMirrorGHWebInterfaceURL}{nmr-relax at GitHub}
+    \item \href{\relaxMirrorGLWebInterfaceURL}{nmr-relax at GitLab}
+    \item \href{\relaxMirrorSFWebInterfaceURL}{nmr-relax at SourceForge}
 \end{itemize}
 
 
@@ -554,118 +554,169 @@ If the planned changes have the potential to introduce problems, the creation of
 \section{Submitting changes to the relax project}
 
 
-% Branches.
-\subsection{Branches}
+If you are not currently registered as a relax developer, to have your changes incorporated into relax you will either need to create patches or push your changes from your local repository to a fork of the primary or mirror relax repositories.
+These changes need to be committed to a dedicated development branch.
+
+
+% Development branches.
+\subsection{Development branches}
 \index{branches|textbf}
 \index{repository!branches|textbf}
 
+When making changes to the relax git repository, you should never commit changes to the \terminal{master} branch.
+Instead a dedicated development branch must be used.
+For example to create a branch from the main development line, the \terminal{master} branch, called \terminal{molmol\_macros} whereby new Molmol macros are to be written, type
 
-\subsection{Branch creation}
-\index{repository!branch creation}
+\example{\$ git checkout master}
 
-If a change is likely to be disruptive or cause breakages in the program, the use of your own temporary branch is recommended.
-This private branch is a complete copy of one of the main development lines wherein you can make changes without disrupting the other developers.
-Although called a private branch every change is visible to all other developers and each commit will result in an automatic email to the relax-commits mailing list\index{mailing list!relax-commits}.
-Other developers are even able to check out your branch and make modifications to it.
-Private branches can also be used for testing ideas.
-If the idea does not work the branch can be deleted from the repository (in reality the branch will always exist between the revision numbers of its creation and deletion and can always be resurrected).
-For example to create a branch from the main development line, the `trunk', called \prompt{molmol\_macros} whereby new Molmol macros are to be written, type
+This is to firstly switch \terminal{master} branch if not already there.
+Then create and switch to your new development branch by typing
 
 \begin{exampleenv}
-\$ svn cp svn+ssh://xxxxx@svn.gna.org/svn/relax/trunk $\backslash$ \\
- svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros
+\$ git branch molmol\_macros/r1 \\
+\$ git checkout molmol\_macros/r1
 \end{exampleenv}
 
-replacing \prompt{xxxxx} with your login name.
-You can then check out your private branch by typing
-
-\example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros}
-
-which will create a directory called \directory{molmol\osus{}macros} containing all the relax source files.
-To have the files placed into a different directory, type the name of that directory at the end of the last command.
-Modifications can be made to this copy while normal development continues on the main line.
+The reason for the \terminal{*/r1} suffix will be discussed later.
+The \terminal{master} branch should be kept clean, either by tracking the primary or mirror repository's \terminal{master} branch directly, or only performing mergers from that branch (as forks should do).
+Modifications can be made to this copy while normal development continues on the \terminal{master} branch.
 
 
-\subsection{Keeping the branch up to date using \file{svnmerge.py}}
-\index{svnmerge.py}
+% Syncing.
+\subsection{Keeping the branch up to date} \label{sect: up to date git}
 \index{repository!keeping up to date}
-\index{repository!svnmerge.py}
 
-As you develop your branch, changes will be occurring simultaneously within the main line.
-These changes should be merged into your branch on a regular basis to avoid large incompatible changes from forming between the two branches.
-To simplify this process, the \file{svnmerge.py} script located at \href{http://www.orcaware.com/svn/wiki/Svnmerge.py}{http://www.orcaware.com/svn/wiki/Svnmerge.py} can be used.
-It is best to download the trunk version from that page, unless that version is non-functional.
-Once you have this script, the merging from the main line to your private branch must be initialised by typing, from within the checked out copy of your branch,
-
-\example{\$ svnmerge.py init}
-\index{Subversion!svnmerge.py init}
-
-This then needs to be committed using the automatically generated log
-
-\example{\$ svn ci -F svnmerge-commit-message.txt}
-\index{Subversion!commit}
-
-To keep up to date, simply type
-
-\example{\$ svnmerge.py merge}
-\index{Subversion!svnmerge.py merge}
+As you develop your branch, changes will be occurring simultaneously within the \terminal{master} branch.
+These changes should be incorporated into your branch on a regular basis to avoid large incompatible changes from forming between the two branches.
+For your changes to be incorporated into relax's \terminal{master} branch, the `git rebase' concept and not `git merge' should be used.
 
 
-If conflicts\index{Subversion!conflict} have occurred please refer to the Subversion book at \href{http://svnbook.red-bean.com/}{http://svnbook.red-bean.com/} for information on how to resolve the problem.
-Otherwise, or once fixed, the main line revisions merged into your branch can be committed using the automatically generated log file:
+% Versioning git branches.
+\subsubsection{Versioning git branches} \label{sect: git branch versioning}
+\index{repository!branch versioning}
 
-\example{\$ svn ci -F svnmerge-commit-message.txt}
-\index{Subversion!commit}
+If you have already pushed your changes to a remote repository, you will need to create a new version of your branch.
+You should never rebase a branch that is tracking a remote branch (unless you subsequently rename the rebased branch and untrack the remote).
+In the above example, the \terminal{molmol\_macros/r1} branch is using such a manual versioning system.
+The second version of your branch can be created by typing
+
+\begin{exampleenv}
+\$ git checkout molmol\_macros/r1 \\
+\$ git branch molmol\_macros/r2 \\
+\$ git checkout molmol\_macros/r2
+\end{exampleenv}
+
+You can then leave the \terminal{molmol\_macros/r1} branch untouched and instead rebase the new \terminal{molmol\_macros/r2} branch.
 
 
+
+% Rebasing.
+\subsubsection{Rebasing to the master branch}
+\index{repository!rebasing}
+
+Assuming you have not already pushed your branch to a remote repository, you can rebase your branch to the \terminal{master} branch.
+Firstly make sure your local copy of the \terminal{master} branch is fully up to date, then type
+
+\example{\$ git rebase -i master}
+
+Or fetch all changes from the primary \relaxHome\ remote (or a mirror) and rebase to the remote \terminal{master} branch with
+
+\begin{exampleenv}
+\$ git fetch \relaxHomeRemoteName \\
+\$ git rebase -i \relaxHomeRemoteName/master
+\end{exampleenv}
+
+If conflicts\index{git!conflict} have occurred please refer to the \href{https://git-scm.com/docs}{git reference manual} for information on how to resolve the problem.
+To avoid accidental loss of your changes when major conflicts occur, version control of your branch can be used to preserve the current set of changes (see Section~\ref{sect: git branch versioning}).
+For example if the current branch is named \terminal{my\_branch/r4}, increment to the fifth version of the branch with
+
+\begin{exampleenv}
+\$ git checkout my\_branch/r4 \\
+\$ git branch my\_branch/r5 \\
+\$ git checkout my\_branch/r5
+\end{exampleenv}
+
+Then you can perform the risky rebase on the new \terminal{my\_branch/r5} branch, knowing that the changes in \terminal{my\_branch/r4} remain safe.
+This process is a lot less stressful than having to deal with `git reflog' when things go wrong.
+
+
+% Patches
+\subsection{Submitting patches}
+\index{patches|textbf}
+\index{repository!patches|textbf}
+
+Although not recommended, if you wish you can submit your changes as patches.
+You will need to have a local git repository and have your changes saved as git commits in a dedicated development branch.
+For details, see the \href{https://git-scm.com/docs}{git reference manual}.
+You will need to first make sure that your branch is fully up to date (Section~\ref{sect: up to date git} on page~\pageref{sect: up to date git}).
+The patches are then created by typing
+
+\example{\$ git format-patch master}
+
+This will create one \file{*.patch} file per branch commit.
+These files can then be emailed to the \relaxDevelML\ mailing list (this requires a \href{\relaxDevelMLSubscribeURL}{subscription}).
+
+
+% Repository forks.
+\subsection{Repository forks}
+\index{forks|textbf}
+\index{repository!forks|textbf}
+
+A simpler process than submitting patches is to push your development branch to a fork of the relax repository.
+You can then send an email to the relax development mailing list (see Section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}) describing and naming the branch and providing a web accessible URL to the git repository.
+
+
+\subsubsection{Web interface fork creation}
+
+The simplest way to create a relax fork is to use the web interface for the relax repository at \relaxHome\ or one of the mirrors:
+\begin{itemize}
+    \item \href{\relaxMirrorBBCodeWebInterfaceURL}{relax source code repository at Bitbucket}
+    \item \href{\relaxMirrorGHCodeWebInterfaceURL}{relax source code repository at GitHub}
+    \item \href{\relaxMirrorGLCodeWebInterfaceURL}{relax source code repository at GitLab}
+    \item \href{\relaxMirrorSFCodeWebInterfaceURL}{relax source code repository at SourceForge}
+\end{itemize}
+
+Simply click on the `fork' button or link and follow the instructions (Bitbucket requires a click on the plus symbol to see the fork link).
+This requires user registration at one of these sites (see Section~\ref{sect: relax mirrors} on page~\pageref{sect: relax mirrors}).
+
+Once the repository is forked, you can clone that repository, create a versioned development branch, and push the branch.
+Or if you have a preexisting cloned relax repository you have worked on, set the fork as a remote and push the development branch to the new remote.
+
+
+\subsubsection{Pushing to an empty git repository}
+
+Alternatively, you can push your already cloned repository to a new git repository anywhere you wish.
+For example if you have your own server and create an empty bare repository accessible from \terminal{git@my\_domain.com/relax/relax.git}, in the local clone type
+
+\begin{exampleenv}
+\$ git remote add my\_remote git@my\_domain.com/relax/relax.git \\
+\$ git push --all my\_remote \\
+\$ git push --tags my\_remote
+\end{exampleenv}
+
+This will push all branches and tags to the empty repository.
+
+
+% Merging the branch back into the main line.
 \subsection{Merging the branch back into the main line}
 \index{repository!merging branch back}
 
-Once you have completed the modifications desired for your branch, all changes which have occurred in the main line have been merged using \file{svnmerge.py}, and the changes have been approved for merging back into the main line -- then your branch can be merged.
-First check out a copy of the main line,
+Once the changes have been accepted, possibly after a few revisions of the branch, it can be merged by one of the relax developers back into the primary relax repository.
+Taking the MOLMOL macro example again, assuming seven revisions of that branch, the relax developer will add your remote git repository as a remote and pull in the branch.
+Then it will be rebased and merged to \terminal{master} with
 
-\example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/trunk relax-trunk}
-\index{Subversion!check out}
+\begin{exampleenv}
+\$ git checkout molmol\_macros/r7 \\
+\$ git rebase -i master \\
+\$ git checkout master \\
+\$ git merge molmol\_macros/r7
+\end{exampleenv}
+\index{git!merge}
 
-or update a previously checked out version,
+This ensures a clean and linear history for the \terminal{master} branch.
+If the rebase process results in conflicts that the relax developer cannot fix, you will be asked to create a new \terminal{molmol\_macros/r8} branch and perform the rebase and conflict resolution yourself.
 
-\example{\$ svn up}
-\index{Subversion!update}
-
-Then \file{svnmerge.py} can be utilised again.
-First initialise the merging process by typing, from within the checked out copy of the main line, 
-
-\example{\$ svnmerge.py init svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros}
-\index{Subversion!svnmerge.py init}
-
-Then commit the change
-
-\example{\$ svn ci -F svnmerge-commit-message.txt}
-\index{Subversion!commit}
-
-To merge the branch and commit the changes, type
-
-\example{\$ svnmerge.py merge --bidirectional}
-\index{Subversion!svnmerge.py merge}
-
-\example{\$ svn ci -F svnmerge-commit-message.txt}
-\index{Subversion!commit}
-
-Finally the merge properties need to be removed
-
-\example{\$ svnmerge.py uninit -S svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros}
-\index{Subversion!svnmerge.py uninit}
-\index{Subversion!merge}
-
-the changes committed
-
-\example{\$ svn ci -F svnmerge-commit-message.txt}
-\index{Subversion!commit}
-
-and your private branch deleted
-
-\example{\$ svn rm svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros}
-\index{Subversion!remove}
+Note that web interface `pull requests' or `merge requests' will not be used, and that it is better to send an email to the relax developer mailing list rather than to use these features of the web interface (which may be missed by the relax developers, especially when a relax mirror is used).
 
 
 
