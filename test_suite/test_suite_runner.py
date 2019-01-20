@@ -101,29 +101,29 @@ class Test_suite_runner:
         if reset:
             status.skipped_tests = []
 
-        # Execute the system/functional tests.
-        if 'system' in self.categories:
-            test_status = self.run_system_tests(summary=False, reset=False)
-            if not test_status:
-                return
-
         # Execute the unit tests.
         if 'unit' in self.categories:
             test_status = self.run_unit_tests(summary=False, reset=False)
             if not test_status:
-                return
+                return test_status
+
+        # Execute the system/functional tests.
+        if 'system' in self.categories:
+            test_status = self.run_system_tests(summary=False, reset=False)
+            if not test_status:
+                return test_status
 
         # Execute the GUI tests.
         if 'gui' in self.categories:
             test_status = self.run_gui_tests(summary=False, reset=False)
             if not test_status:
-                return
+                return test_status
 
         # Execute the GUI tests.
         if 'verification' in self.categories:
             test_status = self.run_verification_tests(summary=False, reset=False)
             if not test_status:
-                return
+                return test_status
 
         # Print out a summary of the test suite.
         self.summary()
@@ -190,7 +190,7 @@ class Test_suite_runner:
             return False
 
         # All tests were run successfully.
-        return True
+        return self.gui_result
 
 
     def run_system_tests(self, summary=True, reset=True):
@@ -228,7 +228,7 @@ class Test_suite_runner:
             return False
 
         # All tests were run successfully.
-        return True
+        return self.system_result
 
 
     def run_unit_tests(self, summary=True, reset=True):
@@ -266,7 +266,7 @@ class Test_suite_runner:
             return False
 
         # All tests were run successfully.
-        return True
+        return self.unit_result
 
 
     def run_verification_tests(self, summary=True, reset=True):
@@ -302,7 +302,7 @@ class Test_suite_runner:
             return False
 
         # All tests were run successfully.
-        return True
+        return self.verification_result
 
 
     def summary(self):

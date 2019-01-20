@@ -111,6 +111,7 @@ def start(mode=None, profile_flag=False):
     if not profile_flag:
         # Execute relax in multi-processor mode (this includes the uni-processor for normal operation).
         processor.run()
+        sys.exit(callbacks.master.exit_code)
 
     # relax in profiling mode.
     else:
@@ -145,6 +146,8 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
+        # Set up default process-management exit code
+        self.exit_code = 0
 
     def run(self):
         """Execute relax.
@@ -216,8 +219,7 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            res = runner.run_all_tests()
-            sys.exit(not res)
+            self.exit_code = int(not runner.run_all_tests())
 
         # Execute the relax system tests.
         elif self.mode == 'system tests':
@@ -230,8 +232,7 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            res = runner.run_system_tests()
-            sys.exit(not res)
+            self.exit_code = int(not runner.run_system_tests())
 
         # Execute the relax unit tests.
         elif self.mode == 'unit tests':
@@ -240,8 +241,7 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            res = runner.run_unit_tests()
-            sys.exit(not res)
+            self.exit_code = int(not runner.run_unit_tests())
 
         # Execute the relax GUI tests.
         elif self.mode == 'GUI tests':
@@ -250,8 +250,7 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            res = runner.run_gui_tests()
-            sys.exit(not res)
+            self.exit_code = int(not runner.run_gui_tests())
 
         # Execute the relax verification tests.
         elif self.mode == 'verification tests':
@@ -260,8 +259,7 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
-            res = runner.run_verification_tests()
-            sys.exit(not res)
+            self.exit_code = int(not runner.run_verification_tests())
 
         # Test mode.
         elif self.mode == 'test':
