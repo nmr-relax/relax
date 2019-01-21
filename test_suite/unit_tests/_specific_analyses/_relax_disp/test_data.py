@@ -102,7 +102,7 @@ class Test_data(UnitTestCase):
                 self.assertEqual(exp_type, data[1][0])
                 self.assertEqual(frq, data[1][1])
             # Test the time count
-            self.assertEqual(count, 1)
+            self.assertEqual(count, 2)
 
 
     def test_count_relax_times_r1rho(self):
@@ -743,6 +743,3 @@ class Test_data(UnitTestCase):
                     else:
                         c_theta = pi + atan(c_omega1 / c_Delta_omega)
                     self.assertAlmostEqual(tilt_angles[ei][si][mi][oi][di], c_theta, 15)
-
-
-
