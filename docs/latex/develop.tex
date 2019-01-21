@@ -800,31 +800,28 @@ The resultant HTML pages will be located in the directory \directory{docs\ossep{
 \subsection{Making distribution archives}
 \index{distribution archive|textbf}
 
-Two types of distribution archive can be created from the currently checked out sources -- the source and binary distributions.
+Two types of distribution archive can be created from the current sources -- the source and binary distributions.
 To create the source distribution type 
 
 \example{\$ scons source\_dist}
 \index{SCons!source distribution|textbf}
 
-whereas to create the binary distribution, whereby the C modules are compiled and the resultant shared objects are included in the bzipped tar file, type
+To create the binary distribution, whereby the C modules are compiled and the resultant shared objects are included in the bzipped tar file, type
 
 \example{\$ scons binary\_dist}
 \index{SCons!binary distribution|textbf}
 
 If a binary distribution does not exist for your architecture feel free to create it yourself and contribute the archive to be included on the download pages.
-To do this you will need to check out the appropriate tagged branch from the relax subversion repository.
-If the current stable release is called 1.2.3 check out that branch by typing
+To do this you will need to check out the appropriate tag from the relax repository.
+If the current stable release is called 4.0.3, check out that tag by typing
 
-\example{\$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.3 relax}
-\index{Subversion!check out}
+\example{\$ git checkout 4.0.3}
+\index{git!check out}
 
-replacing \prompt{bugman} with your user name if you are a relax developer, otherwise typing
-
-\example{\$ svn co svn://svn.gna.org/svn/relax/tags/1.2.3 relax}
-\index{Subversion!check out}
+This requires you to be in a directory of a local copy of the relax git repository (see Section~\ref{git repository} on page~\pageref{git repository}).
 
 Then build the binary distribution and send a message to the relax development mailing list\index{mailing list!relax-devel}.
-If compilation does not work please submit a bug to the bug tracker\index{bug!tracker} system at \href{https://web.archive.org/web/https://gna.org/bugs/?group=relax}{https://web.archive.org/web/https://gna.org/bugs/?group=relax} detailing the relax version, operation system, architecture, and any other information you believe will help to solve the problem.
+If compilation does not work please submit a bug to the bug tracker\index{bug!tracker} system at \url{\relaxBugTrackerSearchURL} detailing the relax version, operation system, architecture, and any other information you believe will help to solve the problem.
 More information about donating binary distributions to the relax project is given in the free software infrastructure chapter (Chapter~\ref{ch: free software}, page~\pageref{ch: free software}).
 
 
