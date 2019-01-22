@@ -851,8 +851,8 @@ will, in addition to all the files removed by the \prompt{clean} target, remove 
 
 \section{The core design of relax}
 
-To enable flexibility the internal structure of relax is modular.
-By construction the large collection of independent data analysis tools can be used individually and relatively easily by any new code implementing other forms of relaxation data analysis or even by other programs.
+To enable flexibility, the internal structure of relax has been designed to be highly modular.
+By construction the large collection of independent data analysis tools can be used individually and relatively easily by any new code implementing other forms of data analysis or even by other programs.
 The core modular design of the program is shown in Figure~\ref{fig: core design}.
 
 
@@ -860,7 +860,7 @@ The core modular design of the program is shown in Figure~\ref{fig: core design}
 % The divisions of relax's source code.
 \subsection{The divisions of relax's source code}
 
-relax's source code can be divided into a few major categories:  the initialisation code, the user interface (UI) code, the functional code, the number crunching code, the code storing the program state, the multi-processor, auto-analyses, and the test suite.
+relax's source code can be divided into a few major categories:  the initialisation code, the user interface (UI) code, the functional code, the number crunching code, the code storing the program state, the multi-processor, the auto-analyses, and the test suite.
 \begin{description}
   \item[Initialisation:]  The code belonging to this section initialises the program, processes the command-line arguments, and determines what mode the program will be run in including the choice of the UI.
   \item[UI:]  The current UI modes in relax include the prompt, the script and the GUI modes.
@@ -869,10 +869,15 @@ relax's source code can be divided into a few major categories:  the initialisat
   \item[Functional code:]  This code is the main part of the program.
     It includes anything which does not fit into the other sections and comprises the data pipe control code, the specific analysis code, and the relax library.
   \item[Number crunching:]  The computationally expensive code belongs in this section.
-  \item[Program state:]  The state of the program is contained within the relax data store which is accessible from all parts of the program as a singleton object.
+    This also includes parts of the relax library as used by the target functions.
+  \item[Program state:]  Most of the state of the program is contained within the relax data store which is accessible from all parts of the program as a singleton object.
+    Additional non-persistent state information is held in the relax status singleton object.
   \item[Multi-processor:]  All relax execution passes through this interface which allows for uni-processor and OpenMPI multi-processor operations on code that has been specifically parallelised for this task.
-  \item[Auto-analyses:]  Although not shown, these are essentially advanced relax scripts to simplify data analyses for users.
-  \item[Test suite:]  If code paths in relax are not tested in the test suite, they are considered equivalent to not existing.
+  \item[Auto-analyses:]  Although not shown in Figure~\ref{fig: core design}, these are essentially advanced relax scripts to simplify data analyses for users.
+  \item[Test suite:]  This is where the majority of relax code is located.
+    The relax test suite covers almost 100\% of the functionality of relax.
+    If code paths in relax are not tested in the test suite, they are considered equivalent to not existing.
+    The extensive and almost complete coverage ensures that relax will be future-proof and continue to operate as expected.
 \end{description}
 
 % Core relax design figure.
@@ -898,31 +903,39 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
   \item[relax:]  The top level module.
     This initialises the entire program, tests the dependencies, sets up the multi-processor framework and specific processor fabric, and prints the program's introduction message.
   \item[Command line arguments:]  This code processes the arguments supplied to the program and decides whether to print the help message, initialise the prompt, execute a script, initialise a different UI, run the program in test mode, or run the program as a slave thread.
-  \item[Prompt:]  The user interface consisting of a Python\index{Python} prompt\index{User interface!prompt|textbf}.
+  \item[Prompt:]  The user interface consisting of highly modified Python\index{Python} prompt\index{User interface!prompt|textbf}.
     The namespace of the interpreter contains the various user functions which are front ends to the functional code.
-    The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the functional code.
-    The code for the prompt is located in the \directory{prompt\ossep{}} directory.
+    The auto-generated user function front end tests the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the functional code.
+    The code for the prompt is located in the \directory{prompt\ossep{}} directory and the user function front ends in the \directory{user\osus{}functions\ossep{}} directory.
   \item[Script:]  If a script\index{User interface!scripting|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.
     Hence the script has access to all the user functions available at the relax prompt.
     This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
-  \item[GUI:]  The graphical user interface\index{User interface!GUI|textbf} code base is located in the \directory{gui} directory.
-  \item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax without modification of the current sources.
+    The code sits alongside the prompt user interface in the \directory{prompt\ossep{}} directory.
+  \item[GUI:]  The graphical user interface\index{User interface!GUI|textbf} code base is located in the \directory{gui\ossep{}} directory.
+    It is implemented using \href{https://wxpython.org/}{wxPython} so that relax uses the native widgets of the operating system.
+  \item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax with minimal modification of the rest of relax.
     This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible to merge back into relax later on.
-  \item[Pipe control code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.
-    This code is for manipulating the relax data store.
-    All this code is located in the \directory{pipe\osus{}control\ossep{}} directory.
-  \item[Specific analyses API:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.
-    Each type is located in a separate file in the \directory{specific\osus{}analyses\ossep{}} directory.
-  \item[The relax library:]  This is a diverse collection of functions located within the \directory{lib} directory.
-      Any function that does not touch the relax data store or is not specific to an analysis should be located within the relax library.
+    Due to the almost complete test suite coverage, relax is continually being refactored for modularity, flexibility, and speed hence any out-of-tree code that is not safeguarded by the test suite will quickly suffer bit-rot and depreciate in a short period of time.
+  \item[Pipe control code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type or `specific analysis'.
+    Pipe control is about managing the relax data store and it is located in the \directory{pipe\osus{}control\ossep{}} directory.
+  \item[Specific analyses API:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, the NOE calculation, consistency testing, the N-state or ensemble model analysis, relaxation dispersion, and the frame order analysis.
+    Each type is located in a separate directory (Python package) within the \directory{specific\osus{}analyses\ossep{}} directory.
+  \item[The relax library:]  This is a diverse collection of functions located within the \directory{lib\ossep{}} directory.
+      Most independent functions that do not touch the relax data store or are not part of the internal relax API should be located within the relax library.
       This standalone library can be used independently of relax and it is used by all parts of relax.
+      The relax data store combined with the relax library creates a development environment rivalling Mathematica, Matlab, Maxima, Octave, etc.\ but with a strong focus on NMR.
+      This includes support for handling 3D molecular structures (or no structure), spectral data input, NMR phenomenon and many mathematics functions specific for NMR, and data visualization.
   \item[Target functions:]  This is reserved for CPU intensive code involved in optimisations and calculations.
+    Most of relax's execution time when performing an analysis is spent here.
+    An optimisation algorithm feeds in different parameter values into a `target function' in its attempt to minimise the single value returned by that target function (often a $\chi^2$ value).
     The code may be written in Python however C code can be used to increase the speed of the calculations.
+    Note that good design and the use of numpy can be orders of magnitude more important for speed than the choice of programming language.
     For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.
     These functions are located in the \directory{target\osus{}functions\ossep{}} directory.
-  \item[Data:]  The program state stored in the relax data store singleton object.
-    This class contains all the program data and is accessed by the generic and specific code.
-    The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \file{data\ossep{}\_\_init\_\_.py}.
+  \item[Data:]  The program state is stored in the relax data store singleton object.
+    This class contains all the program data and is accessed solely by the pipe control and specific analysis code.
+    The data structures are located in the \file{data\osus{}store\ossep{}} directory.
+    Note that some temporary program execution information is stored in the relax status singleton object (located in \file{status.py}).
 \end{description}
 
 
