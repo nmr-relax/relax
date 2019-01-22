@@ -35,5 +35,10 @@ install:
 
 script:
     - set -e
-    - make -f devel_scripts/travis-ci/Makefile build
-    - make -f devel_scripts/travis-ci/Makefile test
+    - echo $PYTHON_INCLUDE_DIR
+    - echo $VIRTUAL_ENV
+    - scons
+
+    - ./relax -i
+    - ./relax --time --unit-tests
+    - ./relax --time --system-tests
