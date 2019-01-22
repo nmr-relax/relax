@@ -1033,46 +1033,57 @@ This is fixed with commit [dee4fd3622158fb859c950a163017ac797b61ae9](\url{https:
 \index{linking|textbf}
 
 Creating links throughout the relax infrastructure is important for two major reasons -- navigation and search engine indexing.
-When including a link to a post within the mailing list archives, please include the message-id email header.
-This enables subscribers to the mailing lists to search for the specific message within their local copy of the email messages.
-
 
 
 % Navigation.
 \subsection{Navigation}
 
-To be able to easily navigate between the relax infrastructure components -- the bug tracker, the task tracker, the support request tracker, the relax-devel mailing list, the commit logs, and the SVN and CVS repositories -- try to include as many links as possible.
+To be able to easily navigate between the relax infrastructure components -- the bug tracker, the task tracker, the support request tracker, the mailing lists, the commit logs, and the git repositories -- try to include as many links as possible.
 
 For example a bug may first be reported on the relax-users mailing list, then placed within the bug tracker, discussed on relax-devel, a fix committed to the repository, and finally the bug report closed.
-To be able to follow this chain, links are very important (email message-ids are also important).
-When the bug is first added to the bug tracker, a link to the relax-users mailing list archive message and the message-id should be included.
+To be able to follow this chain, links are very important.
+When the bug is first added to the bug tracker, a link to the relax-users mailing list archive message should be included.
 If you start a discussion on relax-devel, try to include links to the bug tracker entry and the relax-users message.
 When committing a fix to the repository, include links to the bug report, to the start of the thread in the mailing list archive, and the original message to relax-users.
-Then when the bug report is closed, include the revision number of the fix and a link to the relax-commits archive message (and message-id).
+Then when the bug report is closed, include the commit ID of the fix and a link to the relax-commits archive message.
 By having all these links, it is then very easy for someone else to jump between the systems and follow the progression of the bug fix.
 
-If you send a message referring to an old post which was sent the relax mailing lists, an old bug report, or any other archived information, please take the time to find that original information in the archives and include a link to it (including the message-id if relevant).
+If you send a message referring to an old post which was sent the relax mailing lists, an old bug report, or any other archived information, please take the time to find that original information in the archives and include a link to it.
 It is much more efficient for a single person to hunt down that message than for the many recipients of your post to search for the message themselves.
 By including the link, you decrease the overhead of following the mailing list.
-
 
 
 % Search engine indexing.
 \subsection{Search engine indexing}
 
 Having a large web of links across relax's infrastructure aids in the search engine indexing of the mailing list archives and the \href{http://www.nmr-relax.com}{http://www.nmr-relax.com} web site.
-The web of links is useful for catching those Google bots.
-That way the Google searching of the mailing list archives located on the \href{http://www.nmr-relax.com/communication.html}{communication web page} will be more up to date.
-However to increase the search engine ranking of the web site, links to \href{http://www.nmr-relax.com}{http://www.nmr-relax.com} from external sites is required.
+The web of links is useful for catching those search engine bots.
+That way the searching of the mailing list archives will be more up to date (see the \href{http://www.nmr-relax.com/communication.html}{communication web page}).
+However to increase the search engine ranking of the web site, links to \url{http://www.nmr-relax.com} from external sites is required.
 This is one reason why relax can be found at a number of sites across the web:
 \begin{description}
+  \item[SourceForge:]  Free software/open source software hosting site.
+    See \url{\relaxMirrorSFWebInterfaceURL}.
+  \item[Bitbucket:]  Free software/open source software hosting site.
+    See \url{\relaxMirrorBBWebInterfaceURL}.
+  \item[GitHub:]  Free software/open source software hosting site.
+    See \url{\relaxMirrorGHWebInterfaceURL}.
+  \item[GitLab:]  Free software/open source software hosting site.
+    See \url{\relaxMirrorGLWebInterfaceURL}.
   \item[The mail archive:]  This site archives all of the relax mailing lists, including \href{http://mail-archive.com/relax-announce@gna.org/}{relax-announce}, \href{http://mail-archive.com/relax-users@gna.org/}{relax-users}, \href{http://mail-archive.com/relax-devel@gna.org/}{relax-devel}, and \href{http://mail-archive.com/relax-commits@gna.org/}{relax-commits}.
   \item[MARC -  Mailing list ARChives:]  This site archives all of the relax mailing lists, including \href{http://marc.info/?l=relax-announce&r=1&w=2}{relax-announce}, \href{http://marc.info/?l=relax-users&r=1&w=2}{relax-users}, \href{http://marc.info/?l=relax-devel&r=1&w=2}{relax-devel}, and \href{http://marc.info/?l=relax-commits&r=1&w=2}{relax-commits}.
+  \item[Free Software Directory:]  This is the Free Software Foundation's (FSF) listing of free software.
+    The relax page is \url{https://directory.fsf.org/wiki/relax}.
+  \item[OpenHUB:]  OpenHUB, previously known as Ohloh, is a free public directory of Free and Open Source Software and the contributors who create and maintain it.
+    This site provides a lot of useful statistical information about relax's development.
+    The relax page is \url{https://www.openhub.net/p/nmr-relax}.
   \item[LinuxLinks.com:]  LinuxLinks.com, the Linux portal, is a website listing many Linux software projects.
     relax can be found on the \href{http://linuxlinks.com/Software/Scientific/Biology/Proteins/}{Software:\-Scientific:\-Biology:\-Proteins} page.
   \item[Softpedia:]  This is the encyclopedia of free software downloads.
-    The relax page on Softpedia is \href{http://linux.softpedia.com/get/Science/relax-22351.shtml}{http://linux.softpedia.com/get/Science/relax-22351.shtml}.
+    The relax page on Softpedia is \url{http://linux.softpedia.com/get/Science/relax-22351.shtml}.
     The relax developers pages are:  \href{http://linux.softpedia.com/developer/Edward-d-039-Auvergne-5136.html}{Edward d'Auvergne}.
   \item[Pro-Linux:]  Diese ist eine der gr\"o{\ss}ten deutschsprachigen Seiten zum Thema Linux.
-    The relax page is \href{http://www.pro-linux.de/cgi-bin/DBApp/check.cgi?ShowApp..10010.100}{http://\-www.\-pro\--linux.\-de/\-cgi\--bin/\-DB\-App/\-check\-.cgi\-?ShowApp..10010.100}.
+    The relax page is \url{http://www.pro-linux.de/cgi-bin/DBApp/check.cgi?ShowApp..10010.100}.
+  \item[Open Source Software Directory:]  Use the Open Source Software Directory to find the best free and open-source software for home and business.
+    relax is currently listed in the \href{https://opensourcesoftwaredirectory.com/Scientific/Molecule-Editors}{molecule editors category}.
 \end{description}
