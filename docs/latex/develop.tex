@@ -985,14 +985,18 @@ Sorry in advance, but the following is the standard pre-composed response to a p
 \index{tracker!support request|textbf}
 
 relax's infrastructure includes three different issue trackers.
-These are the \href{https://web.archive.org/web/https://gna.org/bugs/?group=relax}{bug tracker}, the \href{https://web.archive.org/web/https://gna.org/task/?group=relax}{task tracker}, and the \href{https://web.archive.org/web/https://gna.org/support/?group=relax}{support request tracker}.
-
+These are the:
+\begin{itemize}
+    \item \href{\relaxBugTrackerURL}{Bug tracker}.
+    \item \href{\relaxSRTrackerURL}{Support request tracker}.
+    \item \href{\relaxTaskTrackerURL}{Task tracker}.
+\end{itemize}
 
 
 % Submitting a bug report.
 \subsection{Submitting a bug report}
 
-If someone reports a bug to one of the relax mailing lists, ask that person if they would like to create a bug report for that problem, pointing them to the submission web page.
+If someone reports a bug to one of the relax mailing lists, ask that person if they would like to create a bug report for that problem, pointing them to the submission web page: \url{\relaxBugTrackerSubmitURL}.
 This is a good starting point to allow the person to become more involved in the relax project.
 If they do not respond or say that they would prefer not to, then you can create bug report for the issue linking to the original message and crediting the person for reporting the issue.
 
@@ -1011,13 +1015,13 @@ If you can see an area where relax needs work, feel free to create a report with
 \subsection{Closing an issue}
 
 When closing an issue (whether a bug report, a task, or a support request) a number of steps need to be taken.
-The tracker status should be changed to ``Done'' and the issue ``Closed''.
-In addition, a message should be included which states the repository revision and the relax-commits mailing list archive link (with the message-id) in which the issue was solved.
+The tracker status should be edited and changed to ``closed''.
+In addition, a message should be included that identifies the commits in which the issue was solved.
 If multiple commits were required, then include all the revisions and as many links as possible (if a task required many commits, the relax-commits links could be skipped).
-An example is \href{https://web.archive.org/web/https://gna.org/bugs/?7402}{bug \#7402} where the closing comment was:
+An example is \href{https://sourceforge.net/p/nmr-relax/tickets/1/}{bug \#1}, the first bug report on the SourceForge infrastructure, where the closing comment was:
 
 \begin{exampleenv}
-This documentation bug was fixed in r2641. The commit message is located at \href{http://www.nmr-relax.com/mail.gna.org/public/relax-commits/2006-10/msg00073.html}{http://www.nmr-relax.com/mail.gna.org/public/relax-commits/2006-10/msg00073.html} (Message-id: <E1GYG4l-0002kK-Jx@subversion.gna.org>).
+This is fixed with commit [dee4fd3622158fb859c950a163017ac797b61ae9](\url{https://sourceforge.net/p/nmr-relax/code/ci/dee4fd3622158fb859c950a163017ac797b61ae9}).
 \end{exampleenv}
 
 
