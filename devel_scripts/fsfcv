@@ -379,6 +379,8 @@ class Validate:
 
                 # Blacklisted file.
                 if file_path in self.config.BLACKLISTED_FILES:
+                    if self.args.debug:
+                        sys.stdout.write("Blacklisted file: %s" % file_path)
                     files_blacklisted += 1
                     continue
 
@@ -445,12 +447,16 @@ class Validate:
                             years = [years]
                         for year in years:
                             if year not in committer_info[committer]:
+                                if self.args.debug:
+                                    sys.stdout.write("  Additional year: %s %s\n" % (committer, year))
                                 committer_info[committer].append(year)
 
                 # Remove false negative years.
                 if file_path in self.config.FALSE_NEG_YEARS:
                     for year, committer in self.config.FALSE_NEG_YEARS[file_path]:
                         if committer in committer_info and year in committer_info[committer]:
+                            if self.args.debug:
+                                sys.stdout.write("  False negative year: %s %s\n" % (committer, year))
                             committer_info[committer].pop(committer_info[committer].index(year))
                             if not len(committer_info[committer]):
                                 del committer_info[committer]
@@ -468,6 +474,8 @@ class Validate:
                 # Add any additional copyright notices.
                 if file_path in self.config.ADDITIONAL_COPYRIGHT:
                     for notice in self.config.ADDITIONAL_COPYRIGHT[file_path]:
+                        if self.args.debug:
+                            sys.stdout.write("  Additional copyright: '%s'\n" % notice)
                         expected_copyright.append(notice)
 
                 # Remove false positives and negatives.
@@ -475,11 +483,15 @@ class Validate:
                     for i in range(len(self.config.FALSE_POS[file_path])):
                         for j in reversed(range(len(recorded_copyright))):
                             if self.config.FALSE_POS[file_path][i] in recorded_copyright[j]:
+                                if self.args.debug:
+                                    sys.stdout.write("  False positive: '%s'\n" % recorded_copyright[j])
                                 recorded_copyright.pop(j)
                 if file_path in self.config.FALSE_NEG:
                     for i in range(len(self.config.FALSE_NEG[file_path])):
                         for j in reversed(range(len(expected_copyright))):
                             if self.config.FALSE_NEG[file_path][i] in expected_copyright[j]:
+                                if self.args.debug:
+                                    sys.stdout.write("  False negative: '%s'\n" % recorded_copyright[j])
                                 expected_copyright.pop(j)
 
                 # Remove duplicates and sort the lists.
@@ -487,6 +499,11 @@ class Validate:
                 recorded_copyright = list(set(recorded_copyright))
                 expected_copyright.sort()
                 recorded_copyright.sort()
+                if self.args.debug:
+                    for i in range(len(expected_copyright)):
+                        sys.stdout.write("  Expected copyright: '%s'\n" % expected_copyright[i])
+                    for i in range(len(recorded_copyright)):
+                        sys.stdout.write("  Recorded copyright: '%s'\n" % recorded_copyright[i])
 
                 # Clear the progress meter.
                 if not self.args.verbose:
@@ -905,6 +922,9 @@ class Validate:
         @type before:               int or None
         """
 
+        # Init.
+        debug_format = "  Git: %-30s By %s: '%s'\n"
+
         # File check.
         full_path = "%s%s%s" % (repo_path, sep, file_path)
         if not path.exists(full_path):
@@ -938,7 +958,7 @@ class Validate:
             if file_path in start_commit and start_commit[file_path] == commit_key:
                 history_stop = True
                 if self.args.debug:
-                    sys.stdout.write("  Git:  Terminating to stop false history.  Commit by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write(debug_format % ("Stopping false history.", committer, commit_key))
                 break
 
             # Obtain the committer and date info.
@@ -962,14 +982,14 @@ class Validate:
             # Commits to exclude.
             if commit_key in exclude:
                 if self.args.debug:
-                    sys.stdout.write("  Git:  Excluded commit by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write(debug_format % ("Excluded commit.", committer, commit_key))
                 i += 3
                 continue
 
             # Skip svnmerge.py merges for svn->git migration repositories as these do not imply copyright ownership for the comitter.
             if search("^Merged revisions .* via svnmerge from", subject):
                 if self.args.debug:
-                    sys.stdout.write("  Git:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
+                    sys.stdout.write(debug_format % ("Skipping svnmerge.py migrated commit.", committer, commit_key))
                 i += 3
                 continue
 
@@ -983,8 +1003,18 @@ class Validate:
             # Not significant.
             if newlines < self.config.SIG_CODE:
                 if self.args.debug:
-                    sys.stdout.write("  Git:  Not significant by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write(debug_format % ("Skipping insignificant commit.", committer, commit_key))
                 i += 3
+                first_committer = committer
+                first_commit_key = commit_key
+                first_year = year
+                continue
+
+            # Date already exists.
+            if committer in committer_info and year in committer_info[committer]:
+                i += 3
+                if self.args.debug:
+                    sys.stdout.write(debug_format % ("Date already exists.", committer, commit_key))
                 first_committer = committer
                 first_commit_key = commit_key
                 first_year = year
@@ -992,15 +1022,7 @@ class Validate:
 
             # Debugging printout.
             if self.args.debug:
-                sys.stdout.write("  Git:  Commit by '%s': %s\n" % (committer, commit_key))
-
-            # Date already exists.
-            if committer in committer_info and year in committer_info[committer]:
-                i += 3
-                first_committer = committer
-                first_commit_key = commit_key
-                first_year = year
-                continue
+                sys.stdout.write(debug_format % ("Adding commit.", committer, commit_key))
 
             # A new committer.
             if committer not in committer_info:
@@ -1019,6 +1041,8 @@ class Validate:
 
         # Add committer info if the history was stopped, and no such info exists.
         if history_stop and first_committer and (first_committer not in committer_info or not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer])):
+            if self.args.debug:
+                sys.stdout.write(debug_format % ("Adding stopped history commit.", first_committer, first_commit_key))
             if first_committer not in committer_info:
                 committer_info[first_committer] = []
             committer_info[first_committer].append(first_year)
@@ -1028,6 +1052,8 @@ class Validate:
             if first_committer not in committer_info:
                 committer_info[first_committer] = []
             if not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer]):
+                if self.args.debug:
+                    sys.stdout.write(debug_format % ("Adding first commit.", first_committer, first_commit_key))
                 committer_info[first_committer].append(first_year)
 
 
@@ -1255,6 +1281,9 @@ class Validate:
         @type before:               int or None
         """
 
+        # Init.
+        debug_format = "  SVN: %-30s By %s: '%s'\n"
+
         # File check.
         full_path = "%s%s%s%s%s" % (repo_path, sep, svn_head, sep, file_path)
         if "://" not in full_path and not path.exists(full_path):
@@ -1303,7 +1332,7 @@ class Validate:
             if file_path in start_commit and start_commit[file_path] == commit_key:
                 history_stop = True
                 if self.args.debug:
-                    sys.stdout.write("  SVN:  Terminating to stop false history.  Commit by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write(debug_format % ("Stopping false history.", committer, commit_key))
                 break
 
             # A new commit.
@@ -1388,19 +1417,19 @@ class Validate:
             # Commits to exclude.
             if commit_key in exclude:
                 if self.args.debug:
-                    sys.stdout.write("  SVN:  Excluded commit by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write(debug_format % ("Excluded commit.", committer, commit_key))
                 continue
 
             # Skip svnmerge commits.
             if search("^Merged revisions .* via svnmerge from", msg):
                 if self.args.debug:
-                    sys.stdout.write("  SVN:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
+                    sys.stdout.write(debug_format % ("Skipping svnmerge.py migrated commit.", committer, commit_key))
                 continue
 
             # No diff found.
             if not in_diff:
                 if self.args.debug:
-                    sys.stdout.write("  SVN:  No diff found by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write(debug_format % ("No diff found, skipping.", committer, commit_key))
                 first_committer = committer
                 first_commit_key = commit_key
                 first_year = year
@@ -1409,7 +1438,7 @@ class Validate:
             # Not significant.
             if newlines < self.config.SIG_CODE:
                 if self.args.debug:
-                    sys.stdout.write("  SVN:  Not significant by '%s': %s\n" % (committer, commit_key))
+                    sys.stdout.write(debug_format % ("Skipping insignificant commit.", committer, commit_key))
                 first_committer = committer
                 first_commit_key = commit_key
                 first_year = year
@@ -1417,6 +1446,8 @@ class Validate:
 
             # Date already exists.
             if committer in committer_info and year in committer_info[committer]:
+                if self.args.debug:
+                    sys.stdout.write(debug_format % ("Date already exists.", committer, commit_key))
                 first_committer = committer
                 first_commit_key = commit_key
                 first_year = year
@@ -1424,7 +1455,7 @@ class Validate:
 
             # Debugging printout.
             if self.args.debug:
-                sys.stdout.write("  SVN:  Commit by '%s': %s\n" % (committer, commit_key))
+                sys.stdout.write(debug_format % ("Adding commit.", committer, commit_key))
 
             # A new committer.
             if committer not in committer_info:
@@ -1440,6 +1471,8 @@ class Validate:
 
         # Add committer info if the history was stopped, and no such info exists.
         if history_stop and first_committer and (first_committer not in committer_info or not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer])):
+            if self.args.debug:
+                sys.stdout.write(debug_format % ("Adding stopped history commit.", first_committer, first_commit_key))
             if first_committer not in committer_info:
                 committer_info[first_committer] = []
             committer_info[first_committer].append(first_year)
@@ -1449,6 +1482,8 @@ class Validate:
             if first_committer not in committer_info:
                 committer_info[first_committer] = []
             if not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer]):
+                if self.args.debug:
+                    sys.stdout.write(debug_format % ("Adding first commit.", first_committer, first_commit_key))
                 committer_info[first_committer].append(first_year)
 
 
