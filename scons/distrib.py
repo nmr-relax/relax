@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008,2011 Edward d'Auvergne                              #
+# Copyright (C) 2006-2008,2011,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,6 +33,25 @@ from zipfile import ZipFile
 # relax module imports.
 from version import version
 
+
+# Version control directories to skip.
+VERSION_CONTROL_DIRS = [
+    "\.git",
+    "\.hg",
+    "\.svn",
+]
+
+# Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o', '.os', 'obj', 'lib', and 'exp'.
+BLACKLISTED_FILES = [
+    "\.sconsign",
+    "^\.",
+    "\.pyc$",
+    "\.o$",
+    "\.os$",
+    "\.obj$",
+    "\.lib$",
+    "\.exp$",
+]
 
 def gpg_sign(target, source, env):
     """Builder action for creating a GPG signature of the binary distribution file."""
@@ -136,25 +155,47 @@ def package(target, source, env):
         # Base directory.
         base = getcwd() + sep
 
+        # Find all files untracked by the VC and not ignored.
+        untracked = []
+        if path.isdir(getcwd() + path.sep + ".git"):
+            cmd = "git ls-files --others --exclude-standard"
+            pipe = Popen(cmd, shell=True, stdout=PIPE, close_fds=False)
+            for file_name in pipe.stdout.readlines():
+                untracked.append(file_name.strip())
+
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
-            # Skip the subversion directories.
-            if search("\.svn", root):
+            # Skip the version control directories.
+            skip = False
+            for vc in VERSION_CONTROL_DIRS:
+                if search(vc, root):
+                    skip = True
+            if skip:
                 continue
 
             # Add the files in the current directory to the archive.
             for i in range(len(files)):
-                # Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o', '.os', 'obj', 'lib', and 'exp'.
-                if search("\.sconsign", files[i]) or search("^\.", files[i]) or search("\.pyc$", files[i]) or search("\.o$", files[i]) or search("\.os$", files[i]) or search("\.obj$", files[i]) or search("\.lib$", files[i]) or search("\.exp$", files[i]):
-                    continue
+                # Skip all blacklisted files.
+                skip = False
+                for file_name in BLACKLISTED_FILES:
+                    if search(file_name, files[i]):
+                        skip = True
 
                 # Create the file name (without the base directory).
                 name = path.join(root, files[i])
                 name = name[len(base):]
-                print('relax-' + version + path.sep + name)
+
+                # Skip all untracked files.
+                if name in untracked:
+                    skip = True
+
+                # Nothing to do.
+                if skip:
+                    continue
 
                 # The archive file name.
                 arcname = 'relax-' + version + path.sep + name
+                print(arcname)
 
                 # Zip archives.
                 if dist_type == 'zip':
