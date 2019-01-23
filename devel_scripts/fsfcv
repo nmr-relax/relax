@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2017-2018 Edward d'Auvergne                                   #
+# Copyright (C) 2017-2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -415,13 +415,28 @@ class Validate:
                 # Get the committer and year information from the repository logs.
                 committer_info = {}
                 init = True
-                for repo_path, repo_type, repo_start, repo_end, repo_head in self.config.REPOS:
+                for i in range(len(self.config.REPOS)):
+                    # Unpack.
+                    repo_path, repo_type, repo_start, repo_end, repo_head = self.config.REPOS[i]
+
+                    # Find renames in later repositories.
+                    file_path_rename = file_path
+                    if i < (len(self.config.REPOS) - 1):
+                        if self.config.REPOS[i+1][1] == 'git':
+                            start_commit = self.config.GIT_START
+                        else:
+                            start_commit = self.config.SVN_START
+                        file_path_rename = self.find_renames(file_path, repo_path=self.config.REPOS[i+1][0], repo_type=self.config.REPOS[i+1][1], start_commit=start_commit, after=repo_end, before=self.config.REPOS[i+1][3])
+
+                    # Git history.
                     if repo_type == 'git':
-                        self.git_log_data(file_path, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.GIT_START, author_switch=self.config.AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+                        self.git_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.GIT_START, author_switch=self.config.AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+
+                    # SVN history.
                     else:
-                        self.svn_log_data(file_path, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.SVN_START, author_switch=self.config.AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+                        self.svn_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.SVN_START, author_switch=self.config.AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
                     init = False
-                self.committer_info_cleanup(file_path, committer_info)
+                self.committer_info_cleanup(file_path_rename, committer_info)
 
                 # Add any additional committer years.
                 if file_path in self.config.ADDITIONAL_COPYRIGHT_YEARS:
@@ -714,6 +729,83 @@ class Validate:
 
         # Not public domain.
         return False
+
+
+    def find_renames(self, file_path, repo_path=None, repo_type=None, start_commit=None, after=None, before=None):
+        """Search subsequent repositories for file renames.
+
+        @param file_path:           The relative path of the file to track.
+        @type file_path:            str
+        @keyword repo_path:         The path to the local copy of the VC repository.
+        @type repo_path:            str
+        @keyword start_commit:      The starting commit for each file, where 'git log' identifies an incorrect history path.  This is a dictionary with the keys being the file paths and the values being the commit keys (the first line of the commit message followed by the ISO date in brackets).
+        @type start_commit:         dict of str
+        @keyword after:             Show commits more recent than a specific date.
+        @type after:                int or None
+        @keyword before:            Show commits older than a specific date.
+        @type before:               int or None
+        @return:                    The original file name.
+        @rtype:                     str
+        """
+
+        # The full file path.
+        full_path = path.join(repo_path, file_path)
+
+        # Date restrictions.
+        after_opt = ''
+        before_opt = ''
+        if after:
+            after_opt = '--after=%i-01-01' % after
+        if before:
+            before_opt = '--before=%i-12-31' % before
+
+        # Exec.
+        cmd = ""
+        if repo_type == "git":
+            cmd = "git log %s %s --numstat --follow --pretty=\"%%an xyzyx %%ad xyzyx %%H xyzyx %%s\" --date=iso \"%s\"" % (after_opt, before_opt, full_path)
+        else:
+            raise NameError("Repository type '%s' not supported yet." % repo_type)
+
+        pipe = Popen(cmd, shell=True, stdout=PIPE, close_fds=False)
+
+        # Get the data.
+        lines = pipe.stdout.readlines()
+        i = 0
+        committer = None
+        commit_key = ''
+        history_stop = False
+        original_name = None
+        while 1:
+            # Termination.
+            if i >= len(lines):
+                break
+
+            # Obtain the committer and date info.
+            committer, date, commit_hash, subject = lines[i].decode().split(' xyzyx ')
+            year = int(date.split('-')[0])
+            commit_key = "%s (%s)" % (subject.strip(), date)
+
+            # Termination.
+            if file_path in start_commit and start_commit[file_path] == commit_key:
+                history_stop = True
+                if self.args.debug:
+                    sys.stdout.write("  Finding rename: Terminating to stop false history.  Commit by '%s': %s\n" % (committer, commit_key))
+                break
+
+            # The file name.
+            original_name = lines[i+2].decode().split("\t")[2].strip()
+
+            # Increment the index.
+            i += 3
+
+        # No rename.
+        if original_name == None:
+            original_name = file_path
+        elif self.args.debug and original_name != file_path:
+            sys.stdout.write("  Finding rename: Renamed from '%s' to '%s'.\n" % (original_name, file_path))
+
+        # The last file name.
+        return original_name
 
 
     def format_copyright(self, committer_info):
