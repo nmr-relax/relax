@@ -20,25 +20,56 @@
 ###############################################################################
 language: python
 python:
-#    - 2.6 # To difficult to get to work
     - 2.7
-##    - 3.3
-##    - 3.4
     - 3.5
     - 3.6
+matrix:
+  include:
+    - os: osx
+      language: sh
+      python: "3.7"
+      # Perform the manual steps on osx to install python3 and activate venv
+      before_install:
+        - brew update
+        - brew upgrade python3
+        - python3 -m pip install virtualenv
+        - virtualenv venv -p python3
+        - source venv/bin/activate
+    - os: windows
+      language: sh
+      python: "3.7"
+      before_install:
+        - choco install python3
+        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+        - python -m pip install --upgrade pip wheel
+    - os: windows
+      language: sh
+      python: "2.7"
+      before_install:
+        - choco install python2
+        - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
+        - python -m pip install --upgrade pip wheel
+    # Obtain Python 3.7 from xenial as per https://github.com/travis-ci/travis-ci/issues/9815
+    - python: 3.7
+      dist: xenial
 
 install:
-    - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then echo "[global]" > $VIRTUAL_ENV/pip.conf && echo "trusted-host = pypi.python.org" >> $VIRTUAL_ENV/pip.conf && echo "               svwh.dl.sourceforge.net" >> $VIRTUAL_ENV/pip.conf && cat $VIRTUAL_ENV/pip.conf; fi
-    - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install importlib; fi
-    - pip install -r devel_scripts/travis-ci/requirements.txt
+    # Get newer pip and whell for binary caching support
+    - pip install --upgrade pip wheel
+    - pip install -U -r devel_scripts/travis-ci/requirements.txt
     - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
-
-script:
     - set -e
+    - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then echo "Running python 3.7"; fi
     - echo $PYTHON_INCLUDE_DIR
     - echo $VIRTUAL_ENV
     - scons
 
+script:
+    - set -e
     - ./relax -i
     - ./relax --time --unit-tests
     - ./relax --time --system-tests
+
+cache: pip
+git:
+  depth: 10
