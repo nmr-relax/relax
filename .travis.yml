@@ -73,3 +73,12 @@ script:
 cache: pip
 git:
   depth: 10
+
+notifications:
+  # https://docs.travis-ci.com/user/notifications/#configuring-email-notifications
+  # Pull Request builds do not trigger email notifications.
+  email:
+    recipients:
+      - nmr-relax-devel@lists.sourceforge.net
+    on_success: always # default: change
+    on_failure: always # default: always
