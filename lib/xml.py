@@ -24,11 +24,11 @@
 
 # Python module imports (note that some of these are needed for the eval() function call).
 import numpy
-from numpy import set_printoptions, array, int16, int32, float32, float64, inf, nan, ndarray, zeros
+from numpy import set_printoptions, array, int16, int32, float32, float64, inf, ndarray, zeros
 from re import search
 
 # Modify numpy for better output of numbers and structures.
-set_printoptions(precision=15, threshold=nan)
+set_printoptions(precision=15, threshold=inf)
 
 # relax module imports.
 import lib.arg_check
