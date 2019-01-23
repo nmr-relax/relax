@@ -414,7 +414,6 @@ class Validate:
 
                 # Get the committer and year information from the repository logs.
                 committer_info = {}
-                init = True
                 for i in range(len(self.config.REPOS)):
                     # Unpack.
                     repo_path, repo_type, repo_start, repo_end, repo_head = self.config.REPOS[i]
@@ -430,12 +429,11 @@ class Validate:
 
                     # Git history.
                     if repo_type == 'git':
-                        self.git_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.GIT_START, author_switch=self.config.AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
+                        self.git_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.GIT_START, author_switch=self.config.AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end)
 
                     # SVN history.
                     else:
-                        self.svn_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.SVN_START, author_switch=self.config.AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end, init=init)
-                    init = False
+                        self.svn_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.SVN_START, author_switch=self.config.AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end)
                 self.committer_info_cleanup(file_path_rename, committer_info)
 
                 # Add any additional committer years.
@@ -886,7 +884,7 @@ class Validate:
         return year_string
 
 
-    def git_log_data(self, file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], committer_info={}, after=None, before=None, init=False):
+    def git_log_data(self, file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], committer_info={}, after=None, before=None):
         """Get the committers and years of significant commits from the git log.
 
         @param file_path:           The full file path to obtain the git info for.
@@ -905,8 +903,6 @@ class Validate:
         @type after:                int or None
         @keyword before:            Show commits older than a specific date.
         @type before:               int or None
-        @keyword init:              A flag which if True means that the current repository is the starting repository.
-        @type init:                 bool
         """
 
         # File check.
@@ -931,6 +927,9 @@ class Validate:
         i = 0
         committer = None
         commit_key = ''
+        first_committer = None
+        first_commit_key = ''
+        first_year = None
         history_stop = False
         while 1:
             # Termination.
@@ -967,6 +966,13 @@ class Validate:
                 i += 3
                 continue
 
+            # Skip svnmerge.py merges for svn->git migration repositories as these do not imply copyright ownership for the comitter.
+            if search("^Merged revisions .* via svnmerge from", subject):
+                if self.args.debug:
+                    sys.stdout.write("  Git:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
+                i += 3
+                continue
+
             # The numstat info.
             newlines = lines[i+2].decode().split()[0]
             if newlines == '-':
@@ -979,13 +985,9 @@ class Validate:
                 if self.args.debug:
                     sys.stdout.write("  Git:  Not significant by '%s': %s\n" % (committer, commit_key))
                 i += 3
-                continue
-
-            # Skip svnmerge.py merges for svn->git migration repositories as these do not imply copyright ownership for the comitter.
-            if search("^Merged revisions .* via svnmerge from", subject):
-                if self.args.debug:
-                    sys.stdout.write("  Git:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
-                i += 3
+                first_committer = committer
+                first_commit_key = commit_key
+                first_year = year
                 continue
 
             # Debugging printout.
@@ -995,6 +997,9 @@ class Validate:
             # Date already exists.
             if committer in committer_info and year in committer_info[committer]:
                 i += 3
+                first_committer = committer
+                first_commit_key = commit_key
+                first_year = year
                 continue
 
             # A new committer.
@@ -1004,20 +1009,26 @@ class Validate:
             # Store the info.
             committer_info[committer].append(year)
 
+            # Record the first commit.
+            first_committer = committer
+            first_commit_key = commit_key
+            first_year = year
+
             # Increment the index.
             i += 3
 
         # Add committer info if the history was stopped, and no such info exists.
-        if history_stop and committer and committer not in committer_info:
-            committer_info[committer] = []
-            committer_info[committer].append(year)
+        if history_stop and first_committer and (first_committer not in committer_info or not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer])):
+            if first_committer not in committer_info:
+                committer_info[first_committer] = []
+            committer_info[first_committer].append(first_year)
 
         # Always include the very first commit.
-        if init:
-            if committer and committer not in committer_info:
-                committer_info[committer] = []
-            if committer and year not in committer_info[committer]:
-                committer_info[committer].append(year)
+        if first_committer:
+            if first_committer not in committer_info:
+                committer_info[first_committer] = []
+            if not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer]):
+                committer_info[first_committer].append(first_year)
 
 
     def open_read_file(self, file_name=None):
@@ -1221,7 +1232,7 @@ class Validate:
             self.config.REPOS.append(['.', type, None, None, None])
 
 
-    def svn_log_data(self, file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], svn_head=None, committer_info={}, after=None, before=None, init=False):
+    def svn_log_data(self, file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], svn_head=None, committer_info={}, after=None, before=None):
         """Get the committers and years of significant commits from the svn log.
 
         @param file_path:           The full file path to obtain the git info for.
@@ -1242,8 +1253,6 @@ class Validate:
         @type after:                int or None
         @keyword before:            Show commits older than a specific date.
         @type before:               int or None
-        @keyword init:              A flag which if True means that the current repository is the starting repository.
-        @type init:                 bool
         """
 
         # File check.
@@ -1283,6 +1292,9 @@ class Validate:
         i = 0
         committer = None
         commit_key = ''
+        first_committer = None
+        first_commit_key = ''
+        first_year = None
         history_stop = False
         while 1:
             # Termination.
@@ -1379,26 +1391,35 @@ class Validate:
                     sys.stdout.write("  SVN:  Excluded commit by '%s': %s\n" % (committer, commit_key))
                 continue
 
+            # Skip svnmerge commits.
+            if search("^Merged revisions .* via svnmerge from", msg):
+                if self.args.debug:
+                    sys.stdout.write("  SVN:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
+                continue
+
             # No diff found.
             if not in_diff:
                 if self.args.debug:
                     sys.stdout.write("  SVN:  No diff found by '%s': %s\n" % (committer, commit_key))
+                first_committer = committer
+                first_commit_key = commit_key
+                first_year = year
                 continue
 
             # Not significant.
             if newlines < self.config.SIG_CODE:
                 if self.args.debug:
                     sys.stdout.write("  SVN:  Not significant by '%s': %s\n" % (committer, commit_key))
+                first_committer = committer
+                first_commit_key = commit_key
+                first_year = year
                 continue
 
             # Date already exists.
             if committer in committer_info and year in committer_info[committer]:
-                continue
-
-            # Skip svnmerge commits.
-            if search("^Merged revisions .* via svnmerge from", msg):
-                if self.args.debug:
-                    sys.stdout.write("  SVN:  Skipping svnmerge.py migrated commit: %s\n" % commit_key)
+                first_committer = committer
+                first_commit_key = commit_key
+                first_year = year
                 continue
 
             # Debugging printout.
@@ -1412,17 +1433,23 @@ class Validate:
             # Store the info.
             committer_info[committer].append(year)
 
+            # Record the first commit.
+            first_committer = committer
+            first_commit_key = commit_key
+            first_year = year
+
         # Add committer info if the history was stopped, and no such info exists.
-        if history_stop and committer and committer not in committer_info:
-            committer_info[committer] = []
-            committer_info[committer].append(year)
+        if history_stop and first_committer and (first_committer not in committer_info or not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer])):
+            if first_committer not in committer_info:
+                committer_info[first_committer] = []
+            committer_info[first_committer].append(first_year)
 
         # Always include the very first commit.
-        if init:
-            if committer and committer not in committer_info:
-                committer_info[committer] = []
-            if committer and year not in committer_info[committer]:
-                committer_info[committer].append(year)
+        if first_committer:
+            if first_committer not in committer_info:
+                committer_info[first_committer] = []
+            if not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer]):
+                committer_info[first_committer].append(first_year)
 
 
     def translate_committer_name(self, committer):
