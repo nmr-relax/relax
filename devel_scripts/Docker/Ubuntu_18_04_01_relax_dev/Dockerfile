@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2018-2019 Troels Schwarz-Linnet                               #
+# Copyright (C) 2017-2018 Troels Schwarz-Linnet                               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
