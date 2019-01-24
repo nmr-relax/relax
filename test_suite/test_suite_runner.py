@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008,2010-2015 Edward d'Auvergne                         #
+# Copyright (C) 2006-2008,2010-2015,2019 Edward d'Auvergne                    #
 # Copyright (C) 2019 Troels Schwarz-Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -96,39 +96,36 @@ class Test_suite_runner:
 
         @keyword reset:     A flag which if True will reset the relax status objects for the tests.
         @type reset:        bool
+        @return:            The combined status of the test categories.
+        @rtype:             bool
         """
 
         # Reset the list for skipped tests.
         if reset:
             status.skipped_tests = []
 
+        # Store the status, so that all test categories are run.
+        test_status = True
+
         # Execute the unit tests.
         if 'unit' in self.categories:
-            test_status = self.run_unit_tests(summary=False, reset=False)
-            if not test_status:
-                return test_status
+            test_status = self.run_unit_tests(summary=False, reset=False) and test_status
 
         # Execute the system/functional tests.
         if 'system' in self.categories:
-            test_status = self.run_system_tests(summary=False, reset=False)
-            if not test_status:
-                return test_status
+            test_status = self.run_system_tests(summary=False, reset=False) and test_status
 
         # Execute the GUI tests.
         if 'gui' in self.categories:
-            test_status = self.run_gui_tests(summary=False, reset=False)
-            if not test_status:
-                return test_status
+            test_status = self.run_gui_tests(summary=False, reset=False) and test_status
 
         # Execute the GUI tests.
         if 'verification' in self.categories:
-            test_status = self.run_verification_tests(summary=False, reset=False)
-            if not test_status:
-                return test_status
+            test_status = self.run_verification_tests(summary=False, reset=False) and test_status
 
-        # Print out a summary of the test suite.
+        # Print out a summary of the test suite and return the combined status.
         self.summary()
-
+        return test_status
 
 
     def run_gui_tests(self, summary=True, reset=True):
