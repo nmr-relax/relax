@@ -518,7 +518,7 @@ class Main:
                     print("    %s" % line[:-1])
 
                     # Successful arch.
-                    if search("successful", line):
+                    if search("successful", line.decode('ISO-8859-1')):
                         allowed.append(arch)
 
                 # Delete the compiled file, if it exists.
