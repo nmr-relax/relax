@@ -18,6 +18,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+env:
+  - UPGRADE=false
+
 matrix:
   include:
     # default: Ubuntu Trusty 14.04 https://docs.travis-ci.com/user/reference/trusty/
@@ -25,18 +28,23 @@ matrix:
       language: python
     #- python: 3.5
     #  language: python
-    #- python: 3.6
-    #  language: python
+    - python: 3.6
+      language: python
 
     # Linux python 3.7, Ubuntu Xenial 16.04 https://docs.travis-ci.com/user/reference/xenial https://github.com/travis-ci/travis-ci/issues/9815
     - python: 3.7
       language: python
       dist: xenial
 
+    - python: 3.7
+      language: python
+      dist: xenial
+      env: UPGRADE=true
+
     # Mac python 3.7
     - os: osx
       language: sh
-      python: "3.7"
+      python: 3.7
       # Perform the manual steps on osx to install python3 and activate venv
       before_install:
         - brew update
@@ -50,23 +58,24 @@ matrix:
     #  language: sh
     #  python: "2.7"
     #  before_install:
-    #    - choco install python2
+    #    - choco install python2 --x86
     #    - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
     #    - python -m pip install --upgrade pip wheel
-    #- os: windows
-    #  language: sh
-    #  python: "3.7"
-    #  before_install:
-    #    - choco install python3
-    #    - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-    #    - python -m pip install --upgrade pip wheel
+    - os: windows
+      language: sh
+      python: 3.7
+      before_install:
+        - choco install python3 --x86
+        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+        - python -m pip install --upgrade pip wheel
 
 install:
     # Get newer pip and whell for binary caching support
     - echo $TRAVIS_OS_NAME
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo -H pip install --upgrade pip wheel; fi
-    - pip install -U -r devel_scripts/travis-ci/requirements.txt
+    - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
+    - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
     - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
     - set -e
     - echo $VIRTUAL_ENV
