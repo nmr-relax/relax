@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2014-2015,2018 Edward d'Auvergne                              #
+# Copyright (C) 2014-2015,2018-2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import cos, modf, pi, sin, sqrt
-from numpy import arange, dot, eye, float64, transpose, zeros
+from numpy import arange, array, concatenate, dot, eye, float64, linspace, transpose, zeros
 import sys
 from warnings import warn
 
@@ -213,7 +213,7 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
     structure.write_pdb(file=file)
 
 
-def mode_distribution(file=None, structure=None, axis=None, angle=None, pivot=None, atom_id=None, angle_inc=2*pi/360):
+def mode_distribution(file=None, structure=None, axis=None, angle=None, pivot=None, atom_id=None, angle_inc=2*pi/360, total=None, reverse=False, mirror=False):
     """Linear distribution of a single component of the frame order motions.
 
     @keyword file:          The opened and writable file object to place the PDB models of the representation into.
@@ -230,6 +230,12 @@ def mode_distribution(file=None, structure=None, axis=None, angle=None, pivot=No
     @type atom_id:          None or str
     @keyword angle_inc:     The angle between rotated representations.  The default is 1 degree.
     @type angle_inc:        float
+    @keyword total:         The total number of structures to distribute along the motional modes.  This overrides angle_inc.
+    @type total:            int
+    @keyword reverse:       Set this to reverse the ordering of the models distributed along the motional mode.
+    @type reverse:          bool
+    @keyword mirror:        Set this to have the models distributed along the motional mode shift from the negative angle to positive angle, and then return to the negative angle.
+    @type mirror:           bool
     """
 
     # Check the structural object.
@@ -245,20 +251,31 @@ def mode_distribution(file=None, structure=None, axis=None, angle=None, pivot=No
     # Initialise the rotation matrix data structures.
     R = eye(3, dtype=float64)
 
-    # The range of angles.
-    count = int(angle/angle_inc)
-    inner = arange(-count*angle_inc, (count+1)*angle_inc, angle_inc)
-    if inner[-1] > angle:
-        inner = inner[:-1]
-    if modf(angle/angle_inc)[0] > 1e-7:
-        print("Bracketing the representation.")
-        angles = zeros(len(inner)+2, float64)
-        angles[0] = -angle
-        angles[1:-1] = inner
-        angles[-1] = angle
+    # No angle handling.
+    if angle == 0.0 or total == 1:
+        angles = array([0.0])
+
+    # Range of angles for a fixed number of structures.
+    elif total != None:
+        if mirror:
+            total = int(total / 2) + 1
+        angles = linspace(-angle, angle, total)
+
+    # Range of angles for a fixed angle between structures.
     else:
-        print("No bracketing of the representation required.")
-        angles = inner
+        angles = linspace(-angle, angle, int(angle/angle_inc))
+        if not len(angles):
+            angles = array([-angle, 0.0, angle])
+
+    # Angle reversal.
+    if reverse:
+        angles = angles[::-1]
+
+    # Angle mirroring.
+    if mirror:
+        angles2 = angles[:-1]
+        angles2 = angles2[::-1]
+        angles = concatenate((angles, angles2))
 
     # Generate the structures.
     current_model = 1
@@ -274,6 +291,9 @@ def mode_distribution(file=None, structure=None, axis=None, angle=None, pivot=No
 
         # Rotate the model.
         structure.rotate(R=R, origin=pivot, model=current_model, selection=selection)
+
+    # Delete the first model.
+    structure.delete(model=1)
 
     # Save the result.
     structure.write_pdb(file=file)

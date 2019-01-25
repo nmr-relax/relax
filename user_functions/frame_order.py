@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2010,2012-2015,2018 Edward d'Auvergne                    #
+# Copyright (C) 2009-2010,2012-2015,2018-2019 Edward d'Auvergne               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -97,6 +97,29 @@ uf.add_keyarg(
     desc_short = "original structural model",
     desc = "Only one model from an analysed ensemble of structures can be used for the representation, as the decomposition PDB files consist of one model per state.",
     wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "total",
+    default = None,
+    py_type = "int",
+    desc_short = "total number of structures",
+    desc = "The total number of structures to distribute along the motional modes.  This overrides the fixed angle value.",
+    wiz_element_type = "spin",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "reverse",
+    default = False,
+    py_type = "bool",
+    desc_short = "reversal of distributed models",
+    desc = "Set this to reverse the ordering of the models distributed along the motional mode."
+)
+uf.add_keyarg(
+    name = "mirror",
+    default = False,
+    py_type = "bool",
+    desc_short = "mirror the distribution",
+    desc = "Set this to have the models distributed along the motional mode shift from the negative angle to positive angle, and then return to the negative angle."
 )
 uf.add_keyarg(
     name = "force",

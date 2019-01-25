@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2011,2013-2015,2018 Edward d'Auvergne                    #
+# Copyright (C) 2009-2011,2013-2015,2018-2019 Edward d'Auvergne               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -46,7 +46,7 @@ from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
 
 
-def decompose(root="decomposed", dir=None, atom_id=None, model=1, force=True):
+def decompose(root="decomposed", dir=None, atom_id=None, model=1, total=100, reverse=False, mirror=False, force=True):
     """Structural representation of the individual frame order motional components.
 
     @keyword root:          The file root for the PDB files created.  Each motional component will be represented by a different PDB file appended with '_mode1.pdb', '_mode2.pdb', '_mode3.pdb', etc.
@@ -57,6 +57,12 @@ def decompose(root="decomposed", dir=None, atom_id=None, model=1, force=True):
     @type atom_id:          None or str
     @keyword model:         Only one model from an analysed ensemble of structures can be used for the decomposition, as the corresponding PDB file consists of one model per state.
     @type model:            int
+    @keyword total:         The total number of structures to distribute along the motional modes.  This overrides a default fixed angle incrementation.
+    @type total:            int
+    @keyword reverse:       Set this to reverse the ordering of the models distributed along the motional mode.
+    @type reverse:          bool
+    @keyword mirror:        Set this to have the models distributed along the motional mode shift from the negative angle to positive angle, and then return to the negative angle.
+    @type mirror:           bool
     @keyword force:         A flag which, if set to True, will overwrite the any pre-existing file.
     @type force:            bool
     """
@@ -123,7 +129,7 @@ def decompose(root="decomposed", dir=None, atom_id=None, model=1, force=True):
         average_position(structure=structure, models=[None])
 
         # Create the representation.
-        mode_distribution(file=file, structure=structure, axis=frame[:,i], angle=angles[i], pivot=pivot, atom_id=domain_moving())
+        mode_distribution(file=file, structure=structure, axis=frame[:,i], angle=angles[i], pivot=pivot, atom_id=domain_moving(), total=total, reverse=reverse, mirror=mirror)
 
         # Close the file.
         file.close()
