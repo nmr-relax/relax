@@ -4,7 +4,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008,2010-2012,2014-2016,2018 Edward d'Auvergne          #
+# Copyright (C) 2006-2008,2010-2012,2014-2016,2018-2019 Edward d'Auvergne     #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
@@ -601,21 +601,18 @@ class Main:
                  'exponential_sat.c',
                  'relax_fit.c']
 
-        # Construct the python include path (for Python.h).
-        py_include_minpath = sys.prefix + path.sep + 'include'
-        py_include_fullpath = py_include_minpath + path.sep + 'python' + str(sys.version_info[0]) + '.' + str(sys.version_info[1])
+        # Construct the Python include path (for Python.h).
+        py_include_fullpath = None
+        py_include_minpath = path.join(sys.prefix, 'include')
+        py_version = 'python' + str(sys.version_info[0]) + '.' + str(sys.version_info[1])
+        if access(path.join(py_include_minpath, py_version, 'Python.h'), F_OK):
+            py_include_fullpath = path.join(py_include_minpath, py_version)
+        elif access(path.join(py_include_minpath, py_version + 'm', 'Python.h'), F_OK):
+            py_include_fullpath = path.join(py_include_minpath, py_version + 'm')
 
-        # Test if Python.h resides here.
-        f_name_pyth = py_include_fullpath + path.sep + 'Python.h'
-        if not access(f_name_pyth, F_OK):
-
-            # Test if 'PYTHON_INCLUDE_DIR' has been set to system environment.
-            if 'PYTHON_INCLUDE_DIR' in environ:
-
-                # Test if Python.h is here.
-                f_name_pyth = environ['PYTHON_INCLUDE_DIR'] + path.sep + 'Python.h'
-                if access(f_name_pyth, F_OK):
-                    py_include_fullpath = environ['PYTHON_INCLUDE_DIR']
+        # Test if 'PYTHON_INCLUDE_DIR' has been set to system environment.
+        elif 'PYTHON_INCLUDE_DIR' in environ and access(path.join(environ['PYTHON_INCLUDE_DIR'], 'Python.h'), F_OK):
+            py_include_fullpath = environ['PYTHON_INCLUDE_DIR']
 
         # Construct the python bin path.
         py_bin_minpath = sys.prefix + path.sep + 'bin'
@@ -631,7 +628,7 @@ class Main:
         # C flags.
         if SYSTEM == 'Windows':
             cflags = '/nologo /I\"' + py_include_minpath + '\"'
-        else:
+        elif py_include_fullpath:
             cflags = '-I' + py_include_fullpath
         if env['PLATFORM'] == 'darwin':
             for arch in archs:
