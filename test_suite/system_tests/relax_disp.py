@@ -102,12 +102,13 @@ class Relax_disp(SystemTestCase):
         if not dep_check.scipy_module:
             # The list of tests to skip.
             to_skip = [
-                "test_estimate_r2eff_err_methods"
+                "test_estimate_r2eff_err_methods",
+                "test_paul_schanda_nov_2015",
             ]
 
             # Store in the status object.
             if methodName in to_skip:
-                status.skipped_tests.append([methodName, 'scipy.optimize.leastsq module', self._skip_type])
+                status.skipped_tests.append([methodName, 'Scipy', self._skip_type])
 
         # If not NMRPipe showApod program in PATH.
         if not dep_check.showApod_software:
