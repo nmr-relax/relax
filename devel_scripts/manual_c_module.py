@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012,2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,7 +22,8 @@
 
 # Script for manually compiling the C modules for different Python targets.
 
-from os import system
+from os import F_OK, access, system
+from os.path import join
 import sys
 
 
@@ -36,9 +37,12 @@ if len(sys.argv) == 3:
 cmd = []
 
 # Python.h.
-include = '%s/include/python%s/' % (path, target)
-if target in ['3.2', '3.3', '3.4', '3.5']:
-    include = '%s/include/python%sm/' % (path, target)
+py_path = join(path, 'include', 'python' + target)
+include = None
+if access(join(py_path, 'Python.h'), F_OK):
+    include = py_path
+elif access(join(py_path + 'm', 'Python.h'), F_OK):
+    include = py_path + 'm'
 
 # Python 3.2 installed in the home directory.
 cmd.append("gcc -o target_functions/c_chi2.os -c -I%s -fPIC target_functions/c_chi2.c" % include)
