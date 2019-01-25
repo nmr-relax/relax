@@ -20,48 +20,39 @@
 ###############################################################################
 language: python
 env:
-  - UPGRADE=false
+  global:
+    - UPGRADE=false
+    - MPI=false
 
 matrix:
   include:
     # default: Ubuntu Trusty 14.04 https://docs.travis-ci.com/user/reference/trusty/
     - python: 2.7
       language: python
-    #- python: 3.5
-    #  language: python
+    # Test run with MPI 2 processors.
+    # Python 3.6 is standard version on Redhat 7 and Ubuntu LTS 18.04 and TS 16.04
     - python: 3.6
       language: python
-
+      env: MPI=true
     # Linux python 3.7, Ubuntu Xenial 16.04 https://docs.travis-ci.com/user/reference/xenial https://github.com/travis-ci/travis-ci/issues/9815
     - python: 3.7
       language: python
       dist: xenial
-
+    # Try upgrade all pip packages
     - python: 3.7
       language: python
       dist: xenial
       env: UPGRADE=true
-
     # Mac python 3.7
     - os: osx
       language: sh
       python: 3.7
-      # Perform the manual steps on osx to install python3 and activate venv
       before_install:
         - brew update
         - brew upgrade python3
         - python3 -m pip install virtualenv
         - virtualenv venv -p python3
         - source venv/bin/activate
-
-    # Windows python 2.7 and 3.7
-    #- os: windows
-    #  language: sh
-    #  python: "2.7"
-    #  before_install:
-    #    - choco install python2 --x86
-    #    - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
-    #    - python -m pip install --upgrade pip wheel
     - os: windows
       language: sh
       python: 3.7
@@ -71,24 +62,36 @@ matrix:
         - python -m pip install --upgrade pip wheel
 
 install:
+    # Fail on first error
+    - set -e
+    # Find Python.h to build with scons
+    - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
+
+    - echo "MPI=$MPI ; OS=$TRAVIS_OS_NAME ; PIPUPGRADE=$UPGRADE ; VIRTUAL_ENV=$VIRTUAL_ENV ; PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    # apt-get install for OpenMPI http://wiki.nmr-relax.com/OpenMPI
+    - if [[ $MPI == "true" ]]; then sudo apt-get update && sudo apt-get install -y openmpi-bin libopenmpi-dev ssh; fi
     # Get newer pip and whell for binary caching support
-    - echo $TRAVIS_OS_NAME
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo -H pip install --upgrade pip wheel; fi
-    - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
+    # Install python packages with pip: scons minfx bmrblib numpy scipy matplotlib
     - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
-    - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
-    - set -e
-    - echo $VIRTUAL_ENV
-    - echo $TRAVIS_PYTHON_VERSION
-    - echo $PYTHON_INCLUDE_DIR
+    - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
+    # Install python package with pip for running with multiple processors
+    - if [[ $MPI == "true" ]]; then pip install mpi4py; fi
+
+    # Build and compile. scons read the file 'sconstruct' for  build instructions
     - scons
 
 script:
+    # Fail on first error
     - set -e
-    - ./relax -i
-    - ./relax --time --unit-tests
-    - ./relax --time --system-tests
+    - if [[ $MPI == "false" ]]; then ./relax -i; fi
+    - if [[ $MPI == "false" ]]; then ./relax --time --unit-tests; fi
+    - if [[ $MPI == "false" ]]; then ./relax --time --system-tests; fi
+
+    - if [[ $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
+    - if [[ $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
+    - if [[ $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
 
 cache: pip
 git:
