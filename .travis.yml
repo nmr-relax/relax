@@ -34,6 +34,10 @@ matrix:
     - python: 3.6
       language: python
       env: MPI=true
+      before_install:
+        # apt-get install for OpenMPI http://wiki.nmr-relax.com/OpenMPI
+        - sudo apt-get update && sudo apt-get install -y openmpi-bin libopenmpi-dev ssh
+
     # Linux python 3.7, Ubuntu Xenial 16.04 https://docs.travis-ci.com/user/reference/xenial https://github.com/travis-ci/travis-ci/issues/9815
     - python: 3.7
       language: python
@@ -60,16 +64,20 @@ matrix:
         - choco install python3 --x86
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
         - python -m pip install --upgrade pip wheel
+        # Install Microsoft-MPI : https://github.com/Microsoft/Microsoft-MPI
+        # - wget -i "https://github.com"`curl -sL https://github.com/Microsoft/Microsoft-MPI/releases/latest | grep "download" | grep ".msi" | cut -d'"' -f2`
+        # - wget -i "https://github.com"`curl -sL https://github.com/Microsoft/Microsoft-MPI/releases/latest | grep "download" | grep ".exe" | cut -d'"' -f2`
+        # - msiexec.exe /i msmpisdk.msi ACCEPT=YES /qr+
+        # - msmpisetup.exe -force -unattend
+        # - set MSMPI
+        # - rm msmpisdk.msi msmpisetup.exe
 
 install:
     # Fail on first error
     - set -e
     # Find Python.h to build with scons
     - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
-
     - echo "MPI=$MPI ; OS=$TRAVIS_OS_NAME ; PIPUPGRADE=$UPGRADE ; VIRTUAL_ENV=$VIRTUAL_ENV ; PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-    # apt-get install for OpenMPI http://wiki.nmr-relax.com/OpenMPI
-    - if [[ $MPI == "true" ]]; then sudo apt-get update && sudo apt-get install -y openmpi-bin libopenmpi-dev ssh; fi
     # Get newer pip and whell for binary caching support
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo -H pip install --upgrade pip wheel; fi
