@@ -26,6 +26,7 @@ import dep_check
 # Python module imports.
 import os
 import sys
+from traceback import print_exc
 if dep_check.wx_module:
     import wx
 import unittest
@@ -185,6 +186,15 @@ class Test_suite_runner:
         # Catch the keyboard interrupt.
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt:  Terminating all tests.\n")
+            return False
+
+        # Catch GUI app set up errors.
+        except:
+            print("Failure in setting up the GUI tests.\n")
+            print_exc()
+            if summary:
+                self.summary()
+            self.gui_result = 'skip'
             return False
 
         # All tests were run successfully.
