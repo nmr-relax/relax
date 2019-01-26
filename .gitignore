@@ -9,6 +9,15 @@ target_functions/exponential_sat.os
 target_functions/relax_fit.os
 target_functions/relax_fit.so
 
+# Windows C extensions
+target_functions/c_chi2.obj
+target_functions/exponential.obj
+target_functions/exponential_inv.obj
+target_functions/exponential_sat.obj
+target_functions/relax_fit.exp
+target_functions/relax_fit.lib
+target_functions/relax_fit.obj
+
 # Scons
 .sconsign.dblite
 
