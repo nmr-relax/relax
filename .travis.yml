@@ -72,6 +72,13 @@ matrix:
         # - set MSMPI
         # - rm msmpisdk.msi msmpisetup.exe
 
+        # Works
+        # - mpiexec -np 2 echo "hello world"
+        # - mpiexec -np 2 python -m mpi4py -c "print('Hello')"
+        # Do not work
+        # - mpiexec -np 2 python relax --multi='mpi4py' -i
+        # - mpiexec -np 2 python -m mpi4py relax --multi='mpi4py' -i
+
 install:
     # Fail on first error
     - set -e
