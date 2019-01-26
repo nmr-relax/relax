@@ -403,6 +403,10 @@ class Spectra_list(Base_list):
         @type item:     None or int
         """
 
+        # No elements in the list.
+        if not self.element.GetItemCount():
+            return
+
         # The current selection.
         if item == None:
             item = self.element.GetFirstSelected()
