@@ -1,8 +1,8 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2014,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -56,98 +56,137 @@ MOD_ALL_LIST = [
     'matplotlib',
     'wx',
     'mpi4py',
-    'epydoc'
+    'epydoc',
 ]
 
 
 class Python_info:
     """Find all Python versions and the supported modules."""
 
-    def __init__(self, format="    %-15s %-20s", debug=False):
+    def __init__(self, debug=True):
         """Set up and run."""
-
-        # Store the args.
-        self.format = format
-        self.debug = debug
-
-        # Get a list of all Python binaries.
-        files = self.get_files()
 
         # The modules to find.
         self.modules()
 
         # Loop over the binaries.
-        for file in files:
+        for py_exec in self.get_py_exec_list():
             # Printout.
-            print("Testing %s:" % file)
+            print("Testing %s:" % py_exec)
 
-            # Determine and print out the version info.
-            if 'python' in self.module_list:
-                self.version_python(file)
-            if 'minfx' in self.module_list:
-                self.version_minfx(file)
-            if 'bmrblib' in self.module_list:
-                self.version_bmrblib(file)
-            if 'Numeric' in self.module_list:
-                self.version_numeric(file)
-            if 'Scientific' in self.module_list:
-                self.version_scientific(file)
-            if 'numpy' in self.module_list:
-                self.version_numpy(file)
-            if 'scipy' in self.module_list:
-                self.version_scipy(file)
-            if 'matplotlib' in self.module_list:
-                self.version_matplotlib(file)
-            if 'wx' in self.module_list:
-                self.version_wx(file)
-            if 'mpi4py' in self.module_list:
-                self.version_mpi4py(file)
-            if 'epydoc' in self.module_list:
-                self.version_epydoc(file)
+            # Test the Python binary.
+            python = Popen(py_exec, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+            python.stdin.close()
+            err_lines = python.stderr.readlines()
+            for line in err_lines:
+                print(line.decode().strip())
+            if err_lines:
+                continue
 
+            # Determine the Python exception catching syntax.
+            python = Popen(py_exec, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+            cmd = "try:\n    import no_such_python_module\nexcept ImportError, err:\n    pass"
+            python.stdin.write(cmd.encode())
+            python.stdin.close()
+            err_lines = python.stderr.readlines()
+            except_text = "except ImportError, err"
+            for line in err_lines:
+                if "SyntaxError: invalid syntax" in line.decode():
+                    except_text = "except ImportError as err"
 
-    def execute(self, label=None, file=None, commands=None):
-        """Execute Python in a pipe."""
+            # Loop over each module to check.
+            for module in self.module_list:
+                # The python code to execute.
+                commands = """
+from re import search
+import sys
+import traceback
 
-        # Execute the Python binary.
-        python = Popen(file, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+version = '-'
+try:
+    import %s
+    if hasattr(%s, 'version'):
+        if hasattr(%s.version, '__call__'): # wxPython
+            version = %s.version()
+        if hasattr(%s.version, 'version'):  # numpy, scipy
+            version = %s.version.version
+    if hasattr(%s, '__version__'):          # minfx, bmrblib, epydoc, matplotlib, mpi4py, Numeric, Scientific
+        version = %s.__version__
+    else:
+        version = 'unknown'
+%s:
+    text = repr(err)
+    if hasattr(err, '__str__'):
+        text = err.__str__()
+    print(text)
+    if search('No module named', text):
+        version = '-'
+    else:
+        version = text
 
-        # Execute.
-        for command in commands:
-            python.stdin.write(command)
+print(version)
+""" % (module, module, module, module, module, module, module, module, except_text)
 
-        # Close the pipe.
-        python.stdin.close()
-
-        # Write to stdout.
-        line = None
-        for line in python.stdout.readlines():
-            # Decode Python 3 byte arrays.
-            if hasattr(line, 'decode'):
-                line = line.decode()
-
-        # Store the last line as the version
-        if line:
-            version = line[:-1]
+                # Special case - The Python version.
+                if module == 'python':
+                    commands = """
+python_version = 'None'
+try:
+    import platform
+    python_version = platform.python_version()
+except:
+    import sys
+    if hasattr(sys, 'version_info'):
+        python_version = '%s.%s.%s' % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
+    elif hasattr(sys, 'version'):
+        if sys.version[3] == ' ':
+            python_version = sys.version[:3]
+        elif sys.version[5] == ' ':
+            python_version = sys.version[:5]
         else:
-            version = None
+            python_version = sys.version
 
-        # Write to stderr.
-        if self.debug:
-            for line in python.stderr.readlines():
-                # Decode Python 3 byte arrays.
-                if hasattr(line, 'decode'):
+print(python_version)
+"""
+
+                # Execute the Python binary.
+                python = Popen(py_exec, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+                python.stdin.write(commands.encode())
+                #print(commands)
+
+                # Close the pipe.
+                python.stdin.close()
+
+                # Extract the contents of STDOUT.
+                line = None
+                for line in python.stdout.readlines():
                     line = line.decode()
+                    #rint(repr(line))
 
-                # Write.
-                sys.stderr.write(line)
+                # Store the last line as the version
+                if line:
+                    version = line[:-1]
+                else:
+                    version = '?'
 
-        # Write the version info.
-        print(self.format % (label, version))
+                # Extract the contents of STDERR.
+                if debug:
+                    for line in python.stderr.readlines():
+                        line = line.decode()
+
+                        # Write.
+                        sys.stderr.write(line)
+
+                # Write the version info.
+                print("    %-15s %-20s" % (module+':', version))
 
 
-    def get_files(self):
-        """Find all Python binaries."""
+    def get_py_exec_list(self):
+        """Find all Python executables.
+
+        @return:    The list of all executable Python binaries on the system.
+        @rtype:     list of str
+        """
 
         # Run the locate command and filter the results.
         cmd = "locate python | grep '\/python$\|\/python...$' | grep bin"
@@ -160,7 +199,7 @@ class Python_info:
         binaries = []
         for line in pipe.stdout.readlines():
             # The file name.
-            file = line[:-1]
+            file = line[:-1].decode()
 
             # Recursively follow and expand links.
             while True:
@@ -216,211 +255,6 @@ class Python_info:
         # Use the defaults.
         else:
             self.module_list = MOD_LIST
-
-
-    def version_bmrblib(self, file=None):
-        """Determine and print out the bmrblib module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import bmrblib\n",
-            "    if hasattr(bmrblib, '__version__'):\n",
-            "        version = bmrblib.__version__\n",
-            "    else:\n",
-            "        version = 'Unknown'\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="bmrblib:", file=file, commands=commands)
-
-
-    def version_epydoc(self, file=None):
-        """Determine and print out the epydoc module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import epydoc\n",
-            "    version = epydoc.__version__\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="epydoc:", file=file, commands=commands)
-
-
-    def version_matplotlib(self, file=None):
-        """Determine and print out the matplotlib module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import matplotlib\n",
-            "    version = matplotlib.__version__\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="matplotlib:", file=file, commands=commands)
-
-
-    def version_minfx(self, file=None):
-        """Determine and print out the minfx module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import minfx\n",
-            "    if hasattr(minfx, '__version__'):\n",
-            "        version = minfx.__version__\n",
-            "    else:\n",
-            "        version = 'Unknown'\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="minfx:", file=file, commands=commands)
-
-
-    def version_mpi4py(self, file=None):
-        """Determine and print out the mpi4py module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import mpi4py\n",
-            "    version = mpi4py.__version__\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="mpi4py:", file=file, commands=commands)
-
-
-    def version_numeric(self, file=None):
-        """Determine and print out the Numeric module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import Numeric\n",
-            "    version = Numeric.__version__\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="Numeric:", file=file, commands=commands)
-
-
-    def version_numpy(self, file=None):
-        """Determine and print out the numpy module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import numpy\n",
-            "    version = numpy.version.version\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="numpy:", file=file, commands=commands)
-
-
-    def version_scientific(self, file=None):
-        """Determine and print out the Scientific module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import Scientific\n",
-            "    version = Scientific.__version__\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="Scientific:", file=file, commands=commands)
-
-
-    def version_scipy(self, file=None):
-        """Determine and print out the scipy module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import scipy\n",
-            "    version = scipy.version.version\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="scipy:", file=file, commands=commands)
-
-
-    def version_wx(self, file=None):
-        """Determine and print out the wx module version info."""
-
-        # The commands.
-        commands = [
-            "try:\n",
-            "    import wx\n",
-            "    version = wx.version()\n",
-            "except:\n",
-            "    version = '-'\n",
-            "print(version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="wx:", file=file, commands=commands)
-
-
-    def version_python(self, file=None):
-        """Determine and print out the Python and module version info."""
-
-        # The commands.
-        commands = [
-            "python_version = 'None'\n",
-            "try:\n",
-            "    import platform\n",
-            "    python_version = platform.python_version()\n",
-            "except:\n",
-            "    import sys\n",
-            "    if hasattr(sys, 'version_info'):\n",
-            "        python_version = '%s.%s.%s' % (sys.version_info[0], sys.version_info[1], sys.version_info[2])\n",
-            "    elif hasattr(sys, 'version'):\n",
-            "        if sys.version[3] == ' ':\n",
-            "            python_version = sys.version[:3]\n",
-            "        elif sys.version[5] == ' ':\n",
-            "            python_version = sys.version[:5]\n",
-            "        else:\n",
-            "            python_version = sys.version\n",
-            "\n",
-            "print(python_version)\n",
-        ]
-
-        # Execute and print the version
-        self.execute(label="Python:", file=file, commands=commands)
-
 
 
 # Execute.
