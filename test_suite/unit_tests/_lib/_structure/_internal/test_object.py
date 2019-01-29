@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2015 Edward d'Auvergne                                        #
+# Copyright (C) 2015,2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -82,3 +82,29 @@ class Test_object(UnitTestCase):
                 self.assertEqual(mol.z[j], data[i][j][3][2])
                 self.assertEqual(mol.element[j], data[i][j][4])
                 self.assertEqual(mol.bonded[j], data[i][j][5])
+
+
+    def test_add_model(self):
+        """Test for the addition of new models."""
+
+        # Initialise a structural object and add some atoms.
+        struct = object.Internal()
+
+        # Add an atom.
+        struct.add_atom(atom_name='N', res_name='GLY', res_num=10, mol_name='test', pos=[1., 2., 3.], element='N')
+
+        # Copy the model.
+        struct.add_model(model=2, coords_from=1)
+
+        # Check the models.
+        self.assertEqual(len(struct.structural_data.current_models), 2)
+        self.assertEqual(struct.structural_data.current_models[0], 1)
+        self.assertEqual(struct.structural_data.current_models[1], 2)
+        for i in range(2):
+            self.assertEqual(struct.structural_data[i].mol[0].atom_name[0], 'N')
+            self.assertEqual(struct.structural_data[i].mol[0].res_name[0], 'GLY')
+            self.assertEqual(struct.structural_data[i].mol[0].res_num[0], 10)
+            self.assertEqual(struct.structural_data[i].mol[0].x[0], 1.0)
+            self.assertEqual(struct.structural_data[i].mol[0].y[0], 2.0)
+            self.assertEqual(struct.structural_data[i].mol[0].z[0], 3.0)
+            self.assertEqual(struct.structural_data[i].mol[0].element[0], 'N')
