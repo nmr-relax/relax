@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2015,2018 Edward d'Auvergne                              #
+# Copyright (C) 2009-2015,2018-2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -1812,6 +1812,76 @@ class Frame_order(SystemTestCase):
         self.test_simulate_rotor_z_axis(type='decomp')
 
 
+    def test_decompose2_free_rotor_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the free rotor model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_free_rotor_z_axis(type='decomp2')
+
+
+    def test_decompose2_iso_cone_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the isotropic cone model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_z_axis(type='decomp2')
+
+
+    def test_decompose2_iso_cone_xz_plane_tilt(self):
+        """Check the frame_order.decompose user function PDB file for the isotropic cone model with a xz-plane tilt."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_xz_plane_tilt(type='decomp2')
+
+
+    def test_decompose2_iso_cone_free_rotor_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the free rotor isotropic cone model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_free_rotor_z_axis(type='decomp2')
+
+
+    def test_decompose2_iso_cone_torsionless_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the torsionless isotropic cone model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_torsionless_z_axis(type='decomp2')
+
+
+    def test_decompose2_pseudo_ellipse_xz_plane_tilt(self):
+        """Check the frame_order.decompose user function PDB file for the pseudo-ellipse model with a xz-plane tilt."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_xz_plane_tilt(type='decomp2')
+
+
+    def test_decompose2_pseudo_ellipse_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_z_axis(type='decomp2')
+
+
+    def test_decompose2_pseudo_ellipse_free_rotor_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the free rotor pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_free_rotor_z_axis(type='decomp2')
+
+
+    def test_decompose2_pseudo_ellipse_torsionless_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the torsionless pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_torsionless_z_axis(type='decomp2')
+
+
+    def test_decompose2_rotor_z_axis(self):
+        """Check the frame_order.decompose user function PDB file for the rotor model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_rotor_z_axis(type='decomp2')
+
+
     def test_distribute_free_rotor_z_axis(self):
         """Check the frame_order.distribute user function PDB file for the free rotor model along the z-axis."""
 
@@ -3348,6 +3418,10 @@ class Frame_order(SystemTestCase):
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
 
         # Check each PDB.
         for file in files:
@@ -3429,6 +3503,10 @@ class Frame_order(SystemTestCase):
                         self.assertAlmostEqual(pos[1], 0.0, 3)
                         self.assertAlmostEqual(pos[2], 0.0, 3)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_double_rotor_mode1_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the double rotor model along the z-axis for the first rotation mode."""
@@ -3462,6 +3540,10 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
 
@@ -3545,6 +3627,10 @@ class Frame_order(SystemTestCase):
                         self.assertAlmostEqual(pos[1], 0.0, 3)
                         self.assertAlmostEqual(pos[2], 0.0, 3)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_double_rotor_mode2_xz_plane_tilt(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the double rotor model with a xz-plane tilt for the second rotation mode."""
@@ -3578,6 +3664,10 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
 
@@ -3668,6 +3758,10 @@ class Frame_order(SystemTestCase):
                         self.assertAlmostEqual(pos[1], 20.0, 3)
                         self.assertAlmostEqual(pos[2], -20.0, 3)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_double_rotor_mode2_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the double rotor model along the z-axis for the second rotation mode."""
@@ -3701,6 +3795,10 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
 
@@ -3787,6 +3885,10 @@ class Frame_order(SystemTestCase):
                         self.assertAlmostEqual(pos[1], 20.0, 3)
                         self.assertAlmostEqual(pos[2], -20.0, 3)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_free_rotor_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the free rotor model along the z-axis."""
@@ -3817,6 +3919,9 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
 
         # Check each PDB.
@@ -3874,6 +3979,10 @@ class Frame_order(SystemTestCase):
                         self.assertAlmostEqual(pos[1], 0.0, 3)
                         self.assertAlmostEqual(pos[2], 0.0, 3)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_iso_cone_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the isotropic cone model along the z-axis."""
@@ -3904,6 +4013,11 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
             files.append('decompose_mode3.pdb')
@@ -3973,6 +4087,10 @@ class Frame_order(SystemTestCase):
             # Print out the maximum phi value.
             print("Maximum phi for X and Y: %s" % max_phi)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_iso_cone_xz_plane_tilt(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the isotropic cone model with a xz-plane tilt."""
@@ -4006,6 +4124,11 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
             files.append('decompose_mode3.pdb')
@@ -4075,6 +4198,10 @@ class Frame_order(SystemTestCase):
             # Print out the maximum phi value.
             print("Maximum phi for X and Y: %s" % max_phi)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_iso_cone_free_rotor_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the free rotor isotropic cone model along the z-axis."""
@@ -4104,6 +4231,11 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
             files.append('decompose_mode3.pdb')
@@ -4162,6 +4294,10 @@ class Frame_order(SystemTestCase):
                         self.assertAlmostEqual(pos[1], 0.0, 3)
                         self.assertAlmostEqual(pos[2], 0.0, 3)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_iso_cone_torsionless_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the torsionless isotropic cone model along the z-axis."""
@@ -4191,6 +4327,10 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
 
@@ -4259,6 +4399,10 @@ class Frame_order(SystemTestCase):
             # Print out the maximum phi value.
             print("Maximum phi for X and Y: %s" % max_phi)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_pseudo_ellipse_xz_plane_tilt(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the pseudo-ellipse model with a xz-plane tilt."""
@@ -4292,6 +4436,11 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
             files.append('decompose_mode3.pdb')
@@ -4361,6 +4510,10 @@ class Frame_order(SystemTestCase):
             # Print out the maximum phi value.
             print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_pseudo_ellipse_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the pseudo-ellipse model along the z-axis."""
@@ -4391,6 +4544,11 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
             files.append('decompose_mode3.pdb')
@@ -4460,6 +4618,10 @@ class Frame_order(SystemTestCase):
             # Print out the maximum phi value.
             print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_pseudo_ellipse_free_rotor_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the free rotor pseudo-ellipse model along the z-axis."""
@@ -4489,6 +4651,11 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+            files.append('decompose_mode3.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
             files.append('decompose_mode3.pdb')
@@ -4547,6 +4714,10 @@ class Frame_order(SystemTestCase):
             # Print out the maximum phi value.
             print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_pseudo_ellipse_torsionless_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the torsionless pseudo-ellipse model along the z-axis."""
@@ -4576,6 +4747,10 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+            files.append('decompose_mode2.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
             files.append('decompose_mode2.pdb')
 
@@ -4644,6 +4819,10 @@ class Frame_order(SystemTestCase):
             # Print out the maximum phi value.
             print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
+
 
     def test_simulate_rotor_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the rotor model along the z-axis."""
@@ -4675,6 +4854,9 @@ class Frame_order(SystemTestCase):
             files.append(file)
         elif type == 'decomp':
             self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir)
+            files.append('decompose_mode1.pdb')
+        elif type == 'decomp2':
+            self.interpreter.frame_order.decompose(root='decompose', dir=ds.tmpdir, total=21, reverse=True, mirror=True)
             files.append('decompose_mode1.pdb')
 
         # Check each PDB.
@@ -4735,6 +4917,10 @@ class Frame_order(SystemTestCase):
                         self.assertAlmostEqual(pos[0], 0.0, 3)
                         self.assertAlmostEqual(pos[1], 0.0, 3)
                         self.assertAlmostEqual(pos[2], 0.0, 3)
+
+            # Check the number of structures.
+            if type == 'decomp2':
+                self.assertEqual(num_pos, 21)
 
 
     def test_sobol_setup(self):
