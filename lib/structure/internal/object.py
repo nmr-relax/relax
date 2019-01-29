@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015,2019 Edward d'Auvergne                              #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2011 Han Sun                                                  #
@@ -1227,10 +1227,16 @@ class Internal:
                 if model == self.structural_data[i].num:
                     raise RelaxError("The model '%s' already exists." % model)
 
+        # Set the model number for a single structure, if necessary.
+        if len(self.structural_data) == 1 and self.structural_data[0].num == None:
+            self.structural_data[0].num = coords_from
+            self.structural_data.current_models[0] = coords_from
+
         # Add a new model.
         model = self.structural_data.add_item(model_num=model)
 
         # The model to duplicate.
+        model_from = None
         if coords_from == None:
             model_from = self.structural_data[0]
         else:
@@ -1238,6 +1244,8 @@ class Internal:
                 if self.structural_data[i].num == coords_from:
                     model_from = self.structural_data[i]
                     break
+        if not model_from:
+            raise RelaxError("Cannot find model %i to copy the data from." % coords_from)
 
         # Duplicate all data from the MolList object down.
         for mol_index in range(len(model_from.mol)):
@@ -2725,6 +2733,7 @@ class Internal:
         # Set the single model number.
         if model_orig == None:
             self.structural_data[0].num = model_new
+            self.structural_data.current_models[0] = model_new
             return
 
         # Find the model and set the number.
@@ -2732,6 +2741,7 @@ class Internal:
         for i in range(len(self.structural_data)):
             if model_orig == self.structural_data[i].num:
                 self.structural_data[i].num = model_new
+                self.structural_data.current_models[i] = model_new
                 set = True
 
         # Sanity check.
