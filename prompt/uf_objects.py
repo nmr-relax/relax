@@ -167,6 +167,8 @@ class Uf_object(object):
             # Check if the correct Python object type has been supplied.
             if py_type == 'bool':
                 lib.arg_check.is_bool(value, desc_short)
+            elif py_type == 'bool_or_bool_list':
+                lib.arg_check.is_bool_or_bool_list(value, desc_short)
             elif py_type == 'float':
                 lib.arg_check.is_float(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'float_array':
