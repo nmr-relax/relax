@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014,2019 Edward d'Auvergne                              #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -56,6 +56,78 @@ def is_bool(arg, name=None, raise_error=True):
         return False
     else:
         raise RelaxBoolError(name, arg)
+
+
+def is_bool_or_bool_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, none_elements=False, raise_error=True):
+    """Test if the argument is a Boolean or a list of Booleans.
+
+    @param arg:                         The argument.
+    @type arg:                          anything
+    @keyword name:                      The plain English name of the argument.
+    @type name:                         str
+    @keyword size:                      The number of elements required.
+    @type size:                         None or int
+    @keyword can_be_none:               A flag specifying if the argument can be none.
+    @type can_be_none:                  bool
+    @keyword can_be_empty:              A flag which if True allows the list to be empty.
+    @type can_be_empty:                 bool
+    @keyword none_elements:             A flag which if True allows the list to contain None.
+    @type none_elements:                bool
+    @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                  bool
+    @raise RelaxBoolListBoolError:      If not a Boolean or a list of Booleans (and the raise_error flag is set).
+    @raise RelaxNoneBoolListBoolError:  If not a Boolean, a list of Booleans, or None (and the raise_error flag is set).
+    @return:                            The answer to the question (if raise_error is not set).
+    @rtype:                             bool
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return True
+
+    # A Boolean.
+    if not isinstance(arg, list):
+        if not is_bool(arg, raise_error=False):
+            fail = True
+
+    # A list.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            fail = True
+
+        # Fail if empty.
+        if not can_be_empty and arg == []:
+            fail = True
+
+        # Check the arguments.
+        for i in range(len(arg)):
+            # None.
+            if arg[i] == None and none_elements:
+                continue
+
+            # Check if it is a Boolean.
+            if not is_bool(arg[i], raise_error=False):
+                fail = True
+
+    # Fail.
+    if fail:
+        if not raise_error:
+            return False
+        if can_be_none and size != None:
+            raise RelaxNoneBoolListBoolError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneBoolListBoolError(name, arg)
+        elif size != None:
+            raise RelaxBoolListBoolError(name, arg, size)
+        else:
+            raise RelaxBoolListBoolError(name, arg)
+
+    # Success.
+    return True
 
 
 def is_float(arg, name=None, can_be_none=False, raise_error=True):
