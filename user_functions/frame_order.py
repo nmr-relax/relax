@@ -110,7 +110,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "reverse",
     default = False,
-    py_type = "bool",
+    py_type = "bool_or_bool_list",
     desc_short = "reversal of distributed models",
     desc = "Set this to reverse the ordering of the models distributed along the motional mode."
 )

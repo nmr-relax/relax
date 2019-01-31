@@ -59,8 +59,8 @@ def decompose(root="decomposed", dir=None, atom_id=None, model=1, total=100, rev
     @type model:            int
     @keyword total:         The total number of structures to distribute along the motional modes.  This overrides a default fixed angle incrementation.
     @type total:            int
-    @keyword reverse:       Set this to reverse the ordering of the models distributed along the motional mode.
-    @type reverse:          bool
+    @keyword reverse:       Set this to reverse the ordering of the models distributed along the motional mode.  Use a list of Booleans to selectively reverse each motional mode.
+    @type reverse:          bool or list of bool
     @keyword mirror:        Set this to have the models distributed along the motional mode shift from the negative angle to positive angle, and then return to the negative angle.
     @type mirror:           bool
     @keyword force:         A flag which, if set to True, will overwrite the any pre-existing file.
@@ -110,6 +110,16 @@ def decompose(root="decomposed", dir=None, atom_id=None, model=1, total=100, rev
     # The pivot point.
     pivot = generate_pivot(order=1, pdb_limit=True)
 
+    # Expand the list of reversal flags to all 3 modes, if required.
+    if isinstance(reverse, list):
+        reverse_list = reverse
+        for i in range(3 - len(reverse)):
+            reverse_list.append(False)
+    else:
+        reverse_list = []
+        for i in range(3):
+            reverse_list.append(reverse)
+
     # Loop over each mode.
     for i in range(3):
         # Skip modes with no motion.
@@ -129,7 +139,7 @@ def decompose(root="decomposed", dir=None, atom_id=None, model=1, total=100, rev
         average_position(structure=structure, models=[None])
 
         # Create the representation.
-        mode_distribution(file=file, structure=structure, axis=frame[:,i], angle=angles[i], pivot=pivot, atom_id=domain_moving(), total=total, reverse=reverse, mirror=mirror)
+        mode_distribution(file=file, structure=structure, axis=frame[:,i], angle=angles[i], pivot=pivot, atom_id=domain_moving(), total=total, reverse=reverse_list[i], mirror=mirror)
 
         # Close the file.
         file.close()

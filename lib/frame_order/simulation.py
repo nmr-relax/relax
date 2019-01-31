@@ -216,7 +216,7 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
 def mode_distribution(file=None, structure=None, axis=None, angle=None, pivot=None, atom_id=None, angle_inc=2*pi/360, total=None, reverse=False, mirror=False):
     """Linear distribution of a single component of the frame order motions.
 
-    @keyword file:          The opened and writable file object to place the PDB models of the representation into.
+    @keyword file:          The opened and wrlib/frame_order/simulation.pyitable file object to place the PDB models of the representation into.
     @type file:             str
     @keyword structure:     The internal structural object to convert into an ensemble along the mode of motion.
     @type structure:        lib.structure.internal.object.Internal instance
@@ -232,8 +232,8 @@ def mode_distribution(file=None, structure=None, axis=None, angle=None, pivot=No
     @type angle_inc:        float
     @keyword total:         The total number of structures to distribute along the motional modes.  This overrides angle_inc.
     @type total:            int
-    @keyword reverse:       Set this to reverse the ordering of the models distributed along the motional mode.
-    @type reverse:          bool
+    @keyword reverse:       Set this to reverse the ordering of the models distributed along the motional mode.  Use a list of Booleans to selectively reverse each motional mode.
+    @type reverse:          bool or list of bool
     @keyword mirror:        Set this to have the models distributed along the motional mode shift from the negative angle to positive angle, and then return to the negative angle.
     @type mirror:           bool
     """
