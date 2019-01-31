@@ -1208,6 +1208,64 @@ class Internal:
         self.pack_structs([[mol]], orig_model_num=[None], set_model_num=[set_model_num], orig_mol_num=[[None]], set_mol_name=[set_mol_name])
 
 
+    def add_helix(self, res_start=None, res_end=None, mol_name=None):
+        """Define new alpha helical secondary structure.
+
+        @keyword res_start: The residue number for the start of the helix.
+        @type res_start:    int
+        @keyword res_end:   The residue number for the end of the helix.
+        @type res_end:      int
+        @keyword mol_name:  Define the secondary structure for a specific molecule.
+        @type mol_name:     str or None
+        """
+
+        # Initialise the data structure if required.
+        if not hasattr(self, 'helices'):
+            self.helices = []
+
+        # Use the first model.
+        model = self.structural_data[0]
+
+        # Find the molecule to use.
+        mol = None
+        mol_name_list = []
+        for i in range(len(model.mol)):
+            mol_name_list.append(model.mol[i].mol_name)
+            if model.mol[i].mol_name == mol_name:
+                mol = model.mol[i]
+                mol_index = i
+        if mol == None:
+            raise RelaxError("Cannot find the molecule '%s' in %s." % (mol_name, mol_name_list))
+
+        # Find the residue names.
+        res_start_name = None
+        res_end_name = None
+        length = 0
+        inside = False
+        current_res_num = None
+        for i in range(len(mol.res_num)):
+            # The start of the helix.
+            if mol.res_num[i] == res_start:
+                res_start_name = mol.res_name[i]
+                inside = True
+
+            # Residue count.
+            if inside and current_res_num != mol.res_num[i]:
+                current_res_num = mol.res_num[i]
+                length += 1
+
+            # The end of the helix.
+            if mol.res_num[i] == res_end:
+                res_end_name = mol.res_name[i]
+                inside = False
+
+        # Generate the list of [helix_id, mol_init_index, init_res_name, init_seq_num, mol_end_index, end_res_name, end_seq_num, helix_class, length].
+        helix = [len(self.helices)+1, mol_index, res_start_name, res_start, mol_index, res_end_name, res_end, 1, length]
+
+        # Add the data.
+        self.helices.append(helix)
+
+
     def add_model(self, model=None, coords_from=None):
         """Add a new model to the store.
 

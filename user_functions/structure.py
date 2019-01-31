@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004,2006,2008-2016 Edward d'Auvergne                    #
+# Copyright (C) 2003-2004,2006,2008-2016,2019 Edward d'Auvergne               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -138,6 +138,43 @@ uf.backend = pipe_control.structure.main.add_atom
 uf.menu_text = "&add_atom"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_size = (900, 700)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
+# The structure.add_helix user function.
+uf = uf_info.add_uf('structure.add_helix')
+uf.title = "Define an alpha helix."
+uf.title_short = "helix creation."
+uf.add_keyarg(
+    name = "start",
+    py_type = "int",
+    min = -10000,
+    max = 10000,
+    desc_short = "starting residue number",
+    desc = "The residue number for the start of the helix."
+)
+uf.add_keyarg(
+    name = "end",
+    py_type = "int",
+    min = -10000,
+    max = 10000,
+    desc_short = "ending residue number",
+    desc = "The residue number for the end of the helix."
+)
+uf.add_keyarg(
+    name = "mol_name",
+    py_type = "str",
+    desc_short = "mol name",
+    desc = "Define the secondary structure for a specific molecule.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows alpha helical secondary structure to be defined for the internal structural object.")
+uf.backend = pipe_control.structure.main.add_helix
+uf.menu_text = "&add_helix"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
+uf.wizard_size = (800, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 

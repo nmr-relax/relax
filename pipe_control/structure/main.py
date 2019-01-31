@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009,2011-2016 Edward d'Auvergne                         #
+# Copyright (C) 2003-2009,2011-2016,2019 Edward d'Auvergne                    #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2011 Han Sun                                                  #
@@ -94,6 +94,25 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
 
     # Add the atoms.
     cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record, sort=True)
+
+
+def add_helix(start=None, end=None, mol_name=None):
+    """Define alpha helical secondary structure for the structural data object.
+
+    @keyword start:     The residue number for the start of the helix.
+    @type start:        int
+    @keyword end:       The residue number for the end of the helix.
+    @type end:          int
+    @keyword mol_name:  Define the secondary structure for a specific molecule.
+    @type mol_name:     str or None
+    """
+
+    # Checks.
+    check_pipe()
+    check_structure()
+
+    # Add the atoms.
+    cdp.structure.add_helix(res_start=start, res_end=end, mol_name=mol_name)
 
 
 def add_model(model_num=None):
