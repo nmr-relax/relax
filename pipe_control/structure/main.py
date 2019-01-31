@@ -134,6 +134,37 @@ def add_model(model_num=None):
     print("Created the empty model number %s." % model_num)
 
 
+def add_sheet(strand=1, sheet_id='A', strand_count=2, strand_sense=0, start=None, end=None, mol_name=None, current_atom=None, prev_atom=None):
+    """Define beta sheet secondary structure for the structural data object.
+
+    @keyword strand:        Strand number which starts at 1 for each strand within a sheet and increases by one.
+    @type strand:           int
+    @keyword sheet_id:      The sheet identifier.  To match the PDB standard, sheet IDs should range from 'A' to 'Z'.
+    @type sheet_id:         str
+    @keyword strand_count:  The number of strands in the sheet.
+    @type strand_count:     int
+    @keyword strand_sense:  Sense of strand with respect to previous strand in the sheet. 0 if first strand, 1 if parallel, -1 if anti-parallel.
+    @type strand_sense:     int
+    @keyword start:         The residue number for the start of the sheet.
+    @type start:            int
+    @keyword end:           The residue number for the end of the sheet.
+    @type end:              int
+    @keyword mol_name:      Define the secondary structure for a specific molecule.
+    @type mol_name:         str or None
+    @keyword current_atom:  The name of the first atom in the current strand, to link the current back to the previous strand.
+    @type current_atom:     str or None
+    @keyword prev_atom:     The name of the last atom in the previous strand, to link the current back to the previous strand.
+    @type prev_atom:        str or None
+    """
+
+    # Checks.
+    check_pipe()
+    check_structure()
+
+    # Add the atoms.
+    cdp.structure.add_sheet(strand=strand, sheet_id=sheet_id, strand_count=strand_count, strand_sense=strand_sense, res_start=start, res_end=end, mol_name=mol_name, current_atom=current_atom, prev_atom=prev_atom)
+
+
 def assemble_structural_coordinates(pipes=None, models=None, molecules=None, atom_id=None, lists=False):
     """Assemble the common atomic coordinates taking sequence alignments into account.
  

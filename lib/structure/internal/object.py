@@ -1349,6 +1349,117 @@ class Internal:
             model.mol.add_item(mol_name=name, mol_cont=MolContainer())
 
 
+    def add_sheet(self, strand=1, sheet_id='A', strand_count=2, strand_sense=0, res_start=None, res_end=None, mol_name=None, current_atom=None, prev_atom=None):
+        """Define new alpha helical secondary structure.
+
+        @keyword strand:        Strand number which starts at 1 for each strand within a sheet and increases by one.
+        @type strand:           int
+        @keyword sheet_id:      The sheet identifier.  To match the PDB standard, sheet IDs should range from 'A' to 'Z'.
+        @type sheet_id:         str
+        @keyword strand_count:  The number of strands in the sheet.
+        @type strand_count:     int
+        @keyword strand_sense:  Sense of strand with respect to previous strand in the sheet. 0 if first strand, 1 if parallel, -1 if anti-parallel.
+        @type strand_sense:     int
+        @keyword res_start:     The residue number for the start of the sheet.
+        @type res_start:        int
+        @keyword res_end:       The residue number for the end of the sheet.
+        @type res_end:          int
+        @keyword mol_name:      Define the secondary structure for a specific molecule.
+        @type mol_name:         str or None
+        @keyword current_atom:  The name of the first atom in the current strand, to link the current back to the previous strand.
+        @type current_atom:     str or None
+        @keyword prev_atom:     The name of the last atom in the previous strand, to link the current back to the previous strand.
+        @type prev_atom:        str or None
+        """
+
+        # Initialise the data structure if required.
+        if not hasattr(self, 'sheets'):
+            self.sheets = []
+
+        # Use the first model.
+        model = self.structural_data[0]
+
+        # Find the molecule to use.
+        mol = None
+        mol_name_list = []
+        for i in range(len(model.mol)):
+            mol_name_list.append(model.mol[i].mol_name)
+            if model.mol[i].mol_name == mol_name:
+                mol = model.mol[i]
+                mol_index = i
+        if mol == None:
+            raise RelaxError("Cannot find the molecule '%s' in %s." % (mol_name, mol_name_list))
+
+        # Find the residue names.
+        res_start_name = None
+        res_end_name = None
+        length = 0
+        inside = False
+        current_res_num = None
+        for i in range(len(mol.res_num)):
+            # The start of the sheet.
+            if mol.res_num[i] == res_start:
+                res_start_name = mol.res_name[i]
+                inside = True
+
+            # Residue count.
+            if inside and current_res_num != mol.res_num[i]:
+                current_res_num = mol.res_num[i]
+                length += 1
+
+            # The end of the sheet.
+            if mol.res_num[i] == res_end:
+                res_end_name = mol.res_name[i]
+                inside = False
+
+        # Current strand info.
+        num_strands = strand_count
+        init_res_name = res_start_name
+        mol_init_index = mol_index
+        init_seq_num = res_start
+        init_icode = None
+        end_res_name = res_end_name
+        mol_end_index = mol_index
+        end_seq_num = res_end
+        end_icode = None
+        sense = strand_sense
+
+        # Current sheet info.
+        cur_atom_name = None
+        cur_res_name = None
+        mol_cur_index = None
+        cur_res_seq = None
+        cur_icode = None
+        prev_atom_name = None
+        prev_res_name = None
+        mol_prev_index = None
+        prev_res_seq = None
+        prev_icode = None
+        if strand > 1:
+            # The current strand.
+            cur_atom_name = current_atom
+            cur_res_name = res_start_name
+            mol_cur_index = mol_index
+            cur_res_seq = res_start
+            cur_icode = None
+
+            # The previous strand.
+            for i in reversed(range(len(self.sheets))):
+                if self.sheets[i][1] == sheet_id:
+                    prev_atom_name = prev_atom
+                    prev_res_name = self.sheets[i][7]
+                    mol_prev_index = self.sheets[i][4]
+                    prev_res_seq = self.sheets[i][9]
+                    prev_icode = None
+
+
+        # Generate the list of [strand, sheet_id, num_strands, init_res_name, mol_init_index, init_seq_num, init_icode, end_res_name, mol_end_index, end_seq_num, end_icode, sense, cur_atom, cur_res_name, mol_cur_index, cur_res_seq, cur_icode, prev_atom_name, prev_res_name, mol_prev_index, prev_res_seq, prev_icode].
+        sheet = [strand, sheet_id, num_strands, init_res_name, mol_init_index, init_seq_num, init_icode, end_res_name, mol_end_index, end_seq_num, end_icode, sense, cur_atom_name, cur_res_name, mol_cur_index, cur_res_seq, cur_icode, prev_atom_name, prev_res_name, mol_prev_index, prev_res_seq, prev_icode]
+
+        # Add the data.
+        self.sheets.append(sheet)
+
+
     def are_bonded(self, atom_id1=None, atom_id2=None):
         """Determine if two atoms are directly bonded to each other.
 

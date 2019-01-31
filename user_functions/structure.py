@@ -198,6 +198,90 @@ uf.wizard_size = (700, 400)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
+# The structure.add_sheet user function.
+uf = uf_info.add_uf('structure.add_sheet')
+uf.title = "Define a beta sheet."
+uf.title_short = "beta sheet creation."
+uf.add_keyarg(
+    name = "strand",
+    py_type = "int",
+    min = 1,
+    max = 10000,
+    desc_short = "strand number",
+    desc = "Strand number which starts at 1 for each strand within a sheet and increases by one."
+)
+uf.add_keyarg(
+    name = "sheet_id",
+    py_type = "str",
+    default = 'A',
+    desc_short = "sheet ID",
+    desc = "The sheet identifier.  To match the PDB standard, sheet IDs should range from 'A' to 'Z'.",
+)
+uf.add_keyarg(
+    name = "strand_count",
+    py_type = "int",
+    default = 2,
+    min = 2,
+    max = 10000,
+    desc_short = "strand count",
+    desc = "The number of strands in the sheet."
+)
+uf.add_keyarg(
+    name = "strand_sense",
+    py_type = "int",
+    default = 0,
+    min = -1,
+    max = 1,
+    desc_short = "strand sense",
+    desc = "Sense of strand with respect to previous strand in the sheet. 0 if first strand, 1 if parallel, -1 if anti-parallel."
+)
+uf.add_keyarg(
+    name = "start",
+    py_type = "int",
+    min = -10000,
+    max = 10000,
+    desc_short = "starting residue number",
+    desc = "The residue number for the start of the sheet."
+)
+uf.add_keyarg(
+    name = "end",
+    py_type = "int",
+    min = -10000,
+    max = 10000,
+    desc_short = "ending residue number",
+    desc = "The residue number for the end of the sheet."
+)
+uf.add_keyarg(
+    name = "mol_name",
+    py_type = "str",
+    desc_short = "mol name",
+    desc = "Define the secondary structure for a specific molecule.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "current_atom",
+    py_type = "str",
+    desc_short = "current strand atom name",
+    desc = "The name of the first atom in the current strand, to link the current back to the previous strand.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "prev_atom",
+    py_type = "str",
+    desc_short = "prev strand atom name",
+    desc = "The name of the last atom in the previous strand, to link the current back to the previous strand.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows beta sheet secondary structure to be defined for the internal structural object.")
+uf.backend = pipe_control.structure.main.add_sheet
+uf.menu_text = "&add_sheet"
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
+uf.wizard_size = (800, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.atomic_fluctuations user function.
 uf = uf_info.add_uf('structure.atomic_fluctuations')
 uf.title = "Create an interatomic distance fluctuation correlation matrix."
