@@ -28,7 +28,47 @@ from numpy import ndarray
 
 # relax module imports.
 import lib.check_types
-from lib.errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxListFloatError, RelaxListIntError, RelaxMatrixFloatError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListFloatError, RelaxNoneListIntError, RelaxNoneMatrixFloatError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNoneTupleError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError, RelaxNoneValListValError, RelaxValListValError
+from lib.errors import RelaxBoolError, \
+        RelaxBoolListBoolError, \
+        RelaxFloatError, \
+        RelaxFunctionError, \
+        RelaxIntError, \
+        RelaxIntListIntError, \
+        RelaxListFloatError, \
+        RelaxListIntError, \
+        RelaxListNumError, \
+        RelaxListStrError, \
+        RelaxMatrixFloatError, \
+        RelaxNoneError, \
+        RelaxNoneBoolListBoolError, \
+        RelaxNoneFloatError, \
+        RelaxNoneFunctionError, \
+        RelaxNoneIntError, \
+        RelaxNoneIntListIntError, \
+        RelaxNoneListFloatError, \
+        RelaxNoneListIntError, \
+        RelaxNoneListNumError, \
+        RelaxNoneListStrError, \
+        RelaxNoneMatrixFloatError, \
+        RelaxNoneNumError, \
+        RelaxNoneNumStrListNumStrError, \
+        RelaxNoneNumTupleNumError, \
+        RelaxNoneStrError, \
+        RelaxNoneStrFileError, \
+        RelaxNoneStrListNumError, \
+        RelaxNoneStrListStrError, \
+        RelaxNoneTupleError, \
+        RelaxNoneValListValError, \
+        RelaxNumError, \
+        RelaxNumStrListNumStrError, \
+        RelaxNumTupleNumError, \
+        RelaxStrError, \
+        RelaxStrFileError, \
+        RelaxStrListNumError, \
+        RelaxStrListStrError, \
+        RelaxTupleError, \
+        RelaxTupleNumError, \
+        RelaxValListValError
 from lib.io import DummyFileObject
 from types import FunctionType, MethodType
 
