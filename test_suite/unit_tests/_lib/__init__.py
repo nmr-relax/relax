@@ -36,6 +36,7 @@ __all__ = [
     '_structure',
     '_text',
     'test___init__',
+    'test_arg_check',
     'test_float',
     'test_io',
     'test_mathematics',
