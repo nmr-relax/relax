@@ -1629,6 +1629,11 @@ def superimpose(pipes=None, models=None, molecules=None, atom_id=None, displace_
     # Loop over all pipes, models, and molecules.
     i = 0
     for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id):
+        # Skip the first structure if not moved.
+        if i == 0 and method == 'fit to first':
+            i += 1
+            continue
+
         # The current displacement ID.
         curr_displace_id = None
         if isinstance(displace_id, str):
