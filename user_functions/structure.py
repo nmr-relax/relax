@@ -1604,7 +1604,7 @@ uf.add_keyarg(
     name = "models",
     py_type = "int_list_of_lists",
     desc_short = "model list for each data pipe",
-    desc = "The list of models for each data pipe to use in the superimposition.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    desc = "The list of lists of models for each data pipe to use in the superimposition.  The number of elements in the first dimension must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
