@@ -125,7 +125,7 @@ def is_bool_or_bool_list(arg, name=None, size=None, can_be_none=False, can_be_em
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # A Boolean.
@@ -188,7 +188,7 @@ def is_float(arg, name=None, can_be_none=False, raise_error=True):
     """
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Check for a float.
@@ -227,7 +227,7 @@ def is_float_array(arg, name=None, size=None, can_be_none=False, raise_error=Tru
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Fail if not a list.
@@ -287,7 +287,7 @@ def is_float_matrix(arg, name=None, dim=None, can_be_none=False, none_elements=F
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Fail if not a list.
@@ -370,7 +370,7 @@ def is_float_object(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
         dim = [dim]
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Fail if not a list.
@@ -445,7 +445,7 @@ def is_func(arg, name=None, can_be_none=False, raise_error=True):
     """
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Check for a function.
@@ -479,7 +479,7 @@ def is_int(arg, name=None, can_be_none=False, raise_error=True):
     """
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Check for an integer (avoiding Booleans).
@@ -524,7 +524,7 @@ def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Fail if not a list.
@@ -602,7 +602,7 @@ def is_int_or_int_list(arg, name=None, size=None, can_be_none=False, can_be_empt
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # An integer
@@ -674,7 +674,7 @@ def is_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, li
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Fail if not a list.
@@ -737,7 +737,7 @@ def is_list_val_or_list_of_list_val(arg, name=None, size=None, can_be_none=False
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # A list.
@@ -763,7 +763,7 @@ def is_none(arg, name, raise_error=True):
     """
 
     # Check for None.
-    if arg == None:
+    if arg is None:
         return True
 
     # Fail.
@@ -791,7 +791,7 @@ def is_num(arg, name=None, can_be_none=False, raise_error=True):
     """
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Check for floats and integers (avoiding Booleans).
@@ -898,7 +898,7 @@ def is_num_or_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_emp
         size = [size]
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # A number.
@@ -963,7 +963,7 @@ def is_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=Fals
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Fail if not a tuple.
@@ -1020,7 +1020,7 @@ def is_str(arg, name=None, can_be_none=False, raise_error=True):
     """
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Check for a string.
@@ -1063,7 +1063,7 @@ def is_str_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Fail if not a list.
@@ -1128,7 +1128,7 @@ def is_str_or_inst(arg, name=None, can_be_none=False, raise_error=True):
     """
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Check for a string.
@@ -1169,7 +1169,7 @@ def is_str_or_num_or_str_num_list(arg, name=None, size=None, can_be_none=False, 
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # A number or a string.
@@ -1235,7 +1235,7 @@ def is_str_or_num_list(arg, name=None, size=None, can_be_none=False, can_be_empt
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # A string.
@@ -1300,7 +1300,7 @@ def is_str_or_str_list(arg, name=None, size=None, can_be_none=False, can_be_empt
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # A string.
@@ -1365,7 +1365,7 @@ def is_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=False, r
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # Fail if not a tuple.
@@ -1424,7 +1424,7 @@ def is_val_or_list(arg, name=None, size=None, can_be_none=False, can_be_empty=Fa
     fail = False
 
     # An argument of None is allowed.
-    if can_be_none and arg == None:
+    if can_be_none and arg is None:
         return True
 
     # A value.
