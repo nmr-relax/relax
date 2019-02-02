@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013,2019 Edward d'Auvergne                              #
 # Copyright (C) 2006 Chris MacRaild                                           #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -50,6 +50,7 @@ FILE = 'a file object'
 FLOAT = 'a floating point number'
 FUNC = 'a function'
 LIST = 'a list'
+LIST_BOOL = 'a list of Booleans'
 LIST_FLOAT = 'a list of floating point numbers'
 LIST_INT = 'a list of integers'
 LIST_NUM = 'a list of numbers'
@@ -378,6 +379,9 @@ class RelaxArgNotNoneError(BaseArgError):
 class RelaxBoolError(BaseArgError):
     simple_types = [BOOL]
 
+class RelaxNoneBoolError(BaseArgError):
+    simple_types = [NONE, BOOL]
+
 # Binary - integers 0 and 1.
 class RelaxBinError(BaseArgError):
     simple_types = [BIN]
@@ -498,6 +502,15 @@ class RelaxNoneFloatStrListError(BaseArgError):
     simple_types = [NONE, FLOAT, STR]
     list_types = [LIST]
 
+# Boolean or list of Booleans.
+class RelaxBoolListBoolError(BaseArgError):
+    simple_types = [BOOL]
+    list_types = [LIST_BOOL]
+
+class RelaxNoneBoolListBoolError(BaseArgError):
+    simple_types = [NONE, BOOL]
+    list_types = [LIST_BOOL]
+
 # Integer or list of integers.
 class RelaxIntListIntError(BaseArgError):
     simple_types = [INT]
@@ -562,6 +575,10 @@ class RelaxNoneTupleError(BaseArgError):
 
 # Tuple of numbers.
 class RelaxTupleNumError(BaseArgError):
+    list_types = [TUPLE_NUM]
+
+class RelaxNoneTupleNumError(BaseArgError):
+    simple_types = [NONE]
     list_types = [TUPLE_NUM]
 
 
