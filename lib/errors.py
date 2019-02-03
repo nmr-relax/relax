@@ -163,13 +163,20 @@ class BaseArgError(BaseError):
         # The initial part of the message.
         self.text = "The %s argument '%s' must be " % (name, value)
 
+        # Combine all elements.
+        all_types = []
+        for i in range(len(self.simple_types)):
+            all_types.append(self.simple_types[i])
+
         # Append the fixed size to the list types.
         if size != None:
             for i in range(len(self.list_types)):
-                self.list_types[i] = self.list_types[i] + " of size %s" % repr(size)
+                all_types.append(self.list_types[i] + " of size %s" % repr(size))
 
-        # Combine all elements.
-        all_types = self.simple_types + self.list_types
+        # No fixed sizes.
+        else:
+            for i in range(len(self.list_types)):
+                all_types.append(self.list_types[i])
 
         # Multiple elements.
         if len(all_types) > 1:
