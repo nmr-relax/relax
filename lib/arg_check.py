@@ -28,6 +28,7 @@ from numpy import ndarray
 
 # relax module imports.
 import lib.check_types
+from lib.compat import from_iterable
 from lib.errors import RelaxBoolError, \
         RelaxBoolListBoolError, \
         RelaxFloatError, \
@@ -373,42 +374,46 @@ def is_float_object(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
     if can_be_none and arg is None:
         return True
 
-    # Fail if not a list.
+    # Flatten the structure and determine its rank and dimensionality.
+    flat = arg
+    rank = 1
+    shape = []
+    if isinstance(arg, list) and len(arg):
+        shape.append(len(arg))
+        while 1:
+            if isinstance(flat[0], list) and len(flat[0]):
+                shape.append(len(flat[0]))
+                for element in flat:
+                    if shape[-1] != len(element):
+                        shape[-1] == None
+                flat = list(from_iterable(flat))
+                rank += 1
+            else:
+                break
+    if isinstance(arg, ndarray):
+        flat = arg.flatten()
+        shape = arg.shape
+        rank = len(shape)
+    shape = tuple(shape)
+
+    # Fail if not a list or numpy array.
     if not isinstance(arg, list) and not isinstance(arg, ndarray):
         fail = True
 
-    # Fail on empty lists.
-    elif not len(arg):
+    # Fail if not the right rank.
+    elif dim != None and len(dim) != rank:
         fail = True
 
-    # Fail if not the right dimension.
-    elif dim != None and len(arg) != dim[0]:
-        fail = True
-
-    # Fail if not a rank-2 array.
-    elif dim != None and len(dim) == 2 and not isinstance(arg[0], list) and not isinstance(arg[0], ndarray):
-        fail = True
-
-    # Fail if not a rank-3 array.
-    elif dim != None and len(dim) == 3 and not isinstance(arg[0][0], list) and not isinstance(arg[0][0], ndarray):
-        fail = True
-
-    # Fail if not a rank-4 array.
-    elif dim != None and len(dim) == 4 and not isinstance(arg[0][0][0], list) and not isinstance(arg[0][0][0], ndarray):
+    # Fail if not the right dimensionality.
+    elif dim != None and dim != shape:
         fail = True
 
     # Individual element checks.
     else:
-        # Create a flat list.
-        if isinstance(arg[0], list) or isinstance(arg[0], ndarray):
-            elements = [item for sublist in arg for item in sublist]
-        else:
-            elements = arg
-
-        # Check for float elements.
-        for i in range(len(elements)):
-            if not lib.check_types.is_float(elements[i]):
+        for i in range(len(flat)):
+            if not lib.check_types.is_float(flat[i]):
                 fail = True
+                break
 
     # Fail.
     if fail:
