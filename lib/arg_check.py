@@ -988,20 +988,24 @@ def is_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=Fals
     if not isinstance(arg, tuple):
         fail = True
 
-    # Other checks.
-    else:
-        # Fail size is wrong.
-        if size != None and len(arg) != size:
-            fail = True
+    # Fail size is wrong.
+    elif size != None and len(arg) != size:
+        fail = True
 
-        # Fail if empty.
-        if not can_be_empty and arg == []:
-            fail = True
+    # Fail if empty.
+    elif not can_be_empty and len(arg) == 0:
+        fail = True
 
-        # Fail if not numbers.
-        for i in range(len(arg)):
-            if (not lib.check_types.is_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+    # Fail if not numbers.
+    elif len(arg):
+        for element in arg:
+            if isinstance(element, bool):
                 fail = True
+                break
+
+            if not lib.check_types.is_float(element) and not isinstance(element, int):
+                fail = True
+                break
 
     # Fail.
     if fail:
