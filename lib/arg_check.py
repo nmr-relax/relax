@@ -826,7 +826,7 @@ def is_num(arg, name=None, can_be_none=False, raise_error=True):
 
 
 def is_num_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
-    """Test if the argument is a list of numbers.
+    """Test if the argument is a list or numpy array of numbers.
 
     @param arg:                     The argument.
     @type arg:                      anything
@@ -853,24 +853,28 @@ def is_num_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
     if can_be_none and arg is None:
         return True
 
-    # Fail if not a list.
+    # Fail if not a list or numpy array.
     if not isinstance(arg, list) and not isinstance(arg, ndarray):
         fail = True
 
-    # Other checks.
-    else:
-        # Fail size is wrong.
-        if size != None and len(arg) != size:
-            fail = True
+    # Fail size is wrong.
+    elif size != None and len(arg) != size:
+        fail = True
 
-        # Fail if empty.
-        if not can_be_empty and arg == []:
-            fail = True
+    # Fail if empty.
+    elif not can_be_empty and len(arg) == 0:
+        fail = True
 
-        # Fail if not numbers.
-        for i in range(len(arg)):
-            if (not lib.check_types.is_float(arg[i]) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+    # Fail if not numbers.
+    elif len(arg):
+        for element in arg:
+            if isinstance(element, bool):
                 fail = True
+                break
+
+            if not lib.check_types.is_float(element) and not lib.check_types.is_int(element):
+                fail = True
+                break
 
     # Fail.
     if fail:
