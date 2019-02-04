@@ -35,6 +35,7 @@ from lib.errors import RelaxBoolError, \
         RelaxFunctionError, \
         RelaxIntError, \
         RelaxIntListIntError, \
+        RelaxListError, \
         RelaxListFloatError, \
         RelaxListIntError, \
         RelaxListNumError, \
@@ -47,6 +48,7 @@ from lib.errors import RelaxBoolError, \
         RelaxNoneFunctionError, \
         RelaxNoneIntError, \
         RelaxNoneIntListIntError, \
+        RelaxNoneListError, \
         RelaxNoneListFloatError, \
         RelaxNoneListIntError, \
         RelaxNoneListNumError, \
