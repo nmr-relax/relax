@@ -60,6 +60,7 @@ from lib.errors import RelaxBoolError, \
         RelaxNoneStrListNumError, \
         RelaxNoneStrListStrError, \
         RelaxNoneTupleError, \
+        RelaxNoneTupleNumError, \
         RelaxNoneValListValError, \
         RelaxNumError, \
         RelaxNumStrListNumStrError, \
@@ -956,22 +957,22 @@ def is_num_or_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_emp
 def is_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=False, raise_error=True):
     """Test if the argument is a tuple of numbers.
 
-    @param arg:                 The argument.
-    @type arg:                  anything
-    @keyword name:              The plain English name of the argument.
-    @type name:                 str
-    @keyword size:              The number of elements required.
-    @type size:                 None or int
-    @keyword can_be_none:       A flag specifying if the argument can be none.
-    @type can_be_none:          bool
-    @keyword can_be_empty:      A flag which if True allows the list to be empty.
-    @type can_be_empty:         bool
-    @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
-    @type raise_error:          bool
-    @raise RelaxTupleError:     If not a tuple (and the raise_error flag is set).
-    @raise RelaxTupleNumError:  If not a tuple of numbers (and the raise_error flag is set).
-    @return:                    The answer to the question (if raise_error is not set).
-    @rtype:                     bool
+    @param arg:                     The argument.
+    @type arg:                      anything
+    @keyword name:                  The plain English name of the argument.
+    @type name:                     str
+    @keyword size:                  The number of elements required.
+    @type size:                     None or int
+    @keyword can_be_none:           A flag specifying if the argument can be none.
+    @type can_be_none:              bool
+    @keyword can_be_empty:          A flag which if True allows the list to be empty.
+    @type can_be_empty:             bool
+    @keyword raise_error:           A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:              bool
+    @raise RelaxTupleNumError:      If not a tuple of number (and the raise_error flag is set).
+    @raise RelaxNoneTupleNumError:  If not a tuple of numbers or None (and the raise_error flag is set).
+    @return:                        The answer to the question (if raise_error is not set).
+    @rtype:                         bool
     """
 
     # Init.
@@ -1005,9 +1006,9 @@ def is_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=Fals
         if not raise_error:
             return False
         if can_be_none and size != None:
-            raise RelaxNoneNumTupleNumError(name, arg, size)
+            raise RelaxNoneTupleNumError(name, arg, size)
         elif can_be_none:
-            raise RelaxNoneNumTupleNumError(name, arg)
+            raise RelaxNoneTupleNumError(name, arg)
         elif size != None:
             raise RelaxTupleNumError(name, arg, size)
         else:
