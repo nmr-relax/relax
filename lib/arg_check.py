@@ -699,15 +699,13 @@ def is_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, li
     if not isinstance(arg, list):
         fail = True
 
-    # Other checks.
-    else:
-        # Fail size is wrong.
-        if size != None and len(arg) != size:
-            fail = True
+    # Fail size is wrong.
+    elif size != None and len(arg) != size:
+        fail = True
 
-        # Fail if empty.
-        if not can_be_empty and arg == []:
-            fail = True
+    # Fail if empty.
+    elif not can_be_empty and len(arg) == 0:
+        fail = True
 
     # Fail.
     if fail:
