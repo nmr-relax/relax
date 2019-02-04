@@ -60,6 +60,7 @@ from lib.errors import RelaxBoolError, \
         RelaxNoneStrListNumError, \
         RelaxNoneStrListStrError, \
         RelaxNoneTupleError, \
+        RelaxNoneTupleNumError, \
         RelaxNoneValListValError, \
         RelaxNumError, \
         RelaxNumStrListNumStrError, \
@@ -1005,9 +1006,9 @@ def is_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=Fals
         if not raise_error:
             return False
         if can_be_none and size != None:
-            raise RelaxNoneNumTupleNumError(name, arg, size)
+            raise RelaxNoneTupleNumError(name, arg, size)
         elif can_be_none:
-            raise RelaxNoneNumTupleNumError(name, arg)
+            raise RelaxNoneTupleNumError(name, arg)
         elif size != None:
             raise RelaxTupleNumError(name, arg, size)
         else:

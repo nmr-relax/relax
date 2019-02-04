@@ -22,7 +22,7 @@
 # relax module imports.
 from pipe_control import align_tensor
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListStrError, RelaxNoneStrError, RelaxNoneNumTupleNumError, RelaxStrError
+from lib.errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListStrError, RelaxNoneStrError, RelaxNoneTupleNumError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Unit test imports.
@@ -183,7 +183,7 @@ class Test_align_tensor(Align_tensor_base_class):
                     continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneNumTupleNumError, self.align_tensor_fns.init, align_id='Pf1', params=data[1])
+            self.assertRaises(RelaxNoneTupleNumError, self.align_tensor_fns.init, align_id='Pf1', params=data[1])
 
 
     def test_init_argfail_scale(self):
