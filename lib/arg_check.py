@@ -549,32 +549,37 @@ def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
     if not isinstance(arg, list):
         fail = True
 
-    # Other checks.
-    else:
-        # Fail size is wrong.
-        if size != None and len(arg) != size:
-            fail = True
+    # Fail size is wrong.
+    elif size != None and len(arg) != size:
+        fail = True
 
-        # Fail if empty.
-        if not can_be_empty and arg == []:
-            fail = True
+    # Fail if empty.
+    elif not can_be_empty and len(arg) == 0:
+        fail = True
 
-        # Fail if not ints.
-        for i in range(len(arg)):
+    # Fail if not ints.
+    elif len(arg):
+        for element in arg:
             # None.
-            if arg[i] == None and none_elements:
+            if element == None and none_elements:
                 continue
 
+            # Booleans.
+            if isinstance(element, bool):
+                fail = True
+                break
+
             # List of lists.
-            if list_of_lists and isinstance(arg[i], list):
-                for j in range(len(arg[i])):
-                    if not isinstance(arg[i][j], int):
+            if list_of_lists and isinstance(element, list):
+                for i in range(len(element)):
+                    if not isinstance(element[i], int):
                         fail = True
+                        break
 
             # Simple list.
-            else:
-                if not isinstance(arg[i], int):
-                    fail = True
+            elif not isinstance(element, int):
+                fail = True
+                break
 
     # Fail.
     if fail:
