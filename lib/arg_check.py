@@ -41,6 +41,7 @@ from lib.errors import RelaxBoolError, \
         RelaxListStrError, \
         RelaxMatrixFloatError, \
         RelaxNoneError, \
+        RelaxNoneBoolError, \
         RelaxNoneBoolListBoolError, \
         RelaxNoneFloatError, \
         RelaxNoneFunctionError, \
@@ -74,16 +75,19 @@ from lib.io import DummyFileObject
 from types import FunctionType, MethodType
 
 
-def is_bool(arg, name=None, raise_error=True):
+def is_bool(arg, name=None, can_be_none=False, raise_error=True):
     """Test if the argument is a Boolean.
 
     @param arg:                 The argument.
     @type arg:                  anything
     @keyword name:              The plain English name of the argument.
     @type name:                 str
+    @keyword can_be_none:       A flag specifying if the argument can be none.
+    @type can_be_none:          bool
     @keyword raise_error:       A flag which if True will cause RelaxErrors to be raised.
     @type raise_error:          bool
     @raise RelaxBoolError:      If not a Boolean (and the raise_error flag is set).
+    @raise RelaxNoneBoolError:  If not a Boolean or None (and the raise_error flag is set).
     @return:                    The answer to the question (if raise_error is not set).
     @rtype:                     bool
     """
@@ -92,11 +96,17 @@ def is_bool(arg, name=None, raise_error=True):
     if isinstance(arg, bool):
         return True
 
+    # An argument of None is allowed.
+    if can_be_none and arg is None:
+        return True
+
     # Fail.
     if not raise_error:
         return False
-    else:
+    if not can_be_none:
         raise RelaxBoolError(name, arg)
+    else:
+        raise RelaxNoneBoolError(name, arg)
 
 
 def is_bool_or_bool_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, none_elements=False, raise_error=True):
