@@ -459,6 +459,14 @@ class RelaxNoneListError(BaseArgError):
     simple_types = [NONE]
     list_types = [LIST]
 
+# List of Booleans.
+class RelaxListBoolError(BaseArgError):
+    list_types = [LIST_BOOL]
+
+class RelaxNoneListBoolError(BaseArgError):
+    simple_types = [NONE]
+    list_types = [LIST_BOOL]
+
 # List of floating point numbers.
 class RelaxListFloatError(BaseArgError):
     list_types = [LIST_FLOAT]
