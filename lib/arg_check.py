@@ -25,17 +25,24 @@
 
 # Python module imports.
 import itertools
-from numpy import ndarray
+from numpy import float64, int32, ndarray
 
 # relax module imports.
 import lib.check_types
-from lib.errors import RelaxBoolError, \
+from lib.errors import RelaxError, \
+        RelaxArrayError, \
+        RelaxArrayFloatError, \
+        RelaxArrayIntError, \
+        RelaxArrayNumError, \
+        RelaxBoolError, \
         RelaxBoolListBoolError, \
         RelaxFloatError, \
         RelaxFunctionError, \
         RelaxIntError, \
         RelaxIntListIntError, \
+        RelaxInvalidError, \
         RelaxListError, \
+        RelaxListBoolError, \
         RelaxListFloatError, \
         RelaxListIntError, \
         RelaxListNumError, \
@@ -67,6 +74,9 @@ from lib.errors import RelaxBoolError, \
         RelaxNumError, \
         RelaxNumStrListNumStrError, \
         RelaxNumTupleNumError, \
+        RelaxNumpyFloatError, \
+        RelaxNumpyIntError, \
+        RelaxNumpyNumError, \
         RelaxStrError, \
         RelaxStrFileError, \
         RelaxStrListNumError, \
@@ -1490,6 +1500,379 @@ def is_val_or_list(arg, name=None, size=None, can_be_none=False, can_be_empty=Fa
             raise RelaxValListValError(name, arg, size)
         else:
             raise RelaxValListValError(name, arg)
+
+    # Success.
+    return True
+
+
+def validate_arg(arg, name=None, dim=tuple(), basic_types=[], container_types=[], can_be_none=False, can_be_empty=False, raise_error=True):
+    """Generic validation function for any argument type.
+
+    This function can be used to validate the value of any argument, raising a RelaxError specific
+    for the argument for detailed user feedback.
+
+    Types
+    =====
+
+    The basic Python data types allowed for the argument are specified via the basic_types argument.
+    The currently supported values include:
+
+        - bool
+        - float
+        - func
+        - int
+        - number
+        - str
+
+    The 'number' value is special in that it allows for both 'int' and 'float' values.  If the
+    argument should be a higher rank object, then the container_types argument should be supplied.
+    The allowed values currently include:
+
+        - list
+        - number array
+        - numpy array
+        - set
+        - tuple
+
+    Here, the 'number array' is also special and allows for both 'list' and 'numpy array'
+    containers.  Note that only the basic types 'float', 'int', and 'number' are allowed with this
+    value.
+
+
+    Rank and dimensionality
+    =======================
+
+    To distinguish between basic Python data types and higher rank container types, as well as
+    fixing the dimensionality of the higher rank objects, the 'dim' parameter should be supplied.
+    This should be a tuple with elements consisting of integers or None.  If multiple ranks or
+    dimensionality are allowed, then a list of tuples can be supplied.
+
+
+    Rank
+    ----
+
+    The number of elements of the 'dim' tuples define the rank.  For example a number is rank 0, a
+    vector is rank 1, and a matrix is rank 2.
+
+
+    Dimensionality
+    --------------
+
+    The dimensionality, or number of elements, for each rank are fixed by supplying integers in the
+    'dim' tuple.  If the dimensionality can be variable, the value of None should be supplied
+    instead.
+
+
+    Examples
+    --------
+
+    For basic Python data types, use the empty tuple:
+
+        - dim=()
+
+    For a list of basic data types of unknown length, use:
+
+        - dim=(None,)
+
+    For a numpy array of 5 elements, use:
+
+        - dim=(5,)
+
+    For a numpy 3D matrix, use:
+
+        - dim=(3,3)
+
+
+    Fall back error
+    ===============
+
+    For arguments which do not currently have a specific RelaxError for telling the user what the
+    did wrong, the fall back RelaxInvalidError object will be raised.  If more detailed feedback to
+    the user is desired, then a new RelaxError object should be created and added in the failure
+    section of this function.
+
+
+    @param arg:                         The argument.
+    @type arg:                          anything
+    @keyword name:                      The plain English name of the argument, used in the RelaxError printout.
+    @type name:                         str
+    @keyword dim:                       The dimensions of the object to check.
+    @type dim:                          tuple of (int or None) or list of tuples of (int or None)
+    @keyword basic_types:               The types of values are allowed for the argument.
+    @type basic_types:                  list of str
+    @keyword container_types:           The container types allowed for the argument.
+    @type container_types:              list of str
+    @keyword can_be_none:               A flag specifying if the argument can be none.
+    @type can_be_none:                  bool
+    @keyword can_be_empty:              A flag which if True allows container types to be empty.
+    @type can_be_empty:                 bool
+    @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                  bool
+    @raise RelaxListError:              If a list of different basic types was expected (and the raise_error flag is set)
+    @raise RelaxNoneListError:          If a list of different basic types or no argument was expected (and the raise_error flag is set)
+    @raise RelaxInvalidError:           For all argument combinations that do not have a specific RelaxError (and the raise_error flag is set).
+    @return:                            The answer to the question (if raise_error is not set).
+    @rtype:                             bool
+    """
+
+    # Init.
+    fail = False
+
+    # Checks.
+    if 'number array' in container_types:
+        for type in basic_types:
+            if type not in ['float', 'int', 'number']:
+                raise RelaxError("The 'number array' container type does not support the '%s' basic Python data type." % type)
+    if 'number' in basic_types and ('int' in basic_types or 'float' in basic_types):
+        raise RelaxError("The 'int' or 'float' basic data types cannot be supplied if 'number' is a basic type.")
+
+
+    # Process the expected dimensionality.
+    allowed_rank = []
+    allowed_shape = []
+    if isinstance(dim, list):
+        for i in range(len(dim)):
+            allowed_rank.append(len(dim[i]))
+            allowed_shape.append(dim[i])
+    else:
+        allowed_rank.append(len(dim))
+        allowed_shape.append(dim)
+
+    # Determine the argument's rank and dimensionality, and create a flatten version of the structure.
+    flat = arg
+    shape = []
+    rank = 1
+    numpy_type = None
+    if isinstance(arg, set):
+        if 'set' not in container_types:
+            fail = True
+        shape = [len(arg)]
+        flat = list(arg)
+    elif isinstance(arg, list) or isinstance(arg, tuple):
+        if isinstance(arg, list) and ('list' not in container_types and 'number array' not in container_types):
+            fail = True
+        if isinstance(arg, tuple) and 'tuple' not in container_types:
+            fail = True
+        shape.append(len(arg))
+        while 1:
+            if len(flat) and (isinstance(flat[0], list) or isinstance(flat[0], tuple)):
+                shape.append(len(flat[0]))
+                for element in flat:
+                    if isinstance(element, list) and ('list' not in container_types and 'number array' not in container_types):
+                        fail = True
+                    if isinstance(element, tuple) and 'tuple' not in container_types:
+                        fail = True
+                    if shape[-1] != len(element):
+                        shape[-1] == None
+                flat = list(itertools.chain.from_iterable(flat))
+                rank += 1
+            else:
+                break
+        shape = tuple(shape)
+    elif isinstance(arg, ndarray):
+        if 'numpy array' not in container_types and 'number array' not in container_types:
+            fail = True
+        flat = arg.flatten()
+        shape = arg.shape
+        rank = len(shape)
+        numpy_type = str(arg.dtype)
+    else:
+        flat = [arg]
+        rank = 0
+        shape = tuple()
+
+    # Already failed, so skip.
+    if fail:
+        pass
+
+    # Skip arguments of None when None is allowed.
+    elif can_be_none and arg == None:
+        pass
+
+    # Fail if empty.
+    elif rank and shape[-1] == 0 and not can_be_empty:
+        fail = True
+
+    # Fail if not the right rank.
+    elif rank not in allowed_rank:
+        fail = True
+
+    # Fail if not the right dimensionality.
+    elif shape not in allowed_shape:
+        index = allowed_rank.index(rank)
+        for i in range(rank):
+            if allowed_shape[index][i] != None and allowed_shape[index][i] != shape[i]:
+                fail = True
+
+    # Type checking (skip if the argument can be, and is, None).
+    if not fail and not (can_be_none and arg == None):
+        # Numpy types.
+        if numpy_type:
+            # Integers.
+            if numpy_type == 'int32' and 'int' not in basic_types and 'number' not in basic_types:
+                fail = True
+
+            # Floats.
+            elif numpy_type == 'float64' and 'float' not in basic_types and 'number' not in basic_types:
+                fail = True
+
+
+        # Individual element checks.
+        for element in flat:
+            # Booleans.
+            if isinstance(element, bool):
+                if 'bool' not in basic_types:
+                    fail = True
+
+            # Integers.
+            elif isinstance(element, int) or isinstance(element, int32):
+                if 'int' not in basic_types and 'number' not in basic_types:
+                    fail = True
+
+            # Floats.
+            elif isinstance(element, float) or isinstance(element, float64):
+                if 'float' not in basic_types and 'number' not in basic_types:
+                    fail = True
+
+            # Strings.
+            elif isinstance(element, str):
+                if 'str' not in basic_types:
+                    fail = True
+
+            # Functions.
+            elif isinstance(element, FunctionType) or isinstance(element, MethodType):
+                if 'func' not in basic_types:
+                    fail = True
+
+            # Unhandled type.
+            else:
+                fail = True
+
+            # No need to continue.
+            if fail:
+                break
+
+    # Failure.
+    if fail:
+        # No error.
+        if not raise_error:
+            return False
+
+        # Multiple types.
+        if len(basic_types) > 1:
+            # Array types.
+            if len(allowed_rank) == 1 and 1 in allowed_rank:
+                # List or numpy array.
+                if 'list' in container_types and 'numpy array' in container_types:
+                    raise RelaxArrayError(name, arg, can_be_none=can_be_none)
+
+                # Lists.
+                elif 'list' in container_types:
+                    raise RelaxListError(name, arg, can_be_none=can_be_none)
+
+                # Numpy arrays.
+                elif 'numpy array' in container_types:
+                    raise RelaxNumpyNumError(name, arg, can_be_none=can_be_none)
+
+        # Boolean errors.
+        elif 'bool' in basic_types:
+            # Boolean or list of Booleans.
+            if len(allowed_rank) == 2 and 0 in allowed_rank and 1 in allowed_rank:
+                raise RelaxBoolListBoolError(name, arg, can_be_none=can_be_none)
+
+            # Basic Boolean type.
+            elif len(allowed_rank) == 1 and 0 in allowed_rank:
+                raise RelaxBoolError(name, arg, can_be_none=can_be_none)
+
+            # Boolean list.
+            elif len(allowed_rank) == 1 and 1 in allowed_rank:
+                raise RelaxListBoolError(name, arg, can_be_none=can_be_none)
+
+        # Float errors.
+        elif 'float' in basic_types:
+            # Basic float type.
+            if len(allowed_rank) == 1 and 0 in allowed_rank:
+                raise RelaxFloatError(name, arg, can_be_none=can_be_none)
+
+            # List or numpy array of floats.
+            elif 'number array' in container_types:
+                raise RelaxArrayFloatError(name, arg, dim=dim, can_be_none=can_be_none)
+
+            # Numpy integer array.
+            elif 'numpy array' in container_types:
+                raise RelaxNumpyFloatError(name, arg, dim=dim, can_be_none=can_be_none)
+
+            # List of floats.
+            elif len(allowed_rank) == 1 and 1 in allowed_rank:
+                raise RelaxListFloatError(name, arg, can_be_none=can_be_none)
+
+        # Integer errors.
+        elif 'int' in basic_types:
+            # Integer or list of integers.
+            if len(allowed_rank) == 2 and 0 in allowed_rank and 1 in allowed_rank:
+                raise RelaxIntListIntError(name, arg, can_be_none=can_be_none)
+
+            # Basic integer type.
+            elif len(allowed_rank) == 1 and 0 in allowed_rank:
+                raise RelaxIntError(name, arg, can_be_none=can_be_none)
+
+            # List or numpy array of integers.
+            elif 'number array' in container_types:
+                raise RelaxArrayIntError(name, arg, dim=dim, can_be_none=can_be_none)
+
+            # Numpy integer array.
+            elif 'numpy array' in container_types:
+                raise RelaxNumpyIntError(name, arg, dim=dim, can_be_none=can_be_none)
+
+            # Integer list.
+            elif len(allowed_rank) == 1 and 1 in allowed_rank:
+                raise RelaxListIntError(name, arg, can_be_none=can_be_none)
+
+
+        # Number errors.
+        elif 'number' in basic_types:
+            # Rank-0.
+            if len(container_types) == 0:
+                raise RelaxNumError(name, arg, can_be_none=can_be_none)
+
+            # Mixed types.
+            elif len(container_types) > 1:
+                pass
+
+            # List or numpy array of numbers.
+            elif 'number array' in container_types:
+                raise RelaxArrayNumError(name, arg, dim=dim, can_be_none=can_be_none)
+
+            # Numpy arrays.
+            elif 'numpy array' in container_types:
+                raise RelaxNumpyNumError(name, arg, dim=dim, can_be_none=can_be_none)
+
+            # List of numbers.
+            elif 'list' in container_types:
+                raise RelaxListNumError(name, arg, dim=dim, can_be_none=can_be_none)
+
+        # String errors.
+        elif 'str' in basic_types:
+            # String or list of strings.
+            if len(allowed_rank) == 2 and 0 in allowed_rank and 1 in allowed_rank:
+                raise RelaxStrListStrError(name, arg, can_be_none=can_be_none)
+
+            # Basic string type.
+            elif len(allowed_rank) == 1 and 0 in allowed_rank:
+                raise RelaxStrError(name, arg, can_be_none=can_be_none)
+
+            # List of strings.
+            elif len(allowed_rank) == 1 and 1 in allowed_rank:
+                raise RelaxListStrError(name, arg, can_be_none=can_be_none)
+
+        # Function errors.
+        elif 'func' in basic_types:
+            # Basic function type.
+            if len(allowed_rank) == 1 and 0 in allowed_rank:
+                raise RelaxFunctionError(name, arg, can_be_none=can_be_none)
+
+        # Final fall back.
+        raise RelaxInvalidError(name, arg)
 
     # Success.
     return True
