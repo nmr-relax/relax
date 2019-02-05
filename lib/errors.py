@@ -44,6 +44,10 @@ from lib.text.string import human_readable_list
 SAVE_ERROR_STATE = False    # If True, then a pickled state file will be saved when a RelaxError occurs.
 
 # Text variables.
+ARRAY = 'a list or numpy array'
+ARRAY_FLOAT = 'a list or numpy array of floats'
+ARRAY_INT = 'a list or numpy array of integers'
+ARRAY_NUM = 'a list or numpy array of numbers'
 BIN = 'a binary number (0 or 1)'
 BOOL = 'a Boolean (True or False)'
 INT = 'an integer'
@@ -59,6 +63,9 @@ LIST_STR = 'a list of strings'
 LIST_VAL = 'a list of values'
 MATRIX_FLOAT = 'a matrix of floating point numbers'
 NONE = 'None'
+NUMPY_FLOAT = 'a numpy array of floats'
+NUMPY_INT = 'a numpy array of integers'
+NUMPY_NUM = 'a numpy array of numbers'
 NUM = 'a number'
 TUPLE = 'a tuple'
 TUPLE_FLOAT = 'a tuple of floating point numbers'
@@ -475,6 +482,22 @@ class RelaxNoneStrFileError(BaseArgError):
 #~~~~~~~~~~~~
 
 
+# List or numpy array.
+class RelaxArrayError(BaseArgError):
+    list_types = [ARRAY]
+
+# List or numpy array of floats.
+class RelaxArrayFloatError(BaseArgError):
+    list_types = [ARRAY_FLOAT]
+
+# List or numpy array of ints.
+class RelaxArrayIntError(BaseArgError):
+    list_types = [ARRAY_INT]
+
+# List or numpy array of numbers.
+class RelaxArrayNumError(BaseArgError):
+    list_types = [ARRAY_NUM]
+
 # List.
 class RelaxListError(BaseArgError):
     list_types = [LIST]
@@ -526,6 +549,18 @@ class RelaxListStrError(BaseArgError):
 class RelaxNoneListStrError(BaseArgError):
     simple_types = [NONE]
     list_types = [LIST_STR]
+
+# Numpy array of floats.
+class RelaxNumpyFloatError(BaseArgError):
+    list_types = [NUMPY_FLOAT]
+
+# Numpy array of ints.
+class RelaxNumpyIntError(BaseArgError):
+    list_types = [NUMPY_INT]
+
+# Numpy array of numbers.
+class RelaxNumpyNumError(BaseArgError):
+    list_types = [NUMPY_NUM]
 
 
 # Simple or list types.
