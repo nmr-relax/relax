@@ -49,15 +49,22 @@ from lib.arg_check import is_bool, \
         is_str_or_num_list, \
         is_str_or_str_list, \
         is_tuple, \
-        is_val_or_list
+        is_val_or_list, \
+        validate_arg
 from lib.errors import RelaxError, \
+        RelaxArrayError, \
+        RelaxArrayFloatError, \
+        RelaxArrayIntError, \
+        RelaxArrayNumError, \
         RelaxBoolError, \
         RelaxBoolListBoolError, \
         RelaxFloatError, \
         RelaxFunctionError, \
         RelaxIntError, \
         RelaxIntListIntError, \
+        RelaxInvalidError, \
         RelaxListError, \
+        RelaxListBoolError, \
         RelaxListFloatError, \
         RelaxListIntError, \
         RelaxListNumError, \
@@ -89,6 +96,9 @@ from lib.errors import RelaxError, \
         RelaxNumError, \
         RelaxNumStrListNumStrError, \
         RelaxNumTupleNumError, \
+        RelaxNumpyFloatError, \
+        RelaxNumpyIntError, \
+        RelaxNumpyNumError, \
         RelaxStrError, \
         RelaxStrFileError, \
         RelaxStrListNumError, \
@@ -175,6 +185,62 @@ class Test_arg_check(UnitTestCase):
                     self.assertEqual(func(self.objects[type], name=type, raise_error=False), False)
                     self.assertRaises(error, func, self.objects[type], name=type)
                     self.assertRaises(none_error, func, self.objects[type], name=type, can_be_none=True)
+
+
+    def check_validate_arg(self, allowed=[], none_elem=[], empty=[], error=None, dim=(), basic_types=[], container_types=[]):
+        """Check the operation of lib.arg_check.validate_arg().
+
+        @keyword allowed:       The list of Python data type names from self.objects that should result in the function returning True.
+        @type allowed:          list of str
+        @keyword none_elem:     The list of Python data type names from self.objects that should result in the function returning True, when 'none_elements' is set to True.
+        @type none_elem:        list of str
+        @keyword empty:         The list of empty Python data type names from self.objects that should result in the function returning True, when 'can_be_empty' is set to True.
+        @type empty:            list of str
+        @keyword error:         The expected RelaxError for a normal failure.
+        @type error:            RelaxError instance
+        @keyword dim:           The validate_arg() 'dim' argument.
+        @type dim:              list of tuples
+        """
+
+        # Sanity checks.
+        if error == None:
+            raise RelaxError("The 'error' argument cannot be None.")
+
+        # Loop over all objects.
+        for type in self.object_types:
+            # Printout to help debugging.
+            value_str = repr(self.objects[type])
+            if search("^array", value_str):
+                value_str = value_str.replace("\n", "")
+                value_str = ''.join(value_str.split())
+
+            # Allowed types.
+            if type in allowed:
+                print("Checking allowed type %s: %s" % (type, value_str))
+                self.assertEqual(validate_arg(self.objects[type], name=type, dim=dim, basic_types=basic_types, container_types=container_types, can_be_none=False, none_elements=False), True)
+
+            # None allowed.
+            elif type in ['none']:
+                print("Checking None type %s: %s" % (type, value_str))
+                self.assertEqual(validate_arg(self.objects[type], name=type, dim=dim, basic_types=basic_types, container_types=container_types, can_be_none=True, none_elements=False), True)
+
+            # Allowed types with None elements.
+            elif type in none_elem:
+                print("Checking allowed type with None elements %s: %s" % (type, value_str))
+                self.assertEqual(validate_arg(self.objects[type], name=type, dim=dim, basic_types=basic_types, container_types=container_types, none_elements=True), True)
+
+            # Allowed empty types.
+            elif type in empty:
+                print("Checking allowed empty type %s: %s" % (type, value_str))
+                self.assertEqual(validate_arg(self.objects[type], name=type, dim=dim, basic_types=basic_types, container_types=container_types, can_be_empty=True, none_elements=False), True)
+
+            # Negative tests.
+            else:
+                print("Checking disallowed type %s: %s" % (type, value_str))
+                for can_be_empty in [True, False]:
+                    for none_elements in [True, False]:
+                        self.assertEqual(validate_arg(self.objects[type], name=type, dim=dim, basic_types=basic_types, container_types=container_types, can_be_empty=can_be_empty, none_elements=none_elements, raise_error=False), False)
+                        self.assertRaises(error, validate_arg, self.objects[type], name=type, dim=dim, basic_types=basic_types, container_types=container_types, can_be_empty=can_be_empty, none_elements=none_elements)
 
 
     def setUp(self):
@@ -465,3 +531,790 @@ class Test_arg_check(UnitTestCase):
         """Test the lib.arg_check.is_val_or_list() function."""
 
         self.check_function(func=is_val_or_list, allowed_types=['bool', 'bool_list', 'float', 'float_list', 'int', 'int_list', 'str', 'str_list', 'str_num_list'], error=RelaxValListValError, none_error=RelaxNoneValListValError)
+
+
+    def test_validate_arg_all_basic_types(self):
+        """Test lib.arg_check.validate_arg() with basic data type-checking off."""
+
+        # The allowed types.
+        allowed = [
+            'bool',
+            'class',
+            'file_object',
+            'float',
+            'func',
+            'int',
+            'inst',
+            'inst_file',
+            'str'
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxInvalidError, basic_types=['all'])
+
+
+    def test_validate_arg_all_containers(self):
+        """Test lib.arg_check.validate_arg() with container type-checking off."""
+
+        self.check_validate_arg(allowed=self.object_types, error=RelaxInvalidError, basic_types=['all'], container_types=['all'])
+
+
+    def test_validate_arg_all_basic_types_and_all_containers(self):
+        """Test lib.arg_check.validate_arg() with all type-checking off."""
+
+        self.check_validate_arg(allowed=self.object_types, error=RelaxInvalidError, basic_types=['all'], container_types=['all'])
+
+
+    def test_validate_arg_bool(self):
+        """Test lib.arg_check.validate_arg() for a basic Boolean type."""
+
+        # The allowed types.
+        allowed = [
+            'bool',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxBoolError, dim=(), basic_types=['bool'])
+
+
+    def test_validate_arg_bool_list(self):
+        """Test lib.arg_check.validate_arg() for a list of Booleans."""
+
+        # The allowed types.
+        allowed = [
+            'bool_list',
+        ]
+        none_elem = [
+            'bool_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxListBoolError, dim=(None,), basic_types=['bool'], container_types=['list'])
+        self.check_validate_arg(allowed=[], none_elem=[], error=RelaxListBoolError, dim=(5,), basic_types=['bool'], container_types=['list'])
+
+
+    def test_validate_arg_bool_list_rank2(self):
+        """Test lib.arg_check.validate_arg() for a list of lists of Booleans."""
+
+        # The allowed types.
+        allowed = [
+            'bool_list_rank2',
+        ]
+        none_elem = [
+            'bool_none_list_rank2',
+        ]
+        empty = [
+            'empty_list_rank2',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxInvalidError, dim=(None,None), basic_types=['bool'], container_types=['list'])
+
+
+    def test_validate_arg_bool_or_bool_list(self):
+        """Test lib.arg_check.validate_arg() for a Boolean or a list of Booleans."""
+
+        # The allowed types.
+        allowed = [
+            'bool',
+            'bool_list',
+        ]
+        none_elem = [
+            'bool_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxBoolListBoolError, dim=[(), (None,)], basic_types=['bool'], container_types=['list'])
+
+
+    def test_validate_arg_float(self):
+        """Test lib.arg_check.validate_arg() for a basic float type."""
+
+        # The allowed types.
+        allowed = [
+            'float',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxFloatError, dim=(), basic_types=['float'])
+
+
+    def test_validate_arg_float_list(self):
+        """Test lib.arg_check.validate_arg() for a list of floats."""
+
+        # The allowed types.
+        allowed = [
+            'float_list',
+        ]
+        none_elem = [
+            'float_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxListFloatError, dim=(None,), basic_types=['float'], container_types=['list'])
+
+
+    def test_validate_arg_float_list_rank2(self):
+        """Test lib.arg_check.validate_arg() for a list of lists of floats."""
+
+        # The allowed types.
+        allowed = [
+            'float_list_rank2',
+        ]
+        none_elem = [
+            'float_none_list_rank2',
+        ]
+        empty = [
+            'empty_list_rank2',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxInvalidError, dim=(None,None), basic_types=['float'], container_types=['list'])
+
+
+    def test_validate_arg_float_or_float_list(self):
+        """Test lib.arg_check.validate_arg() for a float or list of floats."""
+
+        # The allowed types.
+        allowed = [
+            'float',
+            'float_list',
+        ]
+        none_elem = [
+            'float_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxInvalidError, dim=[(), (None,)], basic_types=['float'], container_types=['list'])
+
+
+    def test_validate_arg_func(self):
+        """Test lib.arg_check.validate_arg() for a basic function type."""
+
+        # The allowed types.
+        allowed = [
+            'func',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxFunctionError, dim=(), basic_types=['func'])
+
+
+    def test_validate_arg_int(self):
+        """Test lib.arg_check.validate_arg() for a basic integer type."""
+
+        # The allowed types.
+        allowed = [
+            'int',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxIntError, dim=(), basic_types=['int'])
+
+
+    def test_validate_arg_int_list(self):
+        """Test lib.arg_check.validate_arg() for a list of integers."""
+
+        # The allowed types.
+        allowed = [
+            'int_list',
+        ]
+        none_elem = [
+            'int_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxListIntError, dim=(None,), basic_types=['int'], container_types=['list'])
+
+
+    def test_validate_arg_int_list_rank2(self):
+        """Test lib.arg_check.validate_arg() for a list of lists of integers."""
+
+        # The allowed types.
+        allowed = [
+            'int_list_rank2',
+        ]
+        none_elem = [
+            'int_none_list_rank2',
+        ]
+        empty = [
+            'empty_list_rank2',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxInvalidError, dim=(None,None), basic_types=['int'], container_types=['list'])
+
+
+    def test_validate_arg_int_or_int_list(self):
+        """Test lib.arg_check.validate_arg() for a integer or a list of integers."""
+
+        # The allowed types.
+        allowed = [
+            'int',
+            'int_list',
+        ]
+        none_elem = [
+            'int_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxIntListIntError, dim=[(), (None,)], basic_types=['int'], container_types=['list'])
+
+
+    def test_validate_arg_list(self):
+        """Test lib.arg_check.validate_arg() for a list of anything."""
+
+        # The allowed types.
+        allowed = [
+            'bool_list',
+            'float_list',
+            'int_list',
+            'str_list',
+            'str_num_list',
+        ]
+        none_elem = [
+            'bool_none_list',
+            'float_none_list',
+            'int_none_list',
+            'str_none_list',
+            'str_none_num_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxListError, dim=(None,), basic_types=['bool', 'float', 'int', 'str'], container_types=['list'])
+
+
+    def test_validate_arg_list_or_numpy_array(self):
+        """Test lib.arg_check.validate_arg() for a list of anything or numpy array."""
+
+        # The allowed types.
+        allowed = [
+            'bool_list',
+            'float_list',
+            'float_numpy_array',
+            'int_list',
+            'int_numpy_array',
+            'str_list',
+            'str_num_list',
+        ]
+        none_elem = [
+            'bool_none_list',
+            'float_none_list',
+            'int_none_list',
+            'str_none_list',
+            'str_none_num_list',
+        ]
+        empty = [
+            'empty_list',
+            'float_numpy_array_empty',
+            'int_numpy_array_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxArrayError, dim=(None,), basic_types=['bool', 'float', 'int', 'str'], container_types=['list', 'numpy array'])
+
+
+    def test_validate_arg_number(self):
+        """Test lib.arg_check.validate_arg() for a number."""
+
+        # The allowed types.
+        allowed = [
+            'float',
+            'int',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxNumError, dim=(), basic_types=['number'])
+
+
+    def test_validate_arg_number_array_rank1(self):
+        """Test lib.arg_check.validate_arg() for a rank-1 list or numpy array of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_list',
+            'float_numpy_array',
+            'int_list',
+            'int_numpy_array',
+        ]
+        none_elem = [
+            'float_none_list',
+            'int_none_list',
+        ]
+        empty = [
+            'empty_list',
+            'float_numpy_array_empty',
+            'int_numpy_array_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxArrayNumError, dim=(None,), basic_types=['number'], container_types=['number array'])
+
+
+    def test_validate_arg_number_array_rank2(self):
+        """Test lib.arg_check.validate_arg() for a rank-2 list or numpy array of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_list_rank2',
+            'float_numpy_matrix',
+            'int_list_rank2',
+            'int_numpy_matrix',
+        ]
+        none_elem = [
+            'float_none_list_rank2',
+            'int_none_list_rank2',
+        ]
+        empty = [
+            'empty_list_rank2',
+            'float_numpy_matrix_empty',
+            'int_numpy_matrix_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxArrayNumError, dim=(None,None), basic_types=['number'], container_types=['number array'])
+
+
+    def test_validate_arg_number_array_rank3(self):
+        """Test lib.arg_check.validate_arg() for a rank-3 list or numpy array of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_list_rank3',
+            'float_numpy_object',
+            'int_list_rank3',
+            'int_numpy_object',
+        ]
+        none_elem = [
+            'float_none_list_rank3',
+            'int_none_list_rank3',
+        ]
+        empty = [
+            'empty_list_rank3',
+            'float_numpy_object_empty',
+            'int_numpy_object_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxArrayNumError, dim=(None,None,None), basic_types=['number'], container_types=['number array'])
+
+
+    def test_validate_arg_number_list(self):
+        """Test lib.arg_check.validate_arg() for a rank-1 list of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_list',
+            'int_list',
+        ]
+        none_elem = [
+            'float_none_list',
+            'int_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxListNumError, dim=(None,), basic_types=['number'], container_types=['list'])
+
+
+    def test_validate_arg_number_list_rank2(self):
+        """Test lib.arg_check.validate_arg() for a rank-2 list of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_list_rank2',
+            'int_list_rank2',
+        ]
+        none_elem = [
+            'float_none_list_rank2',
+            'int_none_list_rank2',
+        ]
+        empty = [
+            'empty_list_rank2',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxListNumError, dim=(None,None), basic_types=['number'], container_types=['list'])
+
+
+    def test_validate_arg_number_list_rank3(self):
+        """Test lib.arg_check.validate_arg() for a rank-3 list of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_list_rank3',
+            'int_list_rank3',
+        ]
+        none_elem = [
+            'float_none_list_rank3',
+            'int_none_list_rank3',
+        ]
+        empty = [
+            'empty_list_rank3',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxListNumError, dim=(None,None,None), basic_types=['number'], container_types=['list'])
+
+
+    def test_validate_arg_number_numpy_array_rank1(self):
+        """Test lib.arg_check.validate_arg() for a rank-1 numpy array of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_numpy_array',
+            'int_numpy_array',
+        ]
+        none_elem = [
+        ]
+        empty = [
+            'float_numpy_array_empty',
+            'int_numpy_array_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxNumpyNumError, dim=(None,), basic_types=['number'], container_types=['numpy array'])
+
+
+    def test_validate_arg_number_numpy_array_rank2(self):
+        """Test lib.arg_check.validate_arg() for a rank-2 numpy array of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_numpy_matrix',
+            'int_numpy_matrix',
+        ]
+        none_elem = [
+        ]
+        empty = [
+            'float_numpy_matrix_empty',
+            'int_numpy_matrix_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, error=RelaxNumpyNumError, dim=(2,2), basic_types=['number'], container_types=['numpy array'])
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxNumpyNumError, dim=(None,None), basic_types=['number'], container_types=['numpy array'])
+
+
+    def test_validate_arg_number_numpy_array_rank3(self):
+        """Test lib.arg_check.validate_arg() for a rank-3 numpy array of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_numpy_object',
+            'int_numpy_object',
+        ]
+        none_elem = [
+        ]
+        empty = [
+            'float_numpy_object_empty',
+            'int_numpy_object_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, error=RelaxNumpyNumError, dim=(2,2,2), basic_types=['number'], container_types=['numpy array'])
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxNumpyNumError, dim=(None,None,None), basic_types=['number'], container_types=['numpy array'])
+
+
+    def test_validate_arg_number_or_number_tuple(self):
+        """Test lib.arg_check.validate_arg() for a rank-1 tuple of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float',
+            'float_tuple',
+            'int',
+            'int_tuple',
+        ]
+        none_elem = [
+            'float_none_tuple',
+            'int_none_tuple',
+        ]
+        empty = [
+            'empty_tuple',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxNumTupleNumError, dim=[(), (None,)], basic_types=['number'], container_types=['tuple'])
+
+
+    def test_validate_arg_number_tuple(self):
+        """Test lib.arg_check.validate_arg() for a rank-1 tuple of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_tuple',
+            'int_tuple',
+        ]
+        none_elem = [
+            'float_none_tuple',
+            'int_none_tuple',
+        ]
+        empty = [
+            'empty_tuple',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxTupleNumError, dim=(None,), basic_types=['number'], container_types=['tuple'])
+
+
+    def test_validate_arg_number_tuple_rank2(self):
+        """Test lib.arg_check.validate_arg() for a rank-2 tuple of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_tuple_rank2',
+            'int_tuple_rank2',
+        ]
+        none_elem = [
+            'float_none_tuple_rank2',
+            'int_none_tuple_rank2',
+        ]
+        empty = [
+            'empty_tuple_rank2',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxTupleNumError, dim=(None,None), basic_types=['number'], container_types=['tuple'])
+
+
+    def test_validate_arg_number_tuple_rank3(self):
+        """Test lib.arg_check.validate_arg() for a rank-3 tuple of numbers."""
+
+        # The allowed types.
+        allowed = [
+            'float_tuple_rank3',
+            'int_tuple_rank3',
+        ]
+        none_elem = [
+            'float_none_tuple_rank3',
+            'int_none_tuple_rank3',
+        ]
+        empty = [
+            'empty_tuple_rank3',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxTupleNumError, dim=(None,None,None), basic_types=['number'], container_types=['tuple'])
+
+
+    def test_validate_arg_numpy_float_array(self):
+        """Test lib.arg_check.validate_arg() for a numpy float array."""
+
+        # The allowed types.
+        allowed = [
+            'float_numpy_array',
+        ]
+        empty = [
+            'float_numpy_array_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, empty=empty, error=RelaxNumpyFloatError, dim=(None,), basic_types=['float'], container_types=['numpy array'])
+
+
+    def test_validate_arg_numpy_float_matrix(self):
+        """Test lib.arg_check.validate_arg() for a numpy matrix of floats."""
+
+        # The allowed types.
+        allowed = [
+            'float_numpy_matrix',
+        ]
+        empty = [
+            'float_numpy_matrix_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, empty=empty, error=RelaxNumpyFloatError, dim=(None,None), basic_types=['float'], container_types=['numpy array'])
+
+
+    def test_validate_arg_numpy_float_rank3(self):
+        """Test lib.arg_check.validate_arg() for a numpy rank-3 object of floats."""
+
+        # The allowed types.
+        allowed = [
+            'float_numpy_object',
+        ]
+        empty = [
+            'float_numpy_object_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxNumpyFloatError, dim=(2,2,2), basic_types=['float'], container_types=['numpy array'])
+        self.check_validate_arg(allowed=allowed, empty=empty, error=RelaxNumpyFloatError, dim=(None,None,None), basic_types=['float'], container_types=['numpy array'])
+
+
+    def test_validate_arg_numpy_int_array(self):
+        """Test lib.arg_check.validate_arg() for a numpy int array."""
+
+        # The allowed types.
+        allowed = [
+            'int_numpy_array',
+        ]
+        empty = [
+            'int_numpy_array_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxNumpyIntError, dim=(2,), basic_types=['int'], container_types=['numpy array'])
+        self.check_validate_arg(allowed=allowed, empty=empty, error=RelaxNumpyIntError, dim=(None,), basic_types=['int'], container_types=['numpy array'])
+
+
+    def test_validate_arg_numpy_int_matrix(self):
+        """Test lib.arg_check.validate_arg() for a numpy matrix of ints."""
+
+        # The allowed types.
+        allowed = [
+            'int_numpy_matrix',
+        ]
+        empty = [
+            'int_numpy_matrix_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, empty=empty, error=RelaxNumpyIntError, dim=(None,None), basic_types=['int'], container_types=['numpy array'])
+
+
+    def test_validate_arg_numpy_int_rank3(self):
+        """Test lib.arg_check.validate_arg() for a numpy rank-3 object of ints."""
+
+        # The allowed types.
+        allowed = [
+            'int_numpy_object',
+        ]
+        empty = [
+            'int_numpy_object_empty',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxNumpyIntError, dim=(2,2,2), basic_types=['int'], container_types=['numpy array'])
+        self.check_validate_arg(allowed=allowed, empty=empty, error=RelaxNumpyIntError, dim=(None,None,None), basic_types=['int'], container_types=['numpy array'])
+
+
+    def test_validate_arg_str(self):
+        """Test lib.arg_check.validate_arg() for a basic string type."""
+
+        # The allowed types.
+        allowed = [
+            'str',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxStrError, dim=(), basic_types=['str'])
+
+
+    def test_validate_arg_str_list(self):
+        """Test lib.arg_check.validate_arg() for a list of strings."""
+
+        # The allowed types.
+        allowed = [
+            'str_list',
+        ]
+        none_elem = [
+            'str_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxListStrError, dim=(None,), basic_types=['str'], container_types=['list'])
+
+
+    def test_validate_arg_str_list_rank2(self):
+        """Test lib.arg_check.validate_arg() for a list of lists of strings."""
+
+        # The allowed types.
+        allowed = [
+            'str_list_rank2',
+        ]
+        none_elem = [
+            'str_none_list_rank2',
+        ]
+        empty = [
+            'empty_list_rank2',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxInvalidError, dim=(None,None), basic_types=['str'], container_types=['list'])
+
+
+    def test_validate_arg_str_or_file_object(self):
+        """Test lib.arg_check.validate_arg() for a string or list of strings."""
+
+        # The allowed types.
+        allowed = [
+            'str',
+            'file_object',
+            'inst_file'
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxStrFileError, dim=[(), (None,)], basic_types=['str', 'file object'])
+
+
+    def test_validate_arg_str_or_str_list(self):
+        """Test lib.arg_check.validate_arg() for a string or list of strings."""
+
+        # The allowed types.
+        allowed = [
+            'str',
+            'str_list',
+        ]
+        none_elem = [
+            'str_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxStrListStrError, dim=[(), (None,)], basic_types=['str'], container_types=['list'])
+
+
+    def test_validate_arg_tuple(self):
+        """Test lib.arg_check.validate_arg() for a tuple of anything."""
+
+        # The allowed types.
+        allowed = [
+            'bool_tuple',
+            'float_tuple',
+            'int_tuple',
+            'str_tuple',
+        ]
+        none_elem = [
+            'bool_none_tuple',
+            'float_none_tuple',
+            'int_none_tuple',
+            'str_none_tuple',
+        ]
+        empty = [
+            'empty_tuple',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxTupleError, dim=(None,), container_types=['tuple'])
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxTupleError, dim=(None,), basic_types=['bool', 'number', 'str'], container_types=['tuple'])
