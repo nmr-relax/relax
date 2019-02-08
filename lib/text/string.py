@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,12 +22,54 @@
 # Module docstring.
 """Module for building documentation."""
 
+# Python module imports.
+from copy import deepcopy
+
+
 # Some constants.
 TITLE = 3
 SECTION = 2
 SUBSECTION = 1
 PARAGRAPH = 0
 LIST = 10
+
+
+def human_readable_list(data, conjunction="and"):
+    """Convert the list/array object into a human readable list.
+
+    This formats and returns a list, with the last element prefixed with the qualifier.
+
+
+    @param data:            The list or array object to convert.
+    @type data:             list of str
+    @keyword conjunction:   The conjunction to add to the list.
+    @type conjunction:      str
+    @return:                The formatted list.
+    @rtype:                 str
+    """
+
+    # Avoid modifying the original list.
+    new_data = deepcopy(data)
+
+    # Handle an empty list or a single element.
+    if len(data) == 0:
+        string = ""
+    elif len(data) == 1:
+        string = data[0]
+
+    # Two elements.
+    elif len(data) == 2:
+        string = "%s %s %s" % (data[0], conjunction, data[1])
+
+    # Multiple elements.
+    else:
+        string = "%s" % data[0]
+        for i in range(1, len(data) - 1):
+            string += ", %s" % data[i]
+        string += ", %s %s" % (conjunction, data[-1])
+
+    # Return the formatted list.
+    return string
 
 
 def strip_lead(text):
