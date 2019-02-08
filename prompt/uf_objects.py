@@ -189,14 +189,14 @@ class Uf_object(object):
                 lib.arg_check.is_int_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, none_elements=none_elements, list_of_lists=True)
             elif py_type == 'list':
                 lib.arg_check.is_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
-            elif py_type == 'list_val_or_list_of_list_val':
-                lib.arg_check.is_list_val_or_list_of_list_val(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, list_of_lists=True)
             elif py_type == 'none':
                 lib.arg_check.is_none(value, desc_short)
             elif py_type == 'num':
                 lib.arg_check.is_num(value, desc_short, can_be_none=can_be_none)
             elif py_type == 'num_list':
                 lib.arg_check.is_num_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+            elif py_type == 'num_list_or_num_list_of_lists':
+                lib.arg_check.validate_arg(value, desc_short, dim=dim, basic_types=['number'], container_types=['number array'], can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'num_or_num_tuple':
                 lib.arg_check.is_num_or_num_tuple(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'num_tuple':

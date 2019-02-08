@@ -36,7 +36,6 @@ from lib.arg_check import is_bool, \
         is_int_list, \
         is_int_or_int_list, \
         is_list, \
-        is_list_val_or_list_of_list_val, \
         is_none, \
         is_num, \
         is_num_list, \
@@ -349,12 +348,6 @@ class Test_arg_check(UnitTestCase):
 
         self.check_function(func=is_list, allowed_types=['bool_list', 'empty_list', 'empty_list_of_lists', 'float_list', 'float_list_of_lists', 'float_list_rank3', 'int_list', 'int_list_of_lists', 'int_list_rank3', 'str_list', 'str_list_of_lists', 'str_num_list'], error=RelaxListError, none_error=RelaxNoneListError, can_be_empty=True)
         self.check_function(func=is_list, allowed_types=['bool_list', 'empty_list_of_lists', 'float_list', 'float_list_of_lists', 'float_list_rank3', 'int_list', 'int_list_of_lists', 'int_list_rank3', 'str_list', 'str_list_of_lists', 'str_num_list'], error=RelaxListError, none_error=RelaxNoneListError, can_be_empty=False)
-
-
-    def test_is_list_val_or_list_of_list_val(self):
-        """Test the lib.arg_check.is_list_val_or_list_of_list_val() function."""
-
-        self.check_function(func=is_list_val_or_list_of_list_val, allowed_types=['float_list', 'float_list_of_lists', 'int_list', 'int_list_of_lists'], error=RelaxNumStrListNumStrError, none_error=RelaxNoneNumStrListNumStrError)
 
 
     def test_is_none(self):
