@@ -262,6 +262,10 @@ def is_float_array(arg, name=None, size=None, can_be_none=False, raise_error=Tru
     elif size != None and len(arg) != size:
         fail = True
 
+    # Numpy array type check.
+    elif isinstance(arg, ndarray) and str(arg.dtype) not in ['float16', 'float32', 'float64', 'float128']:
+        fail = True
+
     # Loop over the array.
     else:
         for i in range(len(arg)):
@@ -328,6 +332,10 @@ def is_float_matrix(arg, name=None, dim=None, can_be_none=False, none_elements=F
 
     # Fail if not the right dimension.
     elif dim != None and len(arg) != dim[0]:
+        fail = True
+
+    # Numpy array type check.
+    elif isinstance(arg, ndarray) and str(arg.dtype) not in ['float16', 'float32', 'float64', 'float128']:
         fail = True
 
     # Loop over the first dimension.
