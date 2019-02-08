@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -54,6 +54,7 @@ try:
 except ImportError:
     io_module = False
     IOBase = None
+import itertools
 import os
 import platform
 import sys
@@ -228,8 +229,40 @@ def gz_open(file, mode='r'):
     return file_obj
 
 
+def from_iterable(items):
+    """Implementation of the itertools.chain.from_iterable() function for all Python versions.
+
+    @param items:   The normal argument for itertools.chain.from_iterable().
+    @type items:    list
+    @return:        The items of the list.
+    @rtype:         unknown
+    """
+
+    # Default to the normal function.
+    if hasattr(itertools.chain, 'from_iterable'):
+        return itertools.chain.from_iterable(items)
+
+    # Reimplement the function for earlier Python versions.
+    return from_iterable_pre_2_6(items)
+
+
+def from_iterable_pre_2_6(items):
+    """Replacement itertools.chain.from_iterable() function for Python < 2.6.
+
+    @param items:   The normal argument for itertools.chain.from_iterable().
+    @type items:    list
+    @return:        The elements
+    @rtype:         unknown
+    """
+
+    for item in items:
+        for element in item:
+            yield element
+
+
 def norm(x, ord=None, axis=None):
     """Replacement numpy.linalg.norm() function to handle the axis argument for old numpy.
+
     @param x:       Input array.  If `axis` is None, `x` must be 1-D or 2-D.
     @type x:        array_like
     @keyword ord:   Order of the norm (see table under ``Notes``). inf means numpy's `inf` object.
