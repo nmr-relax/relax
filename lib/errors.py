@@ -30,13 +30,14 @@ try:
     bz2 = True
 except ImportError:
     bz2 = False
-from re import match
+from re import match, search
 import sys
 import time
 
 # relax module imports.
 from lib import ansi
 from lib.compat import pickle
+from lib.text.string import human_readable_list
 
 
 # Module variables for changing the behaviour of the warning system.
@@ -157,45 +158,66 @@ class BaseArgError(BaseError):
     list_types = []
 
 
-    def __init__(self, name, value, size=None):
-        """A default initialisation and error message formatting method."""
+    def __init__(self, name, value, size=None, dim=None, rank=None, can_be_none=False):
+        """A default initialisation and error message formatting method.
+
+        @param name:            The name of the argument.
+        @type name:             str
+        @param value:           The argument's value.
+        @type value:            anything
+        @keyword size:          The fixed size for list types.
+        @type size:             int or None
+        @keyword dim:           The expected dimensionality of the argument.
+        @type dim:              tuple of (int or None)
+        @keyword rank:          The rank for list or array types.
+        @type rank:             int or None
+        @keyword can_be_none:   A flag specifying if the argument can be None.  This will tag the text ', or None' to the end of the RelaxError.
+        @type can_be_none:      bool
+        """
+
+        # Single line string representation of the argument.
+        value_str = repr(value)
+        if search("^array", value_str):
+            value_str = value_str.replace("\n", "")
+            value_str = ''.join(value_str.split())
 
         # The initial part of the message.
-        self.text = "The %s argument '%s' must be " % (name, value)
+        self.text = "The %s argument %s must be " % (name, value_str)
 
-        # Combine all elements.
+        # Collect all elements, avoiding any class variable modifications.
         all_types = []
+
+        # The basic data types.
         for i in range(len(self.simple_types)):
             all_types.append(self.simple_types[i])
 
-        # Append the fixed size to the list types.
-        if size != None:
-            for i in range(len(self.list_types)):
-                all_types.append(self.list_types[i] + " of size %s" % repr(size))
+        # The list/array types.
+        for i in range(len(self.list_types)):
+            # Supplementary text.
+            supp_list = []
+            if size != None:
+                supp_list.append("size %s" % repr(size))
+            if rank != None:
+                supp_list.append("rank %i" % rank)
+            if dim != None:
+                supp_list.append("dimensionality %s" % repr(dim))
 
-        # No fixed sizes.
-        else:
-            for i in range(len(self.list_types)):
-                all_types.append(self.list_types[i])
+            # Add the type with any supplementary text.
+            if len(supp_list):
+                all_types.append("%s of %s" % (self.list_types[i], human_readable_list(supp_list, conjunction="or")))
+            else:
+                all_types.append("%s" % self.list_types[i])
+
+        # None is allowed.
+        if can_be_none:
+            all_types.append('None')
 
         # Multiple elements.
         if len(all_types) > 1:
             self.text = self.text + "either "
 
         # Generate the list string.
-        for i in range(len(all_types)):
-            # Separators.
-            if i > 0:
-                # Or.
-                if i == len(all_types)-1:
-                    self.text = self.text + ", or "
-
-                # Commas.
-                else:
-                    self.text = self.text + ", "
-
-            # Append the text.
-            self.text = self.text + all_types[i]
+        self.text += human_readable_list(all_types, conjunction="or")
 
         # The end.
         self.text = self.text + "."
