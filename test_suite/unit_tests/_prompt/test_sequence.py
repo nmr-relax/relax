@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxStrError
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Unit test imports.
@@ -59,7 +59,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.sequence_fns.copy, pipe_from=data[1])
+            self.assertRaises(RelaxStrError, self.sequence_fns.copy, pipe_from=data[1])
 
 
     def test_copy_argfail_pipe_to(self):
@@ -72,7 +72,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.sequence_fns.copy, pipe_to=data[1])
+            self.assertRaises(RelaxStrError, self.sequence_fns.copy, pipe_to=data[1])
 
 
     def test_copy_argfail_both_pipes(self):
@@ -92,7 +92,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.sequence_fns.display, sep=data[1])
+            self.assertRaises(RelaxStrError, self.sequence_fns.display, sep=data[1])
 
 
     def test_display_argfail_mol_name_flag(self):
@@ -183,7 +183,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.sequence_fns.read, file='a', dir=data[1])
+            self.assertRaises(RelaxStrError, self.sequence_fns.read, file='a', dir=data[1])
 
 
     def test_read_argfail_mol_name_col(self):
@@ -196,7 +196,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.read, file='a', mol_name_col=data[1])
+            self.assertRaises(RelaxIntError, self.sequence_fns.read, file='a', mol_name_col=data[1])
 
 
     def test_read_argfail_res_num_col(self):
@@ -209,7 +209,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.read, file='a', res_num_col=data[1])
+            self.assertRaises(RelaxIntError, self.sequence_fns.read, file='a', res_num_col=data[1])
 
 
     def test_read_argfail_res_name_col(self):
@@ -222,7 +222,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.read, file='a', res_name_col=data[1])
+            self.assertRaises(RelaxIntError, self.sequence_fns.read, file='a', res_name_col=data[1])
 
 
     def test_read_argfail_spin_num_col(self):
@@ -235,7 +235,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.read, file='a', spin_num_col=data[1])
+            self.assertRaises(RelaxIntError, self.sequence_fns.read, file='a', spin_num_col=data[1])
 
 
     def test_read_argfail_spin_name_col(self):
@@ -248,7 +248,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.read, file='a', spin_name_col=data[1])
+            self.assertRaises(RelaxIntError, self.sequence_fns.read, file='a', spin_name_col=data[1])
 
 
     def test_read_argfail_sep(self):
@@ -261,7 +261,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.sequence_fns.read, file='a', sep=data[1])
+            self.assertRaises(RelaxStrError, self.sequence_fns.read, file='a', sep=data[1])
 
 
     def test_write_argfail_file(self):
@@ -287,7 +287,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.sequence_fns.write, file='a', dir=data[1])
+            self.assertRaises(RelaxStrError, self.sequence_fns.write, file='a', dir=data[1])
 
 
     def test_write_argfail_mol_name_flag(self):
@@ -365,7 +365,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.sequence_fns.write, file='a', sep=data[1])
+            self.assertRaises(RelaxStrError, self.sequence_fns.write, file='a', sep=data[1])
 
 
     def test_write_argfail_force(self):

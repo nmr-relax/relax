@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxNoneValListValError, RelaxNoneStrError, RelaxNoneStrListStrError
+from lib.errors import RelaxStrError, RelaxStrListStrError, RelaxValListValError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
@@ -59,7 +59,7 @@ class Test_value(Value_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneValListValError, self.value_fns.set, val=data[1], param='csa')
+            self.assertRaises(RelaxValListValError, self.value_fns.set, val=data[1], param='csa')
 
 
     def test_set_argfail_param(self):
@@ -72,7 +72,7 @@ class Test_value(Value_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrListStrError, self.value_fns.set, param=data[1], val=None)
+            self.assertRaises(RelaxStrListStrError, self.value_fns.set, param=data[1], val=None)
 
 
     def test_set_argfail_spin_id(self):
@@ -85,4 +85,4 @@ class Test_value(Value_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.value_fns.set, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.value_fns.set, spin_id=data[1])

@@ -44,7 +44,7 @@ uf.title_short = "Residue copying."
 uf.display = True
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source pipe",
     desc = "The data pipe containing the residue from which the data will be copied.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -54,7 +54,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source residue ID",
     desc = "The residue ID string of the residue to copy the data from.",
     wiz_element_type = 'combo',
@@ -63,7 +63,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination pipe",
     desc = "The data pipe to copy the data to.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -73,7 +73,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination residue ID",
     desc = "The residue ID string of the residue to copy the data to.  If left blank, the new residue will have the same name as the old.",
     can_be_none = True
@@ -104,7 +104,7 @@ uf.title_short = "Residue creation."
 uf.display = True
 uf.add_keyarg(
     name = "res_num",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "residue number",
@@ -113,14 +113,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue name",
     desc = "The name of the residue.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "mol_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule name",
     desc = "The name of the molecule to add the residue to.",
     wiz_element_type = 'combo',
@@ -150,7 +150,7 @@ uf.title = "Delete residues from the current data pipe."
 uf.title_short = "Residue deletion."
 uf.add_keyarg(
     name = "res_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue ID string",
     desc = "The residue ID string.",
     wiz_element_type = 'combo',
@@ -175,7 +175,7 @@ uf.title = "Display information about the residue(s)."
 uf.display = True
 uf.add_keyarg(
     name = "res_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue ID string",
     desc = "The residue ID string.",
     wiz_element_type = 'combo',
@@ -202,7 +202,7 @@ uf.title = "Name the residues."
 uf.title_short = "Residue naming."
 uf.add_keyarg(
     name = "res_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue ID string",
     desc = "The residue ID string corresponding to one or more residues.",
     wiz_element_type = 'combo',
@@ -211,14 +211,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "new residue name",
     desc = "The new name."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the residue to be renamed."
@@ -249,7 +249,7 @@ uf.title = "Number the residues."
 uf.title_short = "Residue numbering."
 uf.add_keyarg(
     name = "res_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue ID string",
     desc = "The residue ID string corresponding to a single residue.",
     wiz_element_type = 'combo',
@@ -258,7 +258,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "number",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "new residue number",
@@ -267,7 +267,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the residue to be renumbered."

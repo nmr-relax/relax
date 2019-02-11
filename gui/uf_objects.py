@@ -609,8 +609,8 @@ class Uf_page(Wiz_page):
 
                 # Dimensions.
                 dim = None
-                if isinstance(arg['dim'], int):
-                    dim = arg['dim']
+                if isinstance(arg['dim'], list):
+                    dim = arg['dim'][-1]
 
                 self.uf_args[arg['name']] = Sequence(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=dim, min=arg['min'], max=arg['max'], titles=arg['list_titles'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_min=arg['wiz_combo_list_min'], tooltip=arg['desc'], single_value=single_value, divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
@@ -629,6 +629,11 @@ class Uf_page(Wiz_page):
                     value_type = 'int'
                 else:
                     value_type = 'str'
+
+                # Dimensions.
+                dim = None
+                if isinstance(arg['dim'], list):
+                    dim = arg['dim'][-1]
 
                 self.uf_args[arg['name']] = Sequence_2D(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=arg['dim'], min=arg['min'], max=arg['max'], titles=arg['list_titles'], desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_min=arg['wiz_combo_list_min'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 

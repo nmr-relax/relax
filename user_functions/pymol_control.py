@@ -92,7 +92,7 @@ uf.title = "Execute a user supplied PyMOL command."
 uf.title_short = "PyMOL command execution."
 uf.add_keyarg(
     name = "command",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "PyMOL command",
     desc = "The PyMOL command to execute."
 )
@@ -116,7 +116,7 @@ uf.title = "Display the cone PDB geometric object."
 uf.title_short = "Cone PDB geometric object display."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file containing the cone geometric object.",
@@ -152,7 +152,7 @@ uf.title_short = "Frame order results display."
 uf.add_keyarg(
     name = "ave_pos",
     default = "ave_pos",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "str",
     desc_short = "average structure file root",
     desc = "The file root of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
@@ -161,7 +161,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "rep",
     default = "frame_order",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "str",
     desc_short = "PDB representation file root",
     desc = "The file root of the PDB file for the geometric object representation of the frame order dynamics.",
@@ -170,7 +170,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "sim",
     default = "simulation.pdb.gz",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Brownian simulation file",
     desc = "The full name the Brownian simulation PDB file.",
@@ -181,7 +181,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are located.",
@@ -211,14 +211,14 @@ uf.title_short = "PyMOL macro execution."
 uf.display = True
 uf.add_keyarg(
     name = "data_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "data type",
     desc = "The data type to map to the structure."
 )
 uf.add_keyarg(
     name = "style",
     default = "classic",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "style",
     desc = "The style of the macro.",
     wiz_element_type = "combo",
@@ -227,37 +227,39 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "colour_start_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "starting colour (by name)",
     desc = "The name of the starting colour of the linear colour gradient.  This can be either one of the X11 or one of the Molmol colour names listed in the description.  If this is set, then the starting colour RGB colour array cannot be given.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "colour_start_rgb",
-    py_type = "num_list",
-    dim = 3,
+    basic_types = ["number"],
+    container_types = ["list"],
+    dim = (3,),
     desc_short = "starting colour (RGB colour array)",
     desc = "The starting colour of the linear colour gradient.  This is an RGB colour array with values ranging from 0 to 1.  If this is set, then the starting colour name cannot be given.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "colour_end_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "ending colour (by name)",
     desc = "The name of the ending colour of the linear colour gradient.  This can be either one of the X11 or one of the Molmol colour names listed in the description.  If this is set, then the ending colour RGB colour array cannot be given.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "colour_end_rgb",
-    py_type = "num_list",
-    dim = 3,
+    basic_types = ["number"],
+    container_types = ["list"],
+    dim = (3,),
     desc_short = "ending colour (RGB colour array)",
     desc = "The ending colour of the linear colour gradient.  This is an RGB colour array with values ranging from 0 to 1.  If this is set, then the ending colour name cannot be given.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "colour_list",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "colour list",
     desc = "The colour list to search for the colour names.  This can be either 'molmol' or 'x11'.",
     wiz_element_type = "combo",
@@ -293,7 +295,7 @@ uf.title_short = "PyMOL macro file execution."
 uf.display = True
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PyMOL macro file.",
@@ -303,7 +305,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "pymol",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -330,14 +332,14 @@ uf.title = "Create PyMOL macros."
 uf.title_short = "PyMOL macro creation."
 uf.add_keyarg(
     name = "data_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "data type",
     desc = "The data type to map to the structure."
 )
 uf.add_keyarg(
     name = "style",
     default = "classic",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "style",
     desc = "The style of the macro.",
     wiz_element_type = "combo",
@@ -346,37 +348,39 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "colour_start_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "starting colour (by name)",
     desc = "The name of the starting colour of the linear colour gradient.  This can be either one of the X11 or one of the Molmol colour names listed in the description.  If this is set, then the starting colour RGB colour array cannot be given.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "colour_start_rgb",
-    py_type = "num_list",
-    dim = 3,
+    basic_types = ["number"],
+    container_types = ["list"],
+    dim = (3,),
     desc_short = "starting colour (RGB colour array)",
     desc = "The starting colour of the linear colour gradient.  This is an RGB colour array with values ranging from 0 to 1.  If this is set, then the starting colour name cannot be given.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "colour_end_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "ending colour (by name)",
     desc = "The name of the ending colour of the linear colour gradient.  This can be either one of the X11 or one of the Molmol colour names listed in the description.  If this is set, then the ending colour RGB colour array cannot be given.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "colour_end_rgb",
-    py_type = "num_list",
-    dim = 3,
+    basic_types = ["number"],
+    container_types = ["list"],
+    dim = (3,),
     desc_short = "ending colour (RGB colour array)",
     desc = "The ending colour of the linear colour gradient.  This is an RGB colour array with values ranging from 0 to 1.  If this is set, then the ending colour name cannot be given.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "colour_list",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "colour list",
     desc = "The colour list to search for the colour names.  This can be either 'molmol' or 'x11'.",
     wiz_element_type = "combo",
@@ -386,7 +390,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The optional name of the file.",
@@ -397,7 +401,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "pymol",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The optional directory to save the file to.",
@@ -406,7 +410,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the file to be overwritten."
 )
@@ -437,7 +441,7 @@ uf.title = "Display the diffusion tensor PDB geometric object over the loaded PD
 uf.title_short = "Diffusion tensor and structure display."
 uf.add_keyarg(
     name = "file",
-    py_type = "str_or_inst",
+    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file containing the tensor geometric object.",
@@ -477,7 +481,7 @@ uf.title_short = "XH vector distribution display."
 uf.add_keyarg(
     name = "file",
     default = "XH_dist.pdb",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file containing the vector distribution.",

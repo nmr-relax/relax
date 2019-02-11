@@ -44,7 +44,7 @@ uf.title_short = "Spin copying."
 uf.display = True
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The data pipe containing the spin from which the data will be copied.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -54,7 +54,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source spin ID",
     desc = "The spin identifier string of the spin to copy the data from.",
     wiz_element_type = 'combo',
@@ -62,7 +62,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The data pipe to copy the data to.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -72,7 +72,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination spin ID",
     desc = "The spin identifier string of the spin to copy the data to.  If left blank, the new spin will have the same name as the old.",
     can_be_none = True
@@ -103,14 +103,14 @@ uf.title_short = "Spin creation."
 uf.display = True
 uf.add_keyarg(
     name = "spin_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin name",
     desc = "The name of the spin.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "spin_num",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "spin number",
@@ -119,7 +119,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue name",
     desc = "The name of the residue to add the spin to.",
     wiz_element_type = 'combo',
@@ -128,7 +128,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "residue number",
     desc = "The number of the residue to add the spin to.",
     wiz_element_type = 'combo',
@@ -137,7 +137,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule name",
     desc = "The name of the molecule to add the spin to.",
     wiz_element_type = 'combo',
@@ -166,13 +166,13 @@ uf.title = "Create a spin system representing a pseudo-atom."
 uf.title_short = "Pseudo-atom creation."
 uf.add_keyarg(
     name = "spin_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin name",
     desc = "The name of the pseudo-atom spin."
 )
 uf.add_keyarg(
     name = "spin_num",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "spin number",
@@ -181,7 +181,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue ID string",
     desc = "The molecule and residue ID string identifying the position to add the pseudo-spin to.",
     wiz_element_type = 'combo',

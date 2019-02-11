@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxListStrError, RelaxNoneStrError, RelaxStrError
+from lib.errors import RelaxListStrError, RelaxStrError
 from test_suite.unit_tests.model_free_testing_base import Model_free_base_class
 
 # Unit test imports.
@@ -98,7 +98,7 @@ class Test_model_free(Model_free_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.model_free_fns.create_model, model='test', equation='test', params=['test'], spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.model_free_fns.create_model, model='test', equation='test', params=['test'], spin_id=data[1])
 
 
     def test_remove_tm_argfail_spin_id(self):
@@ -111,7 +111,7 @@ class Test_model_free(Model_free_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.model_free_fns.remove_tm, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.model_free_fns.remove_tm, spin_id=data[1])
 
 
     def test_select_model_argfail_model(self):
@@ -137,7 +137,7 @@ class Test_model_free(Model_free_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.model_free_fns.select_model, model='test', spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.model_free_fns.select_model, model='test', spin_id=data[1])
 
 
 

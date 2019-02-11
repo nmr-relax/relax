@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxBoolError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNoneStrListStrError, RelaxNumError, RelaxStrError
+from lib.errors import RelaxBoolError, RelaxIntListIntError, RelaxStrListStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.structure_testing_base import Structure_base_class
 
 # Unit test imports.
@@ -85,7 +85,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.structure_fns.create_diff_tensor_pdb, dir=data[1])
+            self.assertRaises(RelaxStrError, self.structure_fns.create_diff_tensor_pdb, dir=data[1])
 
 
     def test_create_diff_tensor_pdb_argfail_force(self):
@@ -137,7 +137,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.structure_fns.create_vector_dist, dir=data[1])
+            self.assertRaises(RelaxStrError, self.structure_fns.create_vector_dist, dir=data[1])
 
 
     def test_create_vector_dist_argfail_symmetry(self):
@@ -176,7 +176,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.structure_fns.load_spins, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.structure_fns.load_spins, spin_id=data[1])
 
 
     def test_read_pdb_argfail_file(self):
@@ -202,7 +202,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.structure_fns.read_pdb, file='test.pdb', dir=data[1])
+            self.assertRaises(RelaxStrError, self.structure_fns.read_pdb, file='test.pdb', dir=data[1])
 
 
     def test_read_pdb_argfail_read_mol(self):
@@ -215,7 +215,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntListIntError, self.structure_fns.read_pdb, file='test.pdb', read_mol=data[1])
+            self.assertRaises(RelaxIntListIntError, self.structure_fns.read_pdb, file='test.pdb', read_mol=data[1])
 
 
     def test_read_pdb_argfail_set_mol_name(self):
@@ -228,7 +228,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrListStrError, self.structure_fns.read_pdb, file='test.pdb', set_mol_name=data[1])
+            self.assertRaises(RelaxStrListStrError, self.structure_fns.read_pdb, file='test.pdb', set_mol_name=data[1])
 
 
     def test_read_pdb_argfail_read_model(self):
@@ -241,7 +241,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntListIntError, self.structure_fns.read_pdb, file='test.pdb', read_model=data[1])
+            self.assertRaises(RelaxIntListIntError, self.structure_fns.read_pdb, file='test.pdb', read_model=data[1])
 
 
     def test_read_pdb_argfail_set_model_num(self):
@@ -254,4 +254,4 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntListIntError, self.structure_fns.read_pdb, file='test.pdb', set_model_num=data[1])
+            self.assertRaises(RelaxIntListIntError, self.structure_fns.read_pdb, file='test.pdb', set_model_num=data[1])

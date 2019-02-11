@@ -51,14 +51,14 @@ uf.title = "Back calculate the relaxation data at the given frequency."
 uf.title_short = "Relaxation data back calculation."
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation ID string",
     desc = "The relaxation data ID string.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "ri_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation type",
     desc = "The relaxation data type, ie 'R1', 'R2', or 'NOE'.",
     wiz_element_type = "combo",
@@ -68,7 +68,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "frq",
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "frequency",
     desc = "The spectrometer frequency in Hz.",
     can_be_none = True
@@ -88,7 +88,7 @@ uf.title = "Copy relaxation data from one pipe to another."
 uf.title_short = "Relaxation data copying."
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The name of the pipe to copy the relaxation data from.",
     wiz_element_type = 'combo',
@@ -98,7 +98,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The name of the pipe to copy the relaxation data to.",
     wiz_element_type = 'combo',
@@ -108,7 +108,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation data ID string",
     desc = "The relaxation data ID string.",
     wiz_element_type = 'combo',
@@ -142,7 +142,7 @@ uf.title = "Delete the data corresponding to the relaxation data ID string."
 uf.title_short = "Relaxation data deletion."
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation data ID string",
     desc = "The relaxation data ID string.",
     wiz_element_type = 'combo',
@@ -170,7 +170,7 @@ uf.title_short = "Displaying relaxation data."
 uf.display = True
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation data ID string",
     desc = "The relaxation data ID string.",
     wiz_element_type = 'combo',
@@ -198,7 +198,7 @@ uf.title = "Specify if heights or volumes were used to measure the peak intensit
 uf.title_short = "How were peak intensities measured?"
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation data ID string",
     desc = "The relaxation data ID string.",
     wiz_element_type = 'combo',
@@ -208,7 +208,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "type",
     default = "height",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "peak intensity type",
     desc = "The peak intensity type.",
     wiz_element_type = "combo",
@@ -232,13 +232,13 @@ uf.title = "Read R1, R2, NOE, or R2eff relaxation data from a file."
 uf.title_short = "Reading relaxation data from file."
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation ID string",
     desc = "The relaxation data ID string.  This must be a unique identifier."
 )
 uf.add_keyarg(
     name = "ri_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation type",
     desc = "The relaxation data type, i.e. 'R1', 'R2', 'NOE', or 'R2eff'.",
     wiz_element_type = "combo",
@@ -247,13 +247,13 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "frq",
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "frequency in Hz",
     desc = "The exact proton frequency of the spectrometer in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the relaxation data.",
@@ -261,7 +261,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -269,7 +269,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin ID string column",
     desc = "The spin ID string column (an alternative to the mol, res, and spin name and number columns).",
@@ -277,7 +277,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "molecule name column",
     desc = "The molecule name column (alternative to the spin_id_col).",
@@ -285,7 +285,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue number column",
     desc = "The residue number column (alternative to the spin_id_col).",
@@ -293,7 +293,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue name column",
     desc = "The residue name column (alternative to the spin_id_col).",
@@ -301,7 +301,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin number column",
     desc = "The spin number column (alternative to the spin_id_col).",
@@ -309,7 +309,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin name column",
     desc = "The spin name column (alternative to the spin_id_col).",
@@ -317,21 +317,21 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "data_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "data column",
     desc = "The relaxation data column."
 )
 uf.add_keyarg(
     name = "error_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "error column",
     desc = "The experimental error column."
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
@@ -339,7 +339,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin ID string to restrict the loading of data to certain spin subsets.",
@@ -373,7 +373,7 @@ uf.title = "Specify the per-experiment temperature calibration method used."
 uf.title_short = "The per-experiment temperature calibration method."
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation data ID string",
     desc = "The relaxation data ID string.",
     wiz_element_type = 'combo',
@@ -382,7 +382,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "method",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "per-experiment calibration method",
     desc = "The per-experiment temperature calibration method.",
     wiz_element_type = 'combo',
@@ -415,7 +415,7 @@ uf.title = "Specify the temperature control method used."
 uf.title_short = "The temperature control method."
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation data ID string",
     desc = "The relaxation data ID string.",
     wiz_element_type = 'combo',
@@ -424,7 +424,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "method",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "temperature control method",
     desc = "The control method.",
     wiz_element_type = 'combo',
@@ -463,7 +463,7 @@ uf.title = "Set the type of relaxation data."
 uf.title_short = "Relaxation data type setting."
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation ID string",
     desc = "The relaxation data ID string of the data to set the frequency of.",
     wiz_element_type = 'combo',
@@ -472,7 +472,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "ri_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation type",
     desc = "The relaxation data type, i.e. 'R1', 'R2', or 'NOE'.",
     wiz_element_type = "combo",
@@ -495,7 +495,7 @@ uf.title = "Write relaxation data to a file."
 uf.title_short = "Relaxation data writing."
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation data ID string",
     desc = "The relaxation data ID string.",
     wiz_element_type = 'combo',
@@ -504,7 +504,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -512,7 +512,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -521,14 +521,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "bc",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "back calculated data flag",
     desc = "A flag which if True will cause the back-calculated data to be written to the file."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will cause the file to be overwritten."
 )

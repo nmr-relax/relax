@@ -47,13 +47,13 @@ uf.title_short = "Model-free model creation."
 uf.display = True
 uf.add_keyarg(
     name = "model",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "model name",
     desc = "The new name of the model-free model."
 )
 uf.add_keyarg(
     name = "equation",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "model-free equation",
     desc = "The model-free equation.",
     wiz_element_type = "combo",
@@ -71,7 +71,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "params",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "model-free parameters",
     desc = "The array of parameter names of the model.",
     wiz_element_type = "combo_list",
@@ -101,7 +103,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin identification string",
     desc = "The spin identification string.",
     can_be_none = True
@@ -181,7 +183,7 @@ uf.title_short = "Local tm parameter removal."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string.",
     can_be_none = True
@@ -210,7 +212,7 @@ uf.title_short = "Model-free model choice."
 uf.display = True
 uf.add_keyarg(
     name = "model",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "preset model name",
     desc = "The name of the preset model.",
     wiz_element_type = "combo",
@@ -396,7 +398,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string.",
     can_be_none = True

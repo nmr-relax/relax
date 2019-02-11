@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError, RelaxStrListStrError
+from lib.errors import RelaxIntError, RelaxIntListIntError, RelaxNumError, RelaxStrError, RelaxStrListStrError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -84,7 +84,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.baseplane_rmsd, spectrum_id='x', spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.spectrum_fns.baseplane_rmsd, spectrum_id='x', spin_id=data[1])
 
 
     def test_integration_points_argfail_N(self):
@@ -123,7 +123,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.integration_points, N=0, spectrum_id='x', spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.spectrum_fns.integration_points, N=0, spectrum_id='x', spin_id=data[1])
 
 
     def test_read_intensities_argfail_file(self):
@@ -149,7 +149,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.read_intensities, file='a', dir=data[1])
+            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, file='a', dir=data[1])
 
 
     def test_read_intensities_argfail_spectrum_id(self):
@@ -188,7 +188,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntListIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_col=data[1])
+            self.assertRaises(RelaxIntListIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_col=data[1])
 
 
     def test_read_intensities_argfail_int_method(self):
@@ -214,7 +214,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', mol_name_col=data[1])
+            self.assertRaises(RelaxIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', mol_name_col=data[1])
 
 
     def test_read_intensities_argfail_res_num_col(self):
@@ -227,7 +227,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', res_num_col=data[1])
+            self.assertRaises(RelaxIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', res_num_col=data[1])
 
 
     def test_read_intensities_argfail_res_name_col(self):
@@ -240,7 +240,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', res_name_col=data[1])
+            self.assertRaises(RelaxIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', res_name_col=data[1])
 
 
     def test_read_intensities_argfail_spin_num_col(self):
@@ -253,7 +253,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', spin_num_col=data[1])
+            self.assertRaises(RelaxIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', spin_num_col=data[1])
 
 
     def test_read_intensities_argfail_spin_name_col(self):
@@ -266,7 +266,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', spin_name_col=data[1])
+            self.assertRaises(RelaxIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', spin_name_col=data[1])
 
 
     def test_read_intensities_argfail_sep(self):
@@ -279,4 +279,4 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', sep=data[1])
+            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method='y', sep=data[1])
