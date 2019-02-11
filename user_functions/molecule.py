@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2004,2007,2009-2010,2012 Edward d'Auvergne               #
+# Copyright (C) 2002-2004,2007,2009-2010,2012,2019 Edward d'Auvergne          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -44,7 +44,7 @@ uf.title_short = "Molecule copying."
 uf.display = True
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The data pipe containing the molecule from which the data will be copied.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -54,7 +54,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source molecule ID",
     desc = "The name of the molecule from which to copy data from.",
     wiz_element_type = 'combo',
@@ -63,7 +63,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The data pipe to copy the data to.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -73,7 +73,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination molecule ID",
     desc = "The name of the new molecule.  If left blank, the new molecule will have the same name as the old.  This needs to be a molecule ID string, starting with '#'.",
     can_be_none = True
@@ -105,13 +105,13 @@ uf.title_short = "Molecule creation."
 uf.display = True
 uf.add_keyarg(
     name = "mol_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule name",
     desc = "The name of the new molecule."
 )
 uf.add_keyarg(
     name = "mol_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule type",
     desc = "The type of molecule.",
     wiz_element_type = "combo",
@@ -145,7 +145,7 @@ uf.title = "Deleting molecules from the relax data store."
 uf.title_short = "Molecule deletion."
 uf.add_keyarg(
     name = "mol_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule ID string",
     desc = "The molecule ID string.",
     wiz_element_type = 'combo',
@@ -171,7 +171,7 @@ uf.title_short = "Molecule information."
 uf.display = True
 uf.add_keyarg(
     name = "mol_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule ID string",
     desc = "The molecule ID string.",
     wiz_element_type = 'combo',
@@ -194,7 +194,7 @@ uf = uf_info.add_uf('molecule.name')
 uf.title = "Name a molecule."
 uf.add_keyarg(
     name = "mol_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule ID string",
     desc = "The molecule ID string corresponding to one or more molecules.",
     wiz_element_type = 'combo',
@@ -204,14 +204,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "new molecule name",
     desc = "The new molecule name."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the molecule to be renamed."
@@ -240,7 +240,7 @@ uf.title = "Set the molecule type."
 uf.title_short = "Setting molecule type."
 uf.add_keyarg(
     name = "mol_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule ID string",
     desc = "The molecule ID string corresponding to one or more molecules.",
     wiz_element_type = 'combo',
@@ -250,7 +250,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule type",
     desc = "The molecule type.",
     wiz_element_type = "combo",
@@ -260,7 +260,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the molecule to type to be overwritten."

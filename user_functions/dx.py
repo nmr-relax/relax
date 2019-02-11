@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008-2009,2012-2013 Edward d'Auvergne               #
+# Copyright (C) 2003-2005,2008-2009,2012-2013,2019 Edward d'Auvergne          #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -57,14 +57,14 @@ uf.title_short = "OpenDX execution."
 uf.add_keyarg(
     name = "file_prefix",
     default = "map",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "file name",
     desc = "The file name prefix.  For example if file is set to 'temp', then the OpenDX program temp.net will be loaded."
 )
 uf.add_keyarg(
     name = "dir",
     default = "dx",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to change to for running OpenDX.  If this is set to None, OpenDX will be run in the current directory.",
@@ -73,7 +73,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dx_exe",
     default = "dx",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "OpenDX executable file name",
     desc = "The OpenDX executable file.",
@@ -83,7 +83,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "vp_exec",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "visual program execution flag",
     desc = "A flag specifying whether to execute the visual program automatically at start-up.  The default of True causes the program to be executed."
 )
@@ -105,14 +105,16 @@ uf.title_short = "OpenDX map creation."
 uf.display = True
 uf.add_keyarg(
     name = "params",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "parameters",
     desc = "The parameters to be mapped.  This should be an array of strings, the meanings of which are described below."
 )
 uf.add_keyarg(
     name = "map_type",
     default = "Iso3D",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "map type",
     desc = "The type of map to create.  For example the default, a 3D isosurface, the type is 'Iso3D'.  See below for more details.",
     wiz_element_type = "combo",
@@ -121,7 +123,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string.",
     can_be_none = True
@@ -129,21 +131,25 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "inc",
     default = 20,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "number of increments",
     desc = "The number of increments to map in each dimension.  This value controls the resolution of the map.",
     wiz_element_type = "spin"
 )
 uf.add_keyarg(
     name = "lower",
-    py_type = "num_list",
+    basic_types = ["number"],
+    container_types = ["list", "numpy array"],
+    dim = (None,),
     desc_short = "lower bounds",
     desc = "The lower bounds of the space.  If you wish to change the lower bounds of the map then supply an array of length equal to the number of parameters in the model.  A lower bound for each parameter must be supplied.  If nothing is supplied then the defaults will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "upper",
-    py_type = "num_list",
+    basic_types = ["number"],
+    container_types = ["list", "numpy array"],
+    dim = (None,),
     desc_short = "upper bounds",
     desc = "The upper bounds of the space.  If you wish to change the upper bounds of the map then supply an array of length equal to the number of parameters in the model.  A upper bound for each parameter must be supplied.  If nothing is supplied then the defaults will be used.",
     can_be_none = True
@@ -151,7 +157,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "axis_incs",
     default = 5,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "axis increments",
     desc = "The number of increments or ticks displaying parameter values along the axes of the OpenDX plot.",
     wiz_element_type = "spin"
@@ -159,14 +165,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file_prefix",
     default = "map",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "file prefix",
     desc = "The file name.  All the output files are prefixed with this name.  The main file containing the data points will be called the value of 'file'.  The OpenDX program will be called 'file.net' and the OpenDX import file will be called 'file.general'."
 )
 uf.add_keyarg(
     name = "dir",
     default = "dx",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to output files to.  Set this to 'None' if you do not want the files to be placed in subdirectory.  If the directory does not exist, it will be created.",
@@ -174,7 +180,8 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "point",
-    py_type = "num_list_or_num_list_of_lists",
+    basic_types = ["number"],
+    container_types = ["list"],
     dim = [(3,), (None, 3)],
     desc_short = "highlight points in the space",
     desc = "This argument allows specific points in the optimisation space to be displayed as coloured spheres.  This can be used to highlight a minimum or other any other feature of the space.  Either a single point or a list of points can be supplied.  Each point is a list of floating point numbers in the form [x, y, z]",
@@ -184,7 +191,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "point_file",
     default = "point",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "point file name prefix",
     desc = "The name of that the point output files will be prefixed with.",
     can_be_none = True
@@ -192,16 +199,17 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "chi_surface",
     default = None,
-    py_type = "float_array",
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = (4,),
     desc_short = "Set the chi2 surface level for the Innermost, Inner, Middle and Outer Isosurface.",
     desc = "A list of 4 numbers, setting the level for the 4 isosurfaces. Useful in scripting if you create a set of OpenDX maps with all the same contour levels.  Ideal for comparisons.",
     can_be_none = True,
-    dim = 4
 )
 uf.add_keyarg(
     name = "create_par_file",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "creation of file with parameter and calculated chi2",
     desc = "A flag specifying whether to create a file with parameters and associated chi2 value.  The default of False causes the file not to be created."
 )

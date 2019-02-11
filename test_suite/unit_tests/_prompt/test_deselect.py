@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008,2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008,2012,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrFileError
+from lib.errors import RelaxBoolError, RelaxIntError, RelaxStrError, RelaxStrFileError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -71,7 +71,7 @@ class Test_deselect(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.deselect_fns.read, file='unresolved', dir=data[1])
+            self.assertRaises(RelaxStrError, self.deselect_fns.read, file='unresolved', dir=data[1])
 
 
     def test_read_argfail_mol_name_col(self):
@@ -84,7 +84,7 @@ class Test_deselect(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.deselect_fns.read, file='unresolved', mol_name_col=data[1])
+            self.assertRaises(RelaxIntError, self.deselect_fns.read, file='unresolved', mol_name_col=data[1])
 
 
     def test_read_argfail_res_num_col(self):
@@ -97,7 +97,7 @@ class Test_deselect(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.deselect_fns.read, file='unresolved', res_num_col=data[1])
+            self.assertRaises(RelaxIntError, self.deselect_fns.read, file='unresolved', res_num_col=data[1])
 
 
     def test_read_argfail_res_name_col(self):
@@ -110,7 +110,7 @@ class Test_deselect(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.deselect_fns.read, file='unresolved', res_name_col=data[1])
+            self.assertRaises(RelaxIntError, self.deselect_fns.read, file='unresolved', res_name_col=data[1])
 
 
     def test_read_argfail_spin_num_col(self):
@@ -123,7 +123,7 @@ class Test_deselect(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.deselect_fns.read, file='unresolved', spin_num_col=data[1])
+            self.assertRaises(RelaxIntError, self.deselect_fns.read, file='unresolved', spin_num_col=data[1])
 
 
     def test_read_argfail_spin_name_col(self):
@@ -136,7 +136,7 @@ class Test_deselect(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.deselect_fns.read, file='unresolved', spin_name_col=data[1])
+            self.assertRaises(RelaxIntError, self.deselect_fns.read, file='unresolved', spin_name_col=data[1])
 
 
     def test_read_argfail_sep(self):
@@ -149,7 +149,7 @@ class Test_deselect(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.deselect_fns.read, file='unresolved', sep=data[1])
+            self.assertRaises(RelaxStrError, self.deselect_fns.read, file='unresolved', sep=data[1])
 
 
     def test_read_argfail_change_all(self):
@@ -175,7 +175,7 @@ class Test_deselect(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.deselect_fns.reverse, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.deselect_fns.reverse, spin_id=data[1])
 
 
     def test_spin_argfail_spin_id(self):
@@ -188,7 +188,7 @@ class Test_deselect(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.deselect_fns.spin, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.deselect_fns.spin, spin_id=data[1])
 
 
     def test_spin_argfail_change_all(self):

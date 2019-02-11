@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2004,2007-2010,2012 Edward d'Auvergne                    #
+# Copyright (C) 2002-2004,2007-2010,2012,2019 Edward d'Auvergne               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -44,7 +44,7 @@ uf.title_short = "Spin copying."
 uf.display = True
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The data pipe containing the spin from which the data will be copied.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -54,7 +54,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source spin ID",
     desc = "The spin identifier string of the spin to copy the data from.",
     wiz_element_type = 'combo',
@@ -62,7 +62,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The data pipe to copy the data to.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -72,7 +72,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination spin ID",
     desc = "The spin identifier string of the spin to copy the data to.  If left blank, the new spin will have the same name as the old.",
     can_be_none = True
@@ -103,14 +103,14 @@ uf.title_short = "Spin creation."
 uf.display = True
 uf.add_keyarg(
     name = "spin_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin name",
     desc = "The name of the spin.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "spin_num",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "spin number",
@@ -119,7 +119,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue name",
     desc = "The name of the residue to add the spin to.",
     wiz_element_type = 'combo',
@@ -128,7 +128,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "residue number",
     desc = "The number of the residue to add the spin to.",
     wiz_element_type = 'combo',
@@ -137,7 +137,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule name",
     desc = "The name of the molecule to add the spin to.",
     wiz_element_type = 'combo',
@@ -166,13 +166,13 @@ uf.title = "Create a spin system representing a pseudo-atom."
 uf.title_short = "Pseudo-atom creation."
 uf.add_keyarg(
     name = "spin_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin name",
     desc = "The name of the pseudo-atom spin."
 )
 uf.add_keyarg(
     name = "spin_num",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "spin number",
@@ -181,7 +181,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue ID string",
     desc = "The molecule and residue ID string identifying the position to add the pseudo-spin to.",
     wiz_element_type = 'combo',
@@ -190,7 +190,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "members",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "members",
     desc = "A list of the atoms (as spin ID strings) that the pseudo-atom is composed of.",
     wiz_element_type = "combo_list",
@@ -201,7 +203,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "averaging",
     default = "linear",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "positional averaging",
     desc = "The positional averaging technique.",
     wiz_element_type = "combo",
@@ -230,7 +232,7 @@ uf.title = "Delete spins."
 uf.title_short = "Spin deletion."
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identifier string.",
     wiz_element_type = 'combo',
@@ -255,7 +257,7 @@ uf.title_short = "Spin information."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string.",
     wiz_element_type = 'combo',
@@ -281,7 +283,7 @@ uf.title = "Set the element type of the spin."
 uf.title_short = "Spin element setting."
 uf.add_keyarg(
     name = "element",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "IUPAC element name",
     desc = "The IUPAC element name.",
     wiz_element_type = "combo",
@@ -289,7 +291,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string corresponding to one or more spins.",
     wiz_element_type = 'combo',
@@ -299,7 +301,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the element to be changed."
@@ -327,7 +329,7 @@ uf.title = "Set the spins' nuclear isotope type."
 uf.title_short = "Nuclear isotope type."
 uf.add_keyarg(
     name = "isotope",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "nuclear isotope name",
     desc = "The nuclear isotope name in the AE notation - the atomic mass number followed by the element symbol.",
     wiz_element_type = "combo",
@@ -336,7 +338,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string corresponding to one or more spins.",
     wiz_element_type = 'combo',
@@ -346,7 +348,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the nuclear isotope to be changed."
@@ -374,13 +376,13 @@ uf.title = "Name the spins."
 uf.title_short = "Spin naming."
 uf.add_keyarg(
     name = "name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "new spin name",
     desc = "The new name."
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin identification string corresponding to one or more spins.",
@@ -390,7 +392,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the spin to be renamed."
@@ -419,7 +421,7 @@ uf.title = "Number the spins."
 uf.title_short = "Spin numbering."
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string corresponding to a single spin.",
     wiz_element_type = 'combo',
@@ -428,7 +430,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "number",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "new spin number",
@@ -438,7 +440,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the spin to be renumbered."

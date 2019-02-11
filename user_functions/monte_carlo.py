@@ -74,7 +74,7 @@ uf.title_short = "Data creation."
 uf.add_keyarg(
     name = "method",
     default = "back_calc",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "method",
     desc = "The simulation method.",
     wiz_element_type = "combo",
@@ -85,7 +85,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "distribution",
     default = "measured",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "distribution",
     desc = "The error distribution method.",
     wiz_element_type = "combo",
@@ -95,7 +95,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "fixed_error",
-    py_type = "float",
+    basic_types = ["float"],
     default = None,
     desc_short = "fixed error value for fixed error distribution.",
     desc = "The fixed value to use when distribution is set to 'fixed'.",
@@ -193,7 +193,7 @@ uf.title_short = "Simulation setup."
 uf.add_keyarg(
     name = "number",
     default = 500,
-    py_type = "int",
+    basic_types = ["int"],
     min = 3,
     max = 100000,
     desc_short = "number of Monte Carlo simulations",

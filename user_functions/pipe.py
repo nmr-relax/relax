@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2004,2006-2007,2009-2012 Edward d'Auvergne               #
+# Copyright (C) 2002-2004,2006-2007,2009-2012,2019 Edward d'Auvergne          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -47,7 +47,7 @@ uf.title = "The grouping of data pipes into a bundle."
 uf.title_short = "Data pipe bundling."
 uf.add_keyarg(
     name = "bundle",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "pipe bundle",
     desc = "The pipe bundle is a special grouping or clustering of data pipes.",
     wiz_element_type = 'combo',
@@ -56,7 +56,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "data pipe",
     desc = "The name of the data pipe to add to the bundle.",
     wiz_element_type = 'combo',
@@ -84,7 +84,7 @@ uf.title = "Change the type of the current data pipe."
 uf.title_short = "Data pipe type change."
 uf.add_keyarg(
     name = "pipe_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "type of data pipe",
     desc = "The type of data pipe.",
     wiz_element_type = 'combo',
@@ -113,7 +113,7 @@ uf.title = "Copy a data pipe."
 uf.title_short = "Data pipe copying."
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The name of the source data pipe to copy the data from.",
     wiz_element_type = 'combo',
@@ -123,14 +123,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The name of the target data pipe to copy the data to.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "bundle_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination pipe bundle",
     desc = "If given, the new data pipe will be grouped into this bundle.",
     wiz_element_type = 'combo',
@@ -162,13 +162,13 @@ uf.title = "Add a new data pipe to the relax data store."
 uf.title_short = "Data pipe creation."
 uf.add_keyarg(
     name = "pipe_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "data pipe name",
     desc = "The name of the data pipe.",
 )
 uf.add_keyarg(
     name = "pipe_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "type of data pipe",
     desc = "The type of data pipe.",
     wiz_element_type = 'combo',
@@ -178,7 +178,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "bundle",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "pipe bundle",
     desc = "The optional pipe bundle is a special grouping or clustering of data pipes.  If this is specified, the newly created data pipe will be added to this bundle.",
     wiz_element_type = 'combo',
@@ -236,7 +236,7 @@ uf.title = "Delete a data pipe from the relax data store."
 uf.title_short = "Data pipe deletion."
 uf.add_keyarg(
     name = "pipe_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "data pipe",
     desc = "The name of the data pipe to delete.",
     wiz_element_type = 'combo',
@@ -275,13 +275,15 @@ uf.title = "Create a hybrid data pipe by fusing a number of other data pipes."
 uf.title_short = "Hybrid data pipe creation."
 uf.add_keyarg(
     name = "hybrid",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "hybrid pipe name",
     desc = "The name of the hybrid data pipe to create."
 )
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes to hybridise",
     desc = "An array containing the names of all data pipes to hybridise.",
     wiz_element_type = 'combo_list',
@@ -311,7 +313,7 @@ uf.title = "Switch between the data pipes of the relax data store."
 uf.title_short = "Data pipe switching."
 uf.add_keyarg(
     name = "pipe_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "data pipe",
     desc = "The name of the data pipe.",
     wiz_element_type = 'combo',

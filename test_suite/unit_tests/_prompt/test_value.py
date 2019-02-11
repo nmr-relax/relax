@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008,2012 Edward d'Auvergne                              #
+# Copyright (C) 2007-2008,2012,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxNoneValListValError, RelaxNoneStrError, RelaxNoneStrListStrError
+from lib.errors import RelaxStrError, RelaxStrListStrError, RelaxValListValError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
@@ -52,14 +52,27 @@ class Test_value(Value_base_class, TestCase):
     def test_set_argfail_val(self):
         """The val arg test of the value.set() user function."""
 
+        # Set the current data pipe to 'mf'.
+        self.interpreter.pipe.switch('mf')
+
         # Loop over the data types.
+        allowed_params = ['s2', 's2f', 's2s', 'te', 'ts', 'tf', 'rex', 'csa']
         for data in DATA_TYPES:
-            # Catch the None, float, int, str, bin, float list, int list, str list, or bin list arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'bin' or data[0] == 'bool' or data[0] == 'int' or data[0] == 'str' or data[0] == 'float' or data[0] == 'int list' or data[0] == 'bin list' or data[0] == 'bool list' or data[0] == 'str list' or data[0] == 'float list' or data[0] == 'number list':
+            # Skip empty lists.
+            if data[0] in ['list']:
                 continue
 
-            # The argument test.
-            self.assertRaises(RelaxNoneValListValError, self.value_fns.set, val=data[1], param='csa')
+            # Make sure the param and val argument match.
+            param = 'csa'
+            if data[0] in ['int list', 'float list', 'list', 'none list', 'number list', 'str list']:
+                param = []
+                for i in range(len(data[1])):
+                    param.append(allowed_params[i])
+                if not len(param):
+                    param = 'csa'
+
+            # Everything is allowed.
+            self.value_fns.set(val=data[1], param=param)
 
 
     def test_set_argfail_param(self):
@@ -72,7 +85,7 @@ class Test_value(Value_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrListStrError, self.value_fns.set, param=data[1], val=None)
+            self.assertRaises(RelaxStrListStrError, self.value_fns.set, param=data[1], val=None)
 
 
     def test_set_argfail_spin_id(self):
@@ -85,4 +98,4 @@ class Test_value(Value_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.value_fns.set, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.value_fns.set, spin_id=data[1])

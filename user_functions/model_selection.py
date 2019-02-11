@@ -37,7 +37,7 @@ uf.display = True
 uf.add_keyarg(
     name = "method",
     default = "AIC",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "model selection method",
     desc = "The model selection technique (see below).",
     wiz_element_type = 'combo',
@@ -67,13 +67,13 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "modsel_pipe",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "model selection data pipe name",
     desc = "The name of the new data pipe which will be created by this user function by the copying of the selected data pipe."
 )
 uf.add_keyarg(
     name = "bundle",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "pipe bundle",
     desc = "The optional pipe bundle is a special grouping or clustering of data pipes.  If this is specified, the newly created data pipe will be added to this bundle.",
     wiz_element_type = 'combo',
@@ -83,7 +83,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "An array containing the names of all data pipes to include in model selection.",
     wiz_element_type = 'combo_list',

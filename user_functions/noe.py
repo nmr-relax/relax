@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004,2006,2008-2009,2012 Edward d'Auvergne                    #
+# Copyright (C) 2004,2006,2008-2009,2012,2019 Edward d'Auvergne               #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -51,7 +51,7 @@ uf.title = "Read NOESY or ROESY restraints from a file."
 uf.title_short = "Restraint reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the restraint data.",
@@ -59,7 +59,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -67,7 +67,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "proton1_col",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "first proton column",
     desc = "The column containing the first proton of the NOE or ROE cross peak.",
     wiz_element_type = "text",
@@ -75,7 +75,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "proton2_col",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "second proton column",
     desc = "The column containing the second proton of the NOE or ROE cross peak.",
     wiz_element_type = "text",
@@ -83,7 +83,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "lower_col",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "lower bound column",
     desc = "The column containing the lower NOE bound.",
     wiz_element_type = "text",
@@ -91,7 +91,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "upper_col",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "upper bound column",
     desc = "The column containing the upper NOE bound.",
     wiz_element_type = "text",
@@ -99,7 +99,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
     wiz_element_type = "combo",
@@ -129,7 +129,7 @@ uf.title = "Set the steady-state NOE spectrum type for pre-loaded peak intensiti
 uf.title_short = "Steady-state NOE spectrum type."
 uf.add_keyarg(
     name = "spectrum_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum type",
     desc = "The type of steady-state NOE spectrum, one of 'ref' for the reference spectrum or 'sat' for the saturated spectrum.",
     wiz_element_type = "combo",
@@ -139,7 +139,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum ID string",
     desc = "The spectrum ID string.",
     wiz_element_type = 'combo',

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2010,2012 Edward d'Auvergne                              #
+# Copyright (C) 2008-2010,2012,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -52,16 +52,18 @@ uf.title_short = "CoM analysis."
 uf.add_keyarg(
     name = "pivot_point",
     default = [0.0, 0.0, 0.0],
-    py_type = "num_list",
-    dim = 3,
+    basic_types = ["number"],
+    container_types = ["list"],
+    dim = (3,),
     desc_short = "pivot point",
     desc = "The pivot point of the motions between the two domains.",
     list_titles = ['X coordinate', 'Y coordinate', 'Z coordinate']
 )
 uf.add_keyarg(
     name = "centre",
-    py_type = "num_list",
-    dim = 3,
+    basic_types = ["number"],
+    container_types = ["list"],
+    dim = (3,),
     desc_short = "centre of mass",
     desc = "Manually specify the CoM of the initial position prior to the N rotations to the positions of the N states.  This is optional.",
     list_titles = ['X coordinate', 'Y coordinate', 'Z coordinate'],
@@ -94,7 +96,7 @@ uf.title = "Create a PDB file representing the cone models from the centre of ma
 uf.title_short = "Cone PDB creation."
 uf.add_keyarg(
     name = "cone_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "cone type",
     desc = "The type of cone model to represent.",
     wiz_element_type = "combo",
@@ -108,7 +110,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "scale",
     default = 1.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "scaling factor",
     desc = "Value for scaling the pivot-CoM distance which the size of the cone defaults to."
 )
@@ -116,7 +118,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "cone.pdb",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -126,7 +128,7 @@ uf.add_keyarg(
 
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -136,7 +138,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will overwrite the any pre-existing file."
 )
@@ -183,7 +185,7 @@ uf.title_short = "Number of states."
 uf.add_keyarg(
     name = "N",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "number of states N",
     desc = "The number of states."
 )
@@ -207,7 +209,7 @@ uf.title = "Set the reference domain for the '2-domain' N-state model."
 uf.title_short = "Reference domain identification."
 uf.add_keyarg(
     name = "ref",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "reference frame",
     desc = "The domain which will act as the frame of reference.  This is only valid for the '2-domain' N-state model."
 )
@@ -231,7 +233,7 @@ uf.title_short = "N-state model choice."
 uf.add_keyarg(
     name = "model",
     default = "population",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "model",
     desc = "The name of the preset N-state model.",
     wiz_element_type = "combo",

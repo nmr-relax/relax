@@ -44,7 +44,7 @@ uf.title = "Select which relaxation data to use in the consistency tests by NMR 
 uf.title_short = "Spectrometer selection."
 uf.add_keyarg(
     name = "frq",
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "spectrometer frequency in Hz",
     desc = "The spectrometer frequency in Hz.  This must match the currently loaded data to the last decimal point.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.",
     wiz_element_type = 'combo',

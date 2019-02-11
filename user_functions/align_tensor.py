@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2012,2014 Edward d'Auvergne                              #
+# Copyright (C) 2007-2012,2014,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -43,7 +43,7 @@ uf.title_short = "Alignment tensor copying."
 uf.add_keyarg(
     name = "tensor_from",
     default = None,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source tensor ID",
     desc = "The identification string of the alignment tensor to copy the data from.",
     can_be_none = True
@@ -51,7 +51,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "pipe_from",
     default = None,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The name of the data pipe to copy the alignment tensor data from.",
     wiz_element_type = 'combo',
@@ -61,7 +61,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "tensor_to",
     default = None,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination tensor ID",
     desc = "The identification string of the alignment tensor to copy the data to.",
     can_be_none = True
@@ -69,7 +69,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "pipe_to",
     default = None,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The name of the data pipe to copy the alignment tensor data to.",
     wiz_element_type = 'combo',
@@ -103,7 +103,7 @@ uf.title = "Delete alignment tensor data from the relax data store."
 uf.title_short = "Alignment tensor pipe deletion."
 uf.add_keyarg(
     name = "tensor",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "tensor",
     desc = "The alignment tensor identification string.",
     wiz_element_type = 'combo',
@@ -127,7 +127,7 @@ uf.title_short = "Align tensor display."
 uf.display = True
 uf.add_keyarg(
     name = "tensor",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "tensor",
     desc = "The alignment tensor identification string.",
     wiz_element_type = 'combo',
@@ -157,7 +157,7 @@ uf.title = "Fix all alignment tensors so that they do not change during optimisa
 uf.title_short = "Fix alignment tensors."
 uf.add_keyarg(
     name = "id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "tensor ID",
     desc = "The alignment tensor identification string.",
     wiz_element_type = 'combo',
@@ -168,7 +168,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "fixed",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "fixed flag",
     desc = "The flag specifying if the tensors should be fixed or variable."
 )
@@ -187,14 +187,14 @@ uf.title = "Initialise an alignment tensor."
 uf.title_short = "Alignment tensor initialisation."
 uf.add_keyarg(
     name = "tensor",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "tensor ID",
     desc = "The optional alignment tensor ID string, required if multiple tensors exist per alignment.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID",
     desc = "The alignment ID string that the tensor corresponds to.",
     wiz_element_type = "combo",
@@ -203,16 +203,17 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "domain",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "domain ID",
     desc = "The optional domain ID string that the tensor corresponds to.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "params",
-    py_type = "num_tuple",
+    basic_types = ["number"],
+    container_types = ["tuple"],
+    dim = (5,),
     desc_short = "alignment tensor parameters",
-    dim = 5,
     desc = "The alignment tensor data.",
     wiz_read_only = False,
     can_be_none = True
@@ -220,21 +221,21 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "scale",
     default = 1.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "scale",
     desc = "The alignment tensor eigenvalue scaling value."
 )
 uf.add_keyarg(
     name = "angle_units",
     default = "deg",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "angle units",
     desc = "The units for the angle parameters."
 )
 uf.add_keyarg(
     name = "param_types",
     default = 2,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "parameter types",
     desc = "A flag to select different parameter combinations.",
     wiz_element_type = "combo",
@@ -263,7 +264,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "errors",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "errors flag",
     desc = "A flag which determines if the alignment tensor data or its errors are being input."
 )
@@ -304,7 +305,7 @@ uf.display = True
 uf.add_keyarg(
     name = "basis_set",
     default = "matrix",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "basis set",
     desc = "The basis set to operate with.",
     wiz_element_type = "combo",
@@ -313,7 +314,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "tensors",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "alignment tensor IDs",
     desc = "A list of the tensors to apply the calculation to.  If None, all tensors are used.",
     wiz_element_type = "combo_list",
@@ -324,7 +327,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "angle_units",
     default = "deg",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "angle units",
     desc = "The units for the angle parameters, either 'deg' or 'rad'.",
     wiz_element_type = "combo",
@@ -334,7 +337,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "precision",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     max = 100,
     desc_short = "printout precision",
@@ -403,7 +406,7 @@ uf.title = "Specify that one tensor is a reduction of another."
 uf.title_short = "Specify tensor reductions."
 uf.add_keyarg(
     name = "full_tensor",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "full tensor",
     desc = "The full alignment tensor.",
     wiz_element_type = 'combo',
@@ -412,7 +415,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "red_tensor",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "reduced tensor",
     desc = "The reduced alignment tensor.",
     wiz_element_type = 'combo',
@@ -437,7 +440,7 @@ uf.title = "Set the domain label for the alignment tensor."
 uf.title_short = "Tensor domain labelling."
 uf.add_keyarg(
     name = "tensor",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "tensor ID",
     desc = "The alignment tensor to assign the domain label to.",
     wiz_element_type = 'combo',
@@ -446,7 +449,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "domain",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "domain",
     desc = "The domain label."
 )
@@ -471,7 +474,7 @@ uf.display = True
 uf.add_keyarg(
     name = "basis_set",
     default = "irreducible 5D",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "basis set",
     desc = "The basis set to operate with.",
     wiz_element_type = "combo",
@@ -480,7 +483,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "tensors",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (5,),
     desc_short = "alignment tensor IDs",
     desc = "A list of the tensors to apply the calculation to.  If None, all tensors are used.",
     wiz_element_type = "combo_list",
@@ -491,7 +496,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "precision",
     default = 4,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     max = 100,
     desc_short = "printout precision",

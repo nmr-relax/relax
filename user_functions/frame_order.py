@@ -68,7 +68,7 @@ uf.title_short = "Frame order motional components."
 uf.add_keyarg(
     name = "root",
     default = "decomposed",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "str",
     desc_short = "PDB file root",
     desc = "The file root for the PDB files created.  Each motional component will be represented by a different PDB file appended with '_mode1.pdb', '_mode2.pdb', '_mode3.pdb', etc.",
@@ -76,7 +76,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are to be saved.",
@@ -84,7 +84,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom identification string",
     desc = "The atom identification string to allow the representation to be applied to a subset of all atoms.",
     can_be_none = True
@@ -93,7 +93,7 @@ uf.add_keyarg(
     name = "model",
     default = 1,
     min = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "original structural model",
     desc = "Only one model from an analysed ensemble of structures can be used for the representation, as the decomposition PDB files consist of one model per state.",
     wiz_element_type = "spin"
@@ -101,7 +101,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "total",
     default = None,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "total number of structures",
     desc = "The total number of structures to distribute along the motional modes.  This overrides the fixed angle value.",
     wiz_element_type = "spin",
@@ -110,21 +110,23 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "reverse",
     default = False,
-    py_type = "bool_or_bool_list",
+    basic_types = ["bool"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "reversal of distributed models",
     desc = "Set this to reverse the ordering of the models distributed along the motional mode."
 )
 uf.add_keyarg(
     name = "mirror",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "mirror the distribution",
     desc = "Set this to have the models distributed along the motional mode shift from the negative angle to positive angle, and then return to the negative angle."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will overwrite the any pre-existing file."
 )
@@ -146,7 +148,7 @@ uf.title_short = "Frame order motional distribution."
 uf.add_keyarg(
     name = "file",
     default = "distribution.pdb.gz",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "distribution file",
     desc = "The PDB file for storing the frame order motional distribution.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
@@ -156,7 +158,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are to be located.",
@@ -164,7 +166,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom identification string",
     desc = "The atom identification string to allow the distribution to be a subset of all atoms.",
     can_be_none = True
@@ -174,7 +176,7 @@ uf.add_keyarg(
     default = 1000,
     min = 1,
     max = 1000000,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "total number of structures",
     desc = "The total number of structures to include in the uniform distribution.",
     wiz_element_type = "spin"
@@ -184,7 +186,7 @@ uf.add_keyarg(
     default = 100000,
     min = 1,
     max = 100000000,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "maximum number of rotations",
     desc = "The maximum number of rotations to generate the distribution from.  This prevents the user function from executing for an infinite amount of time.  This occurs whenever a frame order amplitude parameter (cone opening angle or torsion angle) is zero so that the subset of all rotations within the motional distribution is also zero.",
     wiz_element_type = "spin"
@@ -193,7 +195,7 @@ uf.add_keyarg(
     name = "model",
     default = 1,
     min = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "original structural model",
     desc = "Only one model from an analysed ensemble of structures can be used for the distribution, as the distribution PDB file consists of one model per state.",
     wiz_element_type = "spin"
@@ -201,7 +203,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will overwrite the any pre-existing file."
 )
@@ -225,7 +227,7 @@ uf.title_short = "Frame order dynamics PDB representation."
 uf.add_keyarg(
     name = "ave_pos",
     default = "ave_pos",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "str",
     desc_short = "average structure file root",
     desc = "The file root of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
@@ -234,7 +236,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "rep",
     default = "frame_order",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "str",
     desc_short = "PDB representation file root",
     desc = "The file root of the PDB file for the geometric object representation of the frame order dynamics.",
@@ -242,7 +244,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are to be located.",
@@ -251,7 +253,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "compress_type",
     default = 0,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "file compression",
     desc = "The type of compression to use when creating the files.",
     wiz_element_type = "combo",
@@ -270,14 +272,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "size",
     default = 30.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "geometric object size",
     desc = "The size of the geometric object in Angstroms."
 )
 uf.add_keyarg(
     name = "inc",
     default = 36,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "increment number",
     desc = "The number of increments used to create the geometric object.",
     wiz_element_type = "spin"
@@ -286,7 +288,7 @@ uf.add_keyarg(
     name = "model",
     default = 1,
     min = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "structural model",
     desc = "Only one model from an analysed ensemble can be used for the PDB representation of the Monte Carlo simulations of the average domain position, as these consists of one model per simulation.",
     wiz_element_type = "spin"
@@ -294,7 +296,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will overwrite the any pre-existing files."
 )
@@ -320,7 +322,7 @@ uf.title_short = "Eigenframe axis permutation."
 uf.add_keyarg(
     name = "permutation",
     default = "A",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "permutation",
     desc = "Which of the two permutations 'A' or 'B' to create.  Three permutations are possible, and 'A' and 'B' select those which are not the starting combination.",
     wiz_element_type = "combo",
@@ -364,8 +366,9 @@ uf.title = "Set the pivot points for the two body motion in the structural coord
 uf.title_short = "Pivot point setting."
 uf.add_keyarg(
     name = "pivot",
-    py_type = "num_list",
-    dim = 3,
+    basic_types = ["number"],
+    container_types = ["number array"],
+    dim = (3,),
     desc_short = "pivot point",
     desc = "The pivot point for the motion (e.g. the position between the 2 domains in PDB coordinates).",
     can_be_none = True
@@ -375,14 +378,14 @@ uf.add_keyarg(
     default = 1,
     min = 1,
     max = 100,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "pivot point number",
     desc = "The ordinal number of the pivot point.  The value of 1 is for the first pivot point, the value of 2 for the second pivot point, and so on.",
     wiz_element_type = "spin"
 )
 uf.add_keyarg(
     name = "fix",
-    py_type = "bool",
+    basic_types = ["bool"],
     default = False,
     desc_short = "fixed flag",
     desc = "A flag specifying if the pivot point should be fixed during optimisation."
@@ -411,7 +414,7 @@ uf.title_short = "Quadratic integration."
 uf.add_keyarg(
     name = "flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "flag",
     desc = "The flag with if True  will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration."
 )
@@ -431,7 +434,7 @@ uf.title = "Set the reference non-moving domain for the 2-domain frame order the
 uf.title_short = "Reference non-moving domain set up."
 uf.add_keyarg(
     name = "ref",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "non-moving reference domain",
     desc = "The non-moving domain which will act as the frame of reference."
 )
@@ -455,7 +458,7 @@ uf.title = "Select and set up the Frame Order model."
 uf.title_short = "Model choice."
 uf.add_keyarg(
     name = "model",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "Frame Order model",
     desc = "The name of the preset Frame Order model.",
     wiz_element_type = "combo",
@@ -522,7 +525,7 @@ uf.title_short = "Frame order pseudo-Brownian dynamics simulation."
 uf.add_keyarg(
     name = "file",
     default = "simulation.pdb.gz",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "simulation file",
     desc = "The PDB file for storing the frame order pseudo-Brownian dynamics simulation.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
@@ -532,7 +535,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are to be located.",
@@ -541,7 +544,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "step_size",
     default = 2.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "angle of rotation",
     desc = "The rotation will be of a random direction but with this fixed angle.  The value is in degrees."
 )
@@ -550,7 +553,7 @@ uf.add_keyarg(
     default = 10,
     min = 1,
     max = 1000000,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "number of steps per snapshot",
     desc = "The number of steps in the simulation when snapshots will be taken."
 )
@@ -559,7 +562,7 @@ uf.add_keyarg(
     default = 1000,
     min = 1,
     max = 1000000,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "total number of snapshots",
     desc = "The total number of snapshots to take before stopping the simulation.",
     wiz_element_type = "spin"
@@ -568,7 +571,7 @@ uf.add_keyarg(
     name = "model",
     default = 1,
     min = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "original structural model",
     desc = "Only one model from an analysed ensemble of structures can be used for the pseudo-Brownian simulation, as the simulation and corresponding PDB file consists of one model per simulation.",
     wiz_element_type = "spin"
@@ -576,7 +579,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will overwrite the any pre-existing file."
 )
@@ -612,7 +615,7 @@ uf.add_keyarg(
     default = 200,
     min = 3,
     max = 10000000,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "maximum number of Sobol' points",
     desc = "The maximum number of integration points to use in the Sobol' sequence during optimisation.  This can be considered as the number of molecular structures in an ensemble used form a uniform distribution of the dynamics.",
     wiz_element_type = "spin"
@@ -622,7 +625,7 @@ uf.add_keyarg(
     default = 1,
     min = 1,
     max = 100000,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "oversampling factor",
     desc = "The generation of the Sobol' sequence oversamples as N * Ov * 10**M, where N is the maximum number of points, Ov is the oversamling value, and M is the number of dimensions or torsion-tilt angles used in the system.",
     wiz_element_type = "spin"

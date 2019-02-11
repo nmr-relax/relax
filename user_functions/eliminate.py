@@ -37,7 +37,7 @@ uf.title_short = "Model elimination."
 uf.display = True
 uf.add_keyarg(
     name = "function",
-    py_type = "func",
+    basic_types = ["func"],
     arg_type = "func",
     desc_short = "function",
     desc = "An optional user supplied function for model elimination.",
@@ -45,7 +45,8 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "args",
-    py_type = "tuple",
+    container_types = ["tuple"],
+    dim = (None,),
     arg_type = "func args",
     desc_short = "function arguments",
     desc = "A tuple of arguments used by the optional function for model elimination.",

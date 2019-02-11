@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013,2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -51,7 +51,7 @@ uf.title = "Read chemical shifts from a file."
 uf.title_short = "Chemical shift reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the peak list of generic formatted file containing the chemical shifts.",
@@ -60,7 +60,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -68,7 +68,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin ID string column",
     desc = "The spin ID string column used by the generic file format (an alternative to the mol, res, and spin name and number columns).",
@@ -76,7 +76,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "molecule name column",
     desc = "The molecule name column used by the generic file format (alternative to the spin ID column).",
@@ -84,7 +84,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue number column",
     desc = "The residue number column used by the generic file format (alternative to the spin ID column).",
@@ -92,7 +92,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue name column",
     desc = "The residue name column used by the generic file format (alternative to the spin ID column).",
@@ -100,7 +100,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin number column",
     desc = "The spin number column used by the generic file format (alternative to the spin ID column).",
@@ -108,7 +108,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin name column",
     desc = "The spin name column used by the generic file format (alternative to the spin ID column).",
@@ -116,7 +116,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator used by the generic format (the default is white space).",
@@ -124,7 +124,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string used to restrict the loading of data to certain spin subsets.",
     can_be_none = True

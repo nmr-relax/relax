@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2009,2012-2014 Edward d'Auvergne               #
+# Copyright (C) 2003-2005,2007-2009,2012-2014,2019 Edward d'Auvergne          #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -59,7 +59,7 @@ uf.title = "Visualise the file within Grace."
 uf.title_short = "Grace execution."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -69,7 +69,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "grace",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -78,7 +78,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "grace_exe",
     default = "xmgrace",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Grace executable file",
     desc = "The Grace executable file.",
@@ -107,7 +107,7 @@ uf.title_short = "Grace file creation."
 uf.add_keyarg(
     name = "x_data_type",
     default = "res_num",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "x data type",
     desc = "The data type for the X-axis (no regular expression is allowed).",
     wiz_element_type = 'combo',
@@ -115,7 +115,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "y_data_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "y data type",
     desc = "The data type for the Y-axis (no regular expression is allowed).",
     wiz_element_type = 'combo',
@@ -123,7 +123,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string.",
     can_be_none = True
@@ -131,7 +131,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "plot_data",
     default = "value",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "plot data",
     desc = "The data to use for the plot.",
     wiz_element_type = "combo",
@@ -150,7 +150,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "norm_type",
     default = "first",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "normalisation point",
     desc = "How the graph should be normalised, if the norm flag is set.",
     wiz_element_type = "combo",
@@ -166,7 +166,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -176,7 +176,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "grace",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -185,14 +185,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the file to be overwritten."
 )
 uf.add_keyarg(
     name = "norm",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "normalisation flag",
     desc = "A flag which, if set to True, will cause all graphs to be normalised to 1.  This is for the normalisation of series type data.  The point for normalisation is set with the norm_type argument."
 )

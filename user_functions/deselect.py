@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004,2006,2008-2010,2012 Edward d'Auvergne               #
+# Copyright (C) 2003-2004,2006,2008-2010,2012,2019 Edward d'Auvergne          #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -70,7 +70,7 @@ uf.title_short = "Interatomic data container deselection."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id1",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID string",
     desc = "The spin ID string of the first spin of the interatomic data container.",
@@ -78,7 +78,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id2",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID string",
     desc = "The spin ID string of the second spin of the interatomic data container.",
@@ -87,7 +87,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "boolean",
     default = "AND",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "boolean operator",
     desc = "The boolean operator specifying how interatomic data containers should be selected.",
     wiz_element_type = "combo",
@@ -104,7 +104,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "change_all",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "change all",
     desc = "A flag specifying if all other interatomic data containers should be changed."
 )
@@ -134,7 +134,7 @@ uf.title_short = "Deselecting spins from file."
 uf.display = True
 uf.add_keyarg(
     name = "file",
-    py_type = "str_or_inst",
+    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the list of spins to deselect.",
@@ -142,7 +142,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -150,7 +150,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin ID string column",
     desc = "The spin ID string column (an alternative to the mol, res, and spin name and number columns).",
@@ -158,7 +158,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "molecule name column",
     desc = "The molecule name column (alternative to the spin_id_col).",
@@ -166,7 +166,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue number column",
     desc = "The residue number column (alternative to the spin_id_col).",
@@ -174,7 +174,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue name column",
     desc = "The residue name column (alternative to the spin_id_col).",
@@ -182,7 +182,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin number column",
     desc = "The spin number column (alternative to the spin_id_col).",
@@ -190,7 +190,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin name column",
     desc = "The spin name column (alternative to the spin_id_col).",
@@ -198,7 +198,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
@@ -206,7 +206,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin ID string to restrict the loading of data to certain spin subsets.",
@@ -215,7 +215,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "boolean",
     default = "AND",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "boolean operator",
     desc = "The boolean operator specifying how spins should be selected.",
     wiz_element_type = "combo",
@@ -232,7 +232,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "change_all",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "change all",
     desc = "A flag specifying if all other spins should be changed."
 )
@@ -265,7 +265,7 @@ uf.title_short = "Spin selection reversal."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string.",
     can_be_none = True
@@ -293,14 +293,14 @@ uf.display = True
 uf.add_keyarg(
     name = "ratio",
     default = 10.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "ratio",
     desc = "The signal to noise ratio to compare to."
 )
 uf.add_keyarg(
     name = "operation",
     default = "<",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "comparison operation",
     desc = "The comparison operation by which to deselect the spins.",
     wiz_element_type = "combo",
@@ -325,7 +325,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "all_sn",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "all S/N per spin flag",
     desc = "A flag specifying if all the signal to noise ratios per spin should match the comparison operator, of if just a single comparison match is enough."
 )
@@ -354,7 +354,7 @@ uf.title_short = "Spin deselection."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string.",
     can_be_none = True
@@ -362,7 +362,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "boolean",
     default = "AND",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "boolean operator",
     desc = "The boolean operator specifying how spins should be deselected.",
     wiz_element_type = "combo",
@@ -379,7 +379,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "change_all",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "change all",
     desc = "A flag specifying if all other spins should be changed."
 )

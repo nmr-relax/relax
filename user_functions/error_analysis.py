@@ -46,7 +46,7 @@ uf.title = "Parameter error estimation via the covariance matrix."
 uf.title_short = "Covariance matrix parameter error estimation."
 uf.add_keyarg(
     name = "epsrel",
-    py_type = "float",
+    basic_types = ["float"],
     default = 0.0,
     desc_short = "parameter to remove linear-dependent columns.",
     desc = "The parameter to remove linear-dependent columns when J is rank deficient.",
@@ -55,7 +55,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "amount of information to print.",
     desc = "The higher the value, the greater the verbosity.",
     can_be_none = False

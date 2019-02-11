@@ -34,13 +34,13 @@ uf.title = "Definition of structural domains."
 uf.title_short = "Domain definition."
 uf.add_keyarg(
     name = "id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "domain ID string",
     desc = "The ID string used to identify molecular domains.",
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin ID string of all atomic members of the domain.",

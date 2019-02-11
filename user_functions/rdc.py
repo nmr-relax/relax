@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2004,2007-2015 Edward d'Auvergne                         #
+# Copyright (C) 2002-2004,2007-2015,2019 Edward d'Auvergne                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -53,7 +53,7 @@ uf.title_short = "RDC back calculation."
 uf.display = True
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -78,7 +78,7 @@ uf.title_short = "RDC Q factor calculation."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string for restricting to subset of all selected spins.",
     can_be_none = True
@@ -86,7 +86,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
 )
@@ -111,7 +111,7 @@ uf.title = "Copy RDC data from one data pipe to another."
 uf.title_short = "RDC copying."
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source pipe",
     desc = "The name of the pipe to copy the RDC data from.",
     wiz_element_type = 'combo',
@@ -120,7 +120,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination pipe",
     desc = "The name of the pipe to copy the RDC data to.",
     wiz_element_type = 'combo',
@@ -129,7 +129,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -140,7 +140,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "back_calc",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "back-calculated data flag",
     desc = "A flag which if True will cause any back-calculated RDCs present to also be copied with the real values and errors."
 )
@@ -170,7 +170,7 @@ uf.title_short = "Correlation plot generation."
 uf.add_keyarg(
     name = "format",
     default = "grace",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "format",
     desc = "The format of the plot data.",
     wiz_element_type = "combo",
@@ -180,14 +180,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "title",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alternative plot title",
     desc = "The title for the plot, overriding the default.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "subtitle",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alternative plot subtitle",
     desc = "The subtitle for the plot, overriding the default.",
     can_be_none = True
@@ -195,7 +195,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "rdc_corr_plot.agr",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Grace file name",
     desc = "The name of the Grace file to create.",
@@ -204,7 +204,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -213,7 +213,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will cause the file to be overwritten."
 )
@@ -241,7 +241,7 @@ uf.title = "Delete the RDC data corresponding to the alignment ID."
 uf.title_short = "RDC deletion."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string of the data to delete.",
     wiz_element_type = 'combo',
@@ -269,7 +269,7 @@ uf.title_short = "RDC data display."
 uf.display = True
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -279,7 +279,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "bc",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "back-calculation flag",
     desc = "A flag which if set will display the back-calculated rather than measured RDCs."
 )
@@ -302,7 +302,7 @@ uf.title = "Read the RDC data from file."
 uf.title_short = "RDC data reading."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -310,7 +310,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the RDC data.",
@@ -318,7 +318,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -327,7 +327,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "data_type",
     default = "D",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "data type",
     desc = "Specify if the RDC data is in the D or 2D format, or the T = J + D format.",
     wiz_element_type = "combo",
@@ -337,7 +337,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id1_col",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     desc_short = "first spin ID column",
     desc = "The spin ID string column for the first spin."
@@ -345,28 +345,28 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id2_col",
     default = 2,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     desc_short = "second spin ID column",
     desc = "The spin ID string column for the second spin."
 )
 uf.add_keyarg(
     name = "data_col",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "data column",
     desc = "The RDC data column.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "error_col",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "error column",
     desc = "The experimental error column.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
     wiz_element_type = "combo",
@@ -378,14 +378,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "neg_g_corr",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "negative gyromagnetic ratio correction",
     desc = "A flag which is used to correct for the negative gyromagnetic ratio of 15N.  If set to True, all RDC values will be inverted prior to being stored in the relax data store."
 )
 uf.add_keyarg(
     name = "absolute",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "absolute RDCs",
     desc = "A flag which indicates that the loaded RDCs are are signless."
 )
@@ -420,7 +420,7 @@ uf.title = "Set the errors for the RDCs."
 uf.title_short = "RDC error setting."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The optional alignment ID string.",
     wiz_element_type = 'combo',
@@ -430,7 +430,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id1",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID string",
     desc = "The optional spin ID string of the first spin.",
@@ -439,7 +439,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id2",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID string",
     desc = "The optional spin ID string of the second spin.",
@@ -449,7 +449,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "sd",
     default = 1.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "RDC error (Hz)",
     desc = "The RDC standard deviation value in Hertz."
 )
@@ -468,7 +468,7 @@ uf.title = "Set optimisation weights on the RDC data."
 uf.title_short = "RDC weighting."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -477,7 +477,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string.",
     can_be_none = True
@@ -485,7 +485,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "weight",
     default = 1.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "weight",
     desc = "The weighting value."
 )
@@ -504,7 +504,7 @@ uf.title = "Write the RDC data to file."
 uf.title_short = "RDC data writing."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -513,7 +513,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -521,7 +521,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -530,14 +530,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "bc",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "back-calculation flag",
     desc = "A flag which if set will write out the back-calculated rather than measured RDCs."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will cause the file to be overwritten."
 )

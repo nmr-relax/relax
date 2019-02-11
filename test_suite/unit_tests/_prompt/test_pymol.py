@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxNoneStrError, RelaxNoneListNumError, RelaxStrError
+from lib.errors import RelaxListNumError, RelaxStrError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -84,7 +84,7 @@ class Test_pymol(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_start_name=data[1])
+            self.assertRaises(RelaxStrError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_start_name=data[1])
 
 
     def test_macro_apply_argfail_colour_start_rgb(self):
@@ -97,7 +97,7 @@ class Test_pymol(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneListNumError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_start_rgb=data[1])
+            self.assertRaises(RelaxListNumError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_start_rgb=data[1])
 
 
     def test_macro_apply_argfail_colour_end_name(self):
@@ -110,7 +110,7 @@ class Test_pymol(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_end_name=data[1])
+            self.assertRaises(RelaxStrError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_end_name=data[1])
 
 
     def test_macro_apply_argfail_colour_end_rgb(self):
@@ -123,7 +123,7 @@ class Test_pymol(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneListNumError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_end_rgb=data[1])
+            self.assertRaises(RelaxListNumError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_end_rgb=data[1])
 
 
     def test_macro_apply_argfail_colour_list(self):
@@ -136,4 +136,4 @@ class Test_pymol(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_list=data[1])
+            self.assertRaises(RelaxStrError, self.pymol_fns.macro_apply, data_type='a', style='x', colour_list=data[1])

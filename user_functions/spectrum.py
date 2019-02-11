@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005,2008-2014 Edward d'Auvergne                         #
+# Copyright (C) 2004-2005,2008-2014,2019 Edward d'Auvergne                    #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
@@ -55,13 +55,13 @@ uf.title_short = "Baseplane RMSD setting."
 uf.add_keyarg(
     name = "error",
     default = 0.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "error",
     desc = "The baseplane RMSD error value."
 )
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum ID string",
     desc = "The spectrum ID string.",
     wiz_element_type = 'combo',
@@ -70,7 +70,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string.",
     can_be_none = True
@@ -91,7 +91,7 @@ uf.title = "Delete the spectral data corresponding to the spectrum ID string."
 uf.title_short = "Spectral data deletion."
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum ID string",
     desc = "The unique spectrum ID string.",
     wiz_element_type = 'combo',
@@ -118,7 +118,9 @@ uf.title = "Perform an error analysis for peak intensities."
 uf.title_short = "Peak intensity error analysis."
 uf.add_keyarg(
     name = "subset",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "subset spectrum IDs",
     desc = "The list of spectrum ID strings to restrict the error analysis to.",
     wiz_combo_iter = spectrum.get_ids,
@@ -203,7 +205,7 @@ uf.title = "Set the number of summed points used in volume integration of a give
 uf.title_short = "Number of integration points."
 uf.add_keyarg(
     name = "N",
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     max = 10000000,
     desc_short = "number of summed points",
@@ -211,7 +213,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum ID string",
     desc = "The spectrum ID string.",
     wiz_element_type = 'combo',
@@ -220,7 +222,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "Restrict setting the number to certain spins.",
     can_be_none = True
@@ -242,7 +244,9 @@ uf.title = "Read peak intensities from a file."
 uf.title_short = "Peak intensity reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str_or_str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     arg_type = "file sel multi",
     desc_short = "file name(s)",
     desc = "The name of the file or the list of files containing the intensity data.",
@@ -251,7 +255,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -259,14 +263,16 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str_or_str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "spectrum ID string",
     desc = "The unique spectrum ID string or list of strings to associate with the peak intensity values.  If multiple files are given, then each file should have a corresponding spectrum ID string.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the IDs are auto generated in form of Z_A{i}."
 )
 uf.add_keyarg(
     name = "dim",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     desc_short = "spectral dimension to read",
     desc = "Associate the data with the spins of any dimension in the peak list.  This defaults to w1, the heteronucleus in HSQC type experiments."
@@ -274,7 +280,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "int_method",
     default = "height",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "peak integration method",
     desc = "The method by which peaks were integrated.",
     wiz_element_type = "combo",
@@ -283,14 +289,16 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "int_col",
-    py_type = "int_or_int_list",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "intensity column",
     desc = "The optional column containing the peak intensity data (used by the generic intensity file format, or if the intensities are in a non-standard column).",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "spin_id_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin ID string column",
     desc = "The spin ID string column used by the generic intensity file format (an alternative to the mol, res, and spin name and number columns).",
@@ -298,7 +306,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "molecule name column",
     desc = "The molecule name column used by the generic intensity file format (alternative to the spin ID column).",
@@ -306,7 +314,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue number column",
     desc = "The residue number column used by the generic intensity file format (alternative to the spin ID column).",
@@ -314,7 +322,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue name column",
     desc = "The residue name column used by the generic intensity file format (alternative to the spin ID column).",
@@ -322,7 +330,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin number column",
     desc = "The spin number column used by the generic intensity file format (alternative to the spin ID column).",
@@ -330,7 +338,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin name column",
     desc = "The spin name column used by the generic intensity file format (alternative to the spin ID column).",
@@ -338,7 +346,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator used by the generic intensity format (the default is white space).",
@@ -346,14 +354,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string used to restrict the loading of data to certain spin subsets.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "ncproc",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "Bruker ncproc parameter",
     desc = "The Bruker specific FID intensity scaling factor.",
     can_be_none = True
@@ -397,7 +405,7 @@ uf.title = "Read peak assignments from a file and create spins."
 uf.title_short = "Peak assignments reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the intensity data.",
@@ -406,7 +414,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -415,14 +423,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dim",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     desc_short = "spectral dimension to read",
     desc = "Associate the data with the spins of any dimension in the peak list.  This defaults to w1, the heteronucleus in HSQC type experiments."
 )
 uf.add_keyarg(
     name = "spin_id_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin ID string column",
     desc = "The spin ID string column used by the generic intensity file format (an alternative to the mol, res, and spin name and number columns).",
@@ -430,7 +438,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "molecule name column",
     desc = "The molecule name column used by the generic intensity file format (alternative to the spin ID column).",
@@ -438,7 +446,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue number column",
     desc = "The residue number column used by the generic intensity file format (alternative to the spin ID column).",
@@ -446,7 +454,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue name column",
     desc = "The residue name column used by the generic intensity file format (alternative to the spin ID column).",
@@ -454,7 +462,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin number column",
     desc = "The spin number column used by the generic intensity file format (alternative to the spin ID column).",
@@ -462,7 +470,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin name column",
     desc = "The spin name column used by the generic intensity file format (alternative to the spin ID column).",
@@ -470,7 +478,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator used by the generic intensity format (the default is white space).",
@@ -478,7 +486,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string used to restrict the loading of data to certain spin subsets.",
     can_be_none = True
@@ -516,7 +524,9 @@ uf.title = "Specify which spectra are replicates of each other."
 uf.title_short = "Replicate spectra."
 uf.add_keyarg(
     name = "spectrum_ids",
-    py_type = "str_or_str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "spectrum ID strings",
     desc = "The list of replicated spectra ID strings.",
     wiz_element_type = 'combo_list',

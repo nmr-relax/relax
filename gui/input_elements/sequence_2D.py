@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012,2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012,2014,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,7 +29,7 @@ import wx.lib.mixins.listctrl
 # relax module imports.
 from gui.input_elements.sequence import Sequence, Sequence_list_ctrl, Sequence_window
 from gui.string_conv import int_to_gui
-from lib.check_types import is_list_of_lists
+from lib.check_types import is_list, is_list_of_lists
 from status import Status; status = Status()
 
 
@@ -243,12 +243,26 @@ class Sequence_window_2D(Sequence_window):
         if values == None:
             return
 
+        # Convert to a list of lists if needed.
+        if is_list_of_lists(values):
+            pass
+        elif is_list(values):
+            values = [values]
+
         # Not a list of lists.
         if not is_list_of_lists(values):
             return
 
+        # Incorrect dimensions.
+        if self.dim[0] != None and len(values) != self.dim[0]:
+            return
+
         # Loop over the entries.
         for i in range(len(values)):
+            # Incorrect dimensions.
+            if self.dim[1] != None and len(values[i]) != self.dim[1]:
+                continue
+
             # Append a row for variable dimension sequences (the first element already exists).
             if self.variable_length and i != 0:
                 self.sequence.InsertStringItem(i, int_to_gui(i+1))

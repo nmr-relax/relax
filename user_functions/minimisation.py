@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2005,2008-2009,2012,2014 Edward d'Auvergne               #
+# Copyright (C) 2002-2005,2008-2009,2012,2014,2019 Edward d'Auvergne          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -44,7 +44,7 @@ uf.display = True
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
 )
@@ -68,7 +68,7 @@ uf.display = True
 uf.add_keyarg(
     name = "min_algor",
     default = "newton",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "minimisation algorithm",
     desc = "The optimisation algorithm to use.",
     wiz_element_type = 'combo',
@@ -112,7 +112,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "line_search",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "line search algorithm",
     desc = "The line search algorithm which will only be used in combination with the line search and conjugate gradient methods.  This will default to the More and Thuente line search.",
     wiz_element_type = 'combo',
@@ -135,7 +135,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "hessian_mod",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "hessian modification",
     desc = "The Hessian modification.  This will only be used in the algorithms which use the Hessian, and defaults to Gill, Murray, and Wright modified Cholesky algorithm.",
     wiz_element_type = 'combo',
@@ -158,7 +158,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "hessian_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "hessian type",
     desc = "The Hessian type.  This will only be used in a few trust region algorithms, and defaults to BFGS.",
     wiz_element_type = 'combo',
@@ -176,13 +176,13 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "func_tol",
     default = 1e-25,
-    py_type = "num",
+    basic_types = ["float"],
     desc_short = "function tolerance",
     desc = "The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.  The default value is 1e-25."
 )
 uf.add_keyarg(
     name = "grad_tol",
-    py_type = "num",
+    basic_types = ["float"],
     desc_short = "gradient tolerance",
     desc = "The gradient tolerance.  Minimisation is terminated if the current gradient value is less than the tolerance.  The default value is None.",
     can_be_none = True
@@ -190,7 +190,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "max_iter",
     default = 10000000,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     max = 1000000000,
     desc_short = "maximum number of iterations",
@@ -199,21 +199,21 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "constraints",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "constraints flag",
     desc = "A boolean flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=True)."
 )
 uf.add_keyarg(
     name = "scaling",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "diagonal scaling flag",
     desc = "The diagonal scaling boolean flag.  The default that scaling is on (scaling=True)."
 )
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
 )
@@ -327,14 +327,18 @@ uf.title_short = "Grid search optimisation."
 uf.display = True
 uf.add_keyarg(
     name = "lower",
-    py_type = "num_list",
+    basic_types = ["number"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "lower bounds",
     desc = "An array of the lower bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "upper",
-    py_type = "num_list",
+    basic_types = ["number"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "upper bounds",
     desc = "An array of the upper bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
     can_be_none = True
@@ -342,7 +346,9 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "inc",
     default = 21,
-    py_type = "int_or_int_list",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "incrementation value",
     desc = "The number of increments to search over.  If a single integer is given then the number of increments will be equal in all dimensions.  Different numbers of increments in each direction can be set if 'inc' is set to an array of integers of length equal to the number of parameters.",
     none_elements = True
@@ -350,21 +356,21 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
 )
 uf.add_keyarg(
     name = "constraints",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "constraints flag",
     desc = "A boolean flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=True)."
 )
 uf.add_keyarg(
     name = "skip_preset",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "skip preset parameter flag",
     desc = "This argument, when True, allows any parameter which already has a value set to be skipped in the grid search.  This value will be overridden and turned off when a zooming grid search is active."
 )
@@ -389,7 +395,7 @@ uf.title_short = "Zooming grid search activation."
 uf.add_keyarg(
     name = "level",
     default = 0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "zoom level",
     desc = "The zooming grid search level.  This can be any number, positive or negative."
 )

@@ -62,26 +62,26 @@ uf.title = "Add an atom."
 uf.title_short = "Atom creation."
 uf.add_keyarg(
     name = "mol_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "molecule name",
     desc = "The name of molecule container to create or add the atom to.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom name",
     desc = "The atom name."
 )
 uf.add_keyarg(
     name = "res_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "residue name",
     desc = "The residue name."
 )
 uf.add_keyarg(
     name = "res_num",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "residue number",
@@ -89,14 +89,16 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pos",
-    py_type = "float_object",
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = [(3,), (None, 3)],
     desc_short = "atomic position",
     desc = "The atomic coordinates.  For specifying different coordinates for each model of the ensemble, a list of lists can be supplied.",
     list_titles = ['X coordinate', 'Y coordinate', 'Z coordinate']
 )
 uf.add_keyarg(
     name = "element",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "element",
     desc = "The element name.",
     wiz_element_type = "combo",
@@ -105,28 +107,28 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "atom_num",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "atom number",
     desc = "The optional atom number.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "chain_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "optional chain ID",
     desc = "The optional chain ID string.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "segment_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "optional segment ID",
     desc = "The optional segment ID string.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "pdb_record",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "optional PDB record name",
     desc = "The optional PDB record name, e.g. 'ATOM' or 'HETATM'.",
     can_be_none = True
@@ -147,7 +149,7 @@ uf.title = "Define an alpha helix."
 uf.title_short = "helix creation."
 uf.add_keyarg(
     name = "start",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "starting residue number",
@@ -155,7 +157,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "end",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "ending residue number",
@@ -163,7 +165,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "mol name",
     desc = "Define the secondary structure for a specific molecule.",
     can_be_none = True
@@ -184,7 +186,7 @@ uf.title = "Add a new model."
 uf.title_short = "Model creation."
 uf.add_keyarg(
     name = "model_num",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "model number",
     desc = "The number of the new model."
 )
@@ -204,7 +206,7 @@ uf.title = "Define a beta sheet."
 uf.title_short = "beta sheet creation."
 uf.add_keyarg(
     name = "strand",
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     max = 10000,
     desc_short = "strand number",
@@ -212,14 +214,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sheet_id",
-    py_type = "str",
+    basic_types = ["str"],
     default = 'A',
     desc_short = "sheet ID",
     desc = "The sheet identifier.  To match the PDB standard, sheet IDs should range from 'A' to 'Z'.",
 )
 uf.add_keyarg(
     name = "strand_count",
-    py_type = "int",
+    basic_types = ["int"],
     default = 2,
     min = 2,
     max = 10000,
@@ -228,7 +230,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "strand_sense",
-    py_type = "int",
+    basic_types = ["int"],
     default = 0,
     min = -1,
     max = 1,
@@ -237,7 +239,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "start",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "starting residue number",
@@ -245,7 +247,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "end",
-    py_type = "int",
+    basic_types = ["int"],
     min = -10000,
     max = 10000,
     desc_short = "ending residue number",
@@ -253,21 +255,21 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "mol name",
     desc = "Define the secondary structure for a specific molecule.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "current_atom",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "current strand atom name",
     desc = "The name of the first atom in the current strand, to link the current back to the previous strand.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "prev_atom",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "prev strand atom name",
     desc = "The name of the last atom in the previous strand, to link the current back to the previous strand.",
     can_be_none = True
@@ -288,7 +290,9 @@ uf.title = "Create an interatomic distance fluctuation correlation matrix."
 uf.title_short = "Interatomic distance fluctuation correlation matrix."
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "The data pipes to generate the interatomic distance fluctuation correlation matrix for.",
     wiz_combo_iter = pipe_names,
@@ -297,28 +301,32 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "model list for each data pipe",
     desc = "The list of models for each data pipe to generate the interatomic distance fluctuation correlation matrix for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "molecule list for each data pipe",
     desc = "The list of molecules for each data pipe to generate the interatomic distance fluctuation correlation matrix for.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom identification string",
     desc = "The atom identification string of the coordinates of interest.  This can be used to restrict the correlation matrix to one atom per residue, for example.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "measure",
-    py_type = "str",
+    basic_types = ["str"],
     default = "distance",
     desc_short = "measure",
     desc = "The type of fluctuation to investigate.  This allows for both interatomic distance and vector angle fluctuations to be calculated.",
@@ -328,7 +336,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str_or_inst",
+    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the text file to create.",
@@ -336,7 +344,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "format",
-    py_type = "str",
+    basic_types = ["str"],
     default = "text",
     desc_short = "output format",
     desc = "The output format.  For all formats other than the text file, a second file will be created with the same name as the text file but with the appropriate file extension added.",
@@ -346,7 +354,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to save the file to.",
@@ -355,7 +363,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause any pre-existing files to be overwritten."
 )
@@ -390,14 +398,14 @@ uf.title = "Calculate the centre of mass (CoM) for all structures."
 uf.title_short = "Centre of mass calculation."
 uf.add_keyarg(
     name = "model",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "model",
     desc = "The optional structural model number to restrict the calculation of the centre of mass to.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom ID string",
     desc = "The atom identification string to restrict the CoM calculation to.",
     can_be_none = True
@@ -421,14 +429,14 @@ uf.title = "Connect two atoms."
 uf.title_short = "Atom connection."
 uf.add_keyarg(
     name = "index1",
-    py_type = "int",
+    basic_types = ["int"],
     max = 10000,
     desc_short = "index 1",
     desc = "The global index of the first atom."
 )
 uf.add_keyarg(
     name = "index2",
-    py_type = "int",
+    basic_types = ["int"],
     max = 10000,
     desc_short = "index 2",
     desc = "The global index of the second atom."
@@ -448,14 +456,14 @@ uf.title_short = "Diffusion tensor PDB file creation."
 uf.add_keyarg(
     name = "scale",
     default = 1.8e-6,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "scaling factor",
     desc = "Value for scaling the diffusion rates."
 )
 uf.add_keyarg(
     name = "file",
     default = "tensor.pdb",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -464,7 +472,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to place the file into.",
@@ -473,7 +481,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will overwrite the any pre-existing file."
 )
@@ -509,7 +517,7 @@ uf.title_short = "Rotor PDB representation."
 uf.add_keyarg(
     name = "file",
     default = "rotor.pdb",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -518,7 +526,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to place the file into.",
@@ -527,56 +535,59 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "rotor_angle",
     default = 0.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "rotor angle",
     desc = "The angle of the rotor motion in degrees."
 )
 uf.add_keyarg(
     name = "axis",
-    py_type = "float_array",
-    dim = 3,
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = (3,),
     desc_short = "rotor axis vector",
     desc = "The vector defining the rotor axis."
 )
 uf.add_keyarg(
     name = "axis_pt",
-    py_type = "float_array",
-    dim = 3,
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = (3,),
     desc_short = "rotor axis point",
     desc = "A point lying anywhere on the rotor axis.  This is used to define the position of the axis in 3D space."
 )
 uf.add_keyarg(
     name = "centre",
-    py_type = "float_array",
-    dim = 3,
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = (3,),
     desc_short = "central point",
     desc = "The central point of the representation.  If this point is not on the rotor axis, then the closest point on the axis will be used for the centre."
 )
 uf.add_keyarg(
     name = "span",
     default = 2e-9,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "representation span",
     desc = "The distance from the central point to the rotor blades (meters)."
 )
 uf.add_keyarg(
     name = "blade_length",
     default = 5e-10,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "blade length",
     desc = "The length of the representative rotor blades."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will overwrite the file if it already exists."
 )
 uf.add_keyarg(
     name = "staggered",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "staggered flag",
     desc = "A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap."
 )
@@ -603,14 +614,14 @@ uf.title_short = "XH vector distribution PDB representation."
 uf.add_keyarg(
     name = "length",
     default = 2e-9,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "vector length",
     desc = "The length of the vectors in the PDB representation (meters)."
 )
 uf.add_keyarg(
     name = "file",
     default = "XH_dist.pdb",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -619,7 +630,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to place the file into.",
@@ -628,14 +639,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "symmetry",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "symmetry flag",
     desc = "A flag which if True will create a second chain with reversed XH bond orientations."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will overwrite the file if it already exists."
 )
@@ -658,7 +669,7 @@ uf.title = "Extract the atomic positions from the loaded structures for the give
 uf.title_short = "Atomic position extraction."
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string.",
     can_be_none = True
@@ -666,7 +677,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "ave_pos",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "average position flag",
     desc = "A flag specifying if the position of the atom is to be averaged across models."
 )
@@ -692,14 +703,14 @@ uf.title = "Delete structural information."
 uf.title_short = "Structure deletion."
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom ID string",
     desc = "The atom identification string.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "model",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "structural model",
     desc = "Individual structural models from a loaded ensemble can be deleted by specifying the model number.",
     can_be_none = True
@@ -707,14 +718,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
 )
 uf.add_keyarg(
     name = "spin_info",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "spin information flag",
     desc = "A flag which if True will cause all structural information in the spin containers and interatomic data containers to be deleted as well.  If False, then only the 3D structural data will be deleted."
 )
@@ -761,7 +772,9 @@ uf.title = "Determine the rotational and translational displacement between a se
 uf.title_short = "Rotational and translational displacement."
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "The data pipes to determine the displacements for.",
     wiz_combo_iter = pipe_names,
@@ -770,28 +783,34 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "model list for each data pipe",
     desc = "The list of models for each data pipe to determine the displacements for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "molecule list for each data pipe",
     desc = "The list of molecules for each data pipe to determine the displacements for.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom identification string",
     desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "centroid",
-    py_type = "float_array",
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = (None,),
     desc_short = "centroid position",
     desc = "The alternative position of the centroid.",
     can_be_none = True
@@ -819,7 +838,9 @@ uf.title = "Find the pivot point of the motion of a set of structures."
 uf.title_short = "Pivot search."
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "The data pipes to use in the motional pivot algorithm.",
     wiz_combo_iter = pipe_names,
@@ -828,28 +849,34 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "model list for each data pipe",
     desc = "The list of models for each data pipe to use in the motional pivot algorithm.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "molecule list for each data pipe",
     desc = "The list of molecules for each data pipe to use in the motional pivot algorithm.  This allows differently named molecules in the same or different data pipes to be used.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom ID string",
     desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "init_pos",
-    py_type = "float_array",
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = (None,),
     desc_short = "initial pivot position",
     desc = "The initial position of the pivot.",
     can_be_none = True
@@ -857,14 +884,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "func_tol",
     default = 1e-5,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "function tolerance",
     desc = "The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.  The default value is 1e-5."
 )
 uf.add_keyarg(
     name = "box_limit",
     default = 200,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "box constraint limit",
     desc = "The pivot point is constrained withing a box of +/- x Angstrom the using the logarithmic barrier function together with simplex optimisation.  This argument is the value of x."
 )
@@ -888,7 +915,7 @@ uf.title = "Load spins from the structure into the relax data store."
 uf.title_short = "Loading spins from structure."
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin identification string for the selective loading of certain spins into the relax data store.",
@@ -897,7 +924,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "from_mols",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "molecules to load spins from",
     desc = "The list of similar, but not necessarily identical molecules to load spin information from.",
     wiz_read_only = False,
@@ -905,7 +934,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_target",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "target molecule name",
     desc = "The name of target molecule container, overriding the name of the loaded structures.",
     can_be_none = True
@@ -913,14 +942,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "ave_pos",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "average position flag",
     desc = "A flag specifying if the position of the atom is to be averaged across models."
 )
 uf.add_keyarg(
     name = "spin_num",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "spin number loading flag",
     desc = "A flag specifying if the spin number should be loaded."
 )
@@ -961,7 +990,9 @@ uf.title = "Calculate the mean structure from all loaded models."
 uf.title_short = "Mean structure."
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "The data pipes containing structures to average.",
     wiz_combo_iter = pipe_names,
@@ -970,35 +1001,39 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "model list for each data pipe",
     desc = "The list of models for each data pipe containing structures to average.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "molecule list for each data pipe",
     desc = "The list of molecules for each data pipe to average.  This allows differently named molecules in the same or different data pipes to be averaged.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom identification string",
     desc = "The atom identification string of the coordinates of interest.  This can be used to restrict the averaged structure to one atom per residue, for example.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_mol_name",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "averaged molecule name",
     desc = "Set the optional name of the averaged molecule.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_model_num",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "averaged model number",
     desc = "Set the optional model number of the averaged molecule.",
     can_be_none = True
@@ -1019,7 +1054,9 @@ uf.title = "Principle component analysis (PCA) of the motions in an ensemble of 
 uf.title_short = "Structural PCA."
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "The data pipes to perform the PC analysis on.",
     wiz_combo_iter = pipe_names,
@@ -1028,21 +1065,27 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "model list for each data pipe",
     desc = "The list of models for each data pipe to perform the PC analysis on.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "molecule list for each data pipe",
     desc = "The list of molecules for each data pipe to perform the PC analysis on.  The PCA will only be calculated for atoms with identical residue name and number and atom name.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "obs_pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "observing data pipes",
     desc = "The data pipes in the PC analysis which will have zero weight.  These structures are for comparison.",
     wiz_combo_iter = pipe_names,
@@ -1051,21 +1094,25 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "obs_models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "observing model list for each data pipe",
     desc = "The list of models for each data pipe in the PC analysis which will have zero weight.  These structures are for comparison.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "obs_molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "observing molecule list for each data pipe",
     desc = "The list of molecules for each data pipe in the PC analysis which will have zero weight.  These structures are for comparison.  The PCA will only be calculated for atoms with identical residue name and number and atom name.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom identification string",
     desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
@@ -1073,7 +1120,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "algorithm",
     default = "eigen",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "PCA algorithm",
     desc = "The PCA algorithm used to find the principle components of.  This can be either 'eigen' for an eigenvalue/eigenvector decomposition, or 'svd' for a singular value decomposition.",
     wiz_element_type = "combo",
@@ -1082,7 +1129,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "num_modes",
-    py_type = "int",
+    basic_types = ["int"],
     default = 4,
     min = 1,
     max = 1000,
@@ -1092,7 +1139,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "format",
     default = "grace",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "graph format",
     desc = "The format of the plot data.",
     wiz_element_type = "combo",
@@ -1102,7 +1149,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to save the graphs into.",
@@ -1131,7 +1178,7 @@ uf.title = "Reading structures from Gaussian log files."
 uf.title_short = "Gaussian log structure reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the Gaussian log file.",
@@ -1140,7 +1187,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -1148,14 +1195,18 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "set_mol_name",
-    py_type = "str_or_str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "setting of molecule names",
     desc = "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_model_num",
-    py_type = "int_or_int_list",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "setting of model numbers",
     desc = "Set the model numbers of the loaded molecules.  This can be a single number or list of numbers.",
     can_be_none = True
@@ -1163,7 +1214,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
 )
@@ -1190,7 +1241,7 @@ uf.title = "Reading structures from PDB files."
 uf.title_short = "PDB reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -1199,7 +1250,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -1207,35 +1258,43 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "read_mol",
-    py_type = "int_or_int_list",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "molecule number to read",
     desc = "If set, only the given molecule(s) will be read.  The molecules are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_mol_name",
-    py_type = "str_or_str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "setting of molecule names",
     desc = "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "read_model",
-    py_type = "int_or_int_list",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "model to read",
     desc = "If set, only the given model number(s) from the PDB file will be read.  Otherwise all models will be read.  This can be a single number or list of numbers.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_model_num",
-    py_type = "int_or_int_list",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "setting of model numbers",
     desc = "Set the model numbers of the loaded molecules.  If unset, then the PDB model numbers will be preserved if they exist.  This can be a single number or list of numbers.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "alt_loc",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alternate location indicator",
     desc = "The PDB ATOM record 'Alternate location indicator' field value.",
     can_be_none = True
@@ -1243,14 +1302,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
 )
 uf.add_keyarg(
     name = "merge",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "merge structure flag",
     desc = "A flag which if set to True will try to merge the PDB structure into the currently loaded structures."
 )
@@ -1292,7 +1351,7 @@ uf.title = "Reading structures from XYZ files."
 uf.title_short = "XYZ reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the XYZ file.",
@@ -1301,7 +1360,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -1309,28 +1368,36 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "read_mol",
-    py_type = "int_or_int_list",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "molecule number to read",
     desc = "If set, only the given molecule(s) will be read.  The molecules are numbered consecutively from 1.  If unset, then all molecules will be loaded.  By providing a list of numbers such as [1, 2], multiple molecules will be read.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_mol_name",
-    py_type = "str_or_str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "setting of molecule names",
     desc = "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "read_model",
-    py_type = "int_or_int_list",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "model to read",
     desc = "If set, only the given model number(s) from the PDB file will be read.  Otherwise all models will be read.  This can be a single number or list of numbers.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "set_model_num",
-    py_type = "int_or_int_list",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "setting of model numbers",
     desc = "Set the model numbers of the loaded molecules.  If unset, then the PDB model numbers will be preserved if they exist.  This can be a single number or list of numbers.",
     can_be_none = True
@@ -1338,7 +1405,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
 )
@@ -1377,7 +1444,9 @@ uf.title = "Determine the RMSD between structures."
 uf.title_short = "Structural RMSD."
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "The data pipes to determine the RMSD for.",
     wiz_combo_iter = pipe_names,
@@ -1386,21 +1455,25 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "model list for each data pipe",
     desc = "The list of models for each data pipe to determine the RMSD for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "molecule list for each data pipe",
     desc = "The list of molecules for each data pipe to determine the RMSD for.  The RMSD will only be calculated for atoms with identical residue name and number and atom name.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom identification string",
     desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
@@ -1408,7 +1481,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "atomic",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "atomic-level RMSD flag",
     desc = "A flag which if if True will allow for per-atom RMSDs to be additionally calculated."
 )
@@ -1438,30 +1511,32 @@ uf.title = "Rotate the internal structural object about the given origin by the 
 uf.title_short = "Structure rotation."
 uf.add_keyarg(
     name = "R",
-    py_type = "float_matrix",
     default = eye(3),
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
     dim = (3, 3),
     desc_short = "rotation matrix",
     desc = "The rotation matrix in forwards rotation notation."
 )
 uf.add_keyarg(
     name = "origin",
-    py_type = "float_array",
-    dim = 3,
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = (3,),
     desc_short = "origin of rotation",
     desc = "The origin or pivot of the rotation.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "model",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "model",
     desc = "The model to rotate (which if not set will cause all models to be rotated).",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom ID string",
     desc = "The atom identification string.",
     can_be_none = True
@@ -1482,7 +1557,9 @@ uf.title = "Multiple sequence alignment (MSA) of structural data."
 uf.title_short = "Multiple sequence alignment."
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "The data pipes to use in the sequence alignment.",
     wiz_combo_iter = pipe_names,
@@ -1491,14 +1568,18 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "model list for each data pipe",
     desc = "The list of models for each data pipe to use in the sequence alignment.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "molecule list for each data pipe",
     desc = "The list of molecules for each data pipe to use in the sequence alignment.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
@@ -1506,7 +1587,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "msa_algorithm",
     default = "Central Star",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "multiple sequence alignment (MSA) algorithm",
     desc = "The multiple sequence alignment (MSA) algorithm used to align all the primary sequence of all structures of interest.",
     wiz_element_type = "combo",
@@ -1516,7 +1597,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "pairwise_algorithm",
     default = None,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "pairwise alignment algorithm",
     desc = "The pairwise alignment algorithm to align each pair of sequences.",
     wiz_element_type = "combo",
@@ -1527,7 +1608,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "matrix",
     default = None,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "substitution matrix",
     desc = "The substitution matrix to use in the pairwise sequence alignment algorithm.",
     wiz_element_type = "combo",
@@ -1538,28 +1619,28 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "gap_open_penalty",
     default = 10.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "gap opening penalty",
     desc = "The penalty for introducing gaps, as a positive number."
 )
 uf.add_keyarg(
     name = "gap_extend_penalty",
     default = 1.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "gap extension penalty",
     desc = "The penalty for extending a gap, as a positive number."
 )
 uf.add_keyarg(
     name = "end_gap_open_penalty",
     default = 0.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "end gap opening penalty",
     desc = "The optional penalty for opening a gap at the end of a sequence."
 )
 uf.add_keyarg(
     name = "end_gap_extend_penalty",
     default = 0.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "end gap extension penalty",
     desc = "The optional penalty for extending a gap at the end of a sequence."
 )
@@ -1593,7 +1674,9 @@ uf.title = "Superimpose a set of structures."
 uf.title_short = "Structural superimposition."
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "The data pipes to use in the superimposition.",
     wiz_combo_iter = pipe_names,
@@ -1602,28 +1685,34 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "model list for each data pipe",
     desc = "The list of lists of models for each data pipe to use in the superimposition.  The number of elements in the first dimension must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "molecule list for each data pipe",
     desc = "The list of molecules for each data pipe to use in the superimposition.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom ID string",
     desc = "The atom identification string of the coordinates of interest.  This allows a subset of all residues or atoms to be used in the superimposition.  For example for protein backbone heavy atoms, this can be set to '@N,C,CA,O'.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "displace_id",
-    py_type = "str_or_str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "displacement ID string(s)",
     desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  If supplied as a list of IDs, then the number of items must match the number of structures.",
     can_be_none = True
@@ -1631,7 +1720,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "method",
     default = "fit to mean",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "superimposition method",
     desc = "The superimposition method.",
     wiz_element_type = "combo",
@@ -1640,7 +1729,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "centre_type",
-    py_type = "str",
+    basic_types = ["str"],
     default = "centroid",
     desc_short = "centre type",
     desc = "The type of centre to user for the superimposition, i.e. either the standard centroid superimposition or a superimposition using the centre of mass (CoM).",
@@ -1650,7 +1739,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "centroid",
-    py_type = "float_array",
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = (None,),
     desc_short = "centroid position",
     desc = "The alternative position of the centroid.",
     can_be_none = True
@@ -1691,21 +1782,22 @@ uf.title = "Laterally displace the internal structural object by the translation
 uf.title_short = "Structure translation."
 uf.add_keyarg(
     name = "T",
-    py_type = "float_array",
-    dim = 3,
+    basic_types = ["float"],
+    container_types = ["list", "numpy array"],
+    dim = (3,),
     desc_short = "translation vector",
     desc = "The translation vector."
 )
 uf.add_keyarg(
     name = "model",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "model",
     desc = "The model to translate (which if not set will cause all models to be translate).",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom ID string",
     desc = "The atom identification string.",
     can_be_none = True
@@ -1725,7 +1817,9 @@ uf.title = "Create a PDB representation of motion between structures using a web
 uf.title_short = "Web of motion between models."
 uf.add_keyarg(
     name = "pipes",
-    py_type = "str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,),
     desc_short = "data pipes",
     desc = "The data pipes to generate the web between.",
     wiz_combo_iter = pipe_names,
@@ -1734,28 +1828,32 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "models",
-    py_type = "int_list_of_lists",
+    basic_types = ["int"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "model list for each data pipe",
     desc = "The list of models for each data pipe to generate the web between.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list_of_lists",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = (None,None),
     desc_short = "molecule list for each data pipe",
     desc = "The list of molecules for each data pipe to generate the web between.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom identification string",
     desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str_or_inst",
+    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -1764,7 +1862,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to save the file to.",
@@ -1773,7 +1871,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause any pre-existing files to be overwritten."
 )
@@ -1802,7 +1900,7 @@ uf.title = "Writing structures to a PDB file."
 uf.title_short = "PDB writing."
 uf.add_keyarg(
     name = "file",
-    py_type = "str_or_inst",
+    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -1811,7 +1909,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -1819,7 +1917,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "model_num",
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "model number",
     desc = "Restrict the writing of structural data to a single model in the PDB file.",
     can_be_none = True
@@ -1827,7 +1925,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "compress_type",
     default = 0,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "compression type",
     desc = "The type of compression to use when creating the file.",
     wiz_element_type = "combo",
@@ -1846,7 +1944,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause any pre-existing files to be overwritten."
 )

@@ -51,7 +51,7 @@ uf.title_short = "Saved state loading."
 uf.add_keyarg(
     name = "state",
     default = "state.bz2",
-    py_type = "str_or_inst",
+    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The file name, which can be a string or a file descriptor object, of a saved program state.",
@@ -61,7 +61,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The name of the directory in which the file is found.",
@@ -70,7 +70,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A boolean flag which if True will cause the current program state to be overwritten."
 )
@@ -102,7 +102,7 @@ uf.title_short = "Saving state."
 uf.add_keyarg(
     name = "state",
     default = "state.bz2",
-    py_type = "str_or_inst",
+    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The file name, which can be a string or a file descriptor object, to save the current program state in.",
@@ -111,7 +111,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The name of the directory in which to place the file.",
@@ -120,7 +120,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "compress_type",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "compression type",
     desc = "The type of compression to use when creating the file.",
     wiz_element_type = "combo",
@@ -130,7 +130,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A boolean flag which if set to True will cause the file to be overwritten."
 )

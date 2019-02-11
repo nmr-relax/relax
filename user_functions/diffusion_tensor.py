@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2010,2012 Edward d'Auvergne                              #
+# Copyright (C) 2003-2010,2012,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -42,7 +42,7 @@ uf.title = "Copy diffusion tensor data from one data pipe to another."
 uf.title_short = "Diffusion tensor data copying."
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The name of the data pipe to copy the diffusion tensor data from.",
     wiz_element_type = 'combo',
@@ -52,7 +52,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The name of the data pipe to copy the diffusion tensor data to.",
     wiz_element_type = 'combo',
@@ -115,43 +115,45 @@ uf.title = "Initialise the diffusion tensor."
 uf.title_short = "Diffusion tensor set up."
 uf.add_keyarg(
     name = "params",
-    py_type = "num_or_num_tuple",
-    dim = [4, 6],
+    basic_types = ["number"],
+    container_types = ["tuple"],
+    dim = [(), (4,), (6,)],
     desc_short = "diffusion tensor parameters",
     desc = "The diffusion tensor data.",
+    none_elements = True,
     can_be_none = True
 )
 uf.add_keyarg(
     name = "time_scale",
     default = 1.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "time scale",
     desc = "The correlation time scaling value."
 )
 uf.add_keyarg(
     name = "d_scale",
     default = 1.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "D scale",
     desc = "The diffusion tensor eigenvalue scaling value."
 )
 uf.add_keyarg(
     name = "angle_units",
     default = "deg",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "angle units",
     desc = "The units for the angle parameters."
 )
 uf.add_keyarg(
     name = "param_types",
     default = 0,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "parameter types",
     desc = "A flag to select different parameter combinations."
 )
 uf.add_keyarg(
     name = "spheroid_type",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spheroid type",
     desc = "A string which, if supplied together with spheroid parameters, will restrict the tensor to either being 'oblate' or 'prolate'.",
     can_be_none = True
@@ -159,7 +161,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "fixed",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "fixed flag",
     desc = "A flag specifying whether the diffusion tensor is fixed or can be optimised."
 )
