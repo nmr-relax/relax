@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxNoneNumError, RelaxStrError
+from lib.errors import RelaxNumError, RelaxStrError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -59,7 +59,7 @@ class Test_relax_disp(TestCase):
                 continue
 
         # The argument test.
-        self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.cpmg_setup, spectrum_id='test', cpmg_frq=data[1])
+        self.assertRaises(RelaxNumError, self.relax_disp_fns.cpmg_setup, spectrum_id='test', cpmg_frq=data[1])
 
 
     def test_relax_cpmg_setup_argfail_spectrum_id(self):

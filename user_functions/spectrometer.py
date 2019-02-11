@@ -42,7 +42,7 @@ uf.title = "Set the spectrometer proton frequency of the experiment."
 uf.title_short = "Spectrometer frequency setup."
 uf.add_keyarg(
     name = "id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "experiment ID",
     desc = "The experiment identification string to set the frequency of.",
     wiz_element_type = 'combo',
@@ -50,14 +50,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "frq",
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "spectrometer frequency",
     desc = "The spectrometer frequency.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."
 )
 uf.add_keyarg(
     name = "units",
     default = "Hz",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "frequency units",
     desc = "The units of frequency.",
     wiz_element_type = "combo",
@@ -85,13 +85,13 @@ uf.title = "Specify the temperature of an experiment."
 uf.title_short = "Experimental temperature."
 uf.add_keyarg(
     name = "id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "experiment ID string",
     desc = "The experiment identification string."
 )
 uf.add_keyarg(
     name = "temp",
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "experimental temperature",
     desc = "The temperature of the experiment in Kalvin."
 )

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012,2014,2016 Edward d'Auvergne                              #
+# Copyright (C) 2012,2014,2016,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -121,7 +121,7 @@ class User_functions(GuiTestCase):
         self.assertEqual(points[1][2], -4.0)
 
         # Set the points to a number of invalid values, checking that they are ignored.
-        for val in ['2', 'die', '[1, 2, 3]', '[1]', '[[1, 2, 3], 1, 2, 3], [1, 2, 3]]']:
+        for val in ['2', 'die', '[1, 2, 3', '[1]', '[[1, 2, 3], 1, 2, 3], [1, 2, 3]]']:
             uf.page.uf_args['point'].SetValue(str_to_gui(val))
             uf.page.uf_args['point'].selection_win_show()
             uf.page.uf_args['point'].selection_win_data()
@@ -231,10 +231,11 @@ class User_functions(GuiTestCase):
         uf.page.uf_args['pos'].selection_win_data()
         pos = uf.page.uf_args['pos'].GetValue()
         sys.stdout.write("Return: %40s\n" % repr(pos))
-        self.assertEqual(len(pos), 3)
-        self.assertEqual(pos[0], 1.0)
-        self.assertEqual(pos[1], 2.0)
-        self.assertEqual(pos[2], -3.0)
+        self.assertEqual(len(pos), 1)
+        self.assertEqual(len(pos[0]), 3)
+        self.assertEqual(pos[0][0], 1.0)
+        self.assertEqual(pos[0][1], 2.0)
+        self.assertEqual(pos[0][2], -3.0)
 
         # Set the pos to a number of invalid values, checking that they are ignored.
         for val in ['die', '[1, 2, 3', '[[1, 2, 3], 1, 2, 3], [1, 2, 3]]']:
@@ -257,10 +258,10 @@ class User_functions(GuiTestCase):
             uf.page.uf_args['pos'].selection_win_data()
             pos = uf.page.uf_args['pos'].GetValue()
             sys.stdout.write("Return: %40s\n" % repr(pos))
-            #self.assertEqual(len(pos), 3)
-            self.assertEqual(pos[0], 1.0)
-            #self.assertEqual(pos[1], None)
-            #self.assertEqual(pos[2], None)
+            #self.assertEqual(len(pos), 1)
+            self.assertEqual(pos[0][0], 1.0)
+            #self.assertEqual(pos[0][1], None)
+            #self.assertEqual(pos[0][2], None)
 
 
     def test_structure_pdb_read(self):

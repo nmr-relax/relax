@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxNoneStrError, RelaxStrError
+from lib.errors import RelaxStrError
 from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
 
 # Unit test imports.
@@ -59,7 +59,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.molecule_fns.copy, pipe_from=data[1], mol_from='#Old mol', mol_to='#Old mol')
+            self.assertRaises(RelaxStrError, self.molecule_fns.copy, pipe_from=data[1], mol_from='#Old mol', mol_to='#Old mol')
 
 
     def test_copy_argfail_mol_from(self):
@@ -85,7 +85,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.molecule_fns.copy, pipe_to=data[1], mol_from='#Old mol', mol_to='#New mol2')
+            self.assertRaises(RelaxStrError, self.molecule_fns.copy, pipe_to=data[1], mol_from='#Old mol', mol_to='#New mol2')
 
 
     def test_copy_argfail_mol_to(self):
@@ -101,7 +101,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.molecule_fns.copy, mol_from='#Old mol', mol_to=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.copy, mol_from='#Old mol', mol_to=data[1])
 
 
     def test_create_argfail_mol_name(self):
@@ -140,7 +140,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.molecule_fns.display, mol_id=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.display, mol_id=data[1])
 
 
     def test_name_argfail_mol_id(self):
@@ -153,7 +153,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.molecule_fns.name, mol_id=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.name, mol_id=data[1])
 
 
     def test_name_argfail_name(self):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009,2012 Edward d'Auvergne                              #
+# Copyright (C) 2007-2009,2012,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxListStrError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from lib.errors import RelaxIntError, RelaxListStrError, RelaxStrError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 # Unit test imports.
@@ -59,7 +59,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, pipe_from=data[1], spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+            self.assertRaises(RelaxStrError, self.spin_fns.copy, pipe_from=data[1], spin_from='#Old mol:1@111', spin_to='#Old mol:2')
 
 
     def test_copy_argfail_spin_from(self):
@@ -85,7 +85,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, pipe_to=data[1], spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+            self.assertRaises(RelaxStrError, self.spin_fns.copy, pipe_to=data[1], spin_from='#Old mol:1@111', spin_to='#Old mol:2')
 
 
     def test_copy_argfail_spin_to(self):
@@ -98,7 +98,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to=data[1])
+            self.assertRaises(RelaxStrError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to=data[1])
 
 
     def test_create_argfail_spin_num(self):
@@ -111,7 +111,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spin_fns.create, spin_num=data[1], spin_name='NH')
+            self.assertRaises(RelaxIntError, self.spin_fns.create, spin_num=data[1], spin_name='NH')
 
 
     def test_create_argfail_spin_name(self):
@@ -124,7 +124,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.create, spin_name=data[1], spin_num=1)
+            self.assertRaises(RelaxStrError, self.spin_fns.create, spin_name=data[1], spin_num=1)
 
 
     def test_create_argfail_res_num(self):
@@ -137,7 +137,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spin_fns.create, res_num=data[1], spin_name='NH')
+            self.assertRaises(RelaxIntError, self.spin_fns.create, res_num=data[1], spin_name='NH')
 
 
     def test_create_argfail_res_name(self):
@@ -150,7 +150,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.create, res_name=data[1], spin_num=1, spin_name='NH')
+            self.assertRaises(RelaxStrError, self.spin_fns.create, res_name=data[1], spin_num=1, spin_name='NH')
 
 
     def test_create_argfail_mol_name(self):
@@ -163,7 +163,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.create, mol_name=data[1], spin_num=1, spin_name='NH')
+            self.assertRaises(RelaxStrError, self.spin_fns.create, mol_name=data[1], spin_num=1, spin_name='NH')
 
 
     def test_create_pseudo_argfail_spin_name(self):
@@ -189,7 +189,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spin_fns.create_pseudo, spin_num=data[1], spin_name='Q')
+            self.assertRaises(RelaxIntError, self.spin_fns.create_pseudo, spin_num=data[1], spin_name='Q')
 
 
     def test_create_pseudo_argfail_res_id(self):
@@ -202,7 +202,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.create_pseudo, res_id=data[1], spin_name='Q')
+            self.assertRaises(RelaxStrError, self.spin_fns.create_pseudo, res_id=data[1], spin_name='Q')
 
 
     def test_create_pseudo_argfail_members(self):
@@ -254,7 +254,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.display, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.spin_fns.display, spin_id=data[1])
 
 
     def test_name_argfail_spin_id(self):
@@ -267,7 +267,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.name, name='N', spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.spin_fns.name, name='N', spin_id=data[1])
 
 
     def test_name_argfail_name(self):
@@ -293,7 +293,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.number, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.spin_fns.number, spin_id=data[1])
 
 
     def test_number_argfail_number(self):
@@ -306,4 +306,4 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spin_fns.number, spin_id='@111', number=data[1])
+            self.assertRaises(RelaxIntError, self.spin_fns.number, spin_id='@111', number=data[1])

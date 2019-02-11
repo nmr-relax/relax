@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2004,2007-2010,2012-2014 Edward d'Auvergne               #
+# Copyright (C) 2002-2004,2007-2010,2012-2014,2019 Edward d'Auvergne          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -53,7 +53,7 @@ uf.title_short = "Interatomic interaction copying."
 uf.display = True
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The data pipe containing the interatomic data container from which the data will be copied.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -63,7 +63,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The data pipe to copy the interatomic data container to.  This defaults to the current data pipe.",
     wiz_element_type = 'combo',
@@ -73,7 +73,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id1",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID",
     desc = "The spin ID of the first spin.",
@@ -82,7 +82,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id2",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID",
     desc = "The spin ID of the first spin.",
@@ -111,7 +111,7 @@ uf.title_short = "Interatomic interaction setup."
 uf.add_keyarg(
     name = "spin_id1",
     default = "@N",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID string",
     desc = "The spin ID string for the first spin of the interatomic interaction.",
@@ -120,7 +120,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id2",
     default = "@H",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID string",
     desc = "The spin ID string for the second spin of the interatomic interaction.",
@@ -129,20 +129,20 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "direct_bond",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "directly bonded atoms flag",
     desc = "This is a flag which if True means that the two spins are directly bonded.  This flag is useful to simplify the set up of the main heteronuclear relaxation mechanism or one-bond residual dipolar couplings."
 )
 uf.add_keyarg(
     name = "spin_selection",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "selection from the spins",
     desc = "Define the interatomic data container selection based on the spin selection.  If either spin is deselected, the interatomic container will also be deselected.  Otherwise the container will be selected."
 )
 uf.add_keyarg(
     name = "pipe",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alternative data pipe",
     desc = "The data pipe to create the interatomic data container for.  This defaults to the current data pipe if not supplied.",
     wiz_element_type = 'combo',
@@ -177,7 +177,7 @@ uf.title = "Read inter-spin distances from a file."
 uf.title_short = "Interatomic distance reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the averaged distance data.",
@@ -185,7 +185,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -194,7 +194,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "unit",
     default = "meter",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "distance unit",
     desc = "The unit of distance.  The default is meter, but Angstrom can also be specified.",
     wiz_element_type = "combo",
@@ -204,7 +204,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id1_col",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     desc_short = "first spin ID column",
     desc = "The spin ID string column for the first spin."
@@ -212,7 +212,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id2_col",
     default = 2,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     desc_short = "second spin ID column",
     desc = "The spin ID string column for the second spin."
@@ -220,14 +220,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "data_col",
     default = 3,
-    py_type = "int",
+    basic_types = ["int"],
     min = 1,
     desc_short = "data column",
     desc = "The distance data column."
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
     wiz_element_type = "combo",
@@ -260,7 +260,7 @@ uf.title_short = "Interatomic distance setup."
 uf.add_keyarg(
     name = "spin_id1",
     default = "@N",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID string",
     desc = "The spin identification string for the first spin of the dipole pair."
@@ -268,7 +268,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id2",
     default = "@H",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID string",
     desc = "The spin identification string for the second spin of the dipole pair."
@@ -276,14 +276,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "ave_dist",
     default = NH_BOND_LENGTH,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "averaged interatomic distance",
     desc = "The r^-3 averaged distance between the two spins to be used in the magnetic dipole constant, defaulting to meters."
 )
 uf.add_keyarg(
     name = "unit",
     default = "meter",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "distance unit",
     desc = "The unit of distance (the default is 'meter').",
     wiz_element_type = "combo",
@@ -315,7 +315,7 @@ uf.title_short = "Interatomic unit vector calculation."
 uf.add_keyarg(
     name = "ave",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "average vector flag",
     desc = "A flag which if True will cause the bond vectors from all models to be averaged.  If vectors from only one model is extracted, this will have no effect."
 )

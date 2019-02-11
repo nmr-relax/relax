@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from lib.errors import RelaxIntError, RelaxStrError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -71,7 +71,7 @@ class Test_noe(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.noe_fns.read_restraints, file='noes', dir=data[1])
+            self.assertRaises(RelaxStrError, self.noe_fns.read_restraints, file='noes', dir=data[1])
 
 
     def test_read_restraints_argfail_proton1_col(self):
@@ -84,7 +84,7 @@ class Test_noe(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.noe_fns.read_restraints, file='noes', proton1_col=data[1])
+            self.assertRaises(RelaxIntError, self.noe_fns.read_restraints, file='noes', proton1_col=data[1])
 
 
     def test_read_restraints_argfail_proton2_col(self):
@@ -97,7 +97,7 @@ class Test_noe(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.noe_fns.read_restraints, file='noes', proton2_col=data[1])
+            self.assertRaises(RelaxIntError, self.noe_fns.read_restraints, file='noes', proton2_col=data[1])
 
 
     def test_read_restraints_argfail_lower_col(self):
@@ -110,7 +110,7 @@ class Test_noe(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.noe_fns.read_restraints, file='noes', lower_col=data[1])
+            self.assertRaises(RelaxIntError, self.noe_fns.read_restraints, file='noes', lower_col=data[1])
 
 
     def test_read_restraints_argfail_upper_col(self):
@@ -123,7 +123,7 @@ class Test_noe(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.noe_fns.read_restraints, file='noes', upper_col=data[1])
+            self.assertRaises(RelaxIntError, self.noe_fns.read_restraints, file='noes', upper_col=data[1])
 
 
     def test_read_restraints_argfail_sep(self):
@@ -136,7 +136,7 @@ class Test_noe(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.noe_fns.read_restraints, file='noes', sep=data[1])
+            self.assertRaises(RelaxStrError, self.noe_fns.read_restraints, file='noes', sep=data[1])
 
 
     def test_spectrum_type_argfail_spectrum_type(self):

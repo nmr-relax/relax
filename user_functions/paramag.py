@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2004,2007-2010,2012 Edward d'Auvergne                    #
+# Copyright (C) 2002-2004,2007-2010,2012,2019 Edward d'Auvergne               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -42,8 +42,9 @@ uf.title = "Specify which atom is the paramagnetic centre."
 uf.title_short = "Paramagnetic centre selection."
 uf.add_keyarg(
     name = "pos",
-    py_type = "num_list",
-    dim = 3,
+    basic_types = ["number"],
+    container_types = ["list", "numpy array"],
+    dim = (3,),
     desc_short = "atomic position",
     desc = "The atomic position of the paramagnetic centre.",
     list_titles = ['X coordinate', 'Y coordinate', 'Z coordinate'],
@@ -51,14 +52,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "atom_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "atom ID string",
     desc = "The atom ID string.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "pipe",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "data pipe",
     desc = "The data pipe containing the structures to extract the centre from.",
     wiz_element_type = 'combo',
@@ -68,28 +69,28 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print out."
 )
 uf.add_keyarg(
     name = "fix",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "fix flag",
     desc = "A flag specifying if the paramagnetic centre should be fixed during optimisation."
 )
 uf.add_keyarg(
     name = "ave_pos",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "average position flag",
     desc = "A flag specifying if the position of the atom is to be averaged across all models."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will cause the current paramagnetic centre to be overwritten."
 )

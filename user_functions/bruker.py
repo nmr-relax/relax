@@ -49,13 +49,13 @@ uf.title = "Read a Bruker Dynamics Center (DC) relaxation data file."
 uf.title_short = "Read a Bruker Dynamics Center file."
 uf.add_keyarg(
     name = "ri_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "relaxation data ID string",
     desc = "The relaxation data ID string.  This must be a unique identifier."
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the Bruker Dynamics Center file containing the relaxation data.",
@@ -63,7 +63,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",

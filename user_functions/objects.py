@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012,2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -391,22 +391,103 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, py_type=None, arg_type=None, dim=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_filesel_wildcard=FileSelectorDefaultWildcardStr, wiz_filesel_style=None, wiz_dirsel_style=DD_DEFAULT_STYLE, wiz_read_only=None, wiz_filesel_preview=True, can_be_none=False, can_be_empty=False, none_elements=False):
+    def add_keyarg(self, name=None, default=None, basic_types=[], container_types=[], dim=(), arg_type=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_filesel_wildcard=FileSelectorDefaultWildcardStr, wiz_filesel_style=None, wiz_dirsel_style=DD_DEFAULT_STYLE, wiz_read_only=None, wiz_filesel_preview=True, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
+
+        Types
+        =====
+
+        The basic Python data types allowed for the argument are specified via the basic_types argument.
+        The currently supported values include:
+
+            - 'all':            Special value used to deactivate type-checking.
+            - 'bool':           Boolean values (True and False).
+            - 'float':          Floating point numbers.
+            - 'func':           Python function objects.
+            - 'int':            Integer numbers.
+            - 'number':         Special value allowing for any number type.
+            - 'str':            String objects.
+            - 'file object':    File objects (instance of file or any object with a write() method).
+
+        The 'number' value is special in that it allows for both 'int' and 'float' values.  If the
+        argument should be a higher rank object, then the container_types argument should be supplied.
+        The allowed values currently include:
+
+            - 'all':            Special value used to deactivate type-checking.
+            - 'list':           Python lists.
+            - 'number array':   Special value meaning both 'list' and 'numpy array'.
+            - 'numpy array':    NumPy array objects.
+            - 'set':            Python sets.
+            - 'tuple':          Python tuples.
+
+        Here, the 'number array' is also special and allows for both 'list' and 'numpy array'
+        containers.  Note that only the basic types 'float', 'int', and 'number' are allowed with this
+        value.
+
+
+        Rank and dimensionality
+        =======================
+
+        To distinguish between basic Python data types and higher rank container types, as well as
+        fixing the dimensionality of the higher rank objects, the 'dim' parameter should be supplied.
+        This should be a tuple with elements consisting of integers or None.  If multiple ranks or
+        dimensionality are allowed, then a list of tuples can be supplied.
+
+
+        Rank
+        ----
+
+        The number of elements of the 'dim' tuples define the rank.  For example a number is rank 0, a
+        vector is rank 1, and a matrix is rank 2.
+
+
+        Dimensionality
+        --------------
+
+        The dimensionality, or number of elements, for each rank are fixed by supplying integers in the
+        'dim' tuple.  If the dimensionality can be variable, the value of None should be supplied
+        instead.
+
+
+        Examples
+        --------
+
+        For basic Python data types, use the empty tuple:
+
+            - dim=()
+
+        For a list of basic data types of unknown length, use:
+
+            - dim=(None,)
+
+        For a numpy array of 5 elements, use:
+
+            - dim=(5,)
+
+        For a numpy 3D matrix, use:
+
+            - dim=(3,3)
+
+        For a simple string or list of string, use:
+
+            - dim=[(), (None,)]
+
 
         @keyword name:                  The name of the argument.
         @type name:                     str
         @keyword default:               The default value of the argument.
         @type default:                  anything
-        @keyword py_type:               The Python object type that the argument must match (taking the can_be_none flag into account).
-        @type py_type:                  str
+        @keyword dim:                   The dimensions of the object to check.
+        @type dim:                      tuple of (int or None) or list of tuples of (int or None)
+        @keyword basic_types:           The types of values are allowed for the argument.
+        @type basic_types:              list of str
+        @keyword container_types:       The container types allowed for the argument.
+        @type container_types:          list of str
         @keyword arg_type:              The type of argument.  This is reserved for special UI elements:
                                             - 'file sel' will indicate to certain UIs that a file selection dialog is required.
                                             - 'dir' will cause the argument to not be shown in certain UIs, as this indicates that the user function already has a 'file sel' type argument and hence a directory is not required.
                                             - 'dir sel' will indicate to certain UIs that a dir selection dialog is required.
         @type arg_type:                 str
-        @keyword dim:                   The fixed dimensions that a list or tuple must conform to.  For a 1D sequence, this can be a single value or a tuple of possible sizes.  For a 2D sequence (a numpy matrix or list of lists), this must be a tuple of the fixed dimension sizes, e.g. a 3x5 matrix should be specified as (3, 5).
-        @type dim:                      int, tuple of int or None
         @keyword min:                   The minimum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
         @type min:                      int
         @keyword max:                   The maximum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
@@ -448,12 +529,14 @@ class Uf_container(object):
         # Check that the args have been properly supplied.
         if name == None:
             raise RelaxError("The 'name' argument must be supplied.")
-        if py_type == None:
-            raise RelaxError("The 'py_type' argument must be supplied.")
         if desc_short == None:
             raise RelaxError("The 'desc_short' argument must be supplied.")
         if desc == None:
             raise RelaxError("The 'desc' argument must be supplied.")
+        if not isinstance(basic_types, list):
+            raise RelaxError("The 'basic_types' argument must be a list.")
+        if not isinstance(container_types, list):
+            raise RelaxError("The 'container_types' argument must be a list.")
 
         # Check the file selection dialog.
         if arg_type == "file sel" and wiz_filesel_style == None:
@@ -466,9 +549,10 @@ class Uf_container(object):
         # Add the data.
         arg['name'] = name
         arg['default'] = default
-        arg['py_type'] = py_type
-        arg['arg_type'] = arg_type
         arg['dim'] = dim
+        arg['basic_types'] = basic_types
+        arg['container_types'] = container_types
+        arg['arg_type'] = arg_type
         arg['min'] = min
         arg['max'] = max
         arg['desc_short'] = desc_short

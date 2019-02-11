@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2004,2007-2010,2012-2013 Edward d'Auvergne               #
+# Copyright (C) 2002-2004,2007-2010,2012-2013,2019 Edward d'Auvergne          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -68,7 +68,7 @@ uf.title = "Copy the molecule, residue, and spin sequence data from one data pip
 uf.title_short = "Sequence data copying."
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The name of the data pipe to copy the sequence data from.",
     wiz_element_type = 'combo',
@@ -78,7 +78,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The name of the data pipe to copy the sequence data to.",
     wiz_element_type = 'combo',
@@ -89,7 +89,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "empty",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "empty sequence flag",
     desc = "A flag which if True will create a molecule, residue, and spin sequence in the target pipe lacking all of the spin data of the source pipe.  If False, then the spin data will also be copied."
 )
@@ -120,7 +120,7 @@ uf.title_short = "Sequence data display."
 uf.display = True
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "column separator",
     desc = "The column separator (the default of None corresponds to white space).",
     can_be_none = True
@@ -128,35 +128,35 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "mol_name_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "molecule name flag",
     desc = "A flag which if True will cause the molecule name column to be shown."
 )
 uf.add_keyarg(
     name = "res_num_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "residue number flag",
     desc = "A flag which if True will cause the residue number column to be shown."
 )
 uf.add_keyarg(
     name = "res_name_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "residue name flag",
     desc = "A flag which if True will cause the residue name column to be shown."
 )
 uf.add_keyarg(
     name = "spin_num_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "spin number flag",
     desc = "A flag which if True will cause the spin number column to be shown."
 )
 uf.add_keyarg(
     name = "spin_name_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "spin name flag",
     desc = "A flag which if True will cause the spin name column to be shown."
 )
@@ -177,7 +177,7 @@ uf.title = "Read the molecule, residue, and spin sequence from a file."
 uf.title_short = "Sequence data reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the sequence data.",
@@ -185,7 +185,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -193,7 +193,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin ID column",
     desc = "The spin ID string column (an alternative to the mol, res, and spin name and number columns).",
@@ -201,7 +201,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "molecule name column",
     desc = "The molecule name column (alternative to the spin_id_col).",
@@ -209,7 +209,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue number column",
     desc = "The residue number column (alternative to the spin_id_col).",
@@ -217,7 +217,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue name column",
     desc = "The residue name column (alternative to the spin_id_col).",
@@ -225,7 +225,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin number column",
     desc = "The spin number column (alternative to the spin_id_col).",
@@ -233,7 +233,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin name column",
     desc = "The spin name column (alternative to the spin_id_col).",
@@ -241,7 +241,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
@@ -249,7 +249,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string to restrict the loading of data to certain spin subsets.",
     can_be_none = True
@@ -287,7 +287,7 @@ uf.title = "Write the molecule, residue, and spin sequence to a file."
 uf.title_short = "Sequence data writing."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -295,7 +295,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -303,7 +303,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "column separator",
     desc = "The column separator (the default of None corresponds to white space).",
     can_be_none = True
@@ -311,42 +311,42 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "mol_name_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "molecule name flag",
     desc = "A flag which if True will cause the molecule name column to be shown."
 )
 uf.add_keyarg(
     name = "res_num_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "residue number flag",
     desc = "A flag which if True will cause the residue number column to be shown."
 )
 uf.add_keyarg(
     name = "res_name_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "residue name flag",
     desc = "A flag which if True will cause the residue name column to be shown."
 )
 uf.add_keyarg(
     name = "spin_num_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "spin number flag",
     desc = "A flag which if True will cause the spin number column to be shown."
 )
 uf.add_keyarg(
     name = "spin_name_flag",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "spin name flag",
     desc = "A flag which if True will cause the spin name column to be shown."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will cause the file to be overwritten."
 )

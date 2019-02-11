@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008,2012 Edward d'Auvergne                              #
+# Copyright (C) 2007-2008,2012,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from lib.errors import RelaxIntError, RelaxStrError
 from test_suite.unit_tests.residue_testing_base import Residue_base_class
 
 # Unit test imports.
@@ -59,7 +59,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.residue_fns.copy, pipe_from=data[1], res_from='#Old mol:1', res_to='#Old mol:2')
+            self.assertRaises(RelaxStrError, self.residue_fns.copy, pipe_from=data[1], res_from='#Old mol:1', res_to='#Old mol:2')
 
 
     def test_copy_argfail_res_from(self):
@@ -85,7 +85,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.residue_fns.copy, pipe_to=data[1], res_from='#Old mol:1', res_to='#Old mol:2')
+            self.assertRaises(RelaxStrError, self.residue_fns.copy, pipe_to=data[1], res_from='#Old mol:1', res_to='#Old mol:2')
 
 
     def test_copy_argfail_res_to(self):
@@ -98,7 +98,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.residue_fns.copy, res_from='#Old mol:1@111', res_to=data[1])
+            self.assertRaises(RelaxStrError, self.residue_fns.copy, res_from='#Old mol:1@111', res_to=data[1])
 
 
     def test_create_argfail_res_num(self):
@@ -111,7 +111,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.residue_fns.create, res_num=data[1], res_name='NH')
+            self.assertRaises(RelaxIntError, self.residue_fns.create, res_num=data[1], res_name='NH')
 
 
     def test_create_argfail_res_name(self):
@@ -124,7 +124,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.residue_fns.create, res_name=data[1], res_num=1)
+            self.assertRaises(RelaxStrError, self.residue_fns.create, res_name=data[1], res_num=1)
 
 
     def test_create_argfail_mol_name(self):
@@ -137,7 +137,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.residue_fns.create, mol_name=data[1], res_num=1, res_name='NH')
+            self.assertRaises(RelaxStrError, self.residue_fns.create, mol_name=data[1], res_num=1, res_name='NH')
 
 
     def test_delete_argfail_res_id(self):
@@ -163,7 +163,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.residue_fns.display, res_id=data[1])
+            self.assertRaises(RelaxStrError, self.residue_fns.display, res_id=data[1])
 
 
     def test_name_argfail_res_id(self):

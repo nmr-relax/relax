@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -60,7 +60,7 @@ uf.title = "Copy parameters from one data pipe to another."
 uf.title_short = "Value copying."
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The name of the pipe to copy from.",
     wiz_element_type = 'combo',
@@ -69,7 +69,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The name of the pipe to copy to.",
     wiz_element_type = 'combo',
@@ -78,7 +78,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "param",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "parameter",
     desc = "The parameter to copy.  Only one parameter may be selected.",
     wiz_element_type = 'combo',
@@ -88,7 +88,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the destination parameter to be overwritten."
 )
@@ -121,7 +121,7 @@ uf.title_short = "Display values."
 uf.display = True
 uf.add_keyarg(
     name = "param",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "parameter",
     desc = "The parameter to display.  Only one parameter may be selected.",
     wiz_element_type = 'combo',
@@ -131,7 +131,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "scaling",
     default = 1.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "scaling",
     desc = "The factor to scale parameters by."
 )
@@ -166,7 +166,7 @@ uf.title = "Read spin specific parameter values from a file."
 uf.title_short = "Reading values from file."
 uf.add_keyarg(
     name = "param",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "parameter",
     desc = "The parameter.  Only one parameter may be selected.",
     wiz_element_type = 'combo',
@@ -176,13 +176,13 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "scaling",
     default = 1.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "scaling",
     desc = "The factor to scale parameters by."
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the values.",
@@ -190,7 +190,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -198,7 +198,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin ID string column",
     desc = "The spin ID string column (an alternative to the mol, res, and spin name and number columns).",
@@ -206,7 +206,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "molecule name column",
     desc = "The molecule name column (alternative to the spin_id_col).",
@@ -214,7 +214,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue number column",
     desc = "The residue number column (alternative to the spin_id_col).",
@@ -222,7 +222,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue name column",
     desc = "The residue name column (alternative to the spin_id_col).",
@@ -230,7 +230,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin number column",
     desc = "The spin number column (alternative to the spin_id_col).",
@@ -238,7 +238,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin name column",
     desc = "The spin name column (alternative to the spin_id_col).",
@@ -246,7 +246,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "data_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "data column",
     desc = "The RDC data column.",
@@ -254,7 +254,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "error_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "error column",
     desc = "The experimental error column.",
@@ -262,7 +262,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
@@ -270,7 +270,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string to restrict the loading of data to certain spin subsets."
 )
@@ -303,14 +303,17 @@ uf.title = "Set parameter values."
 uf.title_short = "Value setting."
 uf.add_keyarg(
     name = "val",
-    py_type = "val_or_list",
+    basic_types = ["all"],
+    container_types = ["all"],
     desc_short = "value",
     desc = "The value(s).",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "param",
-    py_type = "str_or_str_list",
+    basic_types = ["str"],
+    container_types = ["list"],
+    dim = [(), (None,)],
     desc_short = "parameter",
     desc = "The parameter(s).",
     wiz_element_type = 'combo_list',
@@ -320,7 +323,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "index",
-    py_type = "int",
+    basic_types = ["int"],
     default = 0,
     min = 0,
     max = 10000000,
@@ -330,7 +333,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID to restrict value setting to",
     desc = "The spin ID string to restrict value setting to.",
@@ -339,14 +342,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "error",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "error flag",
     desc = "A flag which if True will cause the error rather than parameter to be set."
 )
 uf.add_keyarg(
     name = "force",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the destination parameter to be overwritten."
 )
@@ -413,7 +416,7 @@ uf.title = "Write spin specific parameter values to a file."
 uf.title_short = "Value writing."
 uf.add_keyarg(
     name = "param",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "parameter",
     desc = "The parameter.",
     wiz_element_type = 'combo',
@@ -422,7 +425,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -430,7 +433,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -439,13 +442,13 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "scaling",
     default = 1.0,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "scaling",
     desc = "The factor to scale parameters by."
 )
 uf.add_keyarg(
     name = "comment",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "comment",
     desc = "Text which will be added to the start of the file as comments.  All lines will be prefixed by '# '.",
     can_be_none = True
@@ -453,14 +456,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "bc",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "back calculated value flag",
     desc = "A flag which if True will cause the back calculated values to be written to file rather than the actual data."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the file to be overwritten."
 )

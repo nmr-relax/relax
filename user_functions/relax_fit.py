@@ -47,13 +47,13 @@ uf.title_short = "Relaxation delay time setting."
 uf.add_keyarg(
     name = "time",
     default = 0.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "relaxation time",
     desc = "The time, in seconds, of the relaxation period."
 )
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum identification string",
     desc = "The spectrum identification string.",
     wiz_element_type = 'combo',
@@ -78,7 +78,7 @@ uf.display = True
 uf.add_keyarg(
     name = "model",
     default = "exp",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "model",
     desc = "The type of relaxation curve to fit.",
     wiz_element_type = "combo",

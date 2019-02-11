@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013,2015 Edward d'Auvergne                              #
+# Copyright (C) 2010-2013,2015,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -541,6 +541,21 @@ class Uf_page(Wiz_page):
             # The arg description formatting.
             desc = "The %s:" % arg['desc_short']
 
+            # Dimensions.
+            dim = arg['dim']
+            single_value = False
+            if isinstance(dim, list):
+                dim = ()
+                for i in range(len(arg['dim'])):
+                    if arg['dim'][i] == ():
+                        single_value = True
+                    if len(dim) == len(arg['dim']) and dim[0] < arg['dim']:
+                        dim = arg['dim'][i]
+                    elif len(dim) < len(arg['dim']):
+                        dim = arg['dim'][i]
+            if not dim and 'all' in arg['container_types']:
+                dim = ()
+
             # Special arg type:  file selection dialog.
             if arg['arg_type'] == 'file sel':
                 self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=arg['wiz_filesel_style'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, preview=arg['wiz_filesel_preview'], read_only=arg['wiz_read_only'])
@@ -577,64 +592,65 @@ class Uf_page(Wiz_page):
                 self.uf_args[arg['name']] = Spin_id(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, can_be_none=arg['can_be_none'])
 
             # Value types.
-            elif arg['py_type'] in ['float', 'int', 'num', 'str']:
-                self.uf_args[arg['name']] = Value(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], value_type=arg['py_type'], min=arg['min'], max=arg['max'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
+            elif len(dim) == 0 and ('all' in arg['basic_types'] or 'float' in arg['basic_types'] or 'int' in arg['basic_types'] or 'number' in arg['basic_types'] or 'str' in arg['basic_types']):
+                value_type = arg['basic_types'][0]
+                if value_type == 'number':
+                    value_type = 'float'
+                elif value_type == 'all':
+                    value_type = 'float'
+                self.uf_args[arg['name']] = Value(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], value_type=value_type, min=arg['min'], max=arg['max'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
             # Bool type.
-            elif arg['py_type'] == 'bool':
+            elif len(dim) == 0 and 'bool' in arg['basic_types']:
                 self.uf_args[arg['name']] = Selector_bool(name=arg['name'], parent=self, element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, tooltip=arg['desc'], default=arg['default'], divider=self._div_left, height_element=self.height_element)
 
             # Sequence types.
-            elif arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_tuple', 'int_tuple', 'num_tuple', 'str_tuple', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple', 'val_or_list', 'float_object']:
+            elif len(dim) == 1:
                 # The sequence type.
-                if arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'val_or_list', 'float_object']:
+                if 'list' in arg['container_types'] or 'all' in arg['container_types']:
                     seq_type = 'list'
                 else:
                     seq_type = 'tuple'
 
                 # The value type.
-                if arg['py_type'] in ['float_list', 'num_list', 'float_tuple', 'num_tuple', 'float_array', 'float_or_float_list', 'num_or_num_list', 'float_or_float_tuple', 'num_or_num_tuple', 'float_object']:
+                if 'float' in arg['basic_types'] or 'number' in arg['basic_types']:
                     value_type = 'float'
-                elif arg['py_type'] in ['int_list', 'int_tuple', 'int_array', 'int_or_int_list', 'int_or_int_tuple']:
+                elif 'int' in arg['basic_types']:
                     value_type = 'int'
-                elif arg['py_type'] in ['str_list', 'str_tuple', 'str_array', 'str_or_str_list', 'str_or_str_tuple']:
+                elif 'str' in arg['basic_types']:
                     value_type = 'str'
                 else:
                     value_type = None
 
-                # Single values.
-                single_value = False
-                if arg['py_type'] in ['float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple', 'val_or_list']:
-                    single_value = True
-
-                # Dimensions.
-                dim = None
-                if isinstance(arg['dim'], int):
-                    dim = arg['dim']
+                # Dim conversion.
+                if dim == (None,):
+                    dim = None
 
                 self.uf_args[arg['name']] = Sequence(name=arg['name'], parent=self, default=arg['default'], element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=dim, min=arg['min'], max=arg['max'], titles=arg['list_titles'], sizer=sizer, desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_min=arg['wiz_combo_list_min'], tooltip=arg['desc'], single_value=single_value, divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
             # 2D sequence types.
-            elif arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists', 'float_tuple_of_tuples', 'int_tuple_of_tuples', 'num_tuple_of_tuples', 'str_tuple_of_tuples', 'float_matrix', 'int_matrix', 'num_list_or_num_list_of_lists']:
+            elif len(dim) == 2:
                 # The sequence type.
-                if arg['py_type'] in ['float_list_of_lists', 'int_list_of_lists', 'num_list_of_lists', 'str_list_of_lists', 'float_matrix', 'int_matrix', 'num_list_or_num_list_of_lists']:
+                if 'list' in arg['container_types']:
                     seq_type = 'list'
                 else:
                     seq_type = 'tuple'
 
                 # The value type.
-                if arg['py_type'] in ['float_list_of_lists', 'float_tuple_of_tuples', 'num_list_of_lists', 'num_tuple_of_tuples', 'float_matrix', 'num_list_or_num_list_of_lists']:
+                if 'float' in arg['basic_types'] or 'number' in arg['basic_types']:
                     value_type = 'float'
-                elif arg['py_type'] in ['int_list_of_lists', 'int_tuple_of_tuples', 'int_matrix']:
+                elif 'int' in arg['basic_types']:
                     value_type = 'int'
-                else:
+                elif 'str' in arg['basic_types']:
                     value_type = 'str'
+                else:
+                    value_type = None
 
-                self.uf_args[arg['name']] = Sequence_2D(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=arg['dim'], min=arg['min'], max=arg['max'], titles=arg['list_titles'], desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_min=arg['wiz_combo_list_min'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
+                self.uf_args[arg['name']] = Sequence_2D(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, element_type=arg['wiz_element_type'], seq_type=seq_type, value_type=value_type, dim=dim, min=arg['min'], max=arg['max'], titles=arg['list_titles'], desc=desc, combo_choices=arg['wiz_combo_choices'], combo_data=arg['wiz_combo_data'], combo_list_min=arg['wiz_combo_list_min'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, read_only=arg['wiz_read_only'], can_be_none=arg['can_be_none'])
 
             # Unknown type.
             else:
-                raise RelaxError("The Python object type '%s' cannot be handled." % arg['py_type'])
+                raise RelaxError("The Python object with basic_types=%s, container_types=%s, dim=%s cannot be handled." % (arg['basic_types'], arg['container_types'], arg['dim']))
 
         # Add the free format element.
         if free_format:

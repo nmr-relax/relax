@@ -36,7 +36,7 @@ uf.title_short = "Fixing of parameters."
 uf.display = True
 uf.add_keyarg(
     name = "element",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "element",
     desc = "Which element to fix.",
     wiz_element_type = "combo",
@@ -53,7 +53,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "fixed",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "fixed",
     desc = "A flag specifying if the parameters should be fixed or allowed to change."
 )

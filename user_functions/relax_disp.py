@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004,2006,2008-2009,2012-2014 Edward d'Auvergne               #
+# Copyright (C) 2004,2006,2008-2009,2012-2014,2019 Edward d'Auvergne          #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
@@ -66,7 +66,7 @@ uf.title = "Perform a relaxation dispersion optimisation using Flemming Hansen's
 uf.title_short = "CATIA execution."
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory containing all of the CATIA input files.",
@@ -75,7 +75,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "catia",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "CATIA executable file",
     desc = "The name of the executable CATIA program file.",
@@ -102,7 +102,7 @@ uf.title_short = "CATIA input file creation."
 uf.add_keyarg(
     name = "dir",
     default = "catia",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the CATIA input files, output directory, etc.",
@@ -111,7 +111,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
 )
@@ -132,7 +132,7 @@ uf.title = "Define clusters of spins for joint optimisation."
 uf.title_short = "Spin clustering."
 uf.add_keyarg(
     name = "cluster_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "cluster ID",
     desc = "The cluster identification string.",
     wiz_element_type = 'combo',
@@ -140,7 +140,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identifier string for the spin or group of spins to add to the cluster.",
     wiz_element_type = 'combo',
@@ -171,7 +171,7 @@ uf.title = "Set the CPMG pulse sequence information associated with a given spec
 uf.title_short = "CPMG experiment setup."
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum ID string",
     desc = "The spectrum ID string to associate the CPMG pulse sequence information to.",
     wiz_element_type = 'combo',
@@ -180,7 +180,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "cpmg_frq",
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "CPMG frequency (Hz)",
     desc = "The frequency, in Hz, of the CPMG pulse train.",
     can_be_none = True
@@ -188,7 +188,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "ncyc_even",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "even ncyc flag",
     desc = "A flag which if True means that the number of CPMG blocks must be even.  This is pulse sequence dependant."
 )
@@ -215,7 +215,7 @@ uf.title = "Optimisation of the CPMG data using Art Palmer's CPMGFit program."
 uf.title_short = "CPMGFit execution."
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory containing all of the CPMGFit input files.  If not given, this defaults to the model name in lower case.",
@@ -224,14 +224,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause the results files to be overwritten if they already exist."
 )
 uf.add_keyarg(
     name = "binary",
     default = "cpmgfit",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "CPMGFit executable file",
     desc = "The name of the executable CPMGFit program file.",
@@ -257,7 +257,7 @@ uf.title = "Create the input files for Art Palmer's CPMGFit program."
 uf.title_short = "CPMGFit input file creation."
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the files.  If not given, this defaults to the model name in lower case.",
@@ -266,14 +266,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
 )
 uf.add_keyarg(
     name = "binary",
     default = "cpmgfit",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "CPMGFit executable file",
     desc = "The name of the executable CPMGFit program file.",
@@ -282,7 +282,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string.",
     can_be_none = True
@@ -307,7 +307,7 @@ uf.title = "Select the relaxation dispersion experiment type."
 uf.title_short = "Relaxation dispersion experiment type selection."
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum ID string",
     desc = "The spectrum ID string to associate the spin-lock field strength to.",
     wiz_element_type = 'combo',
@@ -317,7 +317,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "exp_type",
     default = EXP_TYPE_CPMG_SQ,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "experiment type",
     desc = "The type of relaxation dispersion experiment performed.",
     wiz_element_type = "combo",
@@ -371,7 +371,7 @@ uf.title = "Deselect all spins with insignificant dispersion."
 uf.title_short = "Insignificant spin deselection."
 uf.add_keyarg(
     name = "level",
-    py_type = "float",
+    basic_types = ["float"],
     default = 2.0,
     desc_short = "insignificance level",
     desc = "The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.",
@@ -394,7 +394,7 @@ uf.title = "Create the input files for Michael Bieri's NESSY program."
 uf.title_short = "NESSY input file creation."
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the file and to use as the NESSY project directory.  If not given, this defaults to the current directory.",
@@ -403,13 +403,13 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string.",
     can_be_none = True
@@ -431,7 +431,7 @@ uf.title = "Copy dispersion specific parameters values from one data pipe to ano
 uf.title_short = "Dispersion parameter copying."
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source data pipe",
     desc = "The name of the pipe to copy from.",
     wiz_element_type = 'combo',
@@ -440,7 +440,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination data pipe",
     desc = "The name of the pipe to copy to.",
     wiz_element_type = 'combo',
@@ -468,7 +468,7 @@ uf.title_short = "Dispersion curve plotting."
 uf.add_keyarg(
     name = "dir",
     default = "grace",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory name to place all of the spin system files into.",
@@ -477,7 +477,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "y_axis",
     default = Y_AXIS_R2_EFF,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "Y axis data type",
     desc = "Option can be either '%s' which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be '%s', which for R1rho experiments plot R2."%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO),
     wiz_element_type = 'combo',
@@ -491,7 +491,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "x_axis",
     default = X_AXIS_DISP,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "X axis data type",
     desc = "Option can be either '%s' which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either '%s' or '%s' for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'"%(X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA),
     wiz_element_type = 'combo',
@@ -508,14 +508,14 @@ uf.add_keyarg(
     default = 1000,
     min = 1,
     max = 10000000,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "total number of interpolation points",
     desc = "The total number of points to generate the interpolated dispersion curves with.  This value has no effect for the numeric CPMG-based models.",
     can_be_none = False
 )
 uf.add_keyarg(
     name = "extend_hz",
-    py_type = "num",
+    basic_types = ["number"],
     default = 500.0,
     desc_short = "interpolated dispersion curve extension (in Hz)",
     desc = "How far to extend the interpolated dispersion curves beyond the last dispersion point, i.e. the nu_CPMG frequency or spin-lock field strength value, in Hertz.",
@@ -523,7 +523,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "extend_ppm",
-    py_type = "num",
+    basic_types = ["number"],
     default = 500.0,
     desc_short = "interpolated offset curve extension (in ppm)",
     desc = "How far to extend the interpolated dispersion curves beyond the last dispersion point, i.e. the spin-lock offset value, in ppm.",
@@ -532,7 +532,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "interpolate",
     default = INTERPOLATE_DISP,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "option to interpolate the fitted curves",
     desc = "Either by option '%s' which interpolate CPMG frequency or spin-lock field strength, or by option '%s' which interpole over spin-lock offset."%(INTERPOLATE_DISP, INTERPOLATE_OFFSET),
     wiz_element_type = 'combo',
@@ -546,7 +546,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the files to be overwritten."
 )
@@ -569,7 +569,7 @@ uf.title = "Create 2D Grace plots of the exponential curves."
 uf.title_short = "Exponential curve plotting."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -579,7 +579,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "grace",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -588,14 +588,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the file to be overwritten."
 )
 uf.add_keyarg(
     name = "norm",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "normalisation flag",
     desc = "A flag which, if set to True, will cause all graphs to be normalised to a starting value of 1.  This is for the normalisation of series type data."
 )
@@ -616,7 +616,7 @@ uf.title_short = "R1 optimisation flag."
 uf.add_keyarg(
     name = "fit",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "R1 optimisation flag",
     desc = "The flag specifying if R1 values should be optimised or if loaded R1 values should be fixed during optimisation."
 )
@@ -636,7 +636,7 @@ uf.title = "Estimate R2eff errors by the Jacobian matrix."
 uf.title_short = "Estimate R2eff errors."
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID to restrict value setting to",
     desc = "The spin ID string to restrict value setting to.",
@@ -644,7 +644,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "epsrel",
-    py_type = "float",
+    basic_types = ["float"],
     default = 0.0,
     desc_short = "parameter to remove linear-dependent columns.",
     desc = "The parameter to remove linear-dependent columns when J is rank deficient.",
@@ -653,7 +653,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "amount of information to print.",
     desc = "The higher the value, the greater the verbosity.",
     can_be_none = False
@@ -680,7 +680,7 @@ uf.title = "Read R2eff/R1rho values and errors from a file."
 uf.title_short = "R2eff/R1rho value reading."
 uf.add_keyarg(
     name = "id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "partial experiment ID string",
     desc = "The partial experiment ID string to identify this data with.  The full ID string will be constructed as this ID followed by an underscore and then the dispersion point value from the file.",
     wiz_element_type = 'combo',
@@ -689,7 +689,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -697,7 +697,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -705,14 +705,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "disp_frq",
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "CPMG frequency or spin-lock field strength (Hz)",
     desc = "For CPMG-type data, the frequency of the CPMG pulse train.  For R1rho-type data, the spin-lock field strength nu1.  The units must be Hertz",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "spin_id_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin ID string column",
     desc = "The spin ID string column used by the generic file format (an alternative to the mol, res, and spin name and number columns).",
@@ -720,7 +720,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "molecule name column",
     desc = "The molecule name column used by the generic file format (alternative to the spin ID column).",
@@ -728,7 +728,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue number column",
     desc = "The residue number column used by the generic file format (alternative to the spin ID column).",
@@ -736,7 +736,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue name column",
     desc = "The residue name column used by the generic file format (alternative to the spin ID column).",
@@ -744,7 +744,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin number column",
     desc = "The spin number column used by the generic file format (alternative to the spin ID column).",
@@ -752,7 +752,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin name column",
     desc = "The spin name column used by the generic file format (alternative to the spin ID column).",
@@ -760,7 +760,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "data_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "data column",
     desc = "The RDC data column.",
@@ -768,7 +768,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "error_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "error column",
     desc = "The experimental error column.",
@@ -776,7 +776,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator used by the generic format (the default is white space).",
@@ -799,7 +799,7 @@ uf.title = "Read R2eff/R1rho values and errors for a single spin from a file."
 uf.title_short = "Spin R2eff/R1rho value reading."
 uf.add_keyarg(
     name = "id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "experiment ID string",
     desc = "The experiment ID string to identify this data with.",
     wiz_element_type = 'combo',
@@ -808,7 +808,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin identification string.",
@@ -816,7 +816,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -824,7 +824,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -834,7 +834,7 @@ uf.add_keyarg(
     name = "disp_point_col",
     default = None,
     min = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "dispersion point column",
     desc = "The column containing the CPMG frequency or spin-lock field strength (Hz).",
     can_be_none = True
@@ -843,7 +843,7 @@ uf.add_keyarg(
     name = "offset_col",
     default = None,
     min = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "offset column",
     desc = "The column containing the offset information for R1rho-type data.",
     can_be_none = True
@@ -852,7 +852,7 @@ uf.add_keyarg(
     name = "data_col",
     default = 2,
     min = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "R2eff/R1rho data column",
     desc = "The column containing the R2eff or R1rho data."
 )
@@ -860,13 +860,13 @@ uf.add_keyarg(
     name = "error_col",
     default = 3,
     min = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "R2eff/R1rho error column",
     desc = "The column containing the R2eff or R1rho error."
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
     wiz_element_type = "combo",
@@ -890,7 +890,7 @@ uf.title = "Set the relaxation delay time associated with each spectrum."
 uf.title_short = "Relaxation delay time setting."
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum ID string",
     desc = "The spectrum ID string.",
     wiz_element_type = 'combo',
@@ -900,7 +900,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "time",
     default = 0.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "relaxation time",
     desc = "The time, in seconds, of the relaxation period."
 )
@@ -922,7 +922,7 @@ uf.display = True
 uf.add_keyarg(
     name = "model",
     default = MODEL_R2EFF,
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "dispersion model",
     desc = "The type of relaxation dispersion model to fit.",
     wiz_element_type = "combo",
@@ -1054,7 +1054,7 @@ uf.title_short = "Set R20 from the minimum R2eff."
 uf.add_keyarg(
     name = "force",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause the R20 values to be overwritten if they already exist."
 )
@@ -1078,20 +1078,20 @@ uf.title_short = "ShereKhan input file creation."
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin identification string.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory name to place ShereKhan cluster folders into.",
@@ -1114,7 +1114,7 @@ uf.title = "Set the relaxation dispersion spin-lock field strength (nu1)."
 uf.title_short = "Spin-lock field strength."
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum ID string",
     desc = "The spectrum ID string to associate the spin-lock field strength to.",
     wiz_element_type = 'combo',
@@ -1123,7 +1123,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "field",
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "field strength nu1 (Hz)",
     desc = "The spin-lock field strength, nu1, in Hz.",
     can_be_none = True
@@ -1148,7 +1148,7 @@ uf.title = "Set the relaxation dispersion spin-lock offset (omega_rf)."
 uf.title_short = "Spin-lock offset."
 uf.add_keyarg(
     name = "spectrum_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spectrum ID string",
     desc = "The spectrum ID string to associate the spin-lock offset to.",
     wiz_element_type = 'combo',
@@ -1157,7 +1157,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "offset",
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "spin-lock offset (ppm)",
     desc = "The spin-lock offset, omega_rf, in ppm.",
     can_be_none = True
@@ -1182,7 +1182,7 @@ uf.title = "Create text files of the dispersion curves for each spin system."
 uf.title_short = "Dispersion curve writing."
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory name to place all of the spin system files into.",
@@ -1191,7 +1191,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which, if set to True, will cause the files to be overwritten."
 )

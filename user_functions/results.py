@@ -67,7 +67,7 @@ uf.title_short = "Results reading."
 uf.add_keyarg(
     name = "file",
     default = "results",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file to read results from.",
@@ -77,7 +77,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -100,7 +100,7 @@ uf.title_short = "Results writing."
 uf.add_keyarg(
     name = "file",
     default = "results",
-    py_type = "str_or_inst",
+    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file to output results to.  The default is 'results'.  Optionally this can be a file object, or any object with a write() method.",
@@ -110,7 +110,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "pipe_name",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -119,7 +119,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "compress_type",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "compression type",
     desc = "The type of compression to use when creating the file.",
     wiz_element_type = "combo",
@@ -138,7 +138,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will cause the results file to be overwritten."
 )

@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxBoolError, RelaxNoneStrError, RelaxStrError
+from lib.errors import RelaxBoolError, RelaxStrError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -71,7 +71,7 @@ class Test_dasha(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.dasha_fns.create, dir=data[1])
+            self.assertRaises(RelaxStrError, self.dasha_fns.create, dir=data[1])
 
 
     def test_create_argfail_force(self):
@@ -97,7 +97,7 @@ class Test_dasha(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.dasha_fns.execute, dir=data[1])
+            self.assertRaises(RelaxStrError, self.dasha_fns.execute, dir=data[1])
 
 
     def test_execute_argfail_force(self):
@@ -136,4 +136,4 @@ class Test_dasha(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.dasha_fns.extract, dir=data[1])
+            self.assertRaises(RelaxStrError, self.dasha_fns.extract, dir=data[1])

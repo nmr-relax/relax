@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2002-2004,2007-2013,2015 Edward d'Auvergne                    #
+# Copyright (C) 2002-2004,2007-2013,2015,2019 Edward d'Auvergne               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -53,7 +53,7 @@ uf.title_short = "PCS back calculation."
 uf.display = True
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -78,7 +78,7 @@ uf.title_short = "PCS Q factor calculation."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string for restricting to subset of all selected spins.",
     can_be_none = True
@@ -86,7 +86,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "verbosity level",
     desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
 )
@@ -111,7 +111,7 @@ uf.title = "Copy PCS data from one data pipe to another."
 uf.title_short = "PCS copying."
 uf.add_keyarg(
     name = "pipe_from",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "source pipe",
     desc = "The name of the pipe to copy the PCS data from.",
     wiz_element_type = 'combo',
@@ -120,7 +120,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pipe_to",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "destination pipe",
     desc = "The name of the pipe to copy the PCS data to.",
     wiz_element_type = 'combo',
@@ -129,7 +129,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -140,7 +140,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "back_calc",
     default = True,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "back-calculated data flag",
     desc = "A flag which if True will cause any back-calculated PCSs present to also be copied with the real values and errors."
 )
@@ -170,7 +170,7 @@ uf.title_short = "Correlation plot generation."
 uf.add_keyarg(
     name = "format",
     default = "grace",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "format",
     desc = "The format of the plot data.",
     wiz_element_type = "combo",
@@ -180,14 +180,14 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "title",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alternative plot title",
     desc = "The title for the plot, overriding the default.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "subtitle",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alternative plot subtitle",
     desc = "The subtitle for the plot, overriding the default.",
     can_be_none = True
@@ -195,7 +195,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "pcs_corr_plot.agr",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Grace file name",
     desc = "The name of the Grace file to create.",
@@ -204,7 +204,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -213,7 +213,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will cause the file to be overwritten."
 )
@@ -241,7 +241,7 @@ uf.title = "Delete the PCS data corresponding to the alignment ID."
 uf.title_short = "PCS deletion."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string of the data to delete.",
     wiz_element_type = 'combo',
@@ -269,7 +269,7 @@ uf.title_short = "PCS data display."
 uf.display = True
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -279,7 +279,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "bc",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "back-calculation flag",
     desc = "A flag which if set will display the back-calculated rather than measured RDCs."
 )
@@ -302,7 +302,7 @@ uf.title = "Read the PCS data from file."
 uf.title_short = "PCS data reading."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -310,7 +310,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the PCS data.",
@@ -318,7 +318,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -326,7 +326,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin ID column",
     desc = "The spin ID string column (an alternative to the mol, res, and spin name and number columns).",
@@ -334,7 +334,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "mol_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "molecule name column",
     desc = "The molecule name column (alternative to the spin_id_col).",
@@ -342,7 +342,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue number column",
     desc = "The residue number column (alternative to the spin_id_col).",
@@ -350,7 +350,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "res_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "residue name column",
     desc = "The residue name column (alternative to the spin_id_col).",
@@ -358,7 +358,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_num_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin number column",
     desc = "The spin number column (alternative to the spin_id_col).",
@@ -366,7 +366,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_name_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "spin name column",
     desc = "The spin name column (alternative to the spin_id_col).",
@@ -374,7 +374,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "data_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "data column",
     desc = "The PCS data column.",
@@ -382,7 +382,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "error_col",
-    py_type = "int",
+    basic_types = ["int"],
     arg_type = "free format",
     desc_short = "error column",
     desc = "The experimental error column.",
@@ -390,7 +390,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "sep",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "free format",
     desc_short = "column separator",
     desc = "The column separator (the default is white space).",
@@ -398,7 +398,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string to restrict the loading of data to certain spin subsets.",
     can_be_none = True
@@ -427,7 +427,7 @@ uf.title = "Set the errors for the PCSs."
 uf.title_short = "PCS error setting."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The optional alignment ID string.",
     wiz_element_type = 'combo',
@@ -437,7 +437,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The optional spin ID string.",
@@ -447,7 +447,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "sd",
     default = 0.1,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "PCS error (ppm)",
     desc = "The PCS standard deviation value in ppm."
 )
@@ -467,7 +467,7 @@ uf.title_short = "PCS structural noise simulation."
 uf.display = True
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The optional alignment ID string.",
     wiz_element_type = 'combo',
@@ -478,7 +478,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "rmsd",
     default = 0.2,
-    py_type = "float",
+    basic_types = ["float"],
     desc_short = "structural RMSD",
     desc = "The atomic position RMSD, in Angstrom, to randomise the spin positions with for the simulations."
 )
@@ -487,13 +487,13 @@ uf.add_keyarg(
     default = 1000,
     min = 3,
     max = 10000000,
-    py_type = "int",
+    basic_types = ["int"],
     desc_short = "simulation number N",
     desc = "The number of simulations, N, to perform to determine the structural noise component of the PCS errors."
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Grace file name",
     desc = "The optional name of the Grace file to plot the structural errors verses the paramagnetic centre to spin distances.",
@@ -503,7 +503,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name to place the Grace file into.",
@@ -512,7 +512,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will cause the file to be overwritten."
 )
@@ -548,7 +548,7 @@ uf.title = "Set optimisation weights on the PCS data."
 uf.title_short = "PCS weighting."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -557,7 +557,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "spin ID string",
     desc = "The spin ID string.",
     can_be_none = True
@@ -565,7 +565,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "weight",
     default = 1.0,
-    py_type = "num",
+    basic_types = ["number"],
     desc_short = "weight",
     desc = "The weighting value."
 )
@@ -584,7 +584,7 @@ uf.title = "Write the PCS data to file."
 uf.title_short = "PCS data writing."
 uf.add_keyarg(
     name = "align_id",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "alignment ID string",
     desc = "The alignment ID string.",
     wiz_element_type = 'combo',
@@ -593,7 +593,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -601,7 +601,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -610,14 +610,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "bc",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "back-calculation flag",
     desc = "A flag which if set will write out the back-calculated rather than measured RDCs."
 )
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if True will cause the file to be overwritten."
 )

@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxBoolError, RelaxIntError, RelaxListNumError, RelaxNoneListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from lib.errors import RelaxBoolError, RelaxIntError, RelaxListNumError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
 # Unit test imports.
@@ -72,7 +72,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneListNumError, self.n_state_model_fns.CoM, centre=data[1])
+            self.assertRaises(RelaxListNumError, self.n_state_model_fns.CoM, centre=data[1])
 
 
     def test_cone_pdb_argfail_cone_type(self):
@@ -124,7 +124,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.n_state_model_fns.cone_pdb, cone_type='', dir=data[1])
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.cone_pdb, cone_type='', dir=data[1])
 
 
     def test_cone_pdb_argfail_force(self):

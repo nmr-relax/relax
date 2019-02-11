@@ -49,7 +49,7 @@ uf.title_short = "Script creation."
 uf.add_keyarg(
     name = "algor",
     default = "LM",
-    py_type = "str",
+    basic_types = ["str"],
     desc_short = "optimisation algorithm",
     desc = "The minimisation algorithm.",
     wiz_element_type = "combo",
@@ -59,7 +59,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the files.",
@@ -68,7 +68,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause the results file to be overwritten if it already exists."
 )
@@ -95,7 +95,7 @@ uf.title = "Perform a model-free optimisation using Dasha."
 uf.title_short = "Dasha execution."
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the files.",
@@ -104,14 +104,14 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    py_type = "bool",
+    basic_types = ["bool"],
     desc_short = "force flag",
     desc = "A flag which if set to True will cause the results file to be overwritten if it already exists."
 )
 uf.add_keyarg(
     name = "binary",
     default = "dasha",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Dasha executable file",
     desc = "The name of the executable Dasha program file.",
@@ -136,7 +136,7 @@ uf.title = "Extract data from the Dasha results file."
 uf.title_short = "Dasha data extraction."
 uf.add_keyarg(
     name = "dir",
-    py_type = "str",
+    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory where the file 'dasha_results' is found.",

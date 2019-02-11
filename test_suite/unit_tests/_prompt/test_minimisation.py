@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009,2012,2014 Edward d'Auvergne                         #
+# Copyright (C) 2008-2009,2012,2014,2019 Edward d'Auvergne                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxIntListIntError, RelaxNoneListNumError, RelaxNoneNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from lib.errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxIntListIntError, RelaxListNumError, RelaxStrError
 from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_class
 
 # Unit test imports.
@@ -72,7 +72,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneListNumError, self.minimisation_fns.grid_search, lower=data[1])
+            self.assertRaises(RelaxListNumError, self.minimisation_fns.grid_search, lower=data[1])
 
 
     def test_grid_search_argfail_upper(self):
@@ -85,7 +85,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneListNumError, self.minimisation_fns.grid_search, upper=data[1])
+            self.assertRaises(RelaxListNumError, self.minimisation_fns.grid_search, upper=data[1])
 
 
     def test_grid_search_argfail_inc(self):
@@ -93,8 +93,8 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin, int, and interger list arguments, and skip them.
-            if data[0] == 'bin' or data[0] == 'int' or data[0] == 'int list' or data[0] == 'none list':
+            # Catch the None, bin, int, and interger list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'bin' or data[0] == 'int' or data[0] == 'int list' or data[0] == 'none list':
                 continue
 
             # The argument test.
@@ -159,7 +159,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.execute, 'Newton', line_search=data[1])
+            self.assertRaises(RelaxStrError, self.minimisation_fns.execute, 'Newton', line_search=data[1])
 
 
     def test_minimise_argfail_hessian_mod(self):
@@ -172,7 +172,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.execute, 'Newton', hessian_mod=data[1])
+            self.assertRaises(RelaxStrError, self.minimisation_fns.execute, 'Newton', hessian_mod=data[1])
 
 
     def test_minimise_argfail_hessian_type(self):
@@ -185,7 +185,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.execute, 'Newton', hessian_type=data[1])
+            self.assertRaises(RelaxStrError, self.minimisation_fns.execute, 'Newton', hessian_type=data[1])
 
 
     def test_minimise_argfail_func_tol(self):
@@ -194,11 +194,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the float, bin, and int arguments, and skip them.
-            if data[0] == 'float' or data[0] == 'bin' or data[0] == 'int':
+            if data[0] == 'float':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.minimisation_fns.execute, 'Newton', func_tol=data[1])
+            self.assertRaises(RelaxFloatError, self.minimisation_fns.execute, 'Newton', func_tol=data[1])
 
 
     def test_minimise_argfail_grad_tol(self):
@@ -207,11 +207,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the None, float, bin, and int arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'float' or data[0] == 'bin' or data[0] == 'int':
+            if data[0] == 'None' or data[0] == 'float':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneNumError, self.minimisation_fns.execute, 'Newton', grad_tol=data[1])
+            self.assertRaises(RelaxFloatError, self.minimisation_fns.execute, 'Newton', grad_tol=data[1])
 
 
     def test_minimise_argfail_max_iter(self):
