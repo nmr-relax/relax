@@ -32,7 +32,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError, Rela
 from lib.float import isInf
 from lib.periodic_table import periodic_table
 from lib.physical_constants import h_bar, mu0
-from lib.warnings import RelaxDeselectWarning
+from lib.warnings import RelaxWarning, RelaxDeselectWarning
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
