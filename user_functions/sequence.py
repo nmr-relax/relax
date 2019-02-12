@@ -177,7 +177,6 @@ uf.title = "Read the molecule, residue, and spin sequence from a file."
 uf.title_short = "Sequence data reading."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the sequence data.",
@@ -185,7 +184,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -287,7 +285,6 @@ uf.title = "Write the molecule, residue, and spin sequence to a file."
 uf.title_short = "Sequence data writing."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -295,7 +292,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",

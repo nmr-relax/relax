@@ -182,7 +182,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the values.",
@@ -190,7 +189,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -333,7 +331,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID to restrict value setting to",
     desc = "The spin ID string to restrict value setting to.",
@@ -425,7 +422,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -433,7 +429,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",

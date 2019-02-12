@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxNumError, RelaxStrError
+from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxNumError, RelaxStrError, RelaxStrFileError
 from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
 # Unit test imports.
@@ -204,12 +204,12 @@ class Test_relax_data(Relax_data_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the file and str arguments, and skip them.
+            if data[0] in ['file', 'str']:
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file=data[1])
+            self.assertRaises(RelaxStrFileError, self.relax_data_fns.read, ri_id='R2_1000', ri_type='R2', frq=1e9, file=data[1])
 
 
     def test_read_argfail_dir(self):
@@ -347,12 +347,12 @@ class Test_relax_data(Relax_data_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the file and str arguments, and skip them.
+            if data[0] in ['file', 'str']:
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.write, ri_id='R2_1000', file=data[1])
+            self.assertRaises(RelaxStrFileError, self.relax_data_fns.write, ri_id='R2_1000', file=data[1])
 
 
     def test_write_argfail_dir(self):

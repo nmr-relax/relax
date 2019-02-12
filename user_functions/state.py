@@ -51,7 +51,6 @@ uf.title_short = "Saved state loading."
 uf.add_keyarg(
     name = "state",
     default = "state.bz2",
-    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The file name, which can be a string or a file descriptor object, of a saved program state.",
@@ -61,7 +60,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The name of the directory in which the file is found.",
@@ -102,7 +100,6 @@ uf.title_short = "Saving state."
 uf.add_keyarg(
     name = "state",
     default = "state.bz2",
-    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The file name, which can be a string or a file descriptor object, to save the current program state in.",
@@ -111,7 +108,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The name of the directory in which to place the file.",

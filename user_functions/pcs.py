@@ -195,7 +195,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "pcs_corr_plot.agr",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Grace file name",
     desc = "The name of the Grace file to create.",
@@ -204,7 +203,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -310,7 +308,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the PCS data.",
@@ -318,7 +315,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -437,7 +433,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The optional spin ID string.",
@@ -493,7 +488,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Grace file name",
     desc = "The optional name of the Grace file to plot the structural errors verses the paramagnetic centre to spin distances.",
@@ -503,7 +497,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name to place the Grace file into.",
@@ -593,7 +586,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -601,7 +593,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",

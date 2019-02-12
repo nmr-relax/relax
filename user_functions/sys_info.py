@@ -54,7 +54,6 @@ uf.title_short = "Change current working directory."
 uf.display = True
 uf.add_keyarg(
     name = "path",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "path",
     desc = "The path to the new current working directory.",

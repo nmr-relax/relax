@@ -179,7 +179,6 @@ uf.title_short = "Molmol macro file execution."
 uf.display = True
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Molmol macro file",
     desc = "The name of the Molmol macro file.",
@@ -189,7 +188,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "molmol",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -274,7 +272,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The optional name of the file.",
@@ -285,7 +282,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "molmol",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The optional directory to save the file to.",
@@ -348,7 +344,6 @@ uf.title = "Display the diffusion tensor PDB geometric object over the loaded PD
 uf.title_short = "Diffusion tensor and structure display."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file containing the tensor geometric object.",

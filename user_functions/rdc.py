@@ -195,7 +195,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "rdc_corr_plot.agr",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Grace file name",
     desc = "The name of the Grace file to create.",
@@ -204,7 +203,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -310,7 +308,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the RDC data.",
@@ -318,7 +315,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -430,7 +426,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id1",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID string",
     desc = "The optional spin ID string of the first spin.",
@@ -439,7 +434,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id2",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID string",
     desc = "The optional spin ID string of the second spin.",
@@ -513,7 +507,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -521,7 +514,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",

@@ -78,6 +78,7 @@ DATA_TYPES.append(['int', zeros(2, int64)[0]])
 
 # File descriptor.
 DATA_TYPES.append(['file', DummyFileObject()])
+DATA_TYPES.append(['file list', [DummyFileObject(), DummyFileObject()]])
 
 # Floats.
 DATA_TYPES.append(['float', 0.0])

@@ -55,7 +55,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the Bruker Dynamics Center file containing the relaxation data.",
@@ -63,7 +62,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",

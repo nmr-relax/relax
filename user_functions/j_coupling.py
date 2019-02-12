@@ -124,7 +124,6 @@ uf.title = "Read the J coupling data from file."
 uf.title_short = "J coupling data reading."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the J coupling data.",
@@ -132,7 +131,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -210,7 +208,6 @@ uf.title = "Write the J coupling data to file."
 uf.title_short = "J coupling writing."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -218,7 +215,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",

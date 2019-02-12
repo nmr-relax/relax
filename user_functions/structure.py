@@ -336,7 +336,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the text file to create.",
@@ -354,7 +353,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to save the file to.",
@@ -463,7 +461,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "tensor.pdb",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -472,7 +469,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to place the file into.",
@@ -517,7 +513,6 @@ uf.title_short = "Rotor PDB representation."
 uf.add_keyarg(
     name = "file",
     default = "rotor.pdb",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -526,7 +521,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to place the file into.",
@@ -621,7 +615,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "XH_dist.pdb",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -630,7 +623,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to place the file into.",
@@ -915,7 +907,6 @@ uf.title = "Load spins from the structure into the relax data store."
 uf.title_short = "Loading spins from structure."
 uf.add_keyarg(
     name = "spin_id",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin identification string for the selective loading of certain spins into the relax data store.",
@@ -1149,7 +1140,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to save the graphs into.",
@@ -1178,7 +1168,6 @@ uf.title = "Reading structures from Gaussian log files."
 uf.title_short = "Gaussian log structure reading."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the Gaussian log file.",
@@ -1187,7 +1176,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -1241,7 +1229,6 @@ uf.title = "Reading structures from PDB files."
 uf.title_short = "PDB reading."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -1250,7 +1237,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -1351,7 +1337,6 @@ uf.title = "Reading structures from XYZ files."
 uf.title_short = "XYZ reading."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the XYZ file.",
@@ -1360,7 +1345,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -1853,7 +1837,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -1862,7 +1845,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory to save the file to.",
@@ -1900,7 +1882,6 @@ uf.title = "Writing structures to a PDB file."
 uf.title_short = "PDB writing."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
@@ -1909,7 +1890,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",

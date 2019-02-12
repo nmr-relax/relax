@@ -67,7 +67,6 @@ uf.title_short = "Results reading."
 uf.add_keyarg(
     name = "file",
     default = "results",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file to read results from.",
@@ -77,7 +76,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -100,7 +98,6 @@ uf.title_short = "Results writing."
 uf.add_keyarg(
     name = "file",
     default = "results",
-    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file to output results to.  The default is 'results'.  Optionally this can be a file object, or any object with a write() method.",
@@ -110,7 +107,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "pipe_name",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",

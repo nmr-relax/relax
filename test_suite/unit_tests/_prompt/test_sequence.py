@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxStrError
+from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxStrError, RelaxStrFileError
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Unit test imports.
@@ -165,12 +165,12 @@ class Test_sequence(Sequence_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the file and str arguments, and skip them.
+            if data[0] in ['file', 'str']:
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.sequence_fns.read, file=data[1])
+            self.assertRaises(RelaxStrFileError, self.sequence_fns.read, file=data[1])
 
 
     def test_read_argfail_dir(self):
@@ -269,12 +269,12 @@ class Test_sequence(Sequence_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the file and str arguments, and skip them.
+            if data[0] in ['file', 'str']:
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.sequence_fns.write, file=data[1])
+            self.assertRaises(RelaxStrFileError, self.sequence_fns.write, file=data[1])
 
 
     def test_write_argfail_dir(self):

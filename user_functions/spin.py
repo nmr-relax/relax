@@ -301,7 +301,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the element to be changed."
@@ -348,7 +347,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the nuclear isotope to be changed."
@@ -382,7 +380,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin identification string corresponding to one or more spins.",
@@ -392,7 +389,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the spin to be renamed."
@@ -440,7 +436,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the spin to be renumbered."

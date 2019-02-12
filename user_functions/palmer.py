@@ -50,7 +50,6 @@ uf.title = "Create the Modelfree4 input files."
 uf.title_short = "Modelfree4 input file creation."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the files.",
@@ -66,7 +65,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "modelfree4",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Modelfree executable file",
     desc = "The name of the executable Modelfree program file.",
@@ -170,7 +168,6 @@ uf.title = "Perform a model-free optimisation using Modelfree4."
 uf.title_short = "Modelfree4 execution."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the files.",
@@ -188,7 +185,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "modelfree4",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Modelfree4 executable file",
     desc = "The name of the executable Modelfree program file.",
@@ -215,7 +211,6 @@ uf.title = "Extract data from the Modelfree4 'mfout' star formatted file."
 uf.title_short = "Modelfree4 data extraction."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory where the file 'mfout' is found.",

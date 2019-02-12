@@ -70,7 +70,6 @@ uf.title_short = "Interatomic data container deselection."
 uf.display = True
 uf.add_keyarg(
     name = "spin_id1",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID string",
     desc = "The spin ID string of the first spin of the interatomic data container.",
@@ -78,7 +77,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id2",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID string",
     desc = "The spin ID string of the second spin of the interatomic data container.",
@@ -134,7 +132,6 @@ uf.title_short = "Deselecting spins from file."
 uf.display = True
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the list of spins to deselect.",
@@ -142,7 +139,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -206,7 +202,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin ID string to restrict the loading of data to certain spin subsets.",

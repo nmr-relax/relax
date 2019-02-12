@@ -219,7 +219,6 @@ uf.title = "Read BMRB files in the NMR-STAR format."
 uf.title_short = "Reading of BMRB files."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the BMRB NMR-STAR formatted file to read.",
@@ -227,7 +226,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -264,7 +262,6 @@ uf.title = "Specify the scripts used in the analysis."
 uf.title_short = "Analysis scripts."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "script file",
     desc = "The name of the script file.",
@@ -272,7 +269,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -559,7 +555,6 @@ uf.title = "Write the results to a BMRB NMR-STAR formatted file."
 uf.title_short = "BMRB file writing."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the BMRB file to output results to.  Optionally this can be a file object, or any object with a write() method.",
@@ -568,7 +563,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "pipe_name",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -591,7 +585,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "force",
     default = False,
-    basic_types = ["bool"],
     arg_type = "force flag",
     desc_short = "force flag",
     desc = "A flag which if True will cause the any pre-existing file to be overwritten."

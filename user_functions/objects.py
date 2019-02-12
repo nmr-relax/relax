@@ -462,6 +462,39 @@ class Uf_container(object):
             - dim=[(), (None,)]
 
 
+        Special argument types
+        ======================
+
+        The 'arg_type' keyword enables a number of special argument types to be defined.  This is used to set up special UI elements.  The current set of values are:
+
+            - 'dir':                This causes the argument to not be shown in certain UIs, as this indicates that the user function already has a 'file sel' type argument and hence a directory is not required.
+            - 'dir sel':            Indicate to certain UIs that a dir selection dialog is required.
+            - 'file sel':           Indicate to certain UIs that a file selection dialog is required.
+            - 'file sel multi':     The same as 'file sel', except that multiple files can be selected simultaneously.
+            - 'force flag':         Used to suppress the argument in the GUI.  For example when writing a file, the normal 'force' argument is meaningless in the GUI as the operating file system interface will ask if the file should be overwritten.
+            - 'free format':        Used in the GUI to suppress the default argument UI element and instead show the special free file format UI element.
+            - 'func':               Used in the GUI to suppress the argument as functions are not supported.
+            - 'func args':          Used in the GUI to suppress the argument as functions are not supported.
+            - 'spin ID':            Activate the special spin ID UI element in the GUI.
+
+        In addition, some of these values will automatically set the 'dim', 'basic_types', and 'container_types' arguments::
+
+         _____________________________________________________________________________
+         |                |               |                        |                 |
+         | Argument       | dim           | basic_types            | container_types |
+         |________________|_______________|________________________|_________________|
+         |                |               |                        |                 |
+         | dir            | ()            | ['str']                | []              |
+         | dir sel        | ()            | ['str']                | []              |
+         | file sel       | ()            | ['str', 'file object'] | []              |
+         | file sel multi | [(), (None,)] | ['str', 'file object'] | ['list']        |
+         | force flag     | ()            | ['bool']               | []              |
+         | func           | ()            | ['func']               | []              |
+         | func args      | (None,)       | ['all']                | ['tuple']       |
+         | spin ID        | ()            | ['str']                | []              |
+         |________________|_______________|________________________|_________________|
+
+
         @keyword name:                  The name of the argument.
         @type name:                     str
         @keyword default:               The default value of the argument.
@@ -472,10 +505,7 @@ class Uf_container(object):
         @type basic_types:              list of str
         @keyword container_types:       The container types allowed for the argument.
         @type container_types:          list of str
-        @keyword arg_type:              The type of argument.  This is reserved for special UI elements:
-                                            - 'file sel' will indicate to certain UIs that a file selection dialog is required.
-                                            - 'dir' will cause the argument to not be shown in certain UIs, as this indicates that the user function already has a 'file sel' type argument and hence a directory is not required.
-                                            - 'dir sel' will indicate to certain UIs that a dir selection dialog is required.
+        @keyword arg_type:              A special type of argument.  See the docstring for details.
         @type arg_type:                 str
         @keyword min:                   The minimum value allowed for integer types.  This is used in the wx.SpinCtrl for example.
         @type min:                      int
@@ -527,9 +557,50 @@ class Uf_container(object):
         if not isinstance(container_types, list):
             raise RelaxError("The 'container_types' argument must be a list.")
 
-        # Check the file selection dialog.
-        if arg_type == "file sel" and wiz_filesel_style == None:
-            raise RelaxError("The file selection style must always be provided.")
+        # Process the special arguments.
+        if arg_type:
+            # Check the value.
+            allowed = ['dir', 'dir sel', 'file sel', 'file sel multi', 'force flag', 'free format', 'func', 'func args', 'spin ID']
+            if arg_type not in allowed:
+                raise RelaxError("The 'arg_type' argument '%s' should be one of %s." % (arg_type, allowed))
+
+            # Check the file selection dialog.
+            if arg_type == "file sel" and wiz_filesel_style == None:
+                raise RelaxError("The file selection style must always be provided.")
+
+            # Overrides.
+            if arg_type not in ['free format']:
+                # Check the type and dimensionality arguments.
+                if dim != ():
+                    raise RelaxError("The 'dim' argument cannot be set for the '%s' special argument." % arg_type)
+                if basic_types != []:
+                    raise RelaxError("The 'basic_types' argument cannot be set for the '%s' special argument." % arg_type)
+                if container_types != []:
+                    raise RelaxError("The 'container_types' argument cannot be set for the '%s' special argument." % arg_type)
+
+                # Override the dim argument.
+                if arg_type in ['func args']:
+                    dim = (None,)
+                if arg_type in ['file sel multi']:
+                    dim = [(), (None,)]
+
+                # Override the basic_types argument.
+                if arg_type in ['dir', 'dir sel', 'spin ID']:
+                    basic_types = ['str']
+                elif arg_type in ['file sel', 'file sel multi']:
+                    basic_types = ['str', 'file object']
+                elif arg_type in ['force flag']:
+                    basic_types = ['bool']
+                elif arg_type in ['func']:
+                    basic_types = ['func']
+                elif arg_type in ['func args']:
+                    basic_types = ['all']
+
+                # Override the container_types argument.
+                if arg_type in ['file sel multi']:
+                    container_types = ['list']
+                elif arg_type in ['func args']:
+                    container_types = ['tuple']
 
         # Append a new argument dictionary to the list, and alias it.
         self.kargs.append({})

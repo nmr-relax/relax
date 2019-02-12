@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxIntError, RelaxStrError
+from lib.errors import RelaxIntError, RelaxStrError, RelaxStrFileError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -53,12 +53,12 @@ class Test_noe(TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the file and str arguments, and skip them.
+            if data[0] in ['file', 'str']:
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.noe_fns.read_restraints, file=data[1])
+            self.assertRaises(RelaxStrFileError, self.noe_fns.read_restraints, file=data[1])
 
 
     def test_read_restraints_argfail_dir(self):

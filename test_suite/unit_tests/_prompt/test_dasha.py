@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxBoolError, RelaxStrError
+from lib.errors import RelaxBoolError, RelaxStrError, RelaxStrFileError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -118,12 +118,12 @@ class Test_dasha(TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the file and str arguments, and skip them.
+            if data[0] in ['file', 'str']:
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.dasha_fns.execute, binary=data[1])
+            self.assertRaises(RelaxStrFileError, self.dasha_fns.execute, binary=data[1])
 
 
     def test_extract_argfail_dir(self):

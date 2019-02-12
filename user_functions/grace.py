@@ -59,7 +59,6 @@ uf.title = "Visualise the file within Grace."
 uf.title_short = "Grace execution."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -69,7 +68,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "grace",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -78,7 +76,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "grace_exe",
     default = "xmgrace",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Grace executable file",
     desc = "The Grace executable file.",
@@ -166,7 +163,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -176,7 +172,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "grace",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",

@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxIntError, RelaxIntListIntError, RelaxNumError, RelaxStrError, RelaxStrListStrError
+from lib.errors import RelaxIntError, RelaxIntListIntError, RelaxNumError, RelaxStrError, RelaxStrFileListStrFileError, RelaxStrListStrError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -131,12 +131,12 @@ class Test_spectrum(TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the file, file list, str, and str list arguments, and skip them.
+            if data[0] in ['file', 'file list', 'str', 'str list']:
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrListStrError, self.spectrum_fns.read_intensities, file=data[1])
+            self.assertRaises(RelaxStrFileListStrFileError, self.spectrum_fns.read_intensities, file=data[1])
 
 
     def test_read_intensities_argfail_dir(self):
@@ -157,12 +157,12 @@ class Test_spectrum(TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
+            # Catch the str or str list arguments, and skip them.
+            if data[0] in ['str', 'str list']:
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrListStrError, self.spectrum_fns.read_intensities, spectrum_id=data[1])
+            self.assertRaises(RelaxStrListStrError, self.spectrum_fns.read_intensities, file='a', spectrum_id=data[1])
 
 
     def test_read_intensities_argfail_dim(self):

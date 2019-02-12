@@ -40,7 +40,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin ID string of all atomic members of the domain.",

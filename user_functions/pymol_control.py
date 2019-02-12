@@ -116,7 +116,6 @@ uf.title = "Display the cone PDB geometric object."
 uf.title_short = "Cone PDB geometric object display."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file containing the cone geometric object.",
@@ -153,7 +152,6 @@ uf.add_keyarg(
     name = "ave_pos",
     default = "ave_pos",
     basic_types = ["str"],
-    arg_type = "str",
     desc_short = "average structure file root",
     desc = "The file root of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
     can_be_none = True
@@ -162,7 +160,6 @@ uf.add_keyarg(
     name = "rep",
     default = "frame_order",
     basic_types = ["str"],
-    arg_type = "str",
     desc_short = "PDB representation file root",
     desc = "The file root of the PDB file for the geometric object representation of the frame order dynamics.",
     can_be_none = True
@@ -170,7 +167,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "sim",
     default = "simulation.pdb.gz",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Brownian simulation file",
     desc = "The full name the Brownian simulation PDB file.",
@@ -181,7 +177,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are located.",
@@ -295,7 +290,6 @@ uf.title_short = "PyMOL macro file execution."
 uf.display = True
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PyMOL macro file.",
@@ -305,7 +299,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "pymol",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -390,7 +383,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The optional name of the file.",
@@ -401,7 +393,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "pymol",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The optional directory to save the file to.",
@@ -441,7 +432,6 @@ uf.title = "Display the diffusion tensor PDB geometric object over the loaded PD
 uf.title_short = "Diffusion tensor and structure display."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str", "file object"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file containing the tensor geometric object.",
@@ -481,7 +471,6 @@ uf.title_short = "XH vector distribution display."
 uf.add_keyarg(
     name = "file",
     default = "XH_dist.pdb",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file containing the vector distribution.",

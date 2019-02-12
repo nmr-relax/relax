@@ -66,7 +66,6 @@ uf.title = "Perform a relaxation dispersion optimisation using Flemming Hansen's
 uf.title_short = "CATIA execution."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory containing all of the CATIA input files.",
@@ -75,7 +74,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "catia",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "CATIA executable file",
     desc = "The name of the executable CATIA program file.",
@@ -102,7 +100,6 @@ uf.title_short = "CATIA input file creation."
 uf.add_keyarg(
     name = "dir",
     default = "catia",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the CATIA input files, output directory, etc.",
@@ -215,7 +212,6 @@ uf.title = "Optimisation of the CPMG data using Art Palmer's CPMGFit program."
 uf.title_short = "CPMGFit execution."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory containing all of the CPMGFit input files.  If not given, this defaults to the model name in lower case.",
@@ -231,7 +227,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "cpmgfit",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "CPMGFit executable file",
     desc = "The name of the executable CPMGFit program file.",
@@ -257,7 +252,6 @@ uf.title = "Create the input files for Art Palmer's CPMGFit program."
 uf.title_short = "CPMGFit input file creation."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the files.  If not given, this defaults to the model name in lower case.",
@@ -273,7 +267,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "cpmgfit",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "CPMGFit executable file",
     desc = "The name of the executable CPMGFit program file.",
@@ -394,7 +387,6 @@ uf.title = "Create the input files for Michael Bieri's NESSY program."
 uf.title_short = "NESSY input file creation."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the file and to use as the NESSY project directory.  If not given, this defaults to the current directory.",
@@ -468,7 +460,6 @@ uf.title_short = "Dispersion curve plotting."
 uf.add_keyarg(
     name = "dir",
     default = "grace",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory name to place all of the spin system files into.",
@@ -569,7 +560,6 @@ uf.title = "Create 2D Grace plots of the exponential curves."
 uf.title_short = "Exponential curve plotting."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -579,7 +569,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "grace",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -636,7 +625,6 @@ uf.title = "Estimate R2eff errors by the Jacobian matrix."
 uf.title_short = "Estimate R2eff errors."
 uf.add_keyarg(
     name = "spin_id",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID to restrict value setting to",
     desc = "The spin ID string to restrict value setting to.",
@@ -689,7 +677,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -697,7 +684,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -808,7 +794,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "spin ID string",
     desc = "The spin identification string.",
@@ -816,7 +801,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
@@ -824,7 +808,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory name.",
@@ -1091,7 +1074,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory name to place ShereKhan cluster folders into.",
@@ -1182,7 +1164,6 @@ uf.title = "Create text files of the dispersion curves for each spin system."
 uf.title_short = "Dispersion curve writing."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory name to place all of the spin system files into.",

@@ -64,7 +64,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "dx",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to change to for running OpenDX.  If this is set to None, OpenDX will be run in the current directory.",
@@ -73,7 +72,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dx_exe",
     default = "dx",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "OpenDX executable file name",
     desc = "The OpenDX executable file.",
@@ -172,7 +170,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dir",
     default = "dx",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to output files to.  Set this to 'None' if you do not want the files to be placed in subdirectory.  If the directory does not exist, it will be created.",

@@ -64,7 +64,7 @@ class Test_value(Value_base_class, TestCase):
 
             # Make sure the param and val argument match.
             param = 'csa'
-            if data[0] in ['int list', 'float list', 'list', 'none list', 'number list', 'str list']:
+            if data[0] in ['file list', 'float list', 'int list', 'list', 'none list', 'number list', 'str list']:
                 param = []
                 for i in range(len(data[1])):
                     param.append(allowed_params[i])

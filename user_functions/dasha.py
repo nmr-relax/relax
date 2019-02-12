@@ -59,7 +59,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the files.",
@@ -95,7 +94,6 @@ uf.title = "Perform a model-free optimisation using Dasha."
 uf.title_short = "Dasha execution."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory to place the files.",
@@ -111,7 +109,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "dasha",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "Dasha executable file",
     desc = "The name of the executable Dasha program file.",
@@ -136,7 +133,6 @@ uf.title = "Extract data from the Dasha results file."
 uf.title_short = "Dasha data extraction."
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory where the file 'dasha_results' is found.",

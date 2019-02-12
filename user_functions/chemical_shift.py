@@ -51,7 +51,6 @@ uf.title = "Read chemical shifts from a file."
 uf.title_short = "Chemical shift reading."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the peak list of generic formatted file containing the chemical shifts.",
@@ -60,7 +59,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",

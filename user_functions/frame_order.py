@@ -69,14 +69,12 @@ uf.add_keyarg(
     name = "root",
     default = "decomposed",
     basic_types = ["str"],
-    arg_type = "str",
     desc_short = "PDB file root",
     desc = "The file root for the PDB files created.  Each motional component will be represented by a different PDB file appended with '_mode1.pdb', '_mode2.pdb', '_mode3.pdb', etc.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are to be saved.",
@@ -148,7 +146,6 @@ uf.title_short = "Frame order motional distribution."
 uf.add_keyarg(
     name = "file",
     default = "distribution.pdb.gz",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "distribution file",
     desc = "The PDB file for storing the frame order motional distribution.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
@@ -158,7 +155,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are to be located.",
@@ -228,7 +224,6 @@ uf.add_keyarg(
     name = "ave_pos",
     default = "ave_pos",
     basic_types = ["str"],
-    arg_type = "str",
     desc_short = "average structure file root",
     desc = "The file root of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
     can_be_none = True
@@ -237,14 +232,12 @@ uf.add_keyarg(
     name = "rep",
     default = "frame_order",
     basic_types = ["str"],
-    arg_type = "str",
     desc_short = "PDB representation file root",
     desc = "The file root of the PDB file for the geometric object representation of the frame order dynamics.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are to be located.",
@@ -525,7 +518,6 @@ uf.title_short = "Frame order pseudo-Brownian dynamics simulation."
 uf.add_keyarg(
     name = "file",
     default = "simulation.pdb.gz",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "simulation file",
     desc = "The PDB file for storing the frame order pseudo-Brownian dynamics simulation.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
@@ -535,7 +527,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the files are to be located.",

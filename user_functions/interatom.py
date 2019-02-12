@@ -73,7 +73,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id1",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID",
     desc = "The spin ID of the first spin.",
@@ -82,7 +81,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "spin_id2",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID",
     desc = "The spin ID of the first spin.",
@@ -111,7 +109,6 @@ uf.title_short = "Interatomic interaction setup."
 uf.add_keyarg(
     name = "spin_id1",
     default = "@N",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID string",
     desc = "The spin ID string for the first spin of the interatomic interaction.",
@@ -120,7 +117,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id2",
     default = "@H",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID string",
     desc = "The spin ID string for the second spin of the interatomic interaction.",
@@ -177,7 +173,6 @@ uf.title = "Read inter-spin distances from a file."
 uf.title_short = "Interatomic distance reading."
 uf.add_keyarg(
     name = "file",
-    basic_types = ["str"],
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the averaged distance data.",
@@ -185,7 +180,6 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dir",
-    basic_types = ["str"],
     arg_type = "dir",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
@@ -260,7 +254,6 @@ uf.title_short = "Interatomic distance setup."
 uf.add_keyarg(
     name = "spin_id1",
     default = "@N",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "first spin ID string",
     desc = "The spin identification string for the first spin of the dipole pair."
@@ -268,7 +261,6 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "spin_id2",
     default = "@H",
-    basic_types = ["str"],
     arg_type = "spin ID",
     desc_short = "second spin ID string",
     desc = "The spin identification string for the second spin of the dipole pair."
