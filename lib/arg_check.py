@@ -25,6 +25,7 @@
 
 # Python module imports.
 from numpy import ndarray
+from types import FunctionType, MethodType
 
 # relax module imports.
 import lib.check_types
@@ -85,7 +86,6 @@ from lib.errors import RelaxError, \
         RelaxTupleNumError, \
         RelaxValListValError
 from lib.io import DummyFileObject
-from types import FunctionType, MethodType
 
 
 def is_bool(arg, name=None, can_be_none=False, raise_error=True):
