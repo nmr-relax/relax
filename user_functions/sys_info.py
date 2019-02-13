@@ -58,7 +58,6 @@ uf.add_keyarg(
     desc_short = "path",
     desc = "The path to the new current working directory.",
     can_be_none = False,
-    wiz_filesel_style = FD_CHANGE_DIR
 )
 # Description.
 uf.desc.append(Desc_container())
