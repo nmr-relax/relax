@@ -80,6 +80,7 @@ from lib.errors import RelaxError, \
         RelaxNumpyNumError, \
         RelaxStrError, \
         RelaxStrFileError, \
+        RelaxStrFileListStrFileError, \
         RelaxStrListNumError, \
         RelaxStrListStrError, \
         RelaxTupleError, \
@@ -1552,53 +1553,54 @@ def validate_arg(arg, name=None, dim=tuple(), basic_types=[], container_types=[]
     For arguments which do not currently have a specific RelaxError for telling the user what the did wrong, the fall back RelaxInvalidError object will be raised.  If more detailed feedback to the user is desired, then a new RelaxError object should be created and added in the failure section of this function.
 
 
-    @param arg:                         The argument.
-    @type arg:                          anything
-    @keyword name:                      The plain English name of the argument, used in the RelaxError printout.
-    @type name:                         str
-    @keyword dim:                       The dimensions of the object to check.
-    @type dim:                          tuple of (int or None) or list of tuples of (int or None)
-    @keyword basic_types:               The types of values are allowed for the argument.
-    @type basic_types:                  list of str
-    @keyword container_types:           The container types allowed for the argument.
-    @type container_types:              list of str
-    @keyword can_be_none:               A flag specifying if the argument can be none.
-    @type can_be_none:                  bool
-    @keyword can_be_empty:              A flag which if True allows container types to be empty.
-    @type can_be_empty:                 bool
-    @keyword none_elements:             A flag which if True allows container types to contain None.
-    @type none_elements:                bool
-    @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
-    @type raise_error:                  bool
-    @raise RelaxError:                  If the function arguments are incorrectly supplied.
-    @raise RelaxArrayError:             If a list or numpy array is expected (and the raise_error flag is set).
-    @raise RelaxArrayFloatError:        If a list or numpy array of floats is expected (and the raise_error flag is set).
-    @raise RelaxArrayIntError:          If a list or numpy array of integers is expected (and the raise_error flag is set).
-    @raise RelaxArrayNumError:          If a list or numpy array of numbers is expected (and the raise_error flag is set).
-    @raise RelaxBoolError:              If a Boolean value is expected (and the raise_error flag is set).
-    @raise RelaxBoolListBoolError:      If a Boolean or list of Booleans is expected (and the raise_error flag is set).
-    @raise RelaxFloatError:             If a float value is expected (and the raise_error flag is set).
-    @raise RelaxFunctionError:          If a function is expected (and the raise_error flag is set).
-    @raise RelaxIntError:               If an integer value is expected (and the raise_error flag is set).
-    @raise RelaxIntListIntError:        If an integer value or list of integers is expected (and the raise_error flag is set).
-    @raise RelaxListError:              If a list of different basic types is expected (and the raise_error flag is set).
-    @raise RelaxListBoolError:          If a list of Booleans is expected (and the raise_error flag is set).
-    @raise RelaxListFloatError:         If a list of floats is expected (and the raise_error flag is set).
-    @raise RelaxListIntError:           If a list of integers is expected (and the raise_error flag is set).
-    @raise RelaxListNumError:           If a list of numbers is expected (and the raise_error flag is set).
-    @raise RelaxListStrError:           If a list of strings is expected (and the raise_error flag is set).
-    @raise RelaxNumError:               If a number value is expected (and the raise_error flag is set).
-    @raise RelaxNumTupleNumError:       If a number or tuple of numbers is expected (and the raise_error flag is set).
-    @raise RelaxNumpyFloatError:        If a numpy array of floats is expected (and the raise_error flag is set).
-    @raise RelaxNumpyIntError:          If a numpy array of integers is expected (and the raise_error flag is set).
-    @raise RelaxNumpyNumError:          If a numpy array is expected (and the raise_error flag is set).
-    @raise RelaxStrError:               If a string value is expected (and the raise_error flag is set).
-    @raise RelaxStrFileError:           If a string value or file object is expected (and the raise_error flag is set).
-    @raise RelaxStrListStrError:        If a string value or list of string values is expected (and the raise_error flag is set).
-    @raise RelaxTupleNumError:          If a tuple of numbers is expected (and the raise_error flag is set).
-    @raise RelaxInvalidError:           For all argument combinations not covered by a specific RelaxError (and the raise_error flag is set).
-    @return:                            The answer to the question (if raise_error is not set).
-    @rtype:                             bool
+    @param arg:                             The argument.
+    @type arg:                              anything
+    @keyword name:                          The plain English name of the argument, used in the RelaxError printout.
+    @type name:                             str
+    @keyword dim:                           The dimensions of the object to check.
+    @type dim:                              tuple of (int or None) or list of tuples of (int or None)
+    @keyword basic_types:                   The types of values are allowed for the argument.
+    @type basic_types:                      list of str
+    @keyword container_types:               The container types allowed for the argument.
+    @type container_types:                  list of str
+    @keyword can_be_none:                   A flag specifying if the argument can be none.
+    @type can_be_none:                      bool
+    @keyword can_be_empty:                  A flag which if True allows container types to be empty.
+    @type can_be_empty:                     bool
+    @keyword none_elements:                 A flag which if True allows container types to contain None.
+    @type none_elements:                    bool
+    @keyword raise_error:                   A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                      bool
+    @raise RelaxError:                      If the function arguments are incorrectly supplied.
+    @raise RelaxArrayError:                 If a list or numpy array is expected (and the raise_error flag is set).
+    @raise RelaxArrayFloatError:            If a list or numpy array of floats is expected (and the raise_error flag is set).
+    @raise RelaxArrayIntError:              If a list or numpy array of integers is expected (and the raise_error flag is set).
+    @raise RelaxArrayNumError:              If a list or numpy array of numbers is expected (and the raise_error flag is set).
+    @raise RelaxBoolError:                  If a Boolean value is expected (and the raise_error flag is set).
+    @raise RelaxBoolListBoolError:          If a Boolean or list of Booleans is expected (and the raise_error flag is set).
+    @raise RelaxFloatError:                 If a float value is expected (and the raise_error flag is set).
+    @raise RelaxFunctionError:              If a function is expected (and the raise_error flag is set).
+    @raise RelaxIntError:                   If an integer value is expected (and the raise_error flag is set).
+    @raise RelaxIntListIntError:            If an integer value or list of integers is expected (and the raise_error flag is set).
+    @raise RelaxListError:                  If a list of different basic types is expected (and the raise_error flag is set).
+    @raise RelaxListBoolError:              If a list of Booleans is expected (and the raise_error flag is set).
+    @raise RelaxListFloatError:             If a list of floats is expected (and the raise_error flag is set).
+    @raise RelaxListIntError:               If a list of integers is expected (and the raise_error flag is set).
+    @raise RelaxListNumError:               If a list of numbers is expected (and the raise_error flag is set).
+    @raise RelaxListStrError:               If a list of strings is expected (and the raise_error flag is set).
+    @raise RelaxNumError:                   If a number value is expected (and the raise_error flag is set).
+    @raise RelaxNumTupleNumError:           If a number or tuple of numbers is expected (and the raise_error flag is set).
+    @raise RelaxNumpyFloatError:            If a numpy array of floats is expected (and the raise_error flag is set).
+    @raise RelaxNumpyIntError:              If a numpy array of integers is expected (and the raise_error flag is set).
+    @raise RelaxNumpyNumError:              If a numpy array is expected (and the raise_error flag is set).
+    @raise RelaxStrError:                   If a string value is expected (and the raise_error flag is set).
+    @raise RelaxStrFileError:               If a string value or file object is expected (and the raise_error flag is set).
+    @raise RelaxStrFileListStrFileError:    If a string value, file object, list of strings, or list of file objects is expected (and the raise_error flag is set).
+    @raise RelaxStrListStrError:            If a string value or list of string values is expected (and the raise_error flag is set).
+    @raise RelaxTupleNumError:              If a tuple of numbers is expected (and the raise_error flag is set).
+    @raise RelaxInvalidError:               For all argument combinations not covered by a specific RelaxError (and the raise_error flag is set).
+    @return:                                The answer to the question (if raise_error is not set).
+    @rtype:                                 bool
     """
 
     # An argument of None is allowed.
@@ -1766,7 +1768,10 @@ def validate_arg(arg, name=None, dim=tuple(), basic_types=[], container_types=[]
         if len(basic_types) > 1 or len(basic_types) == 0:
             # String or file object.
             if len(basic_types) == 2 and 'str' in basic_types and 'file object' in basic_types:
-                raise RelaxStrFileError(name, arg, can_be_none=can_be_none)
+                if max(allowed_rank) == 0:
+                    raise RelaxStrFileError(name, arg, can_be_none=can_be_none)
+                if max(allowed_rank) == 1:
+                    raise RelaxStrFileListStrFileError(name, arg, can_be_none=can_be_none)
 
             # Array types.
             if max(allowed_rank) == 1 and min(allowed_rank) == 1:

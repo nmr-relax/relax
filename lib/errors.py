@@ -601,7 +601,16 @@ class RelaxNoneNumStrListNumStrError(BaseArgError):
     simple_types = [NONE, NUM, STR]
     list_types = [LIST_NUM, LIST_STR]
 
+# String, file object, or list of strings or file objects.
+class RelaxStrFileListStrFileError(BaseArgError):
+    simple_types = [STR, FILE]
+    list_types = [LIST]
+
 # String or list.
+class RelaxStrListError(BaseArgError):
+    simple_types = [STR]
+    list_types = [LIST]
+
 class RelaxNoneStrListError(BaseArgError):
     simple_types = [NONE, STR]
     list_types = [LIST]

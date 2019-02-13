@@ -100,6 +100,7 @@ from lib.errors import RelaxError, \
         RelaxNumpyNumError, \
         RelaxStrError, \
         RelaxStrFileError, \
+        RelaxStrFileListStrFileError, \
         RelaxStrListNumError, \
         RelaxStrListStrError, \
         RelaxTupleError, \
@@ -261,6 +262,7 @@ class Test_arg_check(UnitTestCase):
             'empty_tuple_rank2':        ((),),
             'empty_tuple_rank3':        (((),),),
             'file_object':              sys.stdout,
+            'file_object_list':         [sys.stdout, Dummy_writable_class()],
             'float':                    1.0,
             'float_list':               [1.],
             'float_list_rank2':         [[1.]],
@@ -395,6 +397,7 @@ class Test_arg_check(UnitTestCase):
             'bool_none_list',
             'empty_list_rank2',
             'empty_list_rank3',
+            'file_object_list',
             'float_list',
             'float_list_rank2',
             'float_list_rank3',
@@ -1256,7 +1259,7 @@ class Test_arg_check(UnitTestCase):
 
 
     def test_validate_arg_str_or_file_object(self):
-        """Test lib.arg_check.validate_arg() for a string or list of strings."""
+        """Test lib.arg_check.validate_arg() for a string or file object."""
 
         # The allowed types.
         allowed = [
@@ -1266,7 +1269,29 @@ class Test_arg_check(UnitTestCase):
         ]
 
         # Checks.
-        self.check_validate_arg(allowed=allowed, error=RelaxStrFileError, dim=[(), (None,)], basic_types=['str', 'file object'])
+        self.check_validate_arg(allowed=allowed, error=RelaxStrFileError, basic_types=['str', 'file object'])
+
+
+    def test_validate_arg_str_file_or_str_file_list_object(self):
+        """Test lib.arg_check.validate_arg() for a string or file object, or a list of strings or file objects."""
+
+        # The allowed types.
+        allowed = [
+            'file_object',
+            'file_object_list',
+            'inst_file',
+            'str',
+            'str_list',
+        ]
+        none_elem = [
+            'str_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxStrFileListStrFileError, dim=[(), (None,)], basic_types=['str', 'file object'], container_types=['list'])
 
 
     def test_validate_arg_str_or_str_list(self):
