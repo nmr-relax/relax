@@ -23,14 +23,6 @@
 # Module docstring.
 """The bmrb user function definitions."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN, FD_SAVE
-else:
-    FD_OPEN = -1
-    FD_SAVE = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import bmrb, exp_info, pipes
@@ -219,10 +211,9 @@ uf.title = "Read BMRB files in the NMR-STAR format."
 uf.title_short = "Reading of BMRB files."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the BMRB NMR-STAR formatted file to read.",
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -262,10 +253,9 @@ uf.title = "Specify the scripts used in the analysis."
 uf.title_short = "Analysis scripts."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "script file",
     desc = "The name of the script file.",
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -555,10 +545,9 @@ uf.title = "Write the results to a BMRB NMR-STAR formatted file."
 uf.title_short = "BMRB file writing."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the BMRB file to output results to.  Optionally this can be a file object, or any object with a write() method.",
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

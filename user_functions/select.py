@@ -23,13 +23,6 @@
 # Module docstring.
 """The select user function definitions."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import domain, selection, spectrum
@@ -210,10 +203,9 @@ uf.title_short = "Selecting spins from file."
 uf.display = True
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the file containing the list of spins to select.",
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

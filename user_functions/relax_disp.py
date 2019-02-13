@@ -25,13 +25,7 @@
 """The relax_disp user function definitions."""
 
 # Python module imports.
-import dep_check
 from os import sep
-if dep_check.wx_module:
-    from wx import FD_OPEN, FD_SAVE
-else:
-    FD_OPEN = -1
-    FD_SAVE = -1
 
 # relax module imports.
 from lib.dispersion.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FIT_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
@@ -74,10 +68,9 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "catia",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "CATIA executable file",
     desc = "The name of the executable CATIA program file.",
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
 # Description.
@@ -227,10 +220,9 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "cpmgfit",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "CPMGFit executable file",
     desc = "The name of the executable CPMGFit program file.",
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
 # Description.
@@ -267,10 +259,9 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "cpmgfit",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "CPMGFit executable file",
     desc = "The name of the executable CPMGFit program file.",
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
 uf.add_keyarg(
@@ -560,11 +551,10 @@ uf.title = "Create 2D Grace plots of the exponential curves."
 uf.title_short = "Exponential curve plotting."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the file.",
     wiz_filesel_wildcard = WILDCARD_GRACE_ALL,
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
@@ -677,10 +667,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the file.",
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
@@ -801,10 +790,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the file.",
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

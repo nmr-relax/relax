@@ -23,12 +23,7 @@
 """The interatom user function definitions."""
 
 # Python module imports.
-import dep_check
 from os import sep
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
@@ -173,10 +168,9 @@ uf.title = "Read inter-spin distances from a file."
 uf.title_short = "Interatomic distance reading."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the file containing the averaged distance data.",
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

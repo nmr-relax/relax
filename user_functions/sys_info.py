@@ -24,11 +24,6 @@
 """The sys_info user function definitions."""
 
 # Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_CHANGE_DIR
-else:
-    FD_CHANGE_DIR = -1
 from os import sep
 
 # relax module imports.

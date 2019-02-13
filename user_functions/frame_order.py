@@ -22,13 +22,6 @@
 # Module docstring.
 """The frame_order user function definitions."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
@@ -146,11 +139,10 @@ uf.title_short = "Frame order motional distribution."
 uf.add_keyarg(
     name = "file",
     default = "distribution.pdb.gz",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "distribution file",
     desc = "The PDB file for storing the frame order motional distribution.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
 uf.add_keyarg(
@@ -518,11 +510,10 @@ uf.title_short = "Frame order pseudo-Brownian dynamics simulation."
 uf.add_keyarg(
     name = "file",
     default = "simulation.pdb.gz",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "simulation file",
     desc = "The PDB file for storing the frame order pseudo-Brownian dynamics simulation.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
 uf.add_keyarg(

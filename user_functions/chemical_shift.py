@@ -23,11 +23,6 @@
 """The chemical_shift user function definitions."""
 
 # Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
 from os import sep
 
 # relax module imports.
@@ -51,11 +46,10 @@ uf.title = "Read chemical shifts from a file."
 uf.title_short = "Chemical shift reading."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the peak list of generic formatted file containing the chemical shifts.",
     wiz_filesel_wildcard = WILDCARD_SPECTRUM_PEAKLIST,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

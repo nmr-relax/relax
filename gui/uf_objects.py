@@ -25,6 +25,7 @@
 # Python module imports.
 from re import search
 import wx
+from wx import FD_OPEN, FD_SAVE
 from wx.lib import scrolledpanel
 import sys
 
@@ -557,12 +558,20 @@ class Uf_page(Wiz_page):
                 dim = ()
 
             # Special arg type:  file selection dialog.
-            if arg['arg_type'] == 'file sel':
-                self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=arg['wiz_filesel_style'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, preview=arg['wiz_filesel_preview'], read_only=arg['wiz_read_only'])
+            if arg['arg_type'] in ['file sel read', 'file sel write']:
+                if arg['arg_type'] == 'file sel read':
+                    style = FD_OPEN
+                if arg['arg_type'] == 'file sel write':
+                    style = FD_SAVE
+                self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=style, tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, preview=arg['wiz_filesel_preview'], read_only=arg['wiz_read_only'])
 
             # Special arg type:  multiple file selection dialog.
-            elif arg['arg_type'] == 'file sel multi':
-                self.uf_args[arg['name']] = Selector_file_multiple(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=arg['wiz_filesel_style'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, preview=arg['wiz_filesel_preview'], read_only=arg['wiz_read_only'])
+            if arg['arg_type'] in ['file sel multi read', 'file sel multi write']:
+                if arg['arg_type'] == 'file sel multi read':
+                    style = FD_OPEN
+                if arg['arg_type'] == 'file sel multi write':
+                    style = FD_SAVE
+                self.uf_args[arg['name']] = Selector_file_multiple(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=style, tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, preview=arg['wiz_filesel_preview'], read_only=arg['wiz_read_only'])
 
             # Special arg type:  dir arg.
             elif arg['arg_type'] == 'dir':

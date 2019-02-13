@@ -23,13 +23,6 @@
 # Module docstring.
 """The noe user function definitions."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
-
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH
 from pipe_control import noesy, spectrum
@@ -51,10 +44,9 @@ uf.title = "Read NOESY or ROESY restraints from a file."
 uf.title_short = "Restraint reading."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the file containing the restraint data.",
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

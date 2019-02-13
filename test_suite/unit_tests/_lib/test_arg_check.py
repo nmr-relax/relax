@@ -113,12 +113,37 @@ def dummy_function():
     pass
 
 
-class Dummy_class:
+class Dummy_class(object):
     pass
 
 
-class Dummy_writable_class:
+
+class Dummy_readable_class(object):
+    def read(self):
+        pass
+
+    def readline(self):
+        pass
+
+    def readlines(self):
+        pass
+
+
+
+class Dummy_rw_class(object):
+    def readable(self):
+        return True
+
+    def writable(self):
+        return True
+
+
+
+class Dummy_writable_class(object):
     def write(self):
+        pass
+
+    def writelines(self):
         pass
 
 
@@ -261,8 +286,12 @@ class Test_arg_check(UnitTestCase):
             'empty_tuple':              (),
             'empty_tuple_rank2':        ((),),
             'empty_tuple_rank3':        (((),),),
-            'file_object':              sys.stdout,
-            'file_object_list':         [sys.stdout, Dummy_writable_class()],
+            'file_object_list_read':    [sys.__stdin__, Dummy_readable_class()],
+            'file_object_list_rw':      [Dummy_rw_class()],
+            'file_object_list_write':   [sys.__stdout__, Dummy_writable_class()],
+            'file_object_read':         Dummy_readable_class(),
+            'file_object_rw':           Dummy_rw_class(),
+            'file_object_write':        sys.__stdout__,
             'float':                    1.0,
             'float_list':               [1.],
             'float_list_rank2':         [[1.]],
@@ -397,7 +426,9 @@ class Test_arg_check(UnitTestCase):
             'bool_none_list',
             'empty_list_rank2',
             'empty_list_rank3',
-            'file_object_list',
+            'file_object_list_read',
+            'file_object_list_rw',
+            'file_object_list_write',
             'float_list',
             'float_list_rank2',
             'float_list_rank3',
@@ -471,7 +502,7 @@ class Test_arg_check(UnitTestCase):
     def test_is_str_or_inst(self):
         """Test the lib.arg_check.is_str_or_inst() function."""
 
-        self.check_function(func=is_str_or_inst, allowed_types=['str', 'file_object', 'inst_file'], error=RelaxStrFileError, none_error=RelaxNoneStrFileError)
+        self.check_function(func=is_str_or_inst, allowed_types=['str', 'file_object_write', 'inst_file'], error=RelaxStrFileError, none_error=RelaxNoneStrFileError)
 
 
     def test_is_str_or_num_or_str_num_list(self):
@@ -536,7 +567,9 @@ class Test_arg_check(UnitTestCase):
         allowed = [
             'bool',
             'class',
-            'file_object',
+            'file_object_read',
+            'file_object_rw',
+            'file_object_write',
             'float',
             'func',
             'int',
@@ -1258,27 +1291,67 @@ class Test_arg_check(UnitTestCase):
         self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxInvalidError, dim=(None,None), basic_types=['str'], container_types=['list'])
 
 
-    def test_validate_arg_str_or_file_object(self):
-        """Test lib.arg_check.validate_arg() for a string or file object."""
+    def test_validate_arg_str_or_file_read(self):
+        """Test lib.arg_check.validate_arg() for a string or a readable file object."""
 
         # The allowed types.
         allowed = [
             'str',
-            'file_object',
+            'file_object_read',
+            'file_object_rw',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, error=RelaxStrFileError, basic_types=['str', 'file object read'])
+
+
+    def test_validate_arg_str_or_file_write(self):
+        """Test lib.arg_check.validate_arg() for a string or a writable file object."""
+
+        # The allowed types.
+        allowed = [
+            'str',
+            'file_object_rw',
+            'file_object_write',
             'inst_file'
         ]
 
         # Checks.
-        self.check_validate_arg(allowed=allowed, error=RelaxStrFileError, basic_types=['str', 'file object'])
+        self.check_validate_arg(allowed=allowed, error=RelaxStrFileError, basic_types=['str', 'file object write'])
 
 
-    def test_validate_arg_str_file_or_str_file_list_object(self):
-        """Test lib.arg_check.validate_arg() for a string or file object, or a list of strings or file objects."""
+    def test_validate_arg_str_file_read_or_str_file_read_list(self):
+        """Test lib.arg_check.validate_arg() for a string or a readable file object, or a list of strings or a readable file objects."""
 
         # The allowed types.
         allowed = [
-            'file_object',
-            'file_object_list',
+            'file_object_list_read',
+            'file_object_list_rw',
+            'file_object_read',
+            'file_object_rw',
+            'str',
+            'str_list',
+        ]
+        none_elem = [
+            'str_none_list',
+        ]
+        empty = [
+            'empty_list',
+        ]
+
+        # Checks.
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxStrFileListStrFileError, dim=[(), (None,)], basic_types=['str', 'file object read'], container_types=['list'])
+
+
+    def test_validate_arg_str_file_write_or_str_file_write_list(self):
+        """Test lib.arg_check.validate_arg() for a string or a writable file object, or a list of strings or a writable file objects."""
+
+        # The allowed types.
+        allowed = [
+            'file_object_list_rw',
+            'file_object_list_write',
+            'file_object_rw',
+            'file_object_write',
             'inst_file',
             'str',
             'str_list',
@@ -1291,7 +1364,7 @@ class Test_arg_check(UnitTestCase):
         ]
 
         # Checks.
-        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxStrFileListStrFileError, dim=[(), (None,)], basic_types=['str', 'file object'], container_types=['list'])
+        self.check_validate_arg(allowed=allowed, none_elem=none_elem, empty=empty, error=RelaxStrFileListStrFileError, dim=[(), (None,)], basic_types=['str', 'file object write'], container_types=['list'])
 
 
     def test_validate_arg_str_or_str_list(self):

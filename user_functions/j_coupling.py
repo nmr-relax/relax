@@ -22,14 +22,6 @@
 # Module docstring.
 """The j_coupling user function definitions."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN, FD_SAVE
-else:
-    FD_OPEN = -1
-    FD_SAVE = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import pipes, j_coupling
@@ -124,10 +116,9 @@ uf.title = "Read the J coupling data from file."
 uf.title_short = "J coupling data reading."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the file containing the J coupling data.",
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -208,10 +199,9 @@ uf.title = "Write the J coupling data to file."
 uf.title_short = "J coupling writing."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the file.",
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

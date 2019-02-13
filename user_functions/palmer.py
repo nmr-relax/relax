@@ -23,13 +23,6 @@
 # Module docstring.
 """The palmer user function definitions for controlling the Modelfree4 software."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import palmer
@@ -65,10 +58,9 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "modelfree4",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "Modelfree executable file",
     desc = "The name of the executable Modelfree program file.",
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
 uf.add_keyarg(
@@ -185,10 +177,9 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "binary",
     default = "modelfree4",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "Modelfree4 executable file",
     desc = "The name of the executable Modelfree program file.",
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
 # Description.

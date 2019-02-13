@@ -1,26 +1,26 @@
 from __future__ import absolute_import
-###############################################################################
-#                                                                             #
-# Copyright (C) 2001,2003-2004,2006-2009,2011-2012,2014 Edward d'Auvergne     #
-# Copyright (C) 2006 Chris MacRaild                                           #
-# Copyright (C) 2014 Troels E. Linnet                                         #
-#                                                                             #
-# This file is part of the program relax (http://www.nmr-relax.com).          #
-#                                                                             #
-# This program is free software: you can redistribute it and/or modify        #
-# it under the terms of the GNU General Public License as published by        #
-# the Free Software Foundation, either version 3 of the License, or           #
-# (at your option) any later version.                                         #
-#                                                                             #
-# This program is distributed in the hope that it will be useful,             #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
-# GNU General Public License for more details.                                #
-#                                                                             #
-# You should have received a copy of the GNU General Public License           #
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
-#                                                                             #
-###############################################################################
+################################################################################
+#                                                                              #
+# Copyright (C) 2001,2003-2004,2006-2009,2011-2012,2014,2019 Edward d'Auvergne #
+# Copyright (C) 2006 Chris MacRaild                                            #
+# Copyright (C) 2014 Troels E. Linnet                                          #
+#                                                                              #
+# This file is part of the program relax (http://www.nmr-relax.com).           #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU General Public License as published by         #
+# the Free Software Foundation, either version 3 of the License, or            #
+# (at your option) any later version.                                          #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# You should have received a copy of the GNU General Public License            #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.        #
+#                                                                              #
+################################################################################
 
 # Module docstring.
 """Module containing advanced IO functions for relax.
@@ -693,8 +693,15 @@ def write_data(out=None, headings=None, data=None, sep=None):
 
 
 class DummyFileObject:
-    def __init__(self):
-        """Set up the dummy object to act as a file object."""
+    def __init__(self, mode='w'):
+        """Set up the dummy object to act as a file object.
+
+        @keyword mode:  Set the read or write mode for object testing.  This can be 'r' or 'w'.
+        @type mode:     str
+        """
+
+        # Store the arg.
+        self.mode = mode
 
         # Initialise an object for adding the string from all write calls to.
         self.data = ''
@@ -710,19 +717,13 @@ class DummyFileObject:
         self.closed = True
 
 
-    def write(self, str):
-        """Mimic the file object write() method so that this class can be used as a file object.
+    def readable(self):
+        """Mimic the Python 3 readable() method."""
 
-        @param str:     The string to be written.
-        @type str:      str
-        """
-
-        # Check if the file is closed.
-        if self.closed:
-            raise ValueError('I/O operation on closed file')
-
-        # Append the string to the data object.
-        self.data = self.data + str
+        if self.mode == 'r':
+            return True
+        else:
+            return False
 
 
     def readlines(self):
@@ -748,6 +749,30 @@ class DummyFileObject:
 
         # Return the file lines.
         return lines
+
+
+    def writable(self):
+        """Mimic the Python 3 writable() method."""
+
+        if self.mode == 'w':
+            return True
+        else:
+            return False
+
+
+    def write(self, str):
+        """Mimic the file object write() method so that this class can be used as a file object.
+
+        @param str:     The string to be written.
+        @type str:      str
+        """
+
+        # Check if the file is closed.
+        if self.closed:
+            raise ValueError('I/O operation on closed file')
+
+        # Append the string to the data object.
+        self.data = self.data + str
 
 
 

@@ -22,13 +22,6 @@
 # Module docstring.
 """The n_state_model user function definitions."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_SAVE
-else:
-    FD_SAVE = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from specific_analyses.n_state_model import uf as n_state_model_uf
@@ -118,11 +111,10 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "cone.pdb",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the PDB file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE
 )
 
 uf.add_keyarg(

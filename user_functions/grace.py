@@ -23,14 +23,6 @@
 # Module docstring.
 """The grace user function definitions for controlling the Grace data viewing software."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN, FD_SAVE
-else:
-    FD_OPEN = -1
-    FD_SAVE = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import grace
@@ -59,11 +51,10 @@ uf.title = "Visualise the file within Grace."
 uf.title_short = "Grace execution."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the file.",
     wiz_filesel_wildcard = WILDCARD_GRACE_ALL,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -76,10 +67,9 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "grace_exe",
     default = "xmgrace",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "Grace executable file",
     desc = "The Grace executable file.",
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
 # Description.
@@ -163,11 +153,10 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the file.",
     wiz_filesel_wildcard = WILDCARD_GRACE_ALL,
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

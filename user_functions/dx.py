@@ -23,13 +23,6 @@
 # Module docstring.
 """The dx user function definitions for controlling the OpenDX visualisation software."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from lib.software.opendx.execute import run
@@ -72,10 +65,9 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "dx_exe",
     default = "dx",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "OpenDX executable file name",
     desc = "The OpenDX executable file.",
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
 uf.add_keyarg(

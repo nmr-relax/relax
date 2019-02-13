@@ -22,13 +22,6 @@
 # Module docstring.
 """The script user function definitions."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
-
 # relax module imports.
 from pipe_control import script
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -42,11 +35,10 @@ uf.title = "Execute a relax script."
 uf.title_short = "Script execution."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the file containing the relaxation data.",
     wiz_filesel_wildcard = WILDCARD_RELAX_SCRIPT,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

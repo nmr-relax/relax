@@ -1484,14 +1484,15 @@ def validate_arg(arg, name=None, dim=tuple(), basic_types=[], container_types=[]
 
     The basic Python data types allowed for the argument are specified via the basic_types argument.  The currently supported values include:
 
-        - 'all':            Special value used to deactivate type-checking.
-        - 'bool':           Boolean values (True and False).
-        - 'float':          Floating point numbers.
-        - 'func':           Python function objects.
-        - 'int':            Integer numbers.
-        - 'number':         Special value allowing for any number type.
-        - 'str':            String objects.
-        - 'file object':    File objects (instance of file or any object with a write() method).
+        - 'all':                Special value used to deactivate type-checking.
+        - 'bool':               Boolean values (True and False).
+        - 'float':              Floating point numbers.
+        - 'func':               Python function objects.
+        - 'int':                Integer numbers.
+        - 'number':             Special value allowing for any number type.
+        - 'str':                String objects.
+        - 'file object read':   Readable file objects (instance of file or any object with read methods).
+        - 'file object write':  Writable file objects (instance of file or any object with write methods).
 
     The 'number' value is special in that it allows for both 'int' and 'float' values.  If the argument should be a higher rank object, then the container_types argument should be supplied.  The allowed values currently include:
 
@@ -1746,8 +1747,14 @@ def validate_arg(arg, name=None, dim=tuple(), basic_types=[], container_types=[]
                     fail = True
 
             # File objects.
-            elif lib.check_types.is_filetype(element) or hasattr(element, 'write'):
-                if 'file object' not in basic_types:
+            elif lib.check_types.is_filetype_rw(element):
+                if 'file object read' not in basic_types and 'file object write' not in basic_types:
+                    fail = True
+            elif lib.check_types.is_filetype_readable(element):
+                if 'file object read' not in basic_types:
+                    fail = True
+            elif lib.check_types.is_filetype_writable(element):
+                if 'file object write' not in basic_types:
                     fail = True
 
             # Unhandled type.
@@ -1767,7 +1774,7 @@ def validate_arg(arg, name=None, dim=tuple(), basic_types=[], container_types=[]
         # Multiple types.
         if len(basic_types) > 1 or len(basic_types) == 0:
             # String or file object.
-            if len(basic_types) == 2 and 'str' in basic_types and 'file object' in basic_types:
+            if len(basic_types) == 2 and 'str' in basic_types and ('file object read' in basic_types or 'file object write' in basic_types):
                 if max(allowed_rank) == 0:
                     raise RelaxStrFileError(name, arg, can_be_none=can_be_none)
                 if max(allowed_rank) == 1:

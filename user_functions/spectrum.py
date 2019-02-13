@@ -26,11 +26,6 @@
 
 # Python module imports.
 from os import sep
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
@@ -244,11 +239,10 @@ uf.title = "Read peak intensities from a file."
 uf.title_short = "Peak intensity reading."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel multi",
+    arg_type = "file sel multi read",
     desc_short = "file name(s)",
     desc = "The name of the file or the list of files containing the intensity data.",
     wiz_filesel_wildcard = WILDCARD_SPECTRUM_PEAKLIST,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -401,11 +395,10 @@ uf.title = "Read peak assignments from a file and create spins."
 uf.title_short = "Peak assignments reading."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the file containing the intensity data.",
     wiz_filesel_wildcard = WILDCARD_SPECTRUM_PEAKLIST,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

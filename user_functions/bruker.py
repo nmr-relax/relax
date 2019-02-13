@@ -22,13 +22,6 @@
 # Module docstring.
 """The bruker user function definitions for interfacing with the Bruker Dynamics Center."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN
-else:
-    FD_OPEN = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import bruker
@@ -55,10 +48,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the Bruker Dynamics Center file containing the relaxation data.",
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",

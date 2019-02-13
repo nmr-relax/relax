@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -47,7 +47,7 @@ except ImportError:
 
 
 # relax module imports.
-from lib.compat import IOBase, unicode
+from lib.compat import IOBase, StringIO, unicode
 
 
 def is_complex(num):
@@ -91,6 +91,117 @@ def is_filetype(obj):
     # Old style check.
     else:
         return isinstance(obj, file)
+
+
+def is_filetype_readable(obj):
+    """Check if the given Python object can operate as a readable file.
+
+    @param obj:     The Python object.
+    @type obj:      anything
+    @return:        True if the object can operate as a readable file, False otherwise.
+    @rtype:         bool
+    """
+
+    # New style check.
+    if hasattr(obj, 'readable'):
+        return obj.readable()
+
+    # Old style check.
+    if hasattr(obj, 'mode'):
+        if obj.mode == 'r':
+            return True
+        else:
+            return False
+
+    # Handle StringIO (and Python2 cStringIO).
+    if repr(type(obj)) == "<type 'cStringIO.StringO'>":
+        return True
+    try:
+        if isinstance(obj, StringIO):
+            return True
+    except TypeError:
+        pass
+
+    # Fallback check.
+    dir_obj = dir(obj)
+    for method in ['read', 'readline', 'readlines']:
+        if method not in dir_obj:
+            return False
+
+    # Good enough.
+    return True
+
+
+def is_filetype_rw(obj):
+    """Check if the given Python object can operate as both a readable and writable file.
+
+    @param obj:     The Python object.
+    @type obj:      anything
+    @return:        True if the object can operate as both a readable and writable file, False otherwise.
+    @rtype:         bool
+    """
+
+    # New style check.
+    if hasattr(obj, 'readable') and hasattr(obj, 'writable'):
+        return obj.readable() and obj.writable()
+
+    # Old style check.
+    if hasattr(obj, 'mode'):
+        if obj.mode == 'rw':
+            return True
+        else:
+            return False
+
+    # Handle StringIO (and Python2 cStringIO).
+    if repr(type(obj)) == "<type 'cStringIO.StringO'>":
+        return True
+    try:
+        if isinstance(obj, StringIO):
+            return True
+    except TypeError:
+        pass
+
+    # Nope.
+    return False
+
+
+def is_filetype_writable(obj):
+    """Check if the given Python object can operate as a writable file.
+
+    @param obj:     The Python object.
+    @type obj:      anything
+    @return:        True if the object can operate as a writable file, False otherwise.
+    @rtype:         bool
+    """
+
+    # New style check.
+    if hasattr(obj, 'writable'):
+        return obj.writable()
+
+    # Old style check.
+    if hasattr(obj, 'mode'):
+        if obj.mode == 'w':
+            return True
+        else:
+            return False
+
+    # Handle StringIO (and Python2 cStringIO).
+    if repr(type(obj)) == "<type 'cStringIO.StringO'>":
+        return True
+    try:
+        if isinstance(obj, StringIO):
+            return True
+    except TypeError:
+        pass
+
+    # Fallback check.
+    dir_obj = dir(obj)
+    for method in ['write', 'writelines']:
+        if method not in dir_obj:
+            return False
+
+    # Good enough.
+    return True
 
 
 def is_float(num):

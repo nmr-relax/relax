@@ -391,7 +391,7 @@ class Uf_container(object):
         self.__dict__[name] = value
 
 
-    def add_keyarg(self, name=None, default=None, basic_types=[], container_types=[], dim=(), arg_type=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_filesel_wildcard=FileSelectorDefaultWildcardStr, wiz_filesel_style=None, wiz_dirsel_style=DD_DEFAULT_STYLE, wiz_read_only=None, wiz_filesel_preview=True, can_be_none=False, can_be_empty=False, none_elements=False):
+    def add_keyarg(self, name=None, default=None, basic_types=[], container_types=[], dim=(), arg_type=None, min=0, max=1000, desc_short=None, desc=None, list_titles=None, wiz_element_type='default', wiz_combo_choices=None, wiz_combo_data=None, wiz_combo_iter=None, wiz_combo_list_min=None, wiz_filesel_wildcard=FileSelectorDefaultWildcardStr, wiz_dirsel_style=DD_DEFAULT_STYLE, wiz_read_only=None, wiz_filesel_preview=True, can_be_none=False, can_be_empty=False, none_elements=False):
         """Wrapper method for adding keyword argument information to the container.
 
         Types
@@ -467,32 +467,36 @@ class Uf_container(object):
 
         The 'arg_type' keyword enables a number of special argument types to be defined.  This is used to set up special UI elements.  The current set of values are:
 
-            - 'dir':                This causes the argument to not be shown in certain UIs, as this indicates that the user function already has a 'file sel' type argument and hence a directory is not required.
-            - 'dir sel':            Indicate to certain UIs that a dir selection dialog is required.
-            - 'file sel':           Indicate to certain UIs that a file selection dialog is required.
-            - 'file sel multi':     The same as 'file sel', except that multiple files can be selected simultaneously.
-            - 'force flag':         Used to suppress the argument in the GUI.  For example when writing a file, the normal 'force' argument is meaningless in the GUI as the operating file system interface will ask if the file should be overwritten.
-            - 'free format':        Used in the GUI to suppress the default argument UI element and instead show the special free file format UI element.
-            - 'func':               Used in the GUI to suppress the argument as functions are not supported.
-            - 'func args':          Used in the GUI to suppress the argument as functions are not supported.
-            - 'spin ID':            Activate the special spin ID UI element in the GUI.
+            - 'dir':                    This causes the argument to not be shown in certain UIs, as this indicates that the user function already has a 'file sel *' type argument and hence directory selection is redundant.
+            - 'dir sel':                Indicate to certain UIs that a dir selection dialog is required.
+            - 'file sel read':          Indicate to certain UIs that a file selection dialog for reading a file is required.
+            - 'file sel write':         Indicate to certain UIs that a file selection dialog for writing a file is required.
+            - 'file sel multi read':    The same as 'file sel read', except that multiple files can be selected simultaneously.
+            - 'file sel multi write':   The same as 'file sel write', except that multiple files can be selected simultaneously.
+            - 'force flag':             Used to suppress the argument in the GUI.  For example when writing a file, the normal 'force' argument is meaningless in the GUI as the operating file system interface will ask if the file should be overwritten.
+            - 'free format':            Used in the GUI to suppress the default argument UI element and instead show the special free file format UI element.
+            - 'func':                   Used in the GUI to suppress the argument as functions are not supported.
+            - 'func args':              Used in the GUI to suppress the argument as functions are not supported.
+            - 'spin ID':                Activate the special spin ID UI element in the GUI.
 
         In addition, some of these values will automatically set the 'dim', 'basic_types', and 'container_types' arguments::
 
-         _____________________________________________________________________________
-         |                |               |                        |                 |
-         | Argument       | dim           | basic_types            | container_types |
-         |________________|_______________|________________________|_________________|
-         |                |               |                        |                 |
-         | dir            | ()            | ['str']                | []              |
-         | dir sel        | ()            | ['str']                | []              |
-         | file sel       | ()            | ['str', 'file object'] | []              |
-         | file sel multi | [(), (None,)] | ['str', 'file object'] | ['list']        |
-         | force flag     | ()            | ['bool']               | []              |
-         | func           | ()            | ['func']               | []              |
-         | func args      | (None,)       | ['all']                | ['tuple']       |
-         | spin ID        | ()            | ['str']                | []              |
-         |________________|_______________|________________________|_________________|
+         _________________________________________________________________________________________
+         |                      |               |                              |                 |
+         | Argument             | dim           | basic_types                  | container_types |
+         |______________________|_______________|______________________________|_________________|
+         |                      |               |                              |                 |
+         | dir                  | ()            | ['str']                      | []              |
+         | dir sel              | ()            | ['str']                      | []              |
+         | file sel read        | ()            | ['str', 'file object read']  | []              |
+         | file sel write       | ()            | ['str', 'file object write'] | []              |
+         | file sel multi read  | [(), (None,)] | ['str', 'file object read']  | ['list']        |
+         | file sel multi write | [(), (None,)] | ['str', 'file object write'] | ['list']        |
+         | force flag           | ()            | ['bool']                     | []              |
+         | func                 | ()            | ['func']                     | []              |
+         | func args            | (None,)       | ['all']                      | ['tuple']       |
+         | spin ID              | ()            | ['str']                      | []              |
+         |______________________|_______________|______________________________|_________________|
 
 
         @keyword name:                  The name of the argument.
@@ -529,8 +533,6 @@ class Uf_container(object):
         @type wiz_combo_list_min:       int or None
         @keyword wiz_filesel_wildcard:  The file selection dialog wildcard string.  For example for opening PDB files, this could be "PDB files (*.pdb)|*.pdb;*.PDB".
         @type wiz_filesel_wildcard:     str or None
-        @keyword wiz_filesel_style:     The file selection dialog style.
-        @type wiz_filesel_style:        int
         @keyword wiz_dirsel_style:      The directory selection dialog style.
         @type wiz_dirsel_style:         int
         @keyword wiz_read_only:         A flag which if True means that the text of the GUI wizard page element cannot be edited.  If the default of None is given, then each UI element will decide for itself what to do.
@@ -560,13 +562,9 @@ class Uf_container(object):
         # Process the special arguments.
         if arg_type:
             # Check the value.
-            allowed = ['dir', 'dir sel', 'file sel', 'file sel multi', 'force flag', 'free format', 'func', 'func args', 'spin ID']
+            allowed = ['dir', 'dir sel', 'file sel read', 'file sel write', 'file sel multi read', 'file sel multi write', 'force flag', 'free format', 'func', 'func args', 'spin ID']
             if arg_type not in allowed:
                 raise RelaxError("The 'arg_type' argument '%s' should be one of %s." % (arg_type, allowed))
-
-            # Check the file selection dialog.
-            if arg_type == "file sel" and wiz_filesel_style == None:
-                raise RelaxError("The file selection style must always be provided.")
 
             # Overrides.
             if arg_type not in ['free format']:
@@ -581,14 +579,16 @@ class Uf_container(object):
                 # Override the dim argument.
                 if arg_type in ['func args']:
                     dim = (None,)
-                if arg_type in ['file sel multi']:
+                if arg_type in ['file sel multi read', 'file sel multi write']:
                     dim = [(), (None,)]
 
                 # Override the basic_types argument.
                 if arg_type in ['dir', 'dir sel', 'spin ID']:
                     basic_types = ['str']
-                elif arg_type in ['file sel', 'file sel multi']:
-                    basic_types = ['str', 'file object']
+                elif arg_type in ['file sel read', 'file sel multi read']:
+                    basic_types = ['str', 'file object read']
+                elif arg_type in ['file sel write', 'file sel multi write']:
+                    basic_types = ['str', 'file object write']
                 elif arg_type in ['force flag']:
                     basic_types = ['bool']
                 elif arg_type in ['func']:
@@ -597,7 +597,7 @@ class Uf_container(object):
                     basic_types = ['all']
 
                 # Override the container_types argument.
-                if arg_type in ['file sel multi']:
+                if arg_type in ['file sel multi read', 'file sel multi write']:
                     container_types = ['list']
                 elif arg_type in ['func args']:
                     container_types = ['tuple']
@@ -627,7 +627,6 @@ class Uf_container(object):
         arg['wiz_combo_iter'] = wiz_combo_iter
         arg['wiz_combo_list_min'] = wiz_combo_list_min
         arg['wiz_filesel_wildcard'] = wiz_filesel_wildcard
-        arg['wiz_filesel_style'] = wiz_filesel_style
         arg['wiz_dirsel_style'] = wiz_dirsel_style
         arg['wiz_read_only'] = wiz_read_only
         arg['wiz_filesel_preview'] = wiz_filesel_preview

@@ -25,12 +25,6 @@
 
 # Python module imports.
 from os import sep
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN, FD_SAVE
-else:
-    FD_OPEN = -1
-    FD_SAVE = -1
 
 # relax module imports.
 import colour
@@ -179,11 +173,10 @@ uf.title_short = "Molmol macro file execution."
 uf.display = True
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "Molmol macro file",
     desc = "The name of the Molmol macro file.",
     wiz_filesel_wildcard = WILDCARD_MOLMOL_MACRO,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -272,11 +265,10 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The optional name of the file.",
     wiz_filesel_wildcard = WILDCARD_MOLMOL_MACRO,
-    wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -344,11 +336,10 @@ uf.title = "Display the diffusion tensor PDB geometric object over the loaded PD
 uf.title_short = "Diffusion tensor and structure display."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the PDB file containing the tensor geometric object.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB,
-    wiz_filesel_style = FD_OPEN
 )
 # Description.
 uf.desc.append(Desc_container())

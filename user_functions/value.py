@@ -24,12 +24,6 @@
 
 # Python module imports.
 from os import sep
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN, FD_SAVE
-else:
-    FD_OPEN = -1
-    FD_SAVE = -1
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
@@ -182,10 +176,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the file containing the values.",
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -422,10 +415,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the file.",
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

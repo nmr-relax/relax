@@ -25,12 +25,6 @@
 # Python module imports.
 from numpy import eye
 from os import sep
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN, FD_SAVE
-else:
-    FD_OPEN = -1
-    FD_SAVE = -1
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
@@ -336,10 +330,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the text file to create.",
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "format",
@@ -461,11 +454,10 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "tensor.pdb",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the PDB file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
@@ -513,11 +505,10 @@ uf.title_short = "Rotor PDB representation."
 uf.add_keyarg(
     name = "file",
     default = "rotor.pdb",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the PDB file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
@@ -615,11 +606,10 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "file",
     default = "XH_dist.pdb",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the PDB file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
@@ -1168,11 +1158,10 @@ uf.title = "Reading structures from Gaussian log files."
 uf.title_short = "Gaussian log structure reading."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the Gaussian log file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_GAUSSIAN_ALL,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -1229,11 +1218,10 @@ uf.title = "Reading structures from PDB files."
 uf.title_short = "PDB reading."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the PDB file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -1337,11 +1325,10 @@ uf.title = "Reading structures from XYZ files."
 uf.title_short = "XYZ reading."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the XYZ file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_XYZ_ALL,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -1837,11 +1824,10 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the PDB file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",
@@ -1882,11 +1868,10 @@ uf.title = "Writing structures to a PDB file."
 uf.title_short = "PDB writing."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The name of the PDB file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
     name = "dir",

@@ -109,7 +109,7 @@ class GuiTestCase(TestCase):
             if arg['arg_type'] == 'dir' and arg['name'] in kargs:
                 # Find the associated file selection arg name.
                 for j in range(len(uf_data.kargs)):
-                    if uf_data.kargs[j]['arg_type'] == 'file sel':
+                    if uf_data.kargs[j]['arg_type'] in ['file sel read', 'file sel write']:
                         file_sel_name = uf_data.kargs[j]['name']
 
                 # Prepend the directory to the file, if needed and supplied.

@@ -25,12 +25,6 @@
 
 # Python module imports.
 from os import sep
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_OPEN, FD_SAVE
-else:
-    FD_OPEN = -1
-    FD_SAVE = -1
 
 # relax module imports.
 import colour
@@ -116,11 +110,10 @@ uf.title = "Display the cone PDB geometric object."
 uf.title_short = "Cone PDB geometric object display."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the PDB file containing the cone geometric object.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -167,11 +160,10 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "sim",
     default = "simulation.pdb.gz",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "Brownian simulation file",
     desc = "The full name the Brownian simulation PDB file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False,
     can_be_none = True
 )
@@ -290,11 +282,10 @@ uf.title_short = "PyMOL macro file execution."
 uf.display = True
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the PyMOL macro file.",
     wiz_filesel_wildcard = WILDCARD_PYMOL_MACRO,
-    wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
     name = "dir",
@@ -383,11 +374,10 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel write",
     desc_short = "file name",
     desc = "The optional name of the file.",
     wiz_filesel_wildcard = WILDCARD_PYMOL_MACRO,
-    wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -432,11 +422,10 @@ uf.title = "Display the diffusion tensor PDB geometric object over the loaded PD
 uf.title_short = "Diffusion tensor and structure display."
 uf.add_keyarg(
     name = "file",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the PDB file containing the tensor geometric object.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -471,11 +460,10 @@ uf.title_short = "XH vector distribution display."
 uf.add_keyarg(
     name = "file",
     default = "XH_dist.pdb",
-    arg_type = "file sel",
+    arg_type = "file sel read",
     desc_short = "file name",
     desc = "The name of the PDB file containing the vector distribution.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN
 )
 # Description.
 uf.desc.append(Desc_container())
