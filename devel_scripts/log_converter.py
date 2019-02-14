@@ -1,7 +1,7 @@
 #! /usr/bin/python
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012,2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-"""Convert SVN logs into the format for the "Full list of changes" component of the release message."""
+"""Convert git logs into the format for the "Full list of changes" component of the release message."""
 
 # Python module imports.
 from os import F_OK, access
@@ -47,12 +47,15 @@ lines = file.readlines()
 file.close()
 
 # Loop over the lines, determining what to do next.
+log = []
 msg = ''
 for line in lines:
-    # The separator, so reinitialise everything.
-    if search('^-----', line):
-        # First, print the old message, removing trailing whitespace.
-        print("        * " + msg.rstrip())
+    # The next commit.
+    if search('^commit ', line):
+        # First, store the old message, removing bracketing whitespace.
+        text = msg.strip()
+        if text:
+            log.append(text)
 
         # Reinitialise.
         msg = ''
@@ -60,27 +63,30 @@ for line in lines:
         # Go to the next line.
         continue
 
-    # The header line.
-    if search('^r[1-9][0-9]', line):
+    # Only process commit message lines.
+    if not search('^    ', line):
         continue
 
-    # The 'Changed paths' line.
-    if search('^Changed paths:', line):
-        continue
-
-    # Files and svn message.
-    if search('^  ', line):
-        continue
-
-    # Svnmerge sep.
-    if search('^\.\.\.\.', line):
-        continue
-
-    # Whitespace.
-    if len(msg):
-        msg += ' '
-        if search('\. $', msg[-1]):
+    # Line unwrapping whitespace.
+    if len(msg) and msg[-1] != ' ':
+        if msg[-1] in ['.', '!', '?']:
+            msg += '  '
+        else:
             msg += ' '
 
-    # Add the line (without the newline char).
-    msg += line[:-1]
+    # Add the line (with no bracketing whitespace).
+    msg += line.strip()
+
+# The last commit.
+text = msg.strip()
+if text:
+    log.append(text)
+
+# Printout.
+for i in range(len(log)):
+    # Add a missing final full stop.
+    if log[i][-1] not in ['.', '!', '?']:
+        log[i] += '.'
+
+    # Output.
+    print("        * " + log[i])
