@@ -25,7 +25,7 @@ import inspect
 from numpy import ndarray
 from os import sep
 from re import search
-from tempfile import mkdtemp, mktemp
+from tempfile import mkdtemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -56,9 +56,6 @@ class Bmrb(SystemTestCase):
 
     def setUp(self):
         """Common set up for these system tests."""
-
-        # Create a temporary file name.
-        ds.tmpfile = mktemp()
 
         # Create a temporary directory for dumping files.
         self.tmpdir = mkdtemp()

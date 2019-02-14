@@ -22,7 +22,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from tempfile import mktemp
+from tempfile import mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -39,7 +39,7 @@ class Align_tensor(SystemTestCase):
         self.interpreter.pipe.create('test', 'N-state')
 
         # Temp file name.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp()
 
         # The alignment.
         align_id = 'test'
@@ -364,7 +364,7 @@ class Align_tensor(SystemTestCase):
         """Test the conversion to and from XML."""
 
         # Save the data pipe.
-        self.interpreter.results.write(ds.tmpfile, dir=None, compress_type=0)
+        self.interpreter.results.write(ds.tmpfile, dir=None, compress_type=0, force=True)
 
         # Create a new data pipe.
         self.interpreter.pipe.create('new', 'N-state')

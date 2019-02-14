@@ -25,7 +25,7 @@
 
 # Python module imports.
 from os import sep
-from tempfile import mktemp
+from tempfile import mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -93,7 +93,7 @@ class Rdc(SystemTestCase):
                 interatom.rdc_bc['tb'] = interatom.rdc['tb'] + 1.0
 
         # Correlation plot.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp()
         self.interpreter.rdc.corr_plot(format='grace', title='Test', subtitle='Test2', file=ds.tmpfile, dir=None, force=True)
 
         # The expected file contents.

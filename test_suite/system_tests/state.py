@@ -24,7 +24,7 @@ from copy import deepcopy
 from numpy import array, float64
 from os import sep
 from re import search
-from tempfile import mktemp
+from tempfile import mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -139,7 +139,7 @@ class State(SystemTestCase):
         """Common set up for these system tests."""
 
         # Create a temporary file name.
-        self.tmpfile = mktemp()
+        self.tmpfile_handle, self.tmpfile = mkstemp()
 
 
     def test_align_tensor_with_mc_sims(self):
@@ -229,13 +229,13 @@ class State(SystemTestCase):
         self.interpreter.pipe.create('test', 'mf')
 
         # Save the state.
-        self.interpreter.state.save(self.tmpfile, force=True)
+        self.interpreter.state.save(self.tmpfile, compress_type=0, force=True)
 
         # Load the state.
         self.interpreter.state.load(self.tmpfile, force=True)
 
         # Save the state.
-        self.interpreter.state.save(self.tmpfile, force=True)
+        self.interpreter.state.save(self.tmpfile, compress_type=0, force=True)
 
         # Load the state.
         self.interpreter.state.load(self.tmpfile, force=True)
@@ -259,7 +259,7 @@ class State(SystemTestCase):
             self.interpreter.pipe.create('test' + repr(i), pipe_types[i])
 
         # Write the results.
-        self.interpreter.state.save(self.tmpfile)
+        self.interpreter.state.save(self.tmpfile, compress_type=0, force=True)
 
         # Reset relax.
         reset()

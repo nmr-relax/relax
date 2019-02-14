@@ -32,7 +32,7 @@ from os import F_OK, access, getcwd, pardir, sep
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
-from tempfile import mktemp
+from tempfile import mkstemp
 from time import sleep
 from warnings import warn
 
@@ -492,7 +492,7 @@ def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_
     # Save the commands as a temporary file, execute it, then delete it.
     try:
         # Temp file name.
-        tmpfile = "%s.pml" % mktemp()
+        tmpfile_handle, tmpfile = mkstemp(suffix='.pml')
 
         # Open the file.
         file = open(tmpfile, 'w')
@@ -510,7 +510,10 @@ def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_
 
     # Delete the temporary file (no matter what).
     finally:
-        # Delete the file.
+        # Close the open file handle on the OS level.
+        close(tmpfile_handle)
+
+        # Delete the temporary file.
         delete(tmpfile, fail=False)
 
 

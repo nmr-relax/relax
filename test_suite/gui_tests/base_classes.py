@@ -25,7 +25,7 @@
 # Python module imports.
 from math import pi    # This is needed for relax scripts as pi is located in the relax prompt namespace.
 from os import sep
-from tempfile import mktemp, mkdtemp
+from tempfile import mkdtemp, mkstemp
 from unittest import TestCase
 import wx
 
@@ -276,7 +276,7 @@ class GuiTestCase(TestCase):
         """Set up for all the functional tests."""
 
         # Create a temporary file for the tests that need it.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp()
 
         # Create a temporary directory for the results.
         ds.tmpdir = mkdtemp()

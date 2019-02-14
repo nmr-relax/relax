@@ -21,7 +21,7 @@
 
 # Python module imports.
 from os import sep
-from tempfile import mktemp
+from tempfile import mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -39,7 +39,7 @@ class Results(SystemTestCase):
         self.interpreter.pipe.create('test', 'mf')
 
         # Create a temporary file name.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp(suffix='.bz2')
 
 
     def test_read_empty_results(self):
@@ -53,4 +53,4 @@ class Results(SystemTestCase):
         """Test the writing of an empty results file."""
 
         # Write the results.
-        self.interpreter.results.write(file=ds.tmpfile, dir=None)
+        self.interpreter.results.write(file=ds.tmpfile, dir=None, force=True)

@@ -26,7 +26,7 @@ import numpy
 from os import path, sep, walk
 from re import search
 import sys
-from tempfile import mkdtemp, mktemp
+from tempfile import mkdtemp, mkstemp
 
 # relax module imports.
 from auto_analyses.dauvergne_protocol import dAuvergne_protocol
@@ -504,7 +504,7 @@ class Mf(SystemTestCase):
         """Test catching U{bug #24131<https://web.archive.org/web/https://gna.org/bugs/?24131>}, the BMRB export failure with the SpinContainer object having no s2 value."""
 
         # The output file.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp()
 
         # Execute the script.
         self.assertRaises(RelaxError, self.script_exec, status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_24131_bmrb_deposition.py')
@@ -514,7 +514,7 @@ class Mf(SystemTestCase):
         """Test catching U{bug #24131<https://web.archive.org/web/https://gna.org/bugs/?24131>}, the BMRB export failure with missing interatomic interactions."""
 
         # The output file.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp()
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_24131_missing_interaction.py')

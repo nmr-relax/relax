@@ -21,7 +21,7 @@
 
 # Python module imports.
 from os import sep
-from tempfile import mktemp
+from tempfile import mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -122,7 +122,7 @@ class State_base_class(UnitTestCase):
         """
 
         # Create a temporary file descriptor.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp(suffix='.bz2')
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
@@ -137,4 +137,4 @@ class State_base_class(UnitTestCase):
         ds.y = 'Hello'
 
         # Save the state.
-        self.state.save_state(state=ds.tmpfile)
+        self.state.save_state(state=ds.tmpfile, force=True)

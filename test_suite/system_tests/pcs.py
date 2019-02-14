@@ -26,7 +26,7 @@
 # Python module imports.
 from os import sep
 from re import search
-from tempfile import mkdtemp, mktemp
+from tempfile import mkdtemp, mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -65,7 +65,7 @@ class Pcs(SystemTestCase):
                     spin.pcs_bc['tb'] += 1.0
 
         # Correlation plot.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp(suffix='.agr')
         self.interpreter.pcs.corr_plot(format='grace', title='Test', subtitle='Test2', file=ds.tmpfile, dir=None, force=True)
 
         # The expected file contents.

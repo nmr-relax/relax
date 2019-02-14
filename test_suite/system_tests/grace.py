@@ -22,7 +22,7 @@
 # Python module imports.
 from os import sep
 from re import search
-from tempfile import mktemp
+from tempfile import mkstemp
 
 # relax module imports.
 from status import Status; status = Status()
@@ -36,7 +36,7 @@ class Grace(SystemTestCase):
         """Common set up for these system tests."""
 
         # Create a temporary grace file name.
-        self.tmpfile = mktemp()
+        self.tmpfile_handle, self.tmpfile = mkstemp(suffix='.agr')
 
 
     def test_cam_kkalpha_plot1(self):
@@ -46,7 +46,7 @@ class Grace(SystemTestCase):
         self.interpreter.state.load('state_cam_kkalpha', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Create the plot.
-        self.interpreter.grace.write('res_num', 's2', file=self.tmpfile, spin_id='@N', dir=None)
+        self.interpreter.grace.write('res_num', 's2', file=self.tmpfile, spin_id='@N', dir=None, force=True)
 
         # Read the file data.
         file = open(self.tmpfile)

@@ -21,7 +21,7 @@
 
 # Python module imports.
 from os import F_OK, access, sep
-from tempfile import mkdtemp, mktemp
+from tempfile import mkdtemp, mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -40,7 +40,7 @@ class Noe(SystemTestCase):
         self.interpreter.pipe.create('noe', 'noe')
 
         # Create a temporary file.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp()
 
         # Create a temporary directory for dumping files.
         ds.tmpdir = mkdtemp()
@@ -108,7 +108,7 @@ class Noe(SystemTestCase):
         self.interpreter.minimise.calculate()
 
         # Save the NOEs.
-        self.interpreter.value.write(param='noe', file=ds.tmpfile)
+        self.interpreter.value.write(param='noe', file=ds.tmpfile, force=True)
 
         # Open the NOE output file.
         file = open(ds.tmpfile)

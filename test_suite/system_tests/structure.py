@@ -27,7 +27,7 @@ from numpy.linalg import norm
 from os import sep
 from re import search
 import sys
-from tempfile import mkdtemp, mktemp
+from tempfile import mkdtemp, mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -1296,7 +1296,7 @@ class Structure(SystemTestCase):
         self.interpreter.reset()
 
         # Create a temporary file.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp(suffix='.pdb')
 
         # The diffusion type (used by the script).
         ds.diff_dir = 'ellipsoid'
@@ -1847,7 +1847,7 @@ class Structure(SystemTestCase):
         self.interpreter.reset()
 
         # Create a temporary file.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp(suffix='.pdb')
 
         # The diffusion type and directory (used by the script).
         ds.diff_dir = 'spheroid_oblate'
@@ -2382,7 +2382,7 @@ class Structure(SystemTestCase):
         self.interpreter.reset()
 
         # Create a temporary file.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp(suffix='.pdb')
 
         # The diffusion type (used by the script).
         ds.diff_dir = 'spheroid_prolate'
@@ -2917,7 +2917,7 @@ class Structure(SystemTestCase):
         self.interpreter.reset()
 
         # Create a temporary file.
-        ds.tmpfile = mktemp()
+        ds.tmpfile_handle, ds.tmpfile = mkstemp(suffix='.pdb')
 
         # The diffusion type (used by the script).
         ds.diff_dir = 'sphere'
@@ -3507,8 +3507,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.write_pdb(file=sys.stdout)
 
         # Write out the file.
-        self.tmpfile = mktemp() + '.pdb'
-        self.interpreter.structure.write_pdb(self.tmpfile)
+        self.tmpfile_handle, self.tmpfile = mkstemp(suffix='.pdb')
+        self.interpreter.structure.write_pdb(self.tmpfile, force=True)
 
         # Read the contents of the file.
         file = open(self.tmpfile)
@@ -3711,7 +3711,7 @@ class Structure(SystemTestCase):
                         self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[ids[i]][ids[j]][k], rot_axis[i][j][k])
 
         # Save the results.
-        self.tmpfile = mktemp()
+        self.tmpfile_handle, self.tmpfile = mkstemp(suffix='.bz2')
         self.interpreter.state.save(self.tmpfile, dir=None, force=True)
 
         # Reset relax.
@@ -3802,7 +3802,7 @@ class Structure(SystemTestCase):
                         self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[ids[i]][ids[j]][k], rot_axis[i][j][k])
 
         # Save the results.
-        self.tmpfile = mktemp()
+        self.tmpfile_handle, self.tmpfile = mkstemp(suffix='.bz2')
         self.interpreter.state.save(self.tmpfile, dir=None, force=True)
 
         # Reset relax.
@@ -4214,8 +4214,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(":HOH")
 
         # Write out the results file.
-        self.tmpfile = mktemp() + '.bz2'
-        self.interpreter.results.write(self.tmpfile, dir=None)
+        self.tmpfile_handle, self.tmpfile = mkstemp(suffix='.bz2')
+        self.interpreter.results.write(self.tmpfile, dir=None, force=True)
 
         # Create a new data pipe and load the results.
         self.interpreter.pipe.create('xml text', 'mf')
@@ -4823,8 +4823,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(":HOH")
 
         # Write out the file.
-        self.tmpfile = mktemp() + '.pdb'
-        self.interpreter.structure.write_pdb(self.tmpfile)
+        self.tmpfile_handle, self.tmpfile = mkstemp(suffix='.pdb')
+        self.interpreter.structure.write_pdb(self.tmpfile, force=True)
 
         # Read the contents of the file.
         file = open(self.tmpfile)
@@ -5340,7 +5340,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='Central Star', pairwise_algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=10.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.5, end_gap_extend_penalty=0.1)
 
         # Save the relax state.
-        self.tmpfile = mktemp()
+        self.tmpfile_handle, self.tmpfile = mkstemp(suffix='.bz2')
         self.interpreter.state.save(self.tmpfile, dir=None, force=True)
 
         # Reset relax.
@@ -5417,7 +5417,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='residue number')
 
         # Save the relax state.
-        self.tmpfile = mktemp()
+        self.tmpfile_handle, self.tmpfile = mkstemp(suffix='.bz2')
         self.interpreter.state.save(self.tmpfile, dir=None, force=True)
 
         # Reset relax.

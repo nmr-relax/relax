@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012,2014 Edward d'Auvergne                              #
+# Copyright (C) 2006-2012,2014,2019 Edward d'Auvergne                         #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -23,7 +23,8 @@
 # Python module imports.
 from math import pi
 from numpy import array, dot, float64, transpose, zeros
-from os import sep
+from os import close, sep
+from tempfile import mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -33,7 +34,6 @@ from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
 from lib.io import delete
 from status import Status; status = Status()
-from tempfile import mktemp
 from test_suite.system_tests.base_classes import SystemTestCase
 
 
@@ -56,21 +56,21 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
         self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init(10e-9, fixed=True)
-        self.tmpfile_sphere = mktemp()
+        self.tmpfile_sphere_handle, self.tmpfile_sphere = mkstemp(suffix='.pdb')
 
         # Spheroid tensor initialization.
         self.interpreter.pipe.switch('spheroid')
         self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
         self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((5e-09, -10000000., 1.6, 2.7), angle_units='rad', spheroid_type='oblate', fixed=True)
-        self.tmpfile_spheroid = mktemp()
+        self.tmpfile_spheroid_handle, self.tmpfile_spheroid = mkstemp(suffix='.pdb')
 
         # Ellipsoid tensor initialization.
         self.interpreter.pipe.switch('ellipsoid')
         self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
         self.interpreter.sequence.read(file='Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=False)
-        self.tmpfile_ellipsoid = mktemp()
+        self.tmpfile_ellipsoid_handle, self.tmpfile_ellipsoid = mkstemp(suffix='.pdb')
 
 
         # Some fake MC simulations (for the sphere).
@@ -140,6 +140,11 @@ class Diffusion_tensor(SystemTestCase):
 
         # Reset relax.
         reset()
+
+        # Close the open file handles on the OS level.
+        close(self.tmpfile_sphere_handle)
+        close(self.tmpfile_spheroid_handle)
+        close(self.tmpfile_ellipsoid_handle)
 
         # Delete the temporary files.
         delete(self.tmpfile_sphere, fail=False)
@@ -425,7 +430,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path)
 
         # Generate the tensor PDB without MC sims.
-        self.interpreter.structure.create_diff_tensor_pdb(file=self.tmpfile_spheroid)
+        self.interpreter.structure.create_diff_tensor_pdb(file=self.tmpfile_spheroid, force=True)
 
 
     def test_copy(self):
@@ -489,7 +494,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.copy('ellipsoid', 'ellipsoid2')
 
         # Create the diffusion tensor objects.
-        self.interpreter.structure.create_diff_tensor_pdb(file=self.tmpfile_ellipsoid, scale=1e-05)
+        self.interpreter.structure.create_diff_tensor_pdb(file=self.tmpfile_ellipsoid, scale=1e-05, force=True)
 
         # Open the temp file.
         file = open(self.tmpfile_ellipsoid)
@@ -531,7 +536,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.copy('sphere', 'sphere2')
 
         # Create the diffusion tensor objects.
-        self.interpreter.structure.create_diff_tensor_pdb(file=self.tmpfile_sphere)
+        self.interpreter.structure.create_diff_tensor_pdb(file=self.tmpfile_sphere, force=True)
 
         # Open the temp file.
         file = open(self.tmpfile_sphere)
@@ -573,7 +578,7 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.copy('spheroid', 'spheroid2')
 
         # Create the diffusion tensor objects.
-        self.interpreter.structure.create_diff_tensor_pdb(file=self.tmpfile_spheroid)
+        self.interpreter.structure.create_diff_tensor_pdb(file=self.tmpfile_spheroid, force=True)
 
         # Open the temp file.
         file = open(self.tmpfile_spheroid)

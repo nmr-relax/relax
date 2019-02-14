@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -77,10 +77,18 @@ class SystemTestCase(TestCase):
 
         # Remove temporary file and variable (if there is a deletion failure, continue to allow the test suite to survive).
         try:
+            # Close the open file handles on the OS level.
+            close(ds.tmpfile_handle)
+
+            # Delete the temporary files.
             deletion(obj=ds, name='tmpfile', dir=False)
         except:
             pass
         try:
+            # Close the open file handles on the OS level.
+            close(self.tmpfile_handle)
+
+            # Delete the temporary files.
             deletion(obj=self, name='tmpfile', dir=False)
         except:
             pass
