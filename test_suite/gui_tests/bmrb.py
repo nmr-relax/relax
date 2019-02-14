@@ -23,7 +23,7 @@
 """GUI tests for the BMRB related activities."""
 
 # Python module imports.
-from tempfile import mkdtemp
+from tempfile import mkdtemp, mkstemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -43,6 +43,9 @@ class Bmrb(GuiTestCase, system_tests.bmrb.Bmrb):
 
     def setUp(self):
         """Common set up for these GUI tests."""
+
+        # Create a temporary file name.
+        ds.tmpfile_handle, ds.tmpfile = mkstemp()
 
         # Create a temporary directory for dumping files.
         self.tmpdir = mkdtemp()
