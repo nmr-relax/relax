@@ -57,6 +57,7 @@ MOD_ALL_LIST = [
     'wx',
     'mpi4py',
     'epydoc',
+    '_tkinter',
 ]
 
 
