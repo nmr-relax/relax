@@ -188,7 +188,7 @@ class RelaxTestResult(TextTestResult):
             test_name = "module %s, test Test_%s" % (module_name, test_name)
 
         # The printout.
-        self.stream.write('  %7.2f s for %s\n' % (-self.time, test_name))
+        self.stream.write('  %7.2f s for %s\n' % (abs(self.time), test_name))
 
 
 
