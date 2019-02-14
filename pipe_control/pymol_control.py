@@ -28,7 +28,7 @@ import dep_check
 # Python module imports.
 if dep_check.pymol_module:
     import pymol
-from os import F_OK, access, getcwd, pardir, sep
+from os import F_OK, access, close, getcwd, pardir, sep
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
