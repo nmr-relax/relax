@@ -188,7 +188,11 @@ class RelaxTestResult(TextTestResult):
             test_name = "module %s, test Test_%s" % (module_name, test_name)
 
         # The printout.
-        self.stream.write('  %7.2f s for %s\n' % (abs(self.time), test_name))
+        if self.category == 'unit':
+            time_str = '%7.2f ms' % (abs(self.time) * 1000)
+        else:
+            time_str = '%7.2f s' % abs(self.time)
+        self.stream.write('  %s for %s\n' % (time_str, test_name))
 
 
 
