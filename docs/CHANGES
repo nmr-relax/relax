@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2016 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2016,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -18,6 +18,383 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+
+
+Version 4.1.0
+(14 February 2019, from master)
+https://sourceforge.net/p/nmr-relax/code/ci/4.1.0/tree/
+
+    Features:
+        * Greater wxPython-Phoenix support while maintaining compatibility with wxPython-Classic.
+        * Creation of a bash completion script for completing command line arguments with the tab key (docs/bash_completion.sh).
+        * A significantly more responsive relax GUI.
+        * Converted the steady-state NOE analysis sample script to use the auto-analysis.
+        * Standardisation of initial and final printouts in the auto-analyses, including the elapsed time.
+        * More of the GUI main menu entries are disabled during execution locking.
+        * Safe execution of all of the auto-analyses.
+        * Huge speed ups for many parts of relax with the addition of fast and temporary hash lookup tables and cross-referencing for the molecule, residue, spin and interatomic data containers.
+        * Many improvements and updates throughout the relax manual.
+        * Support for the new format of the NMRPipe SeriesTab files.
+        * Improvements for the Docker container scripts and documentation in devel_scripts/Docker/.
+        * Automated testing of relax via Travis-CI.
+        * New user function frame_order.decompose for a new representation of the frame order analysis results.
+        * Addition of the new user functions structure.add_helix and structure.add_sheet for manually defining secondary structure.
+        * Speed up of the 'fit to first' algorithm in the structure.superimpose user function.
+        * Significant improvements to the checking of arguments passed into user functions, and the resultant error messages for invalid arguments.
+        * Improvements and fixes for the RelaxError messages to better explain user errors.
+        * A large number of updates for the switch from the Subversion version control repository to git, and the move from the closed Gna! infrastructure to SourceForge.
+
+
+    Changes:
+        * Removal of the Mac OS X taskbar icon functionality.  This code has been disabled since its deletion back in Jun 2012 (r16772), as it does not work with wxPython 2.8 or 2.9.  However with wxPython Phoenix, the disabled code fails as there is no wx.TaskBarIcon.
+        * Keyword to positional argument conversion for the GUI wx.ListCtrl.SetStringItem() function calls.  The keyword arguments for this function must exist for backwards compatibility with ancient wxPython versions.  The current documentation lists them as positional arguments, and keyword arguments are not accepted by wxPython-Phoenix.
+        * Keyword to positional argument conversion for the GUI wx.ScrolledWindow.EnableScrolling() calls.  These function calls were using keyword arguments, however the old wxPython and Phoenix documentation say that these are not keyword arguments (this must have been for backwards compatibility with very old wxPython versions).
+        * Keyword to positional argument conversion for a GUI wx.BoxSizer.Clear() call.  This is for the spin containers in the spin viewer window.  The keyword argument in wxPython classic is deleteWindows however in Phoenix it is delete_windows.
+        * Decreased the precision of a check in the Rx.test_r1_analysis GUI test.  This is to allow the test to pass on wxPython-Phoenix and Python 3.
+        * Keyword to positional argument conversion for the GUI wx.Font() calls.  A number of these were being called with keyword arguments, however the old wxPython and Phoenix documentation say that these are not keyword arguments (this must have been for backwards compatibility with very old wxPython versions).
+        * Replacement of a wx.ListCtrl.DeleteAllColumns() function call from the spectrum GUI element.  This function does not exist in wxPython-Phoenix.  Instead the columns are looped over and wx.ListCtrl.DeleteColumn() is called instead.
+        * Creation of an initial bash script for enabling bash completion.
+        * Improvements for the bash completion relax script.  Directories and relax scripts are now much better handled.
+        * Fine tuning of the bash completion relax script.  The option "-o nospace" for "complete" has been removed as spaces are not added for directories anyway.  This means that a space is added after all options and scripts.
+        * More precision decreases in the Rx.test_r1_analysis GUI test.  This is to allow the test to pass on wxPython-Phoenix and Python 3.
+        * Updates to the upload section of the release checklist document for sending files to SourceForge.
+        * Added release instructions for creating the README.rst files for the download area.  This is for using the custom html2rest at ttps://sourceforge.net/p/nmr-relax/code-python-html2rest to automatically generate the reStructuredText file from the wiki release notes.
+        * Expanded the release checklist instructions for creating the README.rst files.
+        * Updates to many frame order test suite shared data relax scripts.  These scripts are used for data generation and display, and are not part of the test suite.  The updates are for the frame_order.pdb_model and pymol.frame_order user functions which no longer support the 'dist' keyword argument (this functionality was shifted into the frame_order.simulate user function).
+        * First commit after the svn to git migration: Created a .gitignore file for the new git repository.
+        * Documented the svn to git repository migration.  All of the scripts used and detailed instructions have been included.
+        * Standardisation of the section titles in a number of the documentation files.
+        * The files auto-generated during the PDF user manual compilation are now ignored by git.
+        * Git support for the repository version information.  This is used in the relax introductory text, the manual compilation, and in the relax save states.  The version.repo_revision variable has been renamed to version.repo_head to be repository type independent.  For the repository URL, all of the git remotes are included.
+        * C module blacklisting of the Relax_disp.test_bug_24601_r2eff_missing_data system test.  The test is skipped if the C modules are not compiled.
+        * Added .pyc and .so files to be ignored.
+        * Fix for depcheck, when packages has an appended release candidate number.  For example: numpy 1.8.0rc1.
+        * Added a script to check for copyright notice compliance to the FSF standard.  This standard is from https://www.gnu.org/prep/maintain/html_node/Copyright-Notices.html.
+        * Support for multiple git and svn repositories in the FSF copyright notice compliance checking script.
+        * Collection of all commits to attribute to other authors.  This is for the FSF copyright notice compliance checking script.
+        * Collection of all commits to exclude by the FSF copyright notice compliance checking script.
+        * FSF compliant copyright notices for all files in the documentation directory docs/devel/.  This includes two README files with the copyright notices for all of the patches.
+        * FSF compliant copyright notices for all files in the documentation directory docs/latex/.  This includes a README file with the copyright notices for the binary graphics.
+        * FSF compliant copyright notices for all files in the documentation directory docs/html/.  This includes a README file with the copyright notices for latex2html-2008 icons.  The copyright notice script has been updated to handle false negatives (significant git commits without copyright ownership), and additional copyrights not present in the git log.
+        * FSF compliant copyright notices for all remaining files in the documentation directory.
+        * Added the original oxygen icon AUTHORS and COPYING files and standardised the README file titles.  The AUTHORS and COPYING files from the original svn repository svn://anonsvn.kde.org/home/kde/trunk/kdesupport/oxygen-icon have been added to the repository for better documentation of the copyright.  The README file had also been updated with the origin information.
+        * FSF compliant copyright notices for the entirety of the graphics/ directory.
+        * FSF compliant copyright notices for the extern/ directory.  The packages within this directory are skipped in the devel_scripts/copyright_notices.py copyright compliance checking script.
+        * Update to FSF compliant copyright notices for all modules in the auto_analyses package.
+        * Update to FSF compliant copyright notices for all modules in the data_store package.
+        * FSF compliant copyright notices for the entirety of the devel_scripts/ directory.
+        * Update to FSF compliant copyright notices for all modules in the gui package.
+        * Update to FSF compliant copyright notices for all modules in the lib package.
+        * Update to FSF compliant copyright notices for all modules in the multi package.
+        * Update to FSF compliant copyright notices for all modules in the pipe_control package.
+        * Update to FSF compliant copyright notices for all modules in the prompt package.
+        * Update to FSF compliant copyright notices for all scripts in the sample_scripts/ directory.
+        * Update to FSF compliant copyright notices for all modules in the scons package.
+        * Update to FSF compliant copyright notices for all modules in the specific_analyses package.
+        * Update to FSF compliant copyright notices for all modules in the target_functions package.
+        * Update to FSF compliant copyright notices for all modules in the user_functions package.
+        * Update to FSF compliant copyright notices for all modules and files in the base relax directory.
+        * Update to FSF compliant copyright notices for all unit test modules.
+        * Module docstring standardisation for the system test scripts.
+        * Update to FSF compliant copyright notices for all system test modules and scripts.
+        * Update to FSF compliant copyright notices for all verification test modules.
+        * Update to FSF compliant copyright notices for all GUI test modules.
+        * Update to FSF compliant copyright notices for the base test suite modules.
+        * Support for automated copyright notice placement in README files.  This is directly within the FSF copyright notice compliance checking script.
+        * Update to FSF compliant copyright notices for all scripts in the test_suite/shared_data/ directory.
+        * Self exclusion of the FSF compliant copyright notice commits.
+        * Cosmetic change for the test___all__() unit test base class method.  The files are now sorted.
+        * Blacklisted missing files are now skipped in the test___all__() unit test base class method.  This allows for the test_suite.unit_tests._target_functions.test___init__.Test___init__() unit test to pass when the relaxation curve-fitting C modules are not compiled.
+        * Changed the relax state file name for the state.save user function calls in the sample scripts.  This is to make it clearer what the files are.  The old '*save.bz2' notation has been removed and the files are now generally called 'state.bz2'.
+        * Update to FSF compliant copyright notices for the external Sobol package.  An explicit README file has been added to clarify the copyright status of all files.
+        * Added a trivial relax script to help regenerate the pec_diag.eps diagram.
+        * Added the base Xmgrace data file for the generation of the NOE data plot.  This is for regenerating graphics/screenshots/noe_analysis/grace.svg.  The copyright notice checking script has been updated for this old 2004 file.
+        * Changed a number of references to "Linux" to "GNU/Linux".
+        * Replaced all references to "open source" in the manual with "free software".
+        * Removed the ancient CIA.vc references in the development chapter of the manual.
+        * Added a README file for the extern/numdifftools package.  This is taken from the VC log and explains the origin, version, and licensing of the package.
+        * Added the base Xmgrace data file for the generation of the R2 peak intensity data plot.  This is for regenerating graphics/screenshots/xmgrace_peak_intensities.svg.  The copyright notice checking script has been updated for this old 2004 file.
+        * Copyright notice updates for the graphics/misc/relaxGUI_splash* files.
+        * Fixes for the FSF copyright notice compliance checking script.
+        * Update to FSF compliant copyright notices for the external numdifftools package.  Explicit README files have been added to clarify the copyright status of all files.
+        * Removal of the numdifftools extern package, as this can be easily installed in Python using pip.
+        * Support for Grace-formatted units in the specific analysis parameter object.  This is currently used by the relaxation curve-fitting analysis for the Rx parameters.
+        * Created the Relax_fit.test_auto_analysis_pipe_name system test to catch a missing RelaxNoPipeError.  This is to catch the error "NameError: global name 'RelaxNoPipeError' is not defined".
+        * Conversion of the relaxation curve-fitting sample script to use the auto-analysis.
+        * Improved documentation for the DIFF_MODEL variable in the dauvergne_protocol.py sample script.  The fact that it can be supplied as a list is now mentioned in the script docstring, and the default value is now a list with all of the global models.
+        * Support for NMR proton pseudo-atom identification from PDB files in the internal structural object.  The standard pseudo-atoms are now identified as being protons.
+        * Removed a duplicated proton frequency check in the relax_data.read user function.  This resulted duplicated RelaxWarnings being printed out.
+        * Huge improvement for the responsiveness of the relax GUI.  The relax controller window log panel was being updated with a wx.CallAfter() call after every write to the IO streams.  If a relax analysis was proceeding very quickly, which is the case in most analyses, this created a huge backlog of GUI updates.  The result was that the GUI would freeze, running at 100% CPU usage in its own thread, with the analysis running at 100% on another thread.  The fix was to shift the log panel write() call to be triggered by the Timer already being used by the gauges, rather than by the IO stream write() methods.  The text was already placed on a Queue object, so this change is very simple.  Another small change was made to the log panel write() method to avoid a number of unneeded wx calls.  This should also have a significant impact on the GUI updating.
+        * Saved state file name change for the steady-state NOE and relaxation curve-fitting auto-analyses.  The names are now simply 'state.bz2'.  This is so the file is easier to identify as being a relax state file that can be loaded with the state.load user function.
+        * The relaxation curve-fitting sample script now timestamps the data pipe bundle name.
+        * Redesign of Troels' grace2images.py script.  The executable script creation has been shifted from the relaxation curve-fitting auto-analysis (auto_analyses.relax_fit) into the new function lib.plotting.grace.create_grace2images().  This is now also used by the steady-state NOE auto-analysis.  The content of the script has also been shifted into the lib.plotting.grace.GRACE2IMAGES variable to allow for easier code editing.  The grace2images.py script itself has been heavily modified: The script now uses Python3 by default; The depreciated optparse module has been changed to argparse; A copyright notice has been placed at the top of the script; The top comment has been converted into a docstring; The default format is now EPS rather than PNG, as PNG is often not supported as an output device; Bug fix in that all formats can now be created (suppling "JPG" previously did nothing); General code and comment cleanups.
+        * The FSF copyright notice compliance checking script is no longer dependent on relax.  The relevant lib.io relax module functions have been copied into the script, and modified with the assumptions of Python 3 only compatibility and less flexible input.
+        * The relax status singleton now stores the time it was created as the program starting time.  This is to allow for elapsed time calculations, which will be used in the auto-analyses for more detailed printouts.
+        * Creation of the lib.timing.print_elapsed_time() function.  This prints out an elapsed time value in day, hour, minute, and second format.  A number of unit tests have been added to check the handling of different time values, including plurals.
+        * Standardisation of initial and final printouts in the auto-analyses, including the elapsed time.  The main auto-analyses now use lib.sectioning.title() for marking the start and the end of the analysis.  And after the final title() printout, the lib.timing.print_elapsed_time() function is called to provide user feedback to how long relax had been running for.
+        * Creation of the Relax_disp.test_bug_missing_replicates GUI test.  This is to catch an Attribute error when the replicated spectra are specified via the spectrum list GUI element rather than the peak intensity loading wizard.
+        * More of the GUI main menu entries are disabled during execution locking.  This includes all of the 'Tools' menu entries to block the free file format from changing mid-execution, the system information user function from being called, and the test suite from being run.  The BMRB export menu entry is also disabled.
+        * Safe execution of all of the auto-analyses (those that acquire the execution lock).  The whole of the __init__() code of the auto-analyses is now wrapped within a try-finally set of statements.  This is to be absolutely sure that the execution lock is released.  This is not always the case, for example the Relax_fit.test_auto_analysis_pipe_name system test was not releasing the lock due to a RelaxError, and this was causing the later GUI tests to fail.
+        * Updated the Rx.test_r1_analysis GUI test for the changed state file name in the auto-analysis.
+        * Fix for the FSF copyright notice compliance checking script for lib/plotting/grace.py.  The copyright notices within the grace2images.py script in the module variable are now ignored.  This additionally required removing duplicate copyright notices as both the module and embedded script have "Copyright (C) 2013 Troels E. Linnet".
+        * Unique and temporary hash support in the spin containers.  These private data structures will allow for fast SpinContainer to InteratomContainer and reverse lookups.  The hash is temporary and only created when a SpinContainer is created.  It is not stored, so it is regenerated between relax sessions.
+        * Unique and temporary hash support in the interatomic data containers.  The interatomic data containers now have a unique and temporary private hash assigned to it, just as with the spin containers.  They also now have the ability to store the unique spin container hashes.  This is currently unused but will allow for fast SpinContainer to InteratomContainer and reverse lookups.
+        * The interatomic data containers now store the SpinContainer hashes.
+        * The InteratomContainer._hash value is now stored in the spin containers it refers to.
+        * Bmrb system test fixes for the new SpinContainer private hash data structures.  These structures are now blacklisted in the data pipe comparisons.
+        * Speed up for the pipe_control.interatomic.define() function.  The create_interatom() function will now accept the two spin containers as arguments.  As the define() function already has these, they are now passed in avoid two calls to the pipe_control.mol_res_spin.return_spin() function.
+        * Creation of the pipe_control.interatomic.hash_update() function.  This is used when copying interatomic data containers (the pipe_control.interatomic.copy() function) to make sure that the spin hashes in the receiving data pipe are stored in the new interatomic data container.
+        * Converted all pipe_control.mol_res_spin.return_spin() function calls to use keyword arguments.  This is in preparation for adding support for the temporary spin hashes.  The pipe_control.mol_res_spin module return_spin_from_selection() and return_spin_from_index() function calls have also been updated, just in case.
+        * Support for a spin hash fast lookup table for the molecule, residue and spin data structures.  The fast lookup table is stored as dp.mol._spin_hash_lookup.  This matches the dp.mol._spin_id_lookup fast lookup table, but is a simpler table to maintain as there is only one hash ever per spin and that hash is unique.  The table is maintained by the pipe_control.mol_res_spin module.
+        * Conversion of all return_spin() calls with interatom spin IDs to use the spin_hash argument instead.  This should slightly speed up the spin lookups.
+        * Improved the formatting of the interatomic data container list to help with debugging.  The data is now presented with the format_table() function of the lib.text.table module.
+        * Data container hash cross-reference recreation.  This is used by the model_selection, pipe.copy, result.read and state.read user functions.  The cross referencing recreation is for both spin containers and interatomic data containers.  The old pipe_control.mol_res_spin.metadata_update() and new pipe_control.interatomic.metadata_update() functions are called after the loading a results or state file, or a data pipe copy, so that the data structures properly cross-reference each other's hashes.
+        * Huge speed up of the interatomic data container handling.  The pipe_control.interatomic.create_interatom(), return_interatom(), and return_interatom_list() functions now operate with the unique spin hashes rather than spin IDs.  This avoids the expensive calls to the now deleted pipe_control.interatomic.id_match() function.
+        * Fixes for the copying of spin or interatomic data containers.  The data_store.prototype methods Prototype.__clone__() and Prototype.__deepcopy__() will now regenerate the unique hash if a _generate_hash() function is present.  This function has been added to SpinContainer and InteratomContainer.
+        * Changed the spin ID printout for the rdc.read user function to be the unique ID rather than file ID.  This is to help with debugging.
+        * Bug fix for the N_state_model.test_CaM_IQ_tensor_fit system test.  Some of the RDC data contained RDCs between two @N spins rather than an @N and @H spin.  This bug was only uncovered by the switch to the spin and interatomic data container hashes for fast lookups.
+        * Fix for the data store _back_compat_hook() method when creating interatomic data containers.  The pipe_control.interatomic module define() function has been renamed to define_dipole_pair() for clarity and it now accepts two spin containers as arguments, overriding the spin ID arguments.  This fixes the State.test_old_state_loading GUI test that was failing after the conversion to spin and interatomic data container hashes for fast lookups.
+        * Printout fix for the check_read_results_1_3() method of the Mf system tests.
+        * The interatomic_loop() function now uses the spin hash fast lookup table rather than spin IDs.
+        * Redesign of the create_spin() function of the pipe_control.mol_res_spin module.  This function is the backend of the spin.create user function and is also used throughout relax.  Instead of creating a single residue or spin, if only a name and not number is supplied, now multiple spins are created.  If the residue name is supplied but not the residue number, now all residues matching the given name will have new spins created.  For example creating the spin with the name 'NE1' and only specifying the residue name 'TRP', then all tryptophans in all molecules will have NE1 indole side-chain spins created.  This makes the operation of the spin.create user function more logical for the user.
+        * Support for catching segfaults and other errors from Modelfree4.  This allows for non-silent exiting from the Popen() class.  All signals are now reported via RelaxErrors.
+        * Added the text of the LGPLv3 licence to the extern.sobol package.
+        * Added FSF recommended LGPLv3 licence notices to the top of all of the extern.sobol files.  Excluded is the auto-generated test output file.
+        * Renamed the LGPLv3 file in the extern.sobol package to COPYING.LESSER.
+        * Updated all of the minfx project links from Gna! to the SourceForge site.
+        * Updated all of the relax deployment scripts for the Gna! shutdown.  These now use the SourceForge sites for relax, minfx, and bmrblib instead.  The svn to git conversion is also taken into account, and git is used to pull in the latest relax code from the SourceForge mirror.
+        * Converted a large number of Gna! links to point to the equivalent Web Archive URL.  Most of these links should have had a snapshot made in the Internet Archive Wayback Machine.
+        * Added some hyperlinks to the external programs listed in the intro chapter of the user manual.
+        * Added the relaxation dispersion software support to the intro interfacing section.
+        * The prompt UI is no longer referenced as the 'primary' interface in the intro chapter of the manual.
+        * Added relaxation dispersion to the GUI features in the intro chapter.
+        * Added relaxation dispersion to the list of all data pipe types in the intro chapter.
+        * Improvements to the script UI text in the intro chapter.
+        * Linked to the internal Gna! mailing list archives for the multi-processor announcement.  This is for http://www.nmr-relax.com/mail.gna.org/public/relax-devel/2007-05/msg00000.html.
+        * Added new sections to the infrastructure and development chapters about the Gna! shutdown.  This is to warn that the information in these chapters of the manual is out of date.
+        * Updated the NESSY link to point to the new SourceForge location for the project.
+        * Changed the relax PDF manual link from Gna! to SourceForge for the HTML manual footers.  This is in the latex2html configuration file so that the automatically created HTML manual pages point to a valid location.
+        * Changed the relax PDF manual link from Gna! to SourceForge for the HTML manual headers.  This is in the LaTeX header, so that the automatically created HTML manual pages point to a valid location.
+        * Converted Gna! mail archive links in the manual to point to the copies at http://www.nmr-relax.com.
+        * Rewrote the core design of relax development section of the relax manual.  The code design figure has also been updated.  All of the content was still written for the relax 1.3 releases.
+        * Removed the dead Freshmeat/Freecode and Gmane text from the development chapter of the manual.
+        * Copyright notice and FSF compliant copyright notice script updates.
+        * Renamed the FSF Copyright Validator script to the acronym fsfcv.
+        * Split the FSF Copyright Validation script into a configuration file and an executable script.  The configuration part of the script has been retained but with all data stripped to be able to provide a blank template for a new configuration file.  And the new mimetypes section has been converted into a variable rather than manipulating the mimetypes Python module so that the configuration script requires no Python imports.
+        * Converted the whole FSF copyright notice validation script code into a class.  This is in preparation for a number of major changes to the script.
+        * The FSF copyright notice validation script now uses the argparse Python module.  This is for more powerful command line argument processing.  The new --blank-config option will now print out the blank configuration file, and the DEBUG variable has been replaced with the -d or --debug command line option.
+        * Improved the documentation of the fsfcv configuration file.
+        * Implementation of the configuration file parsing.  This uses modern Python import mechanisms to load the blank config first for default values, followed by the user supplied configuration file.
+        * Implemented the verbosity argument so per-file messages are only printed when activated.
+        * The FSF Copyright Validation script will now add the current directory repository if not supplied.  This allows the script to be executed without a configuration file.
+        * New command line option for the FSF copyright validation script to only check for missing notices.  This will only print out files with missing copyright notices.  Files marked as valid may nevertheless have incorrect notices.
+        * The capitalisation of "Copyright (C)" no longer matters for the FSF Copyright Validation script.  This is for the copyright notices within the file.  The configuration file has been updated for the lower case copyright notices (false positives).
+        * Reactivated the user supplied binary mimetypes for the FSF Copyright Validation script.
+        * More robust reading of copyright notices from binary files in the FSF Copyright Validation script.  The reading of the text file will now return and empty list if a UnicodeDecodeError occurs.
+        * Updated the fsfcv configuration file for the fsfcv script and configuration file itself.
+        * Fixes for the extern/numpy_future.py copyright notices.
+        * Support for multiple additional years in the FSF Copyright Validation script.
+        * Added a progress meter, a simple spinner, to the FSF Copyright Validation script.  This is taken directly from lib.text.progress, and the output is sent to STDERR.  All other script output is now sent to STDOUT.  It is only active if the verbose flag is off.
+        * Separated the missing copyright notices from non-valid copyright notices in the fsfcv script.  These are now counted separately and a different message printed out for the missing notice case.
+        * Support added to the fsfcv script for handling content not within a version control repository.  The untracked and non-valid copyright counting is turned off in this case.
+        * Improved the feedback from the progress meter in the fsfcv script.  This now says what the numbers are, using text such as "X files checked.".
+        * Activated the 'link' option for the epydoc API documentation.  This allows for the navigation link to point to "/" rather than "http://www.nmr-relax.com".  This is for SSL and https:// preparations, so that the http://www.nmr-relax.com part of the URL is not present in the local links.
+        * Shifted the epydoc API documentation copyright notice insertion into the scons script.  This notice was previously hardcoded into the devel_scripts/google_analytics.js script - as that is the GPLv3+ copyright notice of that script with the date of 2012.  Instead the copyright notice in the Google analytics script is now skipped and the correct FDLv1.3 copyright notice with the current year programmatically inserted via the scons/manuals.py script.
+        * Adding new format of NMRPipe SeriesTab which give errors.
+        * Added the systemtest 'relax -s Relax_disp.test_b ug_seriestab_format -d' to check for the new format of NMRPipe SeriesTab.
+        * Changes to lib/spectrum/nmrpipe.py to handle NMRPipe SeriesTab, when assignment has not been performed.  Auto detecting the multiplier column.
+        * Fixing for allowing renaming of SeriesTab spectrum ID'
+        * Fix for help section in ./grace2images.py file.  It was unclear how to get different types of images.
+        * Extended the systemtest Relax_disp.test_bug_seriestab_format to include reading of several SeriesTab files, and selecting intensity column.
+        * Modified lib/spectrum/nmrpipe.py in read_seriestab() to allow for selecting intensity column.
+        * Allow for int_col to be a list to make a proper warning.
+        * Initial try for running a Docker image with gedit.  This is an attempt to try running OpenDX later.
+        * Simplification of Dockerfile.
+        * Removing dockerfile for gedit.
+        * Adding a Dockerfile, which makes it easy to build an Ubuntu image and Launch OpenDX.  This is very useful on a Mac.
+        * If the current directory is mounted to home, then dx.map files is working.
+        * Improved the help to settings in XQuartz when running Docker on a mac and accessing the OpenDX GUI.
+        * Renamed the extern.sobol.sobol_lib-not_tested module to sobol_lib_untested.  This is in preparation for updating to the newest upstream code.
+        * Updated the extern.sobol package to the latest upstream code.  This is the new MIT licensed code (which was previously LGPL licensed) from http://people.sc.fsu.edu/~jburkardt/py_src/sobol/sobol.html.  The licence text has been modified to suit the licence change, and the LGPL copyright notices dropped from all files.  The Python 3 updates to the relax version of the package have been transferred into the new code.
+        * Added the MIT licence with copyright notices to the top of all files.  The origin of all code was traced back through the MATLAB sources, FORTRAN90 sources, and FORTRAN77 sources.  The original f77 code did not contain any shared lines of code with the f90 code, so no copyright statements for Bennett Fox were added.  Comments were added to each function to document the history of all of the code.
+        * Easier reading of the Dockerfile.
+        * Extended the help section of running a Docker container, so now it is also possible to run a bash session in the container.
+        * Fix for deploy script of relax to ubuntu.  The version variables was wrongly set.
+        * When running Docker with OpenDX, the current working directory is now mounted on $HOME/work instead of $HOME.
+        * Made the Ultimate Docker file, which package relax and OpenDX together in one Dockerfile.  Everything can now be packed together.  This makes it an ultimate opportunity to easily ship the relax Docker image to run 'everywhere' easily.
+        * Letting the default intensity column of SeriesTab be 'VOL'.  This is the column SeriesTab uses.  The 'HEIGHT' column is copied in from the nmrDraw test.tab file, and does not represent the measurement.
+        * Fixes to sconstruct, when building with Python 3 and SCons.  The current sconstruct caused an 'SyntaxError: invalid syntax' when using '`' in the file.
+        * Fixes to sconstruct, when cleaning with Python 3 and SCons.  This fix is to print the list represented.
+        * Removed the Oxygen Icon directory from the skipped directory list of the fsfcv script.
+        * Added copyright notices for every Oxygen Icon.
+        * Small fix for the FSF Copyright Validation script (fsfcv).
+        * Capitalised the copyright symbol in the Sobol' external library copyright notices.  This is for easier handling by the FSF Copyright Validation script.
+        * Fixes for the fsfcv script configuration for the Sobol' external package.
+        * The alternative committer names are now better handled in the fsfcv script.  The committer's names in the VC logs are now also translated from the alternative to the standard name.
+        * Correct spelling of Troels Schwarz-Linnet in the copyright notices.
+        * Troels' name is now handled differently in the fsfcv script configuration file.  The text "Troels E. Linnet" is now the alternative name, and "Troels Schwarz-Linnet" the standard name.
+        * MS Windows support for the FSF Copyright Validation script.
+        * Cut and paste error fix for the Oxygen Icon licensing text in the README files.  As stated in the COPYING file, the licence is LGPLv3+, not GPLv3+.
+        * Updated the general relax copyright notice for 2018.  This last copyright year is now stored as info.copyright_final_year.
+        * Clarified the GPLv3+ licensing in the relax introduction string.
+        * Manual: Addition of a GPLv3+ copyright notice to a second title page.
+        * Another Oxygen Icon licensing text fix in the README files.
+        * Improved the LGPLv3+ licensing text for the base directory of the Oxygen Icons.
+        * Manual: Added the LGPLv3+ copyright notice for the Oxygen Icons to the second title page.
+        * Documentation for the copyright and public domain notices for 3D structures.  This is to explain why the strict format text files are not modified to include notices, hence they are placed in the README file, and detailing the public domain nature of the Protein Data Bank repository.
+        * Updated the script for Docker images.
+        * Adding Dockerfile for Ubuntu 18.04 LTS and development on Windows.
+        * Fix for comparison of arrays to None.  The use of 'x == None' should be 'x is None'.
+        * Initial commit of travis-ci.
+        * Setting sys.exit(1) in dep_check, to make Travis-ci fail the build on error.
+        * Travis CI: Adding minfx to pip requirements file.
+        * Travis CI: Fixing path to minfx for pip to install.
+        * Travis CI: Adding PYTHON_INCLUDE_DIR.
+        * Travis CI: Fix for getting Python.h.
+        * Travis CI: Again trying to fix export variable to find Python.h.
+        * Travis CI: Adding debug echo of path to Python.h.
+        * Travis CI: Moving export to .travis.yml.
+        * Travis CI: Adding unit test to travis.
+        * Travis CI: Fix for executing relax from current folder.
+        * Travis CI: Removing scons, since it should already be part of Compilers & Build toolchail in Trusty images.
+        * Travis CI: Adding print of relax information.
+        * Travis CI: Adding more packages to pip requirements.
+        * Travis CI: Better reading of tests performed.
+        * Travis CI config: Adding additional Python version to Travis and cleaning up.
+        * Travis CI config: Adding Python 2.6 and 3.5 to the test matrix.
+        * Travis CI config: Specific testing for Python 2.6.
+        * Travis CI config: Trying to get pip conf file.
+        * Travis CI config: Trying to add svwh.dl.sourceforge.net to trusted pip.
+        * Travis CI config: Adding importlib for Python 2.6.
+        * Travis CI config: Trying to add subprocess for Python 2.6.
+        * Travis CI: Removed matplotlib from Python 2.6.
+        * Travis CI: Remove test of Python 2.6.
+        * Renamed README file to markdown.
+        * Added travis build shield to README.
+        * Adding system-tests to be executed with travis.
+        * Creation of a large set of system tests for implementing the frame_order.decompose user function.  The tests have been copied from Frame_order.test_distribute_* and include: Frame_order.test_decompose_free_rotor_z_axis, Frame_order.test_decompose_iso_cone_z_axis, Frame_order.test_decompose_iso_cone_xz_plane_tilt, Frame_order.test_decompose_iso_cone_free_rotor_z_axis, Frame_order.test_decompose_iso_cone_torsionless_z_axis, Frame_order.test_decompose_pseudo_ellipse_xz_plane_tilt, Frame_order.test_decompose_pseudo_ellipse_z_axis, Frame_order.test_decompose_pseudo_ellipse_free_rotor_z_axis, Frame_order.test_decompose_pseudo_ellipse_torsionless_z_axis, Frame_order.test_decompose_rotor_z_axis.
+        * Creation of the frame_order.decompose user function front end.
+        * Implementation of the frame_order.decompose user function backend.
+        * Scons: Fixes for the manual compilation.  The relax manual cannot be compiled if one of the sys.path values contains a 'docs/' directory.  Instead of appending the relax docs/ path to sys.path, it is now prepended.  The documentation Python module __all__ lists have also been filled out.
+        * Renamed the relax default repository version from "repository checkout" to "repository commit".  This general text is more appropriate for a git repository.
+        * Manual: Removed a Gna! reference in the intro chapter.
+        * Manual: Alias creation for the relax mailing lists.  This is to allow for a centralised place for changing the mailing list name, if any changes occur to the mailing list in the future.
+        * Manual, Ch. Infrastructure: Converted the Gna! shutdown note into a new 'History' section.  A lot of the relax free software/open source infrastructure history is now documented.
+        * Manual, Ch. Infrastructure: Removed the Gna! information from the relax website section.
+        * Manual, Ch. Infrastructure: Updated the relax mailing list information from Gna! to SourceForge.  This is now all through LaTeX aliases, so infrastructure changes should be easier to deal with in the future.
+        * Manual, Ch. Infrastructure: Abstracted the bug reporting section using aliasing.  This removes all Gna! specific links from the chapter, shifting them to SourceForge links in the main relax.tex file.
+        * Manual, Ch. Infrastructure: Abstract the relax repository section and switch from svn to git.  This removes all Gna! specific links from the chapter, shifting them to SourceForge links in the main relax.tex file.
+        * Manual, Ch. Infrastructure: Removal of the news section, as this is not supported on SourceForge.
+        * Manual, Ch. Infrastructure: Abstract the distribution archive section and switch from svn to git.  This removes all Gna! specific links from the chapter, shifting them to SourceForge links in the main relax.tex file.
+        * Manual, Ch. Installation: Abstraction of the bug tracker links.  This replaces the dead Gna! links to the current SourceForge links.
+        * Manual, Ch. N-state model: Abstraction of the relax-users mailing list.
+        * Manual, Ch. Dispersion: Dead link and mailing list fixes.  The mailing lists are now abstracted using aliases, some old dead links have been removed, and some Gna! support request links have been converted to Internet Archive links.
+        * Manual, Ch. Development: Removal of the note about the Gna! shutdown.  The chapter is about to be updated for the switch to SourceForge, so this note is no longer needed.
+        * Manual, Ch. Development: Aliases for the mailing lists and addition of a cross reference.
+        * Manual, Ch. Development: Converted the version control section from SVN to git.
+        * Manual, Ch. Development: Minor edits to the coding conventions section.
+        * Adding exit codes for the unit and system tests.  This is for Travis to fail if these fail.  In Windows these can be seen with: echo Exit Code is %errorlevel%
+        * Manual, Ch. Development: Removal of the section describing creating and submitting patches.
+        * Manual, Ch. Development: Section rearrangement in preparation for new text.
+        * Manual, Ch. Development: svn to git and infrastructure abstraction in the Committers section.  All references to svn have been changed to git.  And the Gna! infrastructure has been abstracted to aliases in the main relax.tex file so that future infrastructure changes are easier to deal with.  In addition, many edits of the text have been made.
+        * Manual, Ch. Development: Expansion of the relax repository section.
+        * Manual, Ch. Development: Minor edits to the relax repository git mirror section.
+        * Manual, Ch. Development: Editing of the source code repository section.
+        * Manual, Ch. Development: Added links to the web interfaces for all relax mirror sites.
+        * Fixing the return value of execution of unit and system tests.
+        * Manual, Ch. Development: New subsection and editing of the relax repository section.  An initial section describing git version control and listing all relax repositories has been added.
+        * Manual, Ch. Infrastructure: Updated the relax repository section to include the website and demo.
+        * Manual, Ch. Development: Complete rewrite of the 'Submitting changes to the relax project' section.  This converts the Subversion instructions to git, and switches from Gna! to the aliased primary relax infrastructure.
+        * Manual, Ch. Development: Converted the SCons section from SVN to git, and removed Gna! references.
+        * Manual, Ch. Development: Major editing of the 'Core design of relax' section.  This section is now significantly improved.  There was a lot of old information, some dating back to the pre-relax 3.0 designs.  And a lot of new information has been added to expand on all of the descriptions.
+        * Manual, Ch. Development: Minor editing of the tracker section.
+        * Manual, Ch. Development: Updated the very out of date links section.  This was incredibly out of date.  The links have been updated to include everything listed at http://www.nmr-relax.com/links.html.
+        * Manual, Index: Removed the no longer relevant svnmerge.py entry.
+        * Simplify Travis file.
+        * Added travis-ci support for Python 3.7 and OSX.  Adding notifications from builds att travis-ci.com to nmr-relax-devel att lists.sourceforge.net.  This is after inspiration from https://github.com/WeblateOrg/translation-finder/blob/master/.travis.yml.  Windows can not be added due to unknown compile error.
+        * Fixing a bug for running scons.  This happens after a 'pip install -U numpy', where numpy is upgraded from 13.3 to 16.1.0.  More to read here: https://docs.scipy.org/doc/numpy-1.15.0/reference/generated/numpy.set_printoptions.html; https://stackoverflow.com/questions/1987694/how-to-print-the-full-numpy-array; https://github.com/numpy/numpy/pull/12353.
+        * Fix for building on Mac OSX Python 3.7.  A possible solution was found here: https://stackoverflow.com/questions/31019854/typeerror-cant-use-a-string-pattern-on-a-bytes-like-object-in-re-findall.
+        * Adding sending mails to nmr-relax-devel att lists.sourceforge.net.  This introduces a spamming problem.  Everyone who forks this project and have travis setup for their user will spam the develop mailing list.  To limit this, there are options in travis: https://docs.travis-ci.com/user/notifications/; https://docs.travis-ci.com/user/conditional-builds-stages-jobs.  Introducing a condition like if: branch = master seems not to be implemented yet: https://github.com/travis-ci/travis-ci/issues/1405.  Travis has internal ticket to track this feature request.
+        * SCons: Git support for the scons distribution targets.  This was previously only set up for Subversion.
+        * FSF Copyright Validation script: Support for tracking files renamed in later repositories.  In this case, a file rename in the current git repository would not allow the file to be found in the SVN archive repository.  The history of the later repository is now used to find all file renames after the end of the earlier repository.  False git history is also correctly handled.
+        * FSF Copyright Validation script: Bug fixes for recording the first VC commit as copyright ownership.
+        * FSF Copyright Validation configuration: Updates for recent files and the script bug fixes.  A lot false git history needed to be identified and blocked.  And a lot of README files added for copyright identification needed to be manually included.
+        * Python multiversion test suite script: Added Python 3.6 and 3.7 to the list to test.
+        * Travis CI config: Minimise mailing list messages with successes only reported after fixing failures.
+        * Test suite: Fix for the running of multiple test suite categories.  Now all test categories will be run and the execution will not be terminated at the end of the category containing the first error/failure.
+        * Activating MS Windows Python 3.7 32-bit for travis (64 bit does not work).  Adding travis option for upgrading pip packages in one of the builds.  This is to try to have pip packages where the versions numbers are normal/average and then where the packages have been upgraded to the newest.  Adding check for Python 3.6, since this is the standard version in Ubuntu 16.04 and 18.04.
+        * Added Python as overall language to travis.
+        * System tests: Relax_disp.test_paul_schanda_nov_2015 is now skipped when Scipy is missing.
+        * Devel scripts: Improved logic for finding Python.h in the manual C module building script.
+        * SCons: Improved logic for finding Python.h for building the C modules.
+        * Python multiversion test suite script: Removal of Python 2.3 and 2.4.  These Python versions have not been supported since the first usage of "from __future__ import absolute_import" back in 2013.
+        * Test suite: Graceful failure of the GUI tests when the wx app cannot be setup.  This currently occurs when using wxPython-Phoenix.
+        * Travis CI config: Adding Python 3.6 and adding test of mpirun.
+        * .gitignore: Ignoring Windows C extensions.
+        * Travis CI config: Trying to add MPI for Windows.  It does not seem to work.
+        * Travis CI config: Trying MPI on Windows does not work: "The processor type ''mpi4py'' is not supported."
+        * GUI: Fix for a wxPython 2.9 issue found via the Relax_disp.test_bug_missing_replicates GUI test.  The spectrum ID wx.ListCtrl element cannot be queried for item 0 when empty.
+        * Development scripts: Rewrote the python_seek.py script to report all import errors.
+        * Creation of a large set of system tests for expanding the frame_order.decompose user function.  The tests have been copied from Frame_order.test_decompose_* and modified to include the new 'total' 'reverse', and 'mirror' user function keywords.  The tests include: Frame_order.test_decompose2_free_rotor_z_axis, Frame_order.test_decompose2_iso_cone_z_axis, Frame_order.test_decompose2_iso_cone_xz_plane_tilt, Frame_order.test_decompose2_iso_cone_free_rotor_z_axis, Frame_order.test_decompose2_iso_cone_torsionless_z_axis, Frame_order.test_decompose2_pseudo_ellipse_xz_plane_tilt, Frame_order.test_decompose2_pseudo_ellipse_z_axis, Frame_order.test_decompose2_pseudo_ellipse_free_rotor_z_axis, Frame_order.test_decompose2_pseudo_ellipse_torsionless_z_axis, Frame_order.test_decompose2_rotor_z_axis.
+        * User function frame_order.decompose: Implementation of the 'total', 'reverse' and 'mirror' params.  This allows a fixed number of structures to be generated over the distribution, for the model order to be reversed, and for the models to step from the negative angle to positive angle and then return to the negative angle.  The original code has been simplified by switching from numpy.arange() to numpy.linspace() for generating the range of angles.  This function is far more reliable than arange() which has end point instability issues.
+        * Creation of the Test_object.test_add_model unit test.  This is within the _lib._structure._internal.test_object test module.  The aim is to reveal issues with the model number accounting within the internal structural object.
+        * System test: Addition of Structure.test_add_secondary_structure.  This will be used to quickly implement the new structure.add_helix and structure.add_sheet user functions.
+        * User function: Implementation of structure.add_helix for defining alpha helices.
+        * User function: Implementation of structure.add_sheet for defining beta sheets.
+        * Library: Implementation of the lib.arg_check.is_bool_or_bool_list() function.  This is to allow for either Boolean values or lists of Booleans.
+        * User functions: Registration of the 'bool_or_bool_list' argument type.
+        * User function frame_order.decompose: The argument 'reverse' can now be a list of Booleans.  This allows different modes to be selectively reversed.
+        * User function structure.superimpose: Speed up of the 'fit to first' algorithm.  The translation and rotation are now skipped for the first structure (as the translation is zero and the rotation matrix is the identity matrix).
+        * User function structure.superimpose: Improved the documentation of the 'models' arg.
+        * RelaxErrors: Implementation of a number of new error types.  This includes the RelaxBoolListBoolError, RelaxNoneBoolError, RelaxNoneBoolListBoolError, and RelaxNoneTupleNumError objects.
+        * Unit tests: Complete checking of the lib.arg_check module.
+        * lib.arg_check module: Missing RelaxError import for the new is_bool_or_bool_list() function.  The lib.error import statement has also been spread across multiple lines and alphabetically sorted.
+        * lib.arg_check module: Protection of the functions against future numpy depreciations.  The code 'arg == None' will not be supported by numpy in the future, if the arg being checked is a numpy object.  Instead the 'arg is None' syntax must be used.
+        * RelaxErrors: Bug fix for the error message generation for list types.  The simple_types and list_types variables are class rather than instance variables, but these were being unintentionally modified by the BaseArgError base class __init__() method.
+        * lib.compat module: Implementation of the Python version independent from_iterable() function.  This will be used to avoid directly using itertools.chain.from_iterable(), which was only introduced in Python 2.6 and later.  For Python >= 2.6, the itertools.chain.from_iterable() function is used, otherwise the roughly equivalent lib.compat.from_iterable_pre_2_6() function is used.
+        * lib.arg_check module: Redesign of the is_float_object() function to handle any data input.  Previously the function could only handle max rank-2 Python lists (lists of lists), and max rank-2 numpy arrays.  And only the first dimensionality was being checked.  Now any rank list or numpy array is correctly handled.
+        * lib.arg_check module: Addition of the can_be_none argument to the is_bool() function.
+        * lib.arg_check module: Documentation fixes for the is_*() functions.
+        * lib.arg_check module: Fix for the wrong RelaxErrors being used in the is_num_tuple() function.
+        * lib.arg_check module: Fix for missing RelaxError imports for the is_list() function.
+        * lib.arg_check module: Bug fix, Boolean or empty lists no longer evaluate as true in is_num_tuple().
+        * lib.arg_check module: Bug fix, Boolean or empty lists no longer evaluate as true in is_num_list().
+        * lib.arg_check module: Simplification of the is_list() function.
+        * lib.arg_check module: Fixes to and simplification of the is_int_list() function.  Boolean lists no longer evaluate as true.
+        * RelaxErrors: Addition of more error objects in preparation for a new lib.arg_check function.
+        * RelaxErrors: Expansion of the functionality of the BaseArgError base class.  The docstring now documents the arguments.  The 'dim' and 'rank' arguments have been added to allow for more control over the reported message for array-type objects.  And the 'can_be_none' argument has been added to append ', or None' to the message, negating the need for the RelaxNone*Error objects.  For formatting the lists used in the BaseArgError class, the new function human_readable_list() has been added to the lib.text.string module.
+        * lib.arg_check module: Creation of the generic validate_arg() function.  A large number of associated unit tests have been added to test all combinations.  The _lib.test_arg_check unit tests include: Test_arg_check.test_validate_arg_all_basic_types, Test_arg_check.test_validate_arg_all_basic_types_and_all_containers, Test_arg_check.test_validate_arg_all_containers, Test_arg_check.test_validate_arg_bool, Test_arg_check.test_validate_arg_bool_list, Test_arg_check.test_validate_arg_bool_list_rank2, Test_arg_check.test_validate_arg_bool_or_bool_list, Test_arg_check.test_validate_arg_float, Test_arg_check.test_validate_arg_float_list, Test_arg_check.test_validate_arg_float_list_rank2, Test_arg_check.test_validate_arg_float_or_float_list, Test_arg_check.test_validate_arg_func, Test_arg_check.test_validate_arg_int, Test_arg_check.test_validate_arg_int_list, Test_arg_check.test_validate_arg_int_list_rank2, Test_arg_check.test_validate_arg_int_or_int_list, Test_arg_check.test_validate_arg_list, Test_arg_check.test_validate_arg_list_or_numpy_array, Test_arg_check.test_validate_arg_number, Test_arg_check.test_validate_arg_number_array_rank1, Test_arg_check.test_validate_arg_number_array_rank2, Test_arg_check.test_validate_arg_number_array_rank3, Test_arg_check.test_validate_arg_number_list, Test_arg_check.test_validate_arg_number_list_rank2, Test_arg_check.test_validate_arg_number_list_rank3, Test_arg_check.test_validate_arg_number_numpy_array_rank1, Test_arg_check.test_validate_arg_number_numpy_array_rank2, Test_arg_check.test_validate_arg_number_numpy_array_rank3, Test_arg_check.test_validate_arg_number_or_number_tuple, Test_arg_check.test_validate_arg_number_tuple, Test_arg_check.test_validate_arg_number_tuple_rank2, Test_arg_check.test_validate_arg_number_tuple_rank3, Test_arg_check.test_validate_arg_numpy_float_array, Test_arg_check.test_validate_arg_numpy_float_matrix, Test_arg_check.test_validate_arg_numpy_float_rank3, Test_arg_check.test_validate_arg_numpy_int_array, Test_arg_check.test_validate_arg_numpy_int_matrix, Test_arg_check.test_validate_arg_numpy_int_rank3, Test_arg_check.test_validate_arg_str, Test_arg_check.test_validate_arg_str_list, Test_arg_check.test_validate_arg_str_list_rank2, Test_arg_check.test_validate_arg_str_or_file_object, Test_arg_check.test_validate_arg_str_or_str_list, Test_arg_check.test_validate_arg_tuple.  In addition, a set of new RelaxErrors have been added for more detailed user feedback, including: RelaxArrayError, RelaxArrayFloatError, RelaxArrayIntError, RelaxArrayNumError, RelaxNumpyFloatError, RelaxNumpyIntError, and RelaxNumpyNumError.
+        * lib.arg_check module: Fixes for handling empty numpy arrays.  This is for the is_float_array() and is_float_matrix() functions.
+        * lib.arg_check module: Removal of the is_list_val_or_list_of_list_val() function.  This was never completely implemented, and was only used by the 'point' argument of the dx.map user function.  The user function py_type "list_val_or_list_of_list_val" value has been renamed to 'num_list_or_num_list_of_lists' and the call to is_list_val_or_list_of_list_val() replaced by a call to validate_arg().  The 'dim' argument for the 'point' argument of the dx.map user function has been modified to match the validate_arg() function syntax.
+        * User function definition redesign, increasing the argument setting flexibility.  The 'py_type' argument definition has been replaced by 'basic_types', 'container_types', and sometimes 'dim'.  This matches the new validate_arg() function in the lib.arg_check module and allows for far greater flexibility in defining a parameter together with more extensive parameter checking than previously possible.
+        * specific_analyses.consistency_tests.api module: Missing RelaxWarning import.
+        * User function definitions: Support for checking file lists (from arg_type='file sel multi').  The new RelaxStrFileListStrFileError object has been created for this check (and the RelaxStrListError also added for completeness).
+        * User function definitions: Overrides for arguments with 'arg_type' set.  The 'arg_type' argument is now fully documented in the user_functions.objects module Uf_container.add_keyarg() function docstring.  The value is now checked, and a few unimplemented values have been eliminated.  Overrides for the 'dim', 'basic_types', and 'container_types' are now set for almost all arguments with 'arg_type' set.  And checks that these are not set in the user function definition have been added.
+        * system.cd user function: Removal of the incorrect wiz_filesel_style argument in the definition.
+        * User function definitions: Split of the 'file sel' arg_type value into readable and writable.  The arg_type value is now either 'file sel read' or 'file sel write'.  The 'file sel multi' value has also been split into 'file sel multi read' and 'file sel multi write'.  This is used for checking if file objects supplied to the user function are correctly readable or writable.  And it is used in the GUI to automatically set the file selection dialog style.  Hence the redundant 'wiz_filesel_style' argument has been removed from the user function definitions.  The is_filetype_readable(), is_filetype_rw(), and is_filetype_writable() functions have been added to the lib.check_types module to check the file objects from within the lib.arg_check module validate_arg() function.
+        * Test suite: Zero times reported on MS Windows with --time no longer have a negative sign.
+        * python_seek.py development script: Added _tkinter to the 'all' list for checking the Python install.
+        * Test suite: Unit test times displayed with --time are now in milliseconds.
+        * Python tempfile.mktemp(): Converted all usage of the function to tempfile.mkstemp().  The tempfile.mktemp() function was depreciated in Python 2.3.  According to the Python documentation: "A historical way to create temporary files was to first generate a file name with the mktemp() function and then create a file using this name.  Unfortunately this is not secure, because a different process may create a file with this name in the time between the call to mktemp() and the subsequent attempt to create the file by the first process.  The solution is to combine the two steps and create the file immediately.  This approach is used by mkstemp() and the other functions described above.".  The Travis CI testing system was sometimes failing on files created with mktemp(), so hopefully mkstemp() will alleviate the issue.
+
+
+    Bugfixes:
+        * Bug fix for the pcs.structural_error user function.  The user function now uses a real multivariate normal distribution for sampling atomic positions.  The previous random unit vector + univariate Gaussian sampling does not correctly reproduce the multivariate normal distribution.
+        * Python 3 bugfix for the Relax_disp.test_bug_24601_r2eff_missing_data system test.  Tab characters rather than spaces made the system test script unloadable in Python 3.
+        * Python 3 fixes for the gui.misc module.  This is for text formatting using the "x"*num logic.  In Python 3, num is often a float so this does not work and an explicit int() function call is required.
+        * Python 3 fix for the combo list sequence elements.  Comparison of integers to values of None are not allowed.
+        * Bug fix for "Tools->System information" GUI menu item.  The user function has been renamed from sys_info to system.sys_info.
+        * Python >= 3.4 fix by removing an unused types.ListType import.
+        * Bug fix allowing for spaces in file paths in the GUI open_file() function.  This used by the file preview buttons and the results viewer window.
+        * Minor fixes for the relaxation curve-fitting sample script.
+        * Another small fix for trp indole 15N spins in the relaxation curve-fitting sample script.
+        * Fix for the relaxation curve-fitting auto-analysis for when the data pipe name is incorrect.  This was simply a missing import.
+        * Bug fix for the relaxation dispersion GUI analysis when specifying replicated spectra.  This is for the Attribute error when the replicated spectra are specified via the spectrum list GUI element rather than the peak intensity loading wizard.  The GUI test Relax_disp.test_bug_missing_replicates now passes.
+        * Bug fix by redesigning the GUI pipe editor pop up menu.  The menu now uses IDs to associate menu items with the correct method to call.  Previously all menu entries were calling the method of the last menu entry, which was in most cases the pipe switching method.  As the pipe deletion method is now properly exposed, the Question dialog was increased in size to be able to see all the text.
+        * MS Windows fixes for running relax from git and git-svn repositories.  Multiple commands on MS Windows need to be separated by "&&" and not ";".
+        * Bug fix: Removal of '\u' escape sequences from the latex_mf_table.py test suite script docstring.  This fixes Bug #1 (https://sourceforge.net/p/nmr-relax/tickets/1/) reported on the new SourceForge infrastructure, and allows the script to be used with Python 3.
+        * Bug fix for the model number tracking with the addition of new models.  If a single model is present without a model number, this is now correctly renumbered.
+
 
 
 Version 4.0.3
