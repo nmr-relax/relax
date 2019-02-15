@@ -117,9 +117,9 @@ class Setup:
         data_files = []
         cwd = getcwd()
         for (dirpath, dirnames, filenames) in walk(cwd):
-            # Skip .svn directories.
+            # Skip .git directories.
             split_path = dirpath.split(sep)
-            if '.svn' in split_path:
+            if '.git' in split_path:
                 continue
 
             # Skip blacklisted directories.
@@ -184,9 +184,9 @@ class Setup:
         includes = []
         cwd = getcwd()
         for (dirpath, dirnames, filenames) in walk(cwd):
-            # Skip .svn directories.
+            # Skip .git directories.
             split_path = dirpath.split(sep)
-            if '.svn' in split_path:
+            if '.git' in split_path:
                 continue
 
             # The relative path.

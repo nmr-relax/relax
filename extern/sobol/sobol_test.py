@@ -64,7 +64,7 @@ def sobol_test01 ( ):
     j, seed = i4_uniform ( 0, 100, seed )
     k = bitwise_xor ( i, j )
 
-    print ( '  %6d  %6d  %6d' ) % ( i, j, k ) )
+    print ( '  %6d  %6d  %6d' ) % ( i, j, k )
 
   return
 
