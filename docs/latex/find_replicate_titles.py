@@ -56,6 +56,10 @@ class Replicated_titles:
                 if not search("tex$", file_name):
                     continue
 
+                # Skip files not in 'docs/latex'.
+                if not search(path.join('docs', 'latex'), root):
+                    continue
+
                 # The full path.
                 file_path = path.join(root, file_name)
 
