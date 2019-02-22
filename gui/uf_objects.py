@@ -566,7 +566,7 @@ class Uf_page(Wiz_page):
                 self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=style, tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, preview=arg['wiz_filesel_preview'], read_only=arg['wiz_read_only'])
 
             # Special arg type:  multiple file selection dialog.
-            if arg['arg_type'] in ['file sel multi read', 'file sel multi write']:
+            elif arg['arg_type'] in ['file sel multi read', 'file sel multi write']:
                 if arg['arg_type'] == 'file sel multi read':
                     style = FD_OPEN
                 if arg['arg_type'] == 'file sel multi write':
