@@ -22,7 +22,7 @@
 """Module for testing the special features of the user function GUI windows."""
 
 # Python module imports.
-from os import sep
+from os import path, sep
 import sys
 
 # relax module imports.
@@ -58,6 +58,38 @@ class User_functions(GuiTestCase):
 
         # Execute.
         uf.wizard._go_next(None)
+
+
+    def test_bug_2_structure_read_pdb_failure(self):
+        """Catch U{bug #2<https://sourceforge.net/p/nmr-relax/tickets/2/>}, the failure of the structure.read_pdb user function.
+
+        This was reported by U{Stefano Ciurli<https://sourceforge.net/u/stefanociurli/>}.
+        """
+
+        # Create the data pipe.
+        self.exec_uf_pipe_create(pipe_name='structure.read_pdb user function failure test')
+
+        # Open the structure.read_pdb user function window.
+        uf = uf_store['structure.read_pdb']
+        uf._sync = True
+        uf.create_wizard(parent=self.app.gui)
+
+        # The PDB file.
+        file = path.join(status.install_path, 'test_suite', 'shared_data', 'structures', '1J7O.pdb')
+
+        # Manually set the PDB file on the first text element - as this is not attached to a uf_args dictionary element!
+        uf.page.GetChildren()[6].SetValue(str_to_gui(file))
+
+        # Execute the user function.
+        uf.wizard._go_next(None)
+
+        # Check the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 3)
+        self.assertEqual(cdp.structure.structural_data[0].num, 1)
+        self.assertEqual(cdp.structure.structural_data[1].num, 2)
+        self.assertEqual(cdp.structure.structural_data[2].num, 3)
 
 
     def test_dx_map(self):
