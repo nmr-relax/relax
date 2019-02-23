@@ -26,6 +26,7 @@ from os import path, sep
 import sys
 
 # relax module imports.
+from lib.errors import RelaxStrFileError
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
@@ -90,6 +91,21 @@ class User_functions(GuiTestCase):
         self.assertEqual(cdp.structure.structural_data[0].num, 1)
         self.assertEqual(cdp.structure.structural_data[1].num, 2)
         self.assertEqual(cdp.structure.structural_data[2].num, 3)
+
+
+    def test_bug_3_no_argument_validation(self):
+        """Catch U{bug #3<https://sourceforge.net/p/nmr-relax/tickets/3/>}, the absence of user function argument validation in the GUI."""
+
+        # Create the data pipe.
+        self.exec_uf_pipe_create(pipe_name='user function argument validation test')
+
+        # Open the structure.read_pdb user function window.
+        uf = uf_store['structure.read_pdb']
+        uf._sync = True
+        uf.create_wizard(parent=self.app.gui)
+
+        # Execute the user function with no arguments set.
+        self.assertRaises(RelaxStrFileError, uf.wizard._go_next, None)
 
 
     def test_dx_map(self):
