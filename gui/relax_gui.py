@@ -380,6 +380,7 @@ class Main(wx.Frame):
         # Otherwise output to stderr.
         else:
             sys.stderr.write(text)
+            sys.stderr.flush()
 
 
     def contact_relax(self, event=None):

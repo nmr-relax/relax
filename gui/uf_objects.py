@@ -937,6 +937,18 @@ class Uf_page(Wiz_page):
             # The printout.
             print(self._intro_text(keys, values))
 
+        # User function argument validation.
+        for i in range(len(self.uf_data.kargs)):
+            arg = self.uf_data.kargs[i]
+            try:
+                lib.arg_check.validate_arg(kargs[arg['name']], arg['desc_short'], dim=arg['dim'], basic_types=arg['basic_types'], container_types=arg['container_types'], can_be_none=arg['can_be_none'], can_be_empty=arg['can_be_empty'], none_elements=arg['none_elements'])
+            except AllRelaxErrors:
+                # Display a dialog with the error.
+                gui_raise(sys.exc_info()[1])
+
+                # Return as a failure.
+                return False
+
         # Execute the user function.
         return_status = self.execute(self.name, **kargs)
 

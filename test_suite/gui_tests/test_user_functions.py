@@ -26,7 +26,6 @@ from os import path, sep
 import sys
 
 # relax module imports.
-from lib.errors import RelaxStrFileError
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
@@ -94,7 +93,22 @@ class User_functions(GuiTestCase):
 
 
     def test_bug_3_no_argument_validation(self):
-        """Catch U{bug #3<https://sourceforge.net/p/nmr-relax/tickets/3/>}, the absence of user function argument validation in the GUI."""
+        """Catch U{bug #3<https://sourceforge.net/p/nmr-relax/tickets/3/>}, the absence of user function argument validation in the GUI.
+
+        Without argument validation, the structure.read_pdb user function would fail with the error::
+
+            relax> pipe.create(pipe_name='validation_test', pipe_type='mf', bundle=None)
+
+            relax> structure.read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+            Traceback (most recent call last):
+              File "/data/relax/relax/gui/interpreter.py", line 306, in run
+                fn(*args, **kwds)
+              File "/data/relax/relax/pipe_control/structure/main.py", line 1277, in read_pdb
+                if not access(file_path, F_OK):
+            TypeError: coercing to Unicode: need string or buffer, NoneType found
+
+        However with validation, a RelaxStrFileError error is raised.   This is caught by the GUI, presenting a pop up window for the error, printing out the error text, but not raising the error.  Hence an error cannot be caught.
+        """
 
         # Create the data pipe.
         self.exec_uf_pipe_create(pipe_name='user function argument validation test')
@@ -105,7 +119,7 @@ class User_functions(GuiTestCase):
         uf.create_wizard(parent=self.app.gui)
 
         # Execute the user function with no arguments set.
-        self.assertRaises(RelaxStrFileError, uf.wizard._go_next, None)
+        uf.wizard._go_next(None)
 
 
     def test_dx_map(self):
