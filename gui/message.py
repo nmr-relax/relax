@@ -54,6 +54,7 @@ def error_message(msg, caption=''):
 
         # Write out.
         sys.stderr.write(msg + "\n")
+        sys.stderr.flush()
 
 
 
@@ -125,6 +126,7 @@ class Missing_data(wx.Dialog):
         # Otherwise throw the error out to stderr.
         else:
             sys.stderr.write("Missing data:  %s\n" % msg)
+            sys.stderr.flush()
 
 
 

@@ -44,10 +44,11 @@ def gui_raise(relax_error, raise_flag=False):
     if wx.IsBusy():
         wx.EndBusyCursor()
 
-    # Non-fatal - the error is not raised so just send the text to STDERR.
+    # Non-fatal - the error is not raised so just send the text to STDERR, flushing the buffer to update the controller.
     if not raise_flag:
         sys.stderr.write(relax_error.__str__())
         sys.stderr.write("\n")
+        sys.stderr.flush()
 
     # Show the relax controller (so that the window doesn't hide the dialog).
     app = wx.GetApp()

@@ -95,6 +95,7 @@ class Execute(Thread):
             sys.stderr.write("Exception raised in thread.\n\n")
             print_exc()
             sys.stderr.write("\n\n\n")
+            sys.stderr.flush()
 
             # Unlock the execution lock, if needed.
             if status.exec_lock.locked():

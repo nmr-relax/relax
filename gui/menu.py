@@ -222,6 +222,7 @@ class Menu:
         file = open('docs/COPYING')
         for line in file.readlines():
             sys.stdout.write(line)
+        sys.stdout.flush()
 
         # Show the relax controller.
         self.gui.show_controller(event)

@@ -135,7 +135,9 @@ class Controller(wx.Frame):
         # The relax intro printout, to mimic the prompt/script interface.
         if not status.test_mode:
             info = Info_box()
-            print(info.intro_text())
+            sys.stdout.write(info.intro_text())
+            sys.stdout.write("\n")
+            sys.stdout.flush()
 
         # Set the focus on the log control.
         self.log_panel.SetFocus()
