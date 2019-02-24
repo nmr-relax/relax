@@ -33,6 +33,7 @@ from time import time
 from warnings import warn
 
 # relax module imports.
+from dep_check import version_comparison
 from lib.dispersion.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF
 from lib.errors import RelaxError, RelaxFileError, RelaxNoPipeError
 from lib.io import determine_compression, get_file_path
@@ -208,7 +209,7 @@ class Relax_disp:
         """Check for numerical model using numpy version under 1.8.  This will result in slow "for loop" calculation through data, making the analysis 5-6 times slower."""
 
         # Some warning for the user if the pure numeric solution is selected.
-        if float(version.version[:3]) < 1.8:
+        if version_comparison(version.version, '1.8') < 0:
             # Store which models are in numeric.
             models = []
 
