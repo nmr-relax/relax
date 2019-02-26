@@ -98,26 +98,30 @@ PARAMS_GLOBAL = [
     'tex'
 ]
 
-# Spin specific parameters.
-PARAMS_SPIN = [
-    'r1',
-    'r2',
-    'r2a',
-    'r2b',
+# Chemical shift difference parameters.
+PARAMS_CHEM_SHIFT_DIFF = [
     'dw',
     'dw_AB',
     'dw_AC',
     'dw_BC',
-    'dwH',
-    'dwH_AB',
-    'dwH_AC',
-    'dwH_BC',
     'padw2',
     'phi_ex',
     'phi_ex_A',
     'phi_ex_B',
     'phi_ex_C',
 ]
+
+# Chemical shift difference parameters for the MQ models.
+PARAMS_CHEM_SHIFT_DIFF_MMQ = [
+    'dwH',
+    'dwH_AB',
+    'dwH_AC',
+    'dwH_BC',
+]
+
+# Spin specific parameters.
+PARAMS_SPIN = PARAMS_R1 + PARAMS_R20 + PARAMS_CHEM_SHIFT_DIFF + PARAMS_CHEM_SHIFT_DIFF_MMQ
+
 
 # The model names, parameters, and descriptions.
 MODEL_R2EFF = 'R2eff'

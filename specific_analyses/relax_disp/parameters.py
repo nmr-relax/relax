@@ -39,6 +39,8 @@ from lib.dispersion.variables import MODEL_LIST_MMQ, \
     MODEL_NS_R1RHO_3SITE_LINEAR,  \
     PARAMS_R1, \
     PARAMS_R20, \
+    PARAMS_CHEM_SHIFT_DIFF, \
+    PARAMS_CHEM_SHIFT_DIFF_MMQ, \
     PARAMS_SPIN
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
@@ -709,11 +711,12 @@ def loop_parameters(spins=None):
             if not spins[spin_index].select:
                 continue
 
-            # The R1 parameter.
-            if 'r1' in spins[spin_index].params:
-                for exp_type, frq in loop_exp_frq():
-                    param_index += 1
-                    yield 'r1', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
+            # The parameters.
+            for param in PARAMS_R1:
+                if param in spins[spin_index].params:
+                    for exp_type, frq in loop_exp_frq():
+                        param_index += 1
+                        yield param, param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
 
         # Then the R2 parameters (one per spin per field strength).
         for spin_index in range(len(spins)):
@@ -721,55 +724,24 @@ def loop_parameters(spins=None):
             if not spins[spin_index].select:
                 continue
 
-            # The R2 parameter.
-            if 'r2' in spins[spin_index].params:
-                for exp_type, frq in loop_exp_frq():
-                    param_index += 1
-                    yield 'r2', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
+            # The parameters.
+            for param in PARAMS_R20:
+                if param in spins[spin_index].params:
+                    for exp_type, frq in loop_exp_frq():
+                        param_index += 1
+                        yield param, param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
 
-            # The R2A parameter.
-            if 'r2a' in spins[spin_index].params:
-                for exp_type, frq in loop_exp_frq():
-                    param_index += 1
-                    yield 'r2a', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
-
-            # The R2B parameter.
-            if 'r2b' in spins[spin_index].params:
-                for exp_type, frq in loop_exp_frq():
-                    param_index += 1
-                    yield 'r2b', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
-
-        # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB' (one per spin).
+        # Then the chemical shift difference parameters (one per spin).
         for spin_index in range(len(spins)):
             # Skip deselected spins.
             if not spins[spin_index].select:
                 continue
 
             # Yield the data.
-            if 'phi_ex' in spins[spin_index].params:
-                param_index += 1
-                yield 'phi_ex', param_index, spin_index, None
-            if 'phi_ex_B' in spins[spin_index].params:
-                param_index += 1
-                yield 'phi_ex_B', param_index, spin_index, None
-            if 'phi_ex_C' in spins[spin_index].params:
-                param_index += 1
-                yield 'phi_ex_C', param_index, spin_index, None
-            if 'padw2' in spins[spin_index].params:
-                param_index += 1
-                yield 'padw2', param_index, spin_index, None
-            if 'dw' in spins[spin_index].params:
-                param_index += 1
-                yield 'dw', param_index, spin_index, None
-            if 'dw_AB' in spins[spin_index].params:
-                param_index += 1
-                yield 'dw_AB', param_index, spin_index, None
-            if 'dw_BC' in spins[spin_index].params:
-                param_index += 1
-                yield 'dw_BC', param_index, spin_index, None
-            if 'dw_AC' in spins[spin_index].params:
-                param_index += 1
-                yield 'dw_AC', param_index, spin_index, None
+            for param in PARAMS_CHEM_SHIFT_DIFF:
+                if param in spins[spin_index].params:
+                    param_index += 1
+                    yield param, param_index, spin_index, None
 
         # Then a separate block for the proton chemical shift difference parameters for the MQ models (one per spin).
         for spin_index in range(len(spins)):
@@ -777,22 +749,15 @@ def loop_parameters(spins=None):
             if not spins[spin_index].select:
                 continue
 
-            if 'dwH' in spins[spin_index].params:
-                param_index += 1
-                yield 'dwH', param_index, spin_index, None
-            if 'dwH_AB' in spins[spin_index].params:
-                param_index += 1
-                yield 'dwH_AB', param_index, spin_index, None
-            if 'dwH_BC' in spins[spin_index].params:
-                param_index += 1
-                yield 'dwH_BC', param_index, spin_index, None
-            if 'dwH_AC' in spins[spin_index].params:
-                param_index += 1
-                yield 'dwH_AC', param_index, spin_index, None
+            # Yield the data.
+            for param in PARAMS_CHEM_SHIFT_DIFF_MMQ:
+                if param in spins[spin_index].params:
+                    param_index += 1
+                    yield param, param_index, spin_index, None
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r1', 'r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
+            if not param in PARAMS_SPIN:
                 param_index += 1
                 yield param, param_index, None, None
 
