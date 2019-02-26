@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008,2013-2014 Edward d'Auvergne                         #
+# Copyright (C) 2003-2008,2013-2014,2019 Edward d'Auvergne                    #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2008-2009 Sebastien Morin                                     #
 # Copyright (C) 2014 Troels E. Linnet                                         #
@@ -64,6 +64,60 @@ EQ_ANALYTIC = 'analytic'
 EQ_NUMERIC = 'numeric'
 EQ_SILICO = 'silico'
 
+
+# Parameter categories.
+#######################
+
+# R1-type parameters.
+PARAMS_R1 = [
+    'r1'
+]
+
+# R2-type parameters.
+PARAMS_R20 = [
+    'r2',
+    'r2a',
+    'r2b'
+]
+
+# Non-spin specific parameters.
+PARAMS_GLOBAL = [
+    'k_AB',
+    'k_AC',
+    'k_BC',
+    'kA',
+    'kB',
+    'kC',
+    'kex',
+    'kex_AB',
+    'kex_AC',
+    'kex_BC',
+    'pA',
+    'pB',
+    'pC',
+    'tex'
+]
+
+# Spin specific parameters.
+PARAMS_SPIN = [
+    'r1',
+    'r2',
+    'r2a',
+    'r2b',
+    'dw',
+    'dw_AB',
+    'dw_AC',
+    'dw_BC',
+    'dwH',
+    'dwH_AB',
+    'dwH_AC',
+    'dwH_BC',
+    'padw2',
+    'phi_ex',
+    'phi_ex_A',
+    'phi_ex_B',
+    'phi_ex_C',
+]
 
 # The model names, parameters, and descriptions.
 MODEL_R2EFF = 'R2eff'
@@ -296,9 +350,6 @@ MODEL_YEAR_NS_MMQ_3SITE_LINEAR = 2005
 MODEL_EXP_TYPE_NS_MMQ_3SITE_LINEAR = EXP_TYPE_CPMG_MMQ
 MODEL_SITES_NS_MMQ_3SITE_LINEAR = 3
 MODEL_EQ_NS_MMQ_3SITE_LINEAR = EQ_NUMERIC
-
-# The parameters.
-PARAMS_R20 = ['r2', 'r2a', 'r2b']
 
 # The model lists.
 ## The CPMG models

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008,2013-2014 Edward d'Auvergne                         #
+# Copyright (C) 2003-2008,2013-2014,2019 Edward d'Auvergne                    #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2008-2009 Sebastien Morin                                     #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
@@ -31,7 +31,15 @@ from numpy import array, float64, median, zeros
 import sys
 
 # relax module imports.
-from lib.dispersion.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
+from lib.dispersion.variables import MODEL_LIST_MMQ, \
+    MODEL_M61B, \
+    MODEL_NS_MMQ_3SITE, \
+    MODEL_NS_MMQ_3SITE_LINEAR, \
+    MODEL_NS_R1RHO_3SITE, \
+    MODEL_NS_R1RHO_3SITE_LINEAR,  \
+    PARAMS_R1, \
+    PARAMS_R20, \
+    PARAMS_SPIN
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from pipe_control import pipes
@@ -900,7 +908,7 @@ def param_num(spins=None):
             continue
 
         for i in range(len(spin.params)):
-            if spin.params[i] in ['r1']:
+            if spin.params[i] in PARAMS_R1:
                 for exp_type, frq in loop_exp_frq():
                     num += 1
 
@@ -916,25 +924,25 @@ def param_num(spins=None):
                     num += 1
 
     # Count the number of spin specific parameters for all spins.
-    spin_params = ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH']
+    alread_counted = PARAMS_R1 + PARAMS_R20
     for spin in spins:
         # Skip deselected spins.
         if not spin.select:
             continue
 
-        for i in range(len(spin.params)):
-            if spin.params[i] in spin_params:
+        for param in spin.params:
+            if param in PARAMS_SPIN and not param in alread_counted:
                 num += 1
 
     # Count all other parameters, but only for a single spin.
-    all_params = ['r1'] + PARAMS_R20 + spin_params
+    alread_counted += PARAMS_SPIN
     for spin in spins:
         # Skip deselected spins.
         if not spin.select:
             continue
 
-        for i in range(len(spin.params)):
-            if not spin.params[i] in all_params:
+        for param in spin.params:
+            if not param in alread_counted:
                 num += 1
         break
 
