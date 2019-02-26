@@ -688,14 +688,18 @@ def loop_parameters(spins=None):
             if not spins[spin_index].select:
                 continue
 
-            # Yield the two parameters.
-            params = ['r2eff', 'i0']
-            for i in range(2):
+            # One or two parameters.
+            params = ['r2eff']
+            if has_exponential_exp_type():
+                params = ['r2eff', 'i0']
+
+            # Yield the parameters.
+            for param in params:
                 # First increment the indices.
                 param_index += 1
 
                 # Yield the data.
-                yield params[i], param_index, spin_index, None
+                yield param, param_index, spin_index, None
 
     # All other models.
     else:
