@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008,2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,4 +20,11 @@
 ###############################################################################
 
 
-__all__ = ['']
+__all__ = [
+    'test___init__',
+    'test_checks',
+    'test_data',
+    'test_model',
+    'test_parameters',
+    'test_variables',
+]
