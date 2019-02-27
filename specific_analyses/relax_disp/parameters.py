@@ -84,8 +84,10 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
 
 
 def copy(pipe_from=None, pipe_to=None):
-    """Copy dispersion parameters from one data pipe to another, taking the median of previous values to a start value for clusters.
-    Taking the median prevent averaging extreme outliers.
+    """Copy dispersion parameters from one data pipe to another.
+
+    For spin clusters, the median of previous values is taken to avoid extreme outliers.
+
 
     @param pipe_from:   The data pipe to copy the value from.  This defaults to the current data pipe.
     @type pipe_from:    str
@@ -290,7 +292,7 @@ def copy(pipe_from=None, pipe_to=None):
 
 
 def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=None):
-    """Disassemble the parameter vector.
+    """Disassemble the relaxation dispersion parameter vector.
 
     @keyword param_vector:  The parameter vector.
     @type param_vector:     numpy array
@@ -354,7 +356,7 @@ def get_param_names(spins=None, full=False):
         # The parameters with additional details.
         if full and param_name in PARAMS_R20:
             param_text += " (%s)" % r20_key
- 
+
         # Append the text.
         names.append(param_text)
 
@@ -624,7 +626,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
                     b.append(-1.0 / scaling_matrix[param_index, param_index])
                     j += 1
 
-                    # Then the pA >= pC constraint.
+                    # Then the pA >= pB constraint.
                     A.append(zero_array * 0.0)
                     A[j][param_index2] = 1.0
                     A[j][param_index] = -1.0
@@ -668,7 +670,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
 
 def loop_parameters(spins=None):
-    """Generator function for looping of the parameters of the cluster.
+    """Generator function for looping of the model parameters of the cluster.
 
     @keyword spins: The list of spin data containers for the block.
     @type spins:    list of SpinContainer instances
@@ -763,7 +765,7 @@ def loop_parameters(spins=None):
 
 
 def param_conversion(key=None, spins=None, sim_index=None):
-    """Convert Disassemble the parameter vector.
+    """Calculate the non-model parameter values from the current parameter values.
 
     @keyword key:           The key for the R2eff and I0 parameters.
     @type key:              str or None
@@ -820,8 +822,9 @@ def param_conversion(key=None, spins=None, sim_index=None):
 
 def param_index_to_param_info(index=None, spins=None):
     """Convert the given parameter array index to parameter identifying information.
-    
+
     The parameter index will be converted to the parameter name, the relevant spin index in the cluster, and relevant exponential curve key.
+
 
     @keyword index: The index of the parameter array.
     @type index:    int
@@ -943,7 +946,7 @@ def r1_setup():
 
 
 def set_value(value=None, key=None, spins=None, sim_index=None, param_name=None, spin_index=None, r20_key=None):
-    """Return the value for the given parameter.
+    """Set a specific parameter value.
 
     @keyword value:         The parameter value to set.
     @type value:            float
