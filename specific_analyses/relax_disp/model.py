@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008,2013-2014 Edward d'Auvergne                         #
+# Copyright (C) 2003-2008,2013-2014,2019 Edward d'Auvergne                    #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2008-2009 Sebastien Morin                                     #
 # Copyright (C) 2014 Troels E. Linnet                                         #
@@ -26,6 +26,7 @@
 """Functions for sorting and nesting the models in relaxation dispersion specific analysis."""
 
 # Python module imports.
+from copy import deepcopy
 from datetime import date
 from functools import partial
 from operator import attrgetter, ne
@@ -49,16 +50,16 @@ class Model_class:
         self.model = model
 
         # model description.
-        self.desc = MODEL_DESC[self.model]
+        self.desc = deepcopy(MODEL_DESC[self.model])
 
         # model equation type: analytic, silico or numeric.
-        self.eq =  MODEL_EQ[self.model]
+        self.eq =  deepcopy(MODEL_EQ[self.model])
 
         # The model experiment type.
-        self.exp_type = MODEL_EXP_TYPE[self.model]
+        self.exp_type = deepcopy(MODEL_EXP_TYPE[self.model])
 
         # model parameters.
-        self.params = MODEL_PARAMS[self.model]
+        self.params = deepcopy(MODEL_PARAMS[self.model])
         if is_r1_optimised(model=model) and 'r1' not in self.params:
             self.params.insert(0, 'r1')
 
@@ -66,13 +67,13 @@ class Model_class:
         self.params_nr = len(self.params)
 
         # The number of chemical sites.
-        self.sites = MODEL_SITES[self.model]
+        self.sites = deepcopy(MODEL_SITES[self.model])
 
         # year where model was developed or published.
-        self.year = MODEL_YEAR[self.model]
+        self.year = deepcopy(MODEL_YEAR[self.model])
 
         # Ordered lists of models to nest from.
-        nest_list = MODEL_NEST[self.model]
+        nest_list = deepcopy(MODEL_NEST[self.model])
 
         # Remove the model itself from the list.
         if nest_list == None:
