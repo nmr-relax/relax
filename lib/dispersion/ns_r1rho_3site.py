@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2000-2001 Nikolai Skrynnikov                                  #
 # Copyright (C) 2000-2001 Martin Tollinger                                    #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2014,2019 Edward d'Auvergne                              #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -337,8 +337,21 @@ def ns_r1rho_3site(M0=None, M0_T=None, r1rho_prime=None, omega=None, offset=None
     pB_pC = pB + pC
     k_BA = pA * kex_AB / pA_pB
     k_AB = pB * kex_AB / pA_pB
-    k_CB = pB * kex_BC / pB_pC
-    k_BC = pC * kex_BC / pB_pC
+    if pB_pC != 0.0:
+        k_CB = pB * kex_BC / pB_pC
+        k_BC = pC * kex_BC / pB_pC
+    elif pB == 0.0 and pC == 0.0:
+        k_CB = 0.0
+        k_BC = 0.0
+    elif pB == 0.0:
+        k_CB = 0.0
+        k_BC = 1e100
+    elif pC == 0.0:
+        k_CB = 1e100
+        k_BC = 0.0
+    else:
+        k_CB = 1e100
+        k_BC = 1e100
     k_CA = pA * kex_AC / pA_pC
     k_AC = pC * kex_AC / pA_pC
 
