@@ -84,7 +84,7 @@ from lib.dispersion.variables import MODEL_LIST_FULL, \
     MODEL_EXP_TYPE_NS_MMQ_2SITE, \
     MODEL_EXP_TYPE_NS_MMQ_3SITE, \
     MODEL_EXP_TYPE_NS_MMQ_3SITE_LINEAR
-from specific_analyses.relax_disp.parameters import linear_constraints, loop_parameters, param_num
+from specific_analyses.relax_disp.parameters import linear_constraints, loop_parameters, param_conversion, param_num
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -1538,6 +1538,202 @@ class Test_parameters(UnitTestCase):
 
             # Parameter count check.
             self.assertEqual(i, len(expected[model]))
+
+
+    def test_param_conversion_clustered_spins(self):
+        """Test the specific_analyses.relax_disp.parameters.param_conversion() function for a cluster of 2 spins."""
+
+        # Test parameter values.
+        fixed_values = {
+            'r2eff': 10.0,
+            'r2': 15.0,
+            'r2a': 12.0,
+            'r2b': 18.0,
+            'pA': 0.80,
+            'pB': 0.15,
+            'k_AB': 0.001,
+            'k_BA': 0.003,
+            'kex': 0.01,
+            'kex_AB': 0.015,
+            'kex_BC': 0.017,
+            'kex_AC': 0.016,
+            'kB': 0.005,
+            'kC': 0.004,
+            'tex': 50.0,
+            'dw': 1.0,
+            'dw_AB': 1.02,
+            'dw_BC': 1.03,
+            'dwH': 0.1,
+            'dwH_AB': 0.12,
+            'dwH_BC': 0.13,
+            'phi_ex': 0.5,
+            'phi_ex_B': 0.4,
+            'phi_ex_C': 0.3,
+        }
+
+        # Loop over all models.
+        print("Checking the parameter conversion and setting for a cluster of 2 spins.")
+        for model in MODEL_LIST_FULL:
+            # Printout.
+            print("    Model '%s'." % model)
+
+            # Set up the data store.
+            ds.add(pipe_name=model, pipe_type='relax_disp')
+            if model == MODEL_R2EFF:
+                cdp.model_type = 'R2eff'
+            else:
+                cdp.model_type = 'disp'
+            cdp.exp_type_list = [self.exp_type[model]]
+            cdp.spectrometer_frq_list = [1e6]
+            spins = [SpinContainer(), SpinContainer()]
+            for spin in spins:
+                spin.model = model
+                spin.params = deepcopy(MODEL_PARAMS[model])
+
+            # First set the parameter values.
+            for name, param_index, spin_index, R20_key in loop_parameters(spins):
+                # R2 parameters.
+                if name in ['r2', 'r2a', 'r2b']:
+                    key = "%s - %.8f MHz" % (cdp.exp_type_list[0], cdp.spectrometer_frq_list[0]/1e6)
+                    print("        Setting spin %i parameter %s['%s'] to %s." % (spin_index, name, key, fixed_values[name]))
+                    setattr(spins[spin_index], name, {key: fixed_values[name]})
+
+                # Global parameters.
+                elif spin_index == None:
+                    print("        Setting global parameter %s to %s." % (name, fixed_values[name]))
+                    setattr(spins[0], name, fixed_values[name])
+                    setattr(spins[1], name, fixed_values[name])
+
+                # Spin parameters.
+                else:
+                    print("        Setting spin %i parameter %s to %s." % (spin_index, name, fixed_values[name]))
+                    setattr(spins[spin_index], name, fixed_values[name])
+
+            # Then perform the conversion.
+            param_conversion(key=None, spins=spins, sim_index=None)
+
+            # Check the probabilities.
+            if 'pB' in MODEL_PARAMS[model]:
+                print("        Checking parameter pC.")
+                self.assertAlmostEqual(spins[0].pC, 0.05)
+                self.assertAlmostEqual(spins[1].pC, 0.05)
+            elif 'pA' in MODEL_PARAMS[model]:
+                print("        Checking parameter pB.")
+                self.assertAlmostEqual(spins[0].pB, 0.20)
+                self.assertAlmostEqual(spins[1].pB, 0.20)
+
+            # Check the kex-tex pair.
+            if 'kex' in MODEL_PARAMS[model]:
+                print("        Checking parameter tex.")
+                self.assertAlmostEqual(spins[0].tex, 100.0)
+                self.assertAlmostEqual(spins[1].tex, 100.0)
+            elif 'tex' in MODEL_PARAMS[model]:
+                print("        Checking parameter kex.")
+                self.assertAlmostEqual(spins[0].kex, 0.02)
+                self.assertAlmostEqual(spins[1].kex, 0.02)
+
+            # Check the rates.
+            if 'kex' in MODEL_PARAMS[model] and 'pA' in MODEL_PARAMS[model]:
+                print("        Checking parameter k_AB.")
+                self.assertAlmostEqual(spins[0].k_AB, 0.002)
+                self.assertAlmostEqual(spins[1].k_AB, 0.002)
+                print("        Checking parameter k_BA.")
+                self.assertAlmostEqual(spins[0].k_BA, 0.008)
+                self.assertAlmostEqual(spins[1].k_BA, 0.008)
+
+
+    def test_param_conversion_single_spin(self):
+        """Test the specific_analyses.relax_disp.parameters.param_conversion() function for a single spin."""
+
+        # Test parameter values.
+        fixed_values = {
+            'r2eff': 10.0,
+            'r2': 15.0,
+            'r2a': 12.0,
+            'r2b': 18.0,
+            'pA': 0.80,
+            'pB': 0.15,
+            'k_AB': 0.001,
+            'k_BA': 0.003,
+            'kex': 0.01,
+            'kex_AB': 0.015,
+            'kex_BC': 0.017,
+            'kex_AC': 0.016,
+            'kB': 0.005,
+            'kC': 0.004,
+            'tex': 50.0,
+            'dw': 1.0,
+            'dw_AB': 1.02,
+            'dw_BC': 1.03,
+            'dwH': 0.1,
+            'dwH_AB': 0.12,
+            'dwH_BC': 0.13,
+            'phi_ex': 0.5,
+            'phi_ex_B': 0.4,
+            'phi_ex_C': 0.3,
+        }
+
+        # Loop over all models.
+        print("Checking the parameter conversion and setting for a single spin.")
+        for model in MODEL_LIST_FULL:
+            # Printout.
+            print("    Model '%s'." % model)
+
+            # Set up the data store.
+            ds.add(pipe_name=model, pipe_type='relax_disp')
+            if model == MODEL_R2EFF:
+                cdp.model_type = 'R2eff'
+            else:
+                cdp.model_type = 'disp'
+            cdp.exp_type_list = [self.exp_type[model]]
+            cdp.spectrometer_frq_list = [1e6]
+            spin = SpinContainer()
+            spin.model = model
+            spin.params = deepcopy(MODEL_PARAMS[model])
+
+            # First set the parameter values.
+            for name, param_index, spin_index, R20_key in loop_parameters([spin]):
+                # R2 parameters.
+                if name in ['r2', 'r2a', 'r2b']:
+                    key = "%s - %.8f MHz" % (cdp.exp_type_list[0], cdp.spectrometer_frq_list[0]/1e6)
+                    print("        Setting spin %i parameter %s['%s'] to %s." % (spin_index, name, key, fixed_values[name]))
+                    setattr(spin, name, {key: fixed_values[name]})
+
+                # Global parameters.
+                elif spin_index == None:
+                    print("        Setting global parameter %s to %s." % (name, fixed_values[name]))
+                    setattr(spin, name, fixed_values[name])
+
+                # Spin parameters.
+                else:
+                    print("        Setting spin %i parameter %s to %s." % (spin_index, name, fixed_values[name]))
+                    setattr(spin, name, fixed_values[name])
+
+            # Then perform the conversion.
+            param_conversion(key=None, spins=[spin], sim_index=None)
+
+            # Check the probabilities.
+            if 'pB' in MODEL_PARAMS[model]:
+                print("        Checking parameter pC.")
+                self.assertAlmostEqual(spin.pC, 0.05)
+            elif 'pA' in MODEL_PARAMS[model]:
+                print("        Checking parameter pB.")
+                self.assertAlmostEqual(spin.pB, 0.20)
+
+            # Check the kex-tex pair.
+            if 'kex' in MODEL_PARAMS[model]:
+                print("        Checking parameter tex.")
+                self.assertAlmostEqual(spin.tex, 100.0)
+            elif 'tex' in MODEL_PARAMS[model]:
+                print("        Checking parameter kex.")
+                self.assertAlmostEqual(spin.kex, 0.02)
+
+            # Check the rates.
+            if 'kex' in MODEL_PARAMS[model] and 'pA' in MODEL_PARAMS[model]:
+                print("        Checking parameter k_AB.")
+                self.assertAlmostEqual(spin.k_AB, 0.002)
+                print("        Checking parameter k_BA.")
+                self.assertAlmostEqual(spin.k_BA, 0.008)
 
 
     def test_param_num_clustered_spins(self):
