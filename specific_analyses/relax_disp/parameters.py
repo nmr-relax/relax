@@ -758,10 +758,19 @@ def loop_parameters(spins=None):
                     yield param, param_index, spin_index, None
 
         # All other parameters (one per spin cluster).
-        for param in spins[0].params:
-            if not param in PARAMS_SPIN:
-                param_index += 1
-                yield param, param_index, None, None
+        for spin_index in range(len(spins)):
+            # Skip deselected spins.
+            if not spins[spin_index].select:
+                continue
+
+            # The parameters.
+            for param in spins[0].params:
+                if not param in PARAMS_SPIN:
+                    param_index += 1
+                    yield param, param_index, None, None
+
+            # No more spins.
+            break
 
 
 def param_conversion(key=None, spins=None, sim_index=None):
