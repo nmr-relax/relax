@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008,2013-2014,2016 Edward d'Auvergne                    #
+# Copyright (C) 2003-2008,2013-2014,2016,2019 Edward d'Auvergne               #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2008-2009 Sebastien Morin                                     #
 # Copyright (C) 2013-2015 Troels E. Linnet                                    #
@@ -52,7 +52,7 @@ from specific_analyses.relax_disp.checks import check_model_type
 from specific_analyses.relax_disp.data import average_intensity, calc_rotating_frame_params, find_intensity_keys, generate_r20_key, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq, loop_exp_frq_offset_point, loop_time, pack_back_calc_r2eff, return_param_key_from_data, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, minimise_r2eff
 from specific_analyses.relax_disp.parameter_object import Relax_disp_params
-from specific_analyses.relax_disp.parameters import get_param_names, get_value, loop_parameters, param_index_to_param_info, param_num, r1_setup
+from specific_analyses.relax_disp.parameters import get_param_names, get_value, loop_parameters, param_conversion, param_index_to_param_info, param_num, r1_setup
 
 
 class Relax_disp(API_base, API_common):
@@ -1338,95 +1338,58 @@ class Relax_disp(API_base, API_common):
     def sim_init_values(self):
         """Initialise the Monte Carlo parameter values."""
 
-        # Get the parameter object names.
-        param_names = self.data_names(set='params')
-
-        # Add the names of kex-tex pair.
-        pairs = {}
-        pairs['kex'] = 'tex'
-        pairs['tex'] = 'kex'
-
-        # Add the names of pA-pB pair.
-        pairs['pA'] = 'pB'
-        pairs['pB'] = 'pA'
-
-        # Add the names of kex-k_AB pair and kex-k_BA pair.
-        pairs['k_AB'] = 'kex'
-        pairs['k_BA'] = 'kex'
-
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
 
-
-        # Test if Monte Carlo parameter values have already been set.
-        #############################################################
-
-        # Loop over the spins.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Loop over all the parameter names.
-            for object_name in param_names:
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
-
-
         # Set the Monte Carlo parameter values.
-        #######################################
+        for spin_ids in self.model_loop():
+            spins = spin_ids_to_containers(spin_ids)
 
-        # Loop over the spins.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+            # Firstly perform any required parameter conversions.
+            param_conversion(key=None, spins=spins, sim_index=None)
 
-            # Skip protons for MMQ data.
-            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
-                continue
-
-            # Loop over all the data names.
-            for object_name in param_names:
-                # Not a parameter of the model.
-                if not (object_name in spin.params or (object_name in pairs and pairs[object_name] in spin.params)):
+            # Loop over the spins.
+            for spin in spins:
+                # Skip deselected spins.
+                if not spin.select:
                     continue
 
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
+                # Skip protons for MMQ data.
+                if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                    continue
 
-                # Create the simulation object.
-                setattr(spin, sim_object_name, [])
+                # Include all parameter conversions.
+                conversion_names = []
+                if 'pB' in spin.params:
+                    conversion_names.append('pC')
+                elif 'pA' in spin.params:
+                    conversion_names.append('pB')
+                if 'kex' in spin.params:
+                    conversion_names.append('tex')
+                elif 'tex' in spin.params:
+                    conversion_names.append('kex')
+                if 'kex' in spin.params and 'pA' in spin.params:
+                    conversion_names.append('k_AB')
+                    conversion_names.append('k_BA')
 
-                # Get the simulation object.
-                sim_object = getattr(spin, sim_object_name)
+                # Loop over all the data names.
+                for object_name in spin.params + min_names + conversion_names:
+                    # Name for the simulation object.
+                    sim_object_name = object_name + '_sim'
 
-                # Loop over the simulations.
-                for j in range(cdp.sim_number):
-                    # The non-simulation value.
-                    if object_name not in spin.params:
-                        value = deepcopy(getattr(spin, pairs[object_name]))
-                    else:
-                        value = deepcopy(getattr(spin, object_name))
+                    # Create the simulation object.
+                    setattr(spin, sim_object_name, [])
+
+                    # Get the simulation object.
+                    sim_object = getattr(spin, sim_object_name)
 
                     # Copy and append the data.
-                    sim_object.append(value)
+                    for i in range(cdp.sim_number):
+                        sim_object.append(deepcopy(getattr(spin, object_name)))
 
-            # Loop over all the minimisation object names.
-            for object_name in min_names:
-                # Name for the simulation object.
-                sim_object_name = object_name + '_sim'
-
-                # Create the simulation object.
-                setattr(spin, sim_object_name, [])
-
-                # Get the simulation object.
-                sim_object = getattr(spin, sim_object_name)
-
-                # Loop over the simulations.
-                for j in range(cdp.sim_number):
-                    # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(spin, object_name)))
+            # Perform the required simulation parameter conversions.
+            for i in range(cdp.sim_number):
+                param_conversion(key=None, spins=spins, sim_index=i)
 
 
     def sim_pack_data(self, data_id, sim_data):
