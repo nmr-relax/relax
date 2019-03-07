@@ -782,8 +782,8 @@ def param_conversion(key=None, spins=None, sim_index=None):
 
         # The pA to pB to pC conversion.
         if param_name == 'pA':
-            # 3-site exchange.
-            if spins[0].model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
+            # 3-site exchange with pA and pB optimised.
+            if spins[0].model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
                 # Get the pB value.
                 pB = get_value(key=key, spins=spins, sim_index=sim_index, param_name='pB', spin_index=spin_index, r20_key=r20_key)
 
