@@ -22,6 +22,7 @@
 
 __all__ = [
     'test___init__',
+    'test_api',
     'test_checks',
     'test_data',
     'test_model',
