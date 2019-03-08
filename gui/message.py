@@ -30,7 +30,7 @@ import wx.lib.scrolledpanel
 from graphics import fetch_icon
 import gui
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.misc import bitmap_setup
 from status import Status; status = Status()
 
@@ -74,7 +74,7 @@ class Missing_data(wx.Dialog):
         wx.Dialog.__init__(self, parent, title='Missing data', style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER|wx.STAY_ON_TOP)
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Set the initial size.
         self.SetSize((600, 400))
@@ -168,7 +168,7 @@ class Question(wx.Dialog):
             self.answer = wx.ID_NO
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Centre the window.
         self.Centre()

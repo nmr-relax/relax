@@ -29,7 +29,7 @@ import wx.py
 import wx.stc as stc
 
 # relax module imports
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from info import Info_box
 from prompt import interpreter
 from status import Status; status = Status()
@@ -49,7 +49,7 @@ class Prompt(wx.Frame):
         wx.Frame.__init__(self, *args, **kwds)
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Some default values.
         self.size_x = 1000

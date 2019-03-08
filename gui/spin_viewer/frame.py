@@ -28,7 +28,7 @@ import wx
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH, fetch_icon
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.misc import gui_raise
 from gui.spin_viewer.splitter import Tree_splitter
 from gui.string_conv import gui_to_str, str_to_gui
@@ -65,7 +65,7 @@ class Spin_view_window(wx.Frame):
             self.Maximize()
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Some default values.
         self.size_x = 1000

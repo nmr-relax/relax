@@ -44,7 +44,7 @@ from gui.controller import Controller
 from gui.export_bmrb import Export_bmrb_window
 from gui.filedialog import RelaxDirDialog, RelaxFileDialog
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.interpreter import Interpreter
 from gui.menu import Menu
 from gui.message import error_message, Question
@@ -128,6 +128,7 @@ class Main(wx.Frame):
         font.setup()
 
         # Set up the relax icons.
+        relax_icons = Relax_icons()
         relax_icons.setup()
         self.SetIcons(relax_icons)
 

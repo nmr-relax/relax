@@ -30,7 +30,7 @@ import wx.html
 # relax module imports.
 from info import Info_box
 from graphics import IMAGE_PATH
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 
 
 # HTML header.
@@ -69,7 +69,7 @@ class References(wx.Frame):
         super(References, self).__init__(parent, -1, "relax references", style=wx.DEFAULT_FRAME_STYLE)
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Set an initial window size.
         self.SetSize((800, 800))

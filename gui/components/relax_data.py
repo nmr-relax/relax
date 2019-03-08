@@ -31,7 +31,7 @@ import wx.lib.buttons
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.components.relax_data_meta import Relax_data_meta_list
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.misc import add_border
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
@@ -523,7 +523,7 @@ class Metadata_window(wx.Frame):
         self.SetTitle("Relaxation data metadata")
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Place all elements within a panel (to remove the dark grey in MS Windows).
         self.main_panel = wx.Panel(self, -1)

@@ -34,7 +34,7 @@ from gui.components.scripts import Scripts
 from gui.components.software import Software
 from gui.message import Missing_data
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.misc import add_border, bitmap_setup
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
@@ -403,7 +403,7 @@ class Export_bmrb_window(wx.Frame):
         self.SetTitle("BMRB export window")
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Place all elements within a panel (to remove the dark grey in MS Windows).
         self.main_panel = wx.Panel(self, -1)

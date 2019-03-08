@@ -31,7 +31,7 @@ from wx.lib.wordwrap import wordwrap
 # relax module imports.
 from graphics import IMAGE_PATH
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from info import Info_box
 from status import Status; status = Status()
 
@@ -68,7 +68,7 @@ class About_base(wx.Frame):
         super(About_base, self).__init__(parent=parent, id=id, title=title, style=self.style)
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Create a scrolled window.
         self.window = wx.ScrolledWindow(self, -1)

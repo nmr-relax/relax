@@ -40,7 +40,3 @@ class Relax_icons(wx.IconBundle):
         # This is disabled on Macs.
         if not 'darwin' in sys.platform:
             self.AddIconFromFile(status.install_path + sep + 'graphics' + sep + 'ulysses.ico', wx.BITMAP_TYPE_ANY)
-
-
-# Set up the main set of icons for relax.
-relax_icons = Relax_icons()

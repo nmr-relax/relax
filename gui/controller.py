@@ -32,7 +32,7 @@ import wx.stc
 from graphics import IMAGE_PATH, fetch_icon
 from gui.components.menu import build_menu_item
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.misc import add_border, bitmap_setup
 from gui.string_conv import str_to_gui
 from info import Info_box
@@ -396,7 +396,7 @@ class Controller(wx.Frame):
         self.SetTitle("The relax controller")
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
        # Place all elements within a panel (to remove the dark grey in MS Windows).
         self.main_panel = wx.Panel(self, -1)

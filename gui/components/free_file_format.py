@@ -28,7 +28,7 @@ from wx.lib import buttons
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import IMAGE_PATH, fetch_icon
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.input_elements.value import Value
 from gui.message import Question
 from gui.misc import bitmap_setup
@@ -555,7 +555,7 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
         self._div_left = self._main_size / 2
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # The main sizer.
         self.main_sizer = self.build_frame()

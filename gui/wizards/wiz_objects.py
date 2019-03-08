@@ -30,7 +30,7 @@ from wx.lib import buttons, scrolledpanel
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import IMAGE_PATH, fetch_icon
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import add_border, bitmap_setup
 from gui.string_conv import float_to_gui, str_to_gui
@@ -393,7 +393,7 @@ class Wiz_window(wx.Dialog):
         wx.Dialog.__init__(self, parent, id=-1, title=title, style=style)
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # The sizer for the dialog.
         sizer = wx.BoxSizer(wx.VERTICAL)

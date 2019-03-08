@@ -31,7 +31,7 @@ from wx.lib import buttons
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import fetch_icon
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import add_border, open_file
 from gui.string_conv import gui_to_str, str_to_gui
@@ -58,7 +58,7 @@ class Results_viewer(wx.Frame):
         wx.Frame.__init__(self, parent=parent, style=wx.DEFAULT_FRAME_STYLE)
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Set the window title, size, etc.
         self.SetTitle("Results viewer")

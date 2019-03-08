@@ -31,7 +31,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import WIZARD_IMAGE_PATH, fetch_icon
 from gui.components.menu import build_menu_item
 from gui.fonts import font
-from gui.icons import relax_icons
+from gui.icons import Relax_icons
 from gui.message import Question
 from gui.misc import add_border, bitmap_setup
 from gui.string_conv import gui_to_str, str_to_gui
@@ -72,7 +72,7 @@ class Pipe_editor(wx.Frame):
         wx.Frame.__init__(self, None, id=-1, title="Data pipe editor")
 
         # Set up the window icon.
-        self.SetIcons(relax_icons)
+        self.SetIcons(Relax_icons())
 
         # Initialise some data.
         self.width_col_label = 40
