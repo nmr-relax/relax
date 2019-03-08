@@ -77,11 +77,13 @@ class Python_info:
 
             # Test the Python binary.
             python = Popen(py_exec, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+            python.stdin.write(b"import os\n")
             python.stdin.close()
             err_lines = python.stderr.readlines()
             for line in err_lines:
-                print(line.decode().strip())
+                print("    %s" % line.decode().strip())
             if err_lines:
+                print("    Skipping non-functional Python.")
                 continue
 
             # Determine the Python exception catching syntax.
@@ -190,7 +192,7 @@ print(python_version)
         """
 
         # Run the locate command and filter the results.
-        cmd = "locate python | grep '\/python$\|\/python...$' | grep bin"
+        cmd = "locate python | grep '\/python$\|\/python[123]..$' | grep bin"
         pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
         # Close the pipe.
