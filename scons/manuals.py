@@ -432,6 +432,20 @@ def compile_user_manual_html(target, source, env):
     print("Running the command:\n$ %s\n\n\n" % cmd)
     system(cmd)
 
+    # Modify the CSS file.
+    css_file = open(path.join(dir, 'relax.css'))
+    css = css_file.readlines()
+    css_file.close()
+    css_file = open(path.join(dir, 'relax.css'), 'w')
+    for line in css:
+        # Fix the body width.
+        if search("^BODY { ", line):
+            css_file.write("BODY { width:95%; }\n")
+
+        # Preserve all other lines.
+        else:
+            css_file.write(line)
+
     # Return to the base directory.
     chdir(base_dir)
 
