@@ -48,6 +48,7 @@ from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.models import ModelList
 from lib.structure.internal.molecules import MolContainer
 from lib.structure.internal.selection import Internal_selection
+from lib.text.string import human_readable_list
 from lib.warnings import RelaxWarning
 from lib.xml import fill_object_contents, object_to_xml, xml_to_object
 
@@ -2319,6 +2320,17 @@ class Internal:
             # Increment the model index.
             model_index = model_index + 1
 
+        # Check the validity of the molecule names.
+        invalid_name = []
+        for name in new_mol_name:
+            if '#' in name:
+                invalid_name.append(repr(name))
+        plural = ''
+        if len(invalid_name) > 1:
+            plural = 's'
+        if len(invalid_name):
+            raise RelaxError("The molecule name%s %s cannot contain the '#' character, as this is used in the spin ID strings as the molecule identifier." % (plural, human_readable_list(invalid_name)))
+
         # No data, so throw a warning and exit.
         if not len(mol_conts):
             warn(RelaxWarning("No structural data could be read from the file '%s'." % file_path))
@@ -2424,6 +2436,17 @@ class Internal:
 
             # Increment the model index.
             model_index = model_index + 1
+
+        # Check the validity of the molecule names.
+        invalid_name = []
+        for name in new_mol_name:
+            if '#' in name:
+                invalid_name.append(repr(name))
+        plural = ''
+        if len(invalid_name) > 1:
+            plural = 's'
+        if len(invalid_name):
+            raise RelaxError("The molecule name%s %s cannot contain the '#' character, as this is used in the spin ID strings as the molecule identifier." % (plural, human_readable_list(invalid_name)))
 
         # Create the structural data data structures.
         orig_mol_num = [[0]]
