@@ -2320,6 +2320,11 @@ class Internal:
             # Increment the model index.
             model_index = model_index + 1
 
+        # No data, so throw a warning and exit.
+        if not len(mol_conts):
+            warn(RelaxWarning("No structural data could be read from the file '%s'." % file_path))
+            return False
+
         # Check the validity of the molecule names.
         invalid_name = []
         for name in new_mol_name:
@@ -2330,11 +2335,6 @@ class Internal:
             plural = 's'
         if len(invalid_name):
             raise RelaxError("The molecule name%s %s cannot contain the '#' character, as this is used in the spin ID strings as the molecule identifier." % (plural, human_readable_list(invalid_name)))
-
-        # No data, so throw a warning and exit.
-        if not len(mol_conts):
-            warn(RelaxWarning("No structural data could be read from the file '%s'." % file_path))
-            return False
 
         # Create the structural data data structures.
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, merge=merge, helices=helices, sheets=sheets, verbosity=verbosity)
