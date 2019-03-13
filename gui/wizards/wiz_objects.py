@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -455,15 +455,20 @@ class Wiz_window(wx.Dialog):
     def _build_buttons(self):
         """Construct the buttons for all pages of the wizard."""
 
+        # Single page or a wizard?
+        single_page = True
+        if self._num_pages > 1:
+            single_page = False
+
         # Loop over each page.
         for i in range(self._num_pages):
             # The back button (only for multi-pages, after the first).
-            if self._num_pages > 1 and i > 0:
+            if not single_page and i > 0:
                 # Create the button.
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_BACK)
                 button.SetBitmapLabel(wx.Bitmap(self.ICON_BACK, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
-                button.SetToolTipString("Return to the previous page")
+                button.SetToolTipString("Return to the previous page.")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._go_back, button)
@@ -478,7 +483,10 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_APPLY)
                 button.SetBitmapLabel(wx.Bitmap(self.ICON_APPLY, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
-                button.SetToolTipString("Apply the operation")
+                if single_page:
+                    button.SetToolTipString("Apply the operation and leave the window open.")
+                else:
+                    button.SetToolTipString("Apply the operation and stay on the current page.")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._pages[i]._apply, button)
@@ -493,7 +501,7 @@ class Wiz_window(wx.Dialog):
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_SKIP)
                 button.SetBitmapLabel(wx.Bitmap(self.ICON_SKIP, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
-                button.SetToolTipString("Skip the operation")
+                button.SetToolTipString("Skip the operation and move to the next page.")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._skip, button)
@@ -503,34 +511,34 @@ class Wiz_window(wx.Dialog):
                 self._button_sizers[i].AddSpacer(5)
 
             # The next button (only for multi-pages, excluding the last).
-            if self._num_pages > 1 and i < self._num_pages - 1:
+            if not single_page and i < self._num_pages - 1:
                 # Create the button.
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_NEXT)
                 button.SetBitmapLabel(wx.Bitmap(self.ICON_NEXT, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
-                button.SetToolTipString("Move to the next page")
+                button.SetToolTipString("Apply the operation and move to the next page.")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._go_next, button)
                 self._buttons[i]['next'] = button
 
             # The OK button (only for single pages).
-            if self._num_pages == 1:
+            if single_page:
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_OK)
                 button.SetBitmapLabel(wx.Bitmap(self.ICON_OK, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
-                button.SetToolTipString("Accept the operation")
+                button.SetToolTipString("Apply the operation and close the window.")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._ok, button)
                 self._buttons[i]['ok'] = button
 
             # The finish button (only for the last page with multi-pages).
-            if self._num_pages > 1 and i == self._num_pages - 1:
+            if not single_page and i == self._num_pages - 1:
                 button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_FINISH)
                 button.SetBitmapLabel(wx.Bitmap(self.ICON_FINISH, wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
-                button.SetToolTipString("Accept the operation")
+                button.SetToolTipString("Apply the operation and close the wizard.")
                 button.SetMinSize(self._size_button)
                 self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
                 self.Bind(wx.EVT_BUTTON, self._ok, button)
@@ -543,7 +551,10 @@ class Wiz_window(wx.Dialog):
             button = buttons.ThemedGenBitmapTextButton(self, -1, None, self.TEXT_CANCEL)
             button.SetBitmapLabel(wx.Bitmap(self.ICON_CANCEL, wx.BITMAP_TYPE_ANY))
             button.SetFont(font.normal)
-            button.SetToolTipString("Abort the operation")
+            if single_page:
+                button.SetToolTipString("Abort the operation and close the window.")
+            else:
+                button.SetToolTipString("Abort the operation and close the wizard.")
             button.SetMinSize(self._size_button)
             self._button_sizers[i].Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self._cancel, button)
