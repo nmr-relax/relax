@@ -24,7 +24,7 @@
 from math import sqrt
 from numpy import array, average, dot, float64, mean, sign, std, zeros
 from numpy.linalg import norm
-from os import sep
+from os import path, sep
 from re import search
 import sys
 from tempfile import mkdtemp, mkstemp
@@ -787,6 +787,28 @@ class Structure(SystemTestCase):
         self.assertEqual(len(expected), len(lines))
         for i in range(len(lines)):
             self.assertEqual(expected[i], lines[i])
+
+
+    def test_bug_12_hash_in_mol_name_via_arg(self):
+        """Catch U{bug #12<https://sourceforge.net/p/nmr-relax/tickets/12/>}, the failure to detect '#' in the molecule name.
+
+        This is for the case where set_mol_name argument value contains the '#' character.  The test checks both the structure.read_pdb and structure.read_xyz user functions.
+        """
+
+        # These should fail.
+        self.assertRaises(RelaxError, self.interpreter.structure.read_pdb, 'bug_12_hash_in_mol_name.pdb', dir=path.join('test_suite', 'shared_data', 'structures'), set_mol_name='bug_12_#_in_mol_name')
+        self.assertRaises(RelaxError, self.interpreter.structure.read_xyz, 'bug_12_hash_in_mol_name.xyz', dir=path.join('test_suite', 'shared_data', 'structures'), set_mol_name='bug_12_#_in_mol_name')
+
+
+    def test_bug_12_hash_in_mol_name_via_file(self):
+        """Catch U{bug #12<https://sourceforge.net/p/nmr-relax/tickets/12/>}, the failure to detect '#' in the molecule name.
+
+        This is for the case where the PDB file itself contains the '#' character.  The test checks both the structure.read_pdb and structure.read_xyz user functions.
+        """
+
+        # These should fail.
+        self.assertRaises(RelaxError, self.interpreter.structure.read_pdb, 'bug_12_#_in_mol_name.pdb', dir=path.join('test_suite', 'shared_data', 'structures'))
+        self.assertRaises(RelaxError, self.interpreter.structure.read_xyz, 'bug_12_#_in_mol_name.xyz', dir=path.join('test_suite', 'shared_data', 'structures'))
 
 
     def test_bug_20470_alternate_location_indicator(self):
