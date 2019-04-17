@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,7 +25,7 @@
 # relax module imports.
 from lib.errors import RelaxNoSequenceError
 from lib.physical_constants import element_from_isotope
-from lib.software.bruker_dc import parse_file
+from lib.software.bruker_dc import create_object
 from pipe_control.exp_info import software_select
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, name_spin
 from pipe_control.pipes import check_pipe
@@ -51,22 +51,23 @@ def read(ri_id=None, file=None, dir=None):
         raise RelaxNoSequenceError
 
     # Extract the data from the file.
-    values, errors, res_nums, int_type, frq, ri_type, spin_name, isotope, version = parse_file(file=file, dir=dir)
+    dc_object = create_object(file=file, dir=dir)
 
     # Name the spins if needed.
-    name_spin(name=spin_name, force=False)
-
-    # Modify the residue numbers by adding the heteronucleus name.
-    if isotope:
-        atom_name = element_from_isotope(isotope)
-        for i in range(len(res_nums)):
-            res_nums[i] += '@' + atom_name
+    name_spin(name=dc_object.sample_information.spin_name, force=False)
 
     # Pack the data.
-    pack_data(ri_id, ri_type, frq, values, errors, spin_ids=res_nums)
+    values = []
+    errors = []
+    spin_ids = []
+    for res_id in dc_object.results.sequence:
+        spin_ids.append('%s@%s' % (res_id, dc_object.sample_information.atom_name))
+        values.append(dc_object.results.Rx[res_id])
+        errors.append(dc_object.results.Rx_err[res_id])
+    pack_data(ri_id, dc_object.ri_type, dc_object.parameters.frq, values, errors, spin_ids=spin_ids)
 
     # Set the integration method.
-    peak_intensity_type(ri_id=ri_id, type=int_type)
+    peak_intensity_type(ri_id=ri_id, type=dc_object.details.int_type)
 
     # Set the DC as used software.
-    software_select('Bruker DC', version=version)
+    software_select('Bruker DC', version=dc_object.version)
