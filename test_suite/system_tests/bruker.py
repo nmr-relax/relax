@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import sep
+from os import path, sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -37,6 +37,64 @@ class Bruker(SystemTestCase):
 
         # Create a data pipe.
         self.interpreter.pipe.create('mf', 'mf')
+
+
+    def test_bug_13_T1_read_fail(self):
+        """Test catching U{bug #13<https://sourceforge.net/p/nmr-relax/tickets/13/>}, the failure reading a Bruker DC T1 file as submitted by Stefano Ciurli."""
+
+        # The data ID.
+        ri_id = 'T1_500'
+
+        # The data path.
+        dir = path.join(status.install_path, 'test_suite', 'shared_data', 'bruker_files')
+
+        # Create a data pipe, read the sequence, and read the Bruker DC file to trigger the bug.
+        self.interpreter.pipe.create('bug_13', 'mf')
+        self.interpreter.sequence.read(file='bug_13_sequence', dir=dir, res_num_col=2, res_name_col=1)
+        self.interpreter.bruker.read(ri_id=ri_id, file='bug_13_APO_T1_500_trunc.txt', dir=dir)
+
+        # Check the data in the relax data store.
+        self.assertEqual(cdp.ri_ids, [ri_id])
+        self.assertEqual(cdp.spectrometer_frq[ri_id], 500.125*1e6)
+        self.assertEqual(cdp.ri_type[ri_id], 'R1')
+
+        # The R1 values and errors.
+        r1 = [1.830269, 1.729287, 1.623507]
+        r1_err = [0.0228767, 0.0210908, 0.0239931]
+        i = 0
+        for spin in spin_loop():
+            self.assertAlmostEqual(spin.ri_data[ri_id], r1[i])
+            self.assertAlmostEqual(spin.ri_data_err[ri_id], r1_err[i])
+            i += 1
+
+
+    def test_bug_13_T2_read_fail(self):
+        """Test catching U{bug #13<https://sourceforge.net/p/nmr-relax/tickets/13/>}, the failure reading a Bruker DC T2 file as submitted by Stefano Ciurli."""
+
+        # The data ID.
+        ri_id = 'T2_500'
+
+        # The data path.
+        dir = path.join(status.install_path, 'test_suite', 'shared_data', 'bruker_files')
+
+        # Create a data pipe, read the sequence, and read the Bruker DC file to trigger the bug.
+        self.interpreter.pipe.create('bug_13', 'mf')
+        self.interpreter.sequence.read(file='bug_13_sequence', dir=dir, res_num_col=2, res_name_col=1)
+        self.interpreter.bruker.read(ri_id=ri_id, file='bug_13_APO_T2_500_trunc.txt', dir=dir)
+
+        # Check the data in the relax data store.
+        self.assertEqual(cdp.ri_ids, [ri_id])
+        self.assertEqual(cdp.spectrometer_frq[ri_id], 500.125*1e6)
+        self.assertEqual(cdp.ri_type[ri_id], 'R2')
+
+        # The R1 values and errors.
+        r2 = [15.517992, 15.604246, 15.371578]
+        r2_err = [0.2379555, 0.2386264, 0.3294271]
+        i = 0
+        for spin in spin_loop():
+            self.assertAlmostEqual(spin.ri_data[ri_id], r2[i])
+            self.assertAlmostEqual(spin.ri_data_err[ri_id], r2_err[i])
+            i += 1
 
 
     def test_bug_22411_T1_read_fail(self):
