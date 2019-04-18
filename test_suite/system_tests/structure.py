@@ -796,8 +796,8 @@ class Structure(SystemTestCase):
         """
 
         # These should fail.
-        self.assertRaises(RelaxError, self.interpreter.structure.read_pdb, 'bug_12_hash_in_mol_name.pdb', dir=path.join('test_suite', 'shared_data', 'structures'), set_mol_name='bug_12_#_in_mol_name')
-        self.assertRaises(RelaxError, self.interpreter.structure.read_xyz, 'bug_12_hash_in_mol_name.xyz', dir=path.join('test_suite', 'shared_data', 'structures'), set_mol_name='bug_12_#_in_mol_name')
+        self.assertRaises(RelaxError, self.interpreter.structure.read_pdb, 'bug_12_hash_in_mol_name.pdb', dir=path.join(status.install_path, 'test_suite', 'shared_data', 'structures'), set_mol_name='bug_12_#_in_mol_name')
+        self.assertRaises(RelaxError, self.interpreter.structure.read_xyz, 'bug_12_hash_in_mol_name.xyz', dir=path.join(status.install_path, 'test_suite', 'shared_data', 'structures'), set_mol_name='bug_12_#_in_mol_name')
 
 
     def test_bug_12_hash_in_mol_name_via_file(self):
@@ -807,8 +807,8 @@ class Structure(SystemTestCase):
         """
 
         # These should fail.
-        self.assertRaises(RelaxError, self.interpreter.structure.read_pdb, 'bug_12_#_in_mol_name.pdb', dir=path.join('test_suite', 'shared_data', 'structures'))
-        self.assertRaises(RelaxError, self.interpreter.structure.read_xyz, 'bug_12_#_in_mol_name.xyz', dir=path.join('test_suite', 'shared_data', 'structures'))
+        self.assertRaises(RelaxError, self.interpreter.structure.read_pdb, 'bug_12_#_in_mol_name.pdb', dir=path.join(status.install_path, 'test_suite', 'shared_data', 'structures'))
+        self.assertRaises(RelaxError, self.interpreter.structure.read_xyz, 'bug_12_#_in_mol_name.xyz', dir=path.join(status.install_path, 'test_suite', 'shared_data', 'structures'))
 
 
     def test_bug_20470_alternate_location_indicator(self):
