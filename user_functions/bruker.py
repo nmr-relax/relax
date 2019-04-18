@@ -38,7 +38,7 @@ uf_class.gui_icon = "relax.bruker"
 
 # The bruker.read user function.
 uf = uf_info.add_uf('bruker.read')
-uf.title = "Read a Bruker Dynamics Center (DC) relaxation data file."
+uf.title = "Read the relaxation data out of a Bruker Dynamics Center (DC) file."
 uf.title_short = "Read a Bruker Dynamics Center file."
 uf.add_keyarg(
     name = "ri_id",
@@ -61,7 +61,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This user function is used to load all of the data out of a Bruker Dynamics Center (DC) relaxation data file for subsequent analysis within relax.  Currently the R1 and R2 relaxation rates and steady-state NOE data is supported.")
+uf.desc[-1].add_paragraph("This user function is used to load the fitted relaxation data out of a Bruker Dynamics Center (DC) file for the analyses in relax that use relaxation data.  Currently the R1 and R2 relaxation rates and steady-state NOE data is supported.  The peak intensity information in the file, which is used by the Dynamics Center to fit or calculate the relaxation values, will be discarded.")
 uf.backend = bruker.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
