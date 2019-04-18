@@ -118,6 +118,15 @@ class Interpreter(object):
             # Return as a failure.
             return False
 
+        # Catch any other errors.
+        except:
+            # Print the exception.
+            print_exc()
+            sys.stderr.flush()
+
+            # Return as a failure.
+            return False
+
         # Notify all observers that a user function has completed.
         status.observers.gui_uf.notify()
 
