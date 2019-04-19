@@ -339,7 +339,7 @@ def list_to_gui(list):
     """
 
     # No input.
-    if list == None:
+    if list is None:
         list = ''
 
     # Handle numpy arrays.
