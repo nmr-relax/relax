@@ -109,7 +109,7 @@ install:
     - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
 
     # Manually install matplotlib for version compatibility.
-    - if [[ $OLD_MATPLOTLIB == "true" ]]; then pip install matplotlib=2.2.4; else pip install matplotlib; fi
+    - if [[ $OLD_MATPLOTLIB == "true" ]]; then pip install matplotlib==2.2.4; else pip install matplotlib; fi
 
     # Install python package with pip for running with multiple processors
     - if [[ $MPI == "true" ]]; then pip install mpi4py; fi
