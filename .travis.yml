@@ -26,13 +26,14 @@ env:
     - MPI=false
     - WXPYTHON=false
     - OLD_MATPLOTLIB=false
+    - FSFCV=false
 
 matrix:
   include:
     # default: Ubuntu Trusty 14.04 https://docs.travis-ci.com/user/reference/trusty/
     - python: 2.7
       language: python
-      env: WXPYTHON=true OLD_MATPLOTLIB=true
+      env: WXPYTHON=true OLD_MATPLOTLIB=true FSFCV=true
       before_install:
         # Conda is used to install wxPython 3.0.
         - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -138,6 +139,9 @@ script:
     - if [[ $WXPYTHON == "true"  && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
     - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
     - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
+
+    # Run the FSF copyright validation script.
+    - if [[ $FSFCV == "true" ]]; then ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
 
 cache: pip
 git:
