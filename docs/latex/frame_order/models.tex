@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                             %
-% Copyright (C) 2015 Edward d'Auvergne                                        %
+% Copyright (C) 2015,2019 Edward d'Auvergne                                   %
 %                                                                             %
 % This file is part of the program relax (http://www.nmr-relax.com).          %
 %                                                                             %
@@ -55,7 +55,7 @@ For a basic introduction to the frame order concept and the modelling of the til
 % Simulation.
 \section{Simulation of the frame order models}
 \label{sect: frame order simulation}
-\index{Frame order!simulation|textbf}
+\index{frame order!simulation|textbf}
 
 To validate the derived frame order matrix equations for the models, the real frame order matrix values for a given parameter set can be simulated.
 The following script was used for simulating the isotropic cone and pseudo-ellipse frame order matrices.
@@ -69,7 +69,7 @@ The value of \pycode{VAR} can be set to \pystring{ISO} for selecting the isotrop
 
 % The rigid model.
 \section{Rigid frame order model}
-\index{Frame order!model!rigid|textbf}
+\index{frame order!model!rigid|textbf}
 
 % Rigid model parameterisation.
 \subsection{Rigid model parameterisation}
@@ -100,7 +100,7 @@ For the rigid model, there is no motion so the rotation matrix is simply the ide
 
 
 \subsubsection{Rigid frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 The frame order matrix is
 \begin{equation}
@@ -149,7 +149,7 @@ The \nth{2} degree frame order matrix with tensor rank-4 is the identity matrix
 
 % The rotor model.
 \section{Rotor frame order model}
-\index{Frame order!model!rotor|textbf}
+\index{frame order!model!rotor|textbf}
 
 The rotor model is defined by its rotation axis and a pivot point to position the center of the rotation.
 
@@ -257,7 +257,7 @@ Assuming the rotation axis is the z-axis, the rotation matrix is defined as
 \end{equation}
 
 \subsubsection{Rotor frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 The frame order matrix is
 \begin{subequations}
@@ -353,7 +353,7 @@ The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simu
 
 % The free rotor model.
 \section{Free rotor frame order model}
-\index{Frame order!model!free rotor|textbf}
+\index{frame order!model!free rotor|textbf}
 
 This is similar to the rotor model but with no torsional restriction ($\conesmax = \pi$).
 
@@ -416,7 +416,7 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 The rotation matrix is defined in equation~\ref{eq: R matrix torsion}.
 
 \subsubsection{Free rotor frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 The frame order matrix is
 \begin{subequations}
@@ -481,7 +481,7 @@ The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simu
 
 % The isotropic cone model.
 \section{Isotropic cone frame order model}
-\index{Frame order!model!isotropic cone|textbf}
+\index{frame order!model!isotropic cone|textbf}
 
 
 
@@ -596,7 +596,7 @@ The rotation matrix is the full torsion-tilt rotation matrix of equation~\ref{eq
 
 
 \subsubsection{Isotropic cone frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 
 The frame order matrix is
@@ -675,7 +675,7 @@ The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and cal
 
 % The torsionless isotropic cone model.
 \section{Torsionless isotropic cone frame order model}
-\index{Frame order!model!isotropic cone, torsionless|textbf}
+\index{frame order!model!isotropic cone, torsionless|textbf}
 
 
 % Torsionless isotropic cone model parameterisation.
@@ -738,7 +738,7 @@ The torsionless rotation matrix is defined in equation~\ref{eq: R matrix torsion
 
 
 \subsubsection{Torsionless isotropic cone frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 The frame order matrix is
 \begin{subequations}
@@ -841,7 +841,7 @@ The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simu
 
 % The free rotor isotropic cone model.
 \section{Free rotor isotropic cone frame order model}
-\index{Frame order!model!isotropic cone, free rotor|textbf}
+\index{frame order!model!isotropic cone, free rotor|textbf}
 
 
 % Free rotor isotropic cone model parameterisation.
@@ -903,7 +903,7 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 The rotation matrix is the full torsion-tilt rotation matrix of equation~\ref{eq: R torsion-tilt} on page~\pageref{eq: R torsion-tilt}.
 
 \subsubsection{Free rotor isotropic cone frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 The frame order matrix is
 \begin{subequations}
@@ -985,7 +985,7 @@ The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simu
 %~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \section{Pseudo-ellipse frame order model}
-\index{Frame order!model!pseudo-ellipse|textbf}
+\index{frame order!model!pseudo-ellipse|textbf}
 
 
 
@@ -1239,7 +1239,7 @@ The full rotation matrix is given in equation~\ref{eq: R torsion-tilt} on page~\
 
 
 \subsubsection{Pseudo-ellipse frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 The frame order matrix is
 \begin{subequations}
@@ -1475,7 +1475,7 @@ The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and cal
 
 % The torsionless pseudo-ellipse model.
 \section{Torsionless pseudo-ellipse frame order model}
-\index{Frame order!model!pseudo-ellipse, torsionless|textbf}
+\index{frame order!model!pseudo-ellipse, torsionless|textbf}
 
 The first simplification of the pseudo-ellipse frame order model, which can be very useful for restricted motion systems such as CaM complexed with target peptides, would be to have no torsional motions.
 
@@ -1590,7 +1590,7 @@ Setting the torsion angle $\sigma$ to zero in the full torsion-tilt rotation mat
 
 
 \subsubsection{Torsionless pseudo-ellipse frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 The frame order matrix is
 \begin{subequations}
@@ -1775,7 +1775,7 @@ The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and cal
 
 % The free rotor pseudo-ellipse model.
 \section{Free rotor pseudo-ellipse frame order model}
-\index{Frame order!model!pseudo-ellipse, free rotor|textbf}
+\index{frame order!model!pseudo-ellipse, free rotor|textbf}
 
 
 % Free rotor pseudo-ellipse model parameterisation.
@@ -1879,7 +1879,7 @@ The rotation matrix is the full torsion-tilt rotation matrix of equation~\ref{eq
 
 
 \subsubsection{Free rotor pseudo-ellipse frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 The frame order matrix is
 \begin{subequations}
@@ -2034,7 +2034,7 @@ The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and cal
 
 % The double rotor.
 \section{Double rotor frame order model}
-\index{Frame order!model!double rotor|textbf}
+\index{frame order!model!double rotor|textbf}
 
 The eigenframe of the motion of the double rotor model is characterised by two pivot points and two rotor axes.
 To simplify the modelling, the two axes are assumed to be orthogonal.
@@ -2183,7 +2183,7 @@ The full rotation is then
 
 
 \subsubsection{Double rotor frame order matrix}
-\index{Frame order!matrix}
+\index{frame order!matrix}
 
 The frame order matrix is
 \begin{align}

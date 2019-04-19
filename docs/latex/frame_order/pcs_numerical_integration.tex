@@ -146,7 +146,7 @@ As parallelization for speeding up the calculations can only achieve around two 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \subsection{Frame order model nesting}
-\index{Frame order!model nesting}
+\index{frame order!model nesting}
 
 The concept of model nesting is used to hugely speed up the optimisation in the automated protocol.
 The most complex models have 15 independent parameters, and performing a grid search over 15 dimensions of the pseudo-ellipse frame order model is not feasible when using PCS numerical integration.
@@ -334,7 +334,7 @@ This zooming grid search can be seen in the frame order optimisation script on p
 \subsubsection{The alternating grid search}
 \index{optimisation!algorithm!grid search!alternating|textbf}
 
-For finding the average domain position in the rigid frame order model\index{frame order analysis!rigid model}, an alternating grid search has been implemented in the automated analysis protocol.
+For finding the average domain position in the rigid frame order model\index{frame order!model!rigid}, an alternating grid search has been implemented in the automated analysis protocol.
 The idea is to speed up the slow 6D grid search by first searching over the 3D rotational space, then the 3D translational space.
 The grid is then zoomed by one level and alternating grid search is repeated.
 As this technique does not guarantee convergence, it is not turned on by default.
