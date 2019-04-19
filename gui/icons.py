@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011,2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,7 +33,22 @@ from status import Status; status = Status()
 
 
 class Relax_icons(wx.IconBundle):
-    """The icon bundle class of the main relax icons."""
+    """The icon bundle singleton class of the main relax icons."""
+
+    # Class variable for storing the class instance (for the singleton).
+    _instance = None
+
+    def __new__(self, *args, **kargs):
+        """Replacement method for implementing the singleton design pattern."""
+
+        # First instantiation.
+        if self._instance is None:
+            # Instantiate.
+            self._instance = wx.IconBundle.__new__(self, *args, **kargs)
+
+        # Already instantiated, so return the instance.
+        return self._instance
+
 
     def setup(self):
         """Set up the icons after the main app is created."""
