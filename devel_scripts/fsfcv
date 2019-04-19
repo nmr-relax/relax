@@ -590,6 +590,9 @@ class Validate:
         if repo_flag and not self.args.missing:
             sys.stdout.write("    %-35s %8i %8.2f%%\n" % ("Non-matching copyright notices:", files_nonvalid, percent_nonvalid))
 
+        # Store the status for returning to the shell.
+        self.status = files_missing + files_nonvalid
+
 
     def committer_info_cleanup(self, file_path, committer_info):
         """Clean up the committer info data structure.
@@ -1573,4 +1576,4 @@ class Validate:
 
 # Execute the script.
 if __name__ == '__main__':
-    Validate()
+    sys.exit(Validate().status)
