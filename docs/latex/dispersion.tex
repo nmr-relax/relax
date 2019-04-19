@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                             %
-% Copyright (C) 2013-2015 Edward d'Auvergne                                   %
+% Copyright (C) 2013-2015,2019 Edward d'Auvergne                              %
 % Copyright (C) 2013-2014 Troels E. Linnet                                    %
 %                                                                             %
 % This file is part of the program relax (http://www.nmr-relax.com).          %
@@ -81,8 +81,8 @@ The analytic or closed-form frequency-domain solution for this equation however 
 Solutions can nevertheless be found by either making assumptions or restrictions about the exchange process and then analytically solving~\ref{eq: Bloch-McConnell} or by finding numeric solutions.
 The modelling of relaxation dispersion data can hence be categorised into these two distinct methodologies:
 \begin{description}
-  \item[Analytical models:]\index{relaxation dispersion!Analytical model}  Optimisation of models based on analytical, closed-form expressions derived from the Bloch-McConnell equations subject to certain conditions (see Section~\ref{sect: dispersion: analytic CPMG models} on page~\pageref{sect: dispersion: analytic CPMG models} and Section~\ref{sect: dispersion: analytic R1rho models} on page~\pageref{sect: dispersion: analytic R1rho models}).
-  \item[Numerical models:]\index{relaxation dispersion!Numerical model}  Optimisation of models based on numerically solving the Bloch-McConnell equations (see Section~\ref{sect: dispersion: numeric CPMG models} on page~\pageref{sect: dispersion: numeric CPMG models} and Section~\ref{sect: dispersion: numeric R1rho models} on page~\pageref{sect: dispersion: numeric R1rho models}).
+  \item[Analytical models:]\index{relaxation dispersion!analytical model}  Optimisation of models based on analytical, closed-form expressions derived from the Bloch-McConnell equations subject to certain conditions (see Section~\ref{sect: dispersion: analytic CPMG models} on page~\pageref{sect: dispersion: analytic CPMG models} and Section~\ref{sect: dispersion: analytic R1rho models} on page~\pageref{sect: dispersion: analytic R1rho models}).
+  \item[Numerical models:]\index{relaxation dispersion!numerical model}  Optimisation of models based on numerically solving the Bloch-McConnell equations (see Section~\ref{sect: dispersion: numeric CPMG models} on page~\pageref{sect: dispersion: numeric CPMG models} and Section~\ref{sect: dispersion: numeric R1rho models} on page~\pageref{sect: dispersion: numeric R1rho models}).
 \end{description}
 
 
@@ -99,60 +99,60 @@ If the model you are interested in is not available, please see Section~\ref{sec
 
 Models which are independent of the experiment type include:
 \begin{description}
-  \item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ or $\Ronerho$ values and errors required as the base data for all other models.
+  \item[`R2eff':]\index{relaxation dispersion!model!R2eff}  This is the model used to determine the $\Rtwoeff$ or $\Ronerho$ values and errors required as the base data for all other models.
     See Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}.
-  \item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present.
+  \item[`No Rex':]\index{relaxation dispersion!model!no Rex}  This is the model for no chemical exchange being present.
     See Section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}.
 \end{description}
 
 
 For the SQ CPMG-type experiments, the analytic models currently supported are:
 \begin{description}
-  \item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$.
+  \item[`LM63':]\index{relaxation dispersion!model!LM63}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$.
     See Section~\ref{sect: dispersion: LM63 model} on page~\pageref{sect: dispersion: LM63 model}.
-  \item[`LM63 3-site':]\index{relaxation dispersion!LM63 3-site model}  The original \citet{LuzMeiboom63} 3-site fast exchange equation with parameters $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$.
+  \item[`LM63 3-site':]\index{relaxation dispersion!model!LM63 3-site}  The original \citet{LuzMeiboom63} 3-site fast exchange equation with parameters $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$.
     The equations of \citet{OConnell09} can be used to approximately convert the parameters $\{\PhiexB, \kB, \PhiexC, \kC\}$ to more biologically relevant parameters.
     See Section~\ref{sect: dispersion: LM63 3-site model} on page~\pageref{sect: dispersion: LM63 3-site model}.
-  \item[`CR72':]\index{relaxation dispersion!CR72 model}  The reduced \citet{CarverRichards72} 2-site equation for most time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+  \item[`CR72':]\index{relaxation dispersion!model!CR72}  The reduced \citet{CarverRichards72} 2-site equation for most time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
     It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
-  \item[`CR72 full':]\index{relaxation dispersion!CR72 full model}  The full \citet{CarverRichards72} 2-site equation for most time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
+  \item[`CR72 full':]\index{relaxation dispersion!model!CR72 full}  The full \citet{CarverRichards72} 2-site equation for most time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: CR72 full model} on page~\pageref{sect: dispersion: CR72 full model}.
-  \item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \pA, \dw, \tex\}$.
+  \item[`IT99':]\index{relaxation dispersion!model!IT99}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \pA, \dw, \tex\}$.
     See Section~\ref{sect: dispersion: IT99 model} on page~\pageref{sect: dispersion: IT99 model}.
-  \item[`TSMFK01':]\index{relaxation dispersion!TSMFK01 model}  The \citet{Tollinger01}  2-site very-slow exchange model for time scales within range of microsecond to second time scale.
+  \item[`TSMFK01':]\index{relaxation dispersion!model!TSMFK01}  The \citet{Tollinger01}  2-site very-slow exchange model for time scales within range of microsecond to second time scale.
     Applicable in the limit of slow exchange, when $|\RtwozeroA - \RtwozeroB| \ll \kAB, \kBA \ll 1/\taucpmg$.
     $2*\taucpmg$ is the time between successive 180 degree pulses.
     Parameters are $\{\RtwozeroA, \dots, \dw, \kAB\}$.
     See Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model}.
-  \item[`B14':]\index{relaxation dispersion!B14 model}  The reduced \citet{Baldwin2014} 2-site exact solution equation for all time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+  \item[`B14':]\index{relaxation dispersion!model!B14}  The reduced \citet{Baldwin2014} 2-site exact solution equation for all time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
     It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: B14 model} on page~\pageref{sect: dispersion: B14 model}.
-  \item[`B14 full':]\index{relaxation dispersion!B14 full model}  The full \citet{Baldwin2014} 2-site exact equation for all time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
+  \item[`B14 full':]\index{relaxation dispersion!model!B14 full}  The full \citet{Baldwin2014} 2-site exact equation for all time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: B14 full model} on page~\pageref{sect: dispersion: B14 full model}.
 \end{description}
 
 For the SQ CPMG-type experiments, the numeric models currently supported are:
 \begin{description}
-  \item[`NS CPMG 2-site expanded':]\index{relaxation dispersion!NS CPMG 2-site expanded model}  A model for 2-site exchange expanded using Maple by Nikolai Skrynnikov \citep{Tollinger01}.
+  \item[`NS CPMG 2-site expanded':]\index{relaxation dispersion!model!NS CPMG 2-site expanded}  A model for 2-site exchange expanded using Maple by Nikolai Skrynnikov \citep{Tollinger01}.
     It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: NS CPMG 2-site expanded model} on page~\pageref{sect: dispersion: NS CPMG 2-site expanded model}.
-  \item[`NS CPMG 2-site 3D':]\index{relaxation dispersion!NS CPMG 2-site 3D model}  The reduced model for 2-site exchange using 3D magnetisation vectors whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+  \item[`NS CPMG 2-site 3D':]\index{relaxation dispersion!model!NS CPMG 2-site 3D}  The reduced model for 2-site exchange using 3D magnetisation vectors whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
     It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: NS CPMG 2-site 3D model} on page~\pageref{sect: dispersion: NS CPMG 2-site 3D model}.
-  \item[`NS CPMG 2-site 3D full':]\index{relaxation dispersion!NS CPMG 2-site 3D full model}  The full model for 2-site exchange using 3D magnetisation vectors with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
+  \item[`NS CPMG 2-site 3D full':]\index{relaxation dispersion!model!NS CPMG 2-site 3D full}  The full model for 2-site exchange using 3D magnetisation vectors with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: NS CPMG 2-site 3D full model} on page~\pageref{sect: dispersion: NS CPMG 2-site 3D full model}.
-  \item[`NS CPMG 2-site star':]\index{relaxation dispersion!NS CPMG 2-site star model}  The reduced model for 2-site exchange using complex conjugate matrices whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+  \item[`NS CPMG 2-site star':]\index{relaxation dispersion!model!NS CPMG 2-site star}  The reduced model for 2-site exchange using complex conjugate matrices whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
     It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: NS CPMG 2-site star model} on page~\pageref{sect: dispersion: NS CPMG 2-site star model}.
-  \item[`NS CPMG 2-site star full':]\index{relaxation dispersion!NS CPMG 2-site star full model}  The full model for 2-site exchange using complex conjugate matrices with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
+  \item[`NS CPMG 2-site star full':]\index{relaxation dispersion!model!NS CPMG 2-site star full}  The full model for 2-site exchange using complex conjugate matrices with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: NS CPMG 2-site star full model} on page~\pageref{sect: dispersion: NS CPMG 2-site star full model}.
 \end{description}
 
 
 For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (MMQ -- or multi-multiple quantum), the analytic models currently supported are:
 \begin{description}
-  \item[`MMQ CR72':]\index{relaxation dispersion!MMQ CR72 model}  The Carver and Richards (1972) 2-site model for most time scales expanded for MMQ CPMG data by \citet{Korzhnev04a}.
+  \item[`MMQ CR72':]\index{relaxation dispersion!model!MMQ CR72}  The Carver and Richards (1972) 2-site model for most time scales expanded for MMQ CPMG data by \citet{Korzhnev04a}.
     It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.
     See Section~\ref{sect: dispersion: MMQ CR72 model} on page~\pageref{sect: dispersion: MMQ CR72 model}.
 \end{description}
@@ -160,43 +160,43 @@ For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (M
 
 For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (MMQ -- or multi-multiple quantum), the numeric models currently supported are:
 \begin{description}
-  \item[`NS MMQ 2-site':]\index{relaxation dispersion!NS MMQ 2-site model}  The model for 2-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+  \item[`NS MMQ 2-site':]\index{relaxation dispersion!model!NS MMQ 2-site}  The model for 2-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
     It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.
     See Section~\ref{sect: dispersion: NS MMQ 2-site model} on page~\pageref{sect: dispersion: NS MMQ 2-site model}.
-  \item[`NS MMQ 3-site linear':]\index{relaxation dispersion!NS MMQ 3-site model linear}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.
+  \item[`NS MMQ 3-site linear':]\index{relaxation dispersion!model!NS MMQ 3-site linear}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.
     It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$\}.
     See Section~\ref{sect: dispersion: NS MMQ 3-site linear model} on page~\pageref{sect: dispersion: NS MMQ 3-site linear model}.
-  \item[`NS MMQ 3-site':]\index{relaxation dispersion!NS MMQ 3-site model}  The model for 3-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.
+  \item[`NS MMQ 3-site':]\index{relaxation dispersion!model!NS MMQ 3-site}  The model for 3-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.
     It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$, $\kexAC$\}.
     See Section~\ref{sect: dispersion: NS MMQ 3-site model} on page~\pageref{sect: dispersion: NS MMQ 3-site model}.
 \end{description}
 
 For the $\Ronerho$-type experiments, the analytic models currently supported are:
 \begin{description}
-  \item[`M61':]\index{relaxation dispersion!M61 model}  The \citet{Meiboom61} 2-site fast exchange equation for on-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$.
+  \item[`M61':]\index{relaxation dispersion!model!M61}  The \citet{Meiboom61} 2-site fast exchange equation for on-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$.
     See Section~\ref{sect: dispersion: M61 model} on page~\pageref{sect: dispersion: M61 model}.
-  \item[`DPL94':]\index{relaxation dispersion!DPL94 model}  The \citet{Davis94} extension of the `M61' model for off-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$.
+  \item[`DPL94':]\index{relaxation dispersion!model!DPL94}  The \citet{Davis94} extension of the `M61' model for off-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$.
     See Section~\ref{sect: dispersion: DPL94 model} on page~\pageref{sect: dispersion: DPL94 model}.
-  \item[`M61 skew':]\index{relaxation dispersion!M61 skew model}  The \citet{Meiboom61} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
+  \item[`M61 skew':]\index{relaxation dispersion!model!M61 skew}  The \citet{Meiboom61} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
     This model is disabled by default in the dispersion auto-analysis.
     See Section~\ref{sect: dispersion: M61 skew model} on page~\pageref{sect: dispersion: M61 skew model}.
-  \item[`TP02':]\index{relaxation dispersion!TP02 model}  The \citet{TrottPalmer02} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
+  \item[`TP02':]\index{relaxation dispersion!model!TP02}  The \citet{TrottPalmer02} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: TP02 model} on page~\pageref{sect: dispersion: TP02 model}.
-  \item[`TAP03':]\index{relaxation dispersion!TAP03 model}  The \citet{Trott03} off-resonance 2-site analytic equation for all time scales with the weak condition $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
-  \item[`MP05':]\index{relaxation dispersion!MP05 model}  The \citet{MiloushevPalmer05} off-resonance 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
+  \item[`TAP03':]\index{relaxation dispersion!model!TAP03}  The \citet{Trott03} off-resonance 2-site analytic equation for all time scales with the weak condition $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
+  \item[`MP05':]\index{relaxation dispersion!model!MP05}  The \citet{MiloushevPalmer05} off-resonance 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: MP05 model} on page~\pageref{sect: dispersion: MP05 model}.
 \end{description}
 
 
 For the $\Ronerho$-type experiments, the numeric models currently supported are:
 \begin{description}
-  \item[`NS R1rho 2-site':]\index{relaxation dispersion!NS R1rho 2-site model}  The model for 2-site exchange using 3D magnetisation vectors.
+  \item[`NS R1rho 2-site':]\index{relaxation dispersion!model!NS R1rho 2-site}  The model for 2-site exchange using 3D magnetisation vectors.
     It has the parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
     See Section~\ref{sect: dispersion: NS R1rho 2-site model} on page~\pageref{sect: dispersion: NS R1rho 2-site model}.
-  \item[`NS $\Ronerho$ 3-site linear':]\index{relaxation dispersion!NS R1rho 3-site linear model}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.
+  \item[`NS $\Ronerho$ 3-site linear':]\index{relaxation dispersion!model!NS R1rho 3-site linear}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.
     It has the parameters \{$\Ronerhoprime$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\kexAB$, $\kexBC$\}.
     See Section~\ref{sect: dispersion: NS R1rho 3-site linear model} on page~\pageref{sect: dispersion: NS R1rho 3-site linear model}.
-  \item[`NS $\Ronerho$ 3-site':]\index{relaxation dispersion!NS R1rho 3-site model}  The model for 3-site exchange whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.
+  \item[`NS $\Ronerho$ 3-site':]\index{relaxation dispersion!model!NS R1rho 3-site}  The model for 3-site exchange whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.
     It has the parameters \{$\Ronerhoprime$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\kexAB$, $\kexBC$, $\kexAC$\}.
     See Section~\ref{sect: dispersion: NS R1rho 3-site model} on page~\pageref{sect: dispersion: NS R1rho 3-site model}.
 \end{description}
@@ -241,7 +241,7 @@ In the future, support for off-resonance effects in the CPMG experiments is plan
 
 \section{The base dispersion models}
 \label{sect: dispersion: base models}
-\index{relaxation dispersion!Base model|textbf}
+\index{relaxation dispersion!model category!base models|textbf}
 
 
 % R2eff model.
@@ -249,7 +249,7 @@ In the future, support for off-resonance effects in the CPMG experiments is plan
 
 \subsection{The R2eff model}
 \label{sect: dispersion: R2eff model}
-\index{relaxation dispersion!R2eff model|textbf}
+\index{relaxation dispersion!model!R2eff|textbf}
 
 This is the simplest of all models in that the dispersion component of the base data -- the peak intensity values -- is not modelled.
 It is used to determine either the $\Rtwoeff$ or $\Ronerho$ values and errors as required for the base data for all other models.
@@ -368,7 +368,7 @@ More information about the R2eff model is available from:
 
 \subsection{The model for no chemical exchange relaxation}
 \label{sect: dispersion: No Rex model}
-\index{relaxation dispersion!No Rex model|textbf}
+\index{relaxation dispersion!model!no Rex|textbf}
 
 This model is provided for model selection purposes.
 In combination with frequentist methods, such as AIC\index{model selection!AIC}, or Bayesian methods\index{model selection!Bayesian} it can show if the presence of chemical exchange is statistically significant.
@@ -398,7 +398,7 @@ More information about the No Rex model is available from the:
 
 \section{The analytic CPMG models}
 \label{sect: dispersion: analytic CPMG models}
-\index{relaxation dispersion!Analytic CPMG model|textbf}
+\index{relaxation dispersion!model category!analytic CPMG|textbf}
 
 These are the analytic models designed for a single data type -- the single quantum CPMG-type experiment.
 
@@ -408,7 +408,7 @@ These are the analytic models designed for a single data type -- the single quan
 
 \subsection{The LM63 2-site fast exchange CPMG model}
 \label{sect: dispersion: LM63 model}
-\index{relaxation dispersion!LM63 model|textbf}
+\index{relaxation dispersion!model!LM63|textbf}
 
 This is the original model for 2-site fast exchange for CPMG-type experiments.
 It is selected by setting the model to `LM63', here named after \citet{LuzMeiboom63}.
@@ -451,7 +451,7 @@ More information about the LM63 model is available from:
 
 \subsection{The LM63 3-site fast exchange CPMG model}
 \label{sect: dispersion: LM63 3-site model}
-\index{relaxation dispersion!LM63 3-site model|textbf}
+\index{relaxation dispersion!model!LM63 3-site|textbf}
 
 This is the original \citet{LuzMeiboom63} model for 3-site fast exchange for CPMG-type experiments.
 It is selected by setting the model to `LM63 3-site'.
@@ -510,7 +510,7 @@ More information about the LM63 3-site model is available from:
 
 \subsection{The full CR72 2-site CPMG model}
 \label{sect: dispersion: CR72 full model}
-\index{relaxation dispersion!CR72 full model|textbf}
+\index{relaxation dispersion!model!CR72 full|textbf}
 
 This is the model for 2-site exchange on most times scales (with the constraint that $\pA > \pB$), named after \citet{CarverRichards72}.
 It is selected by setting the model to `CR72 full'.
@@ -550,7 +550,7 @@ More information about the CR72 full model is available from:
 
 \subsection{The reduced CR72 2-site CPMG model}
 \label{sect: dispersion: CR72 model}
-\index{relaxation dispersion!CR72 model|textbf}
+\index{relaxation dispersion!model!CR72|textbf}
 
 This is the model for 2-site exchange on most times scales (with the constraint that $\pA > \pB$), named after \citet{CarverRichards72}.
 It is selected by setting the model to `CR72'.
@@ -582,7 +582,7 @@ More information about the CR72 model is available from:
 
 \subsection{The IT99 2-site CPMG model}
 \label{sect: dispersion: IT99 model}
-\index{relaxation dispersion!IT99 model|textbf}
+\index{relaxation dispersion!model!IT99|textbf}
 
 This is the model for 2-site exchange on all times scales (with the constraint that $\pA \gg \pB$), named after \citet{IshimaTorchia99}.
 It is selected by setting the model to `IT99'.
@@ -621,7 +621,7 @@ More information about the IT99 model is available from:
 
 \subsection{The TSMFK01 2-site CPMG model}
 \label{sect: dispersion: TSMFK01 model}
-\index{relaxation dispersion!TSMFK01 model|textbf}
+\index{relaxation dispersion!model!TSMFK01|textbf}
 
 This is the model for 2-site very-slow exchange model for time scales within range of microsecond to second time scale, where $\pA \gg \pB$, and named after \citet{Tollinger01}.
 It is selected by setting the model to `TSMFK01'.
@@ -650,7 +650,7 @@ More information about the TSMFK01 model is available from:
 
 \subsection{The full B14 2-site CPMG model}
 \label{sect: dispersion: B14 full model}
-\index{relaxation dispersion!B14 full model|textbf}
+\index{relaxation dispersion!model!B14 full|textbf}
 
 This is the model for 2-site exchange exact analytical derivation on all time scales (with the constraint that $\pA > \pB$), named after \citet{Baldwin2014}.
 It is selected by setting the model to `B14 full'.
@@ -754,7 +754,7 @@ More information about the B14 full model is available from:
 
 \subsection{The reduced B14 2-site CPMG model}
 \label{sect: dispersion: B14 model}
-\index{relaxation dispersion!B14 model|textbf}
+\index{relaxation dispersion!model!B14|textbf}
 
 This is the model for 2-site exchange exact analytical derivation on all time scales (with the constraint that $\pA > \pB$), named after \citet{Baldwin2014}.
 It is selected by setting the model to `B14'.
@@ -773,7 +773,7 @@ More information about the B14 model is available from:
 
 \section{The numeric CPMG models}
 \label{sect: dispersion: numeric CPMG models}
-\index{relaxation dispersion!Numeric CPMG model|textbf}
+\index{relaxation dispersion!model category!numeric CPMG|textbf}
 
 These are the numeric models designed for a single data type -- the single quantum CPMG-type experiment.
 
@@ -783,7 +783,7 @@ These are the numeric models designed for a single data type -- the single quant
 
 \subsection{The NS 2-site expanded CPMG model}
 \label{sect: dispersion: NS CPMG 2-site expanded model}
-\index{relaxation dispersion!NS CPMG 2-site expanded model|textbf}
+\index{relaxation dispersion!model!NS CPMG 2-site expanded|textbf}
 
 This is the numerical model for 2-site exchange expanded using Maple by Nikolai Skrynnikov.
 It is selected by setting the model to `NS CPMG 2-site expanded'.
@@ -890,7 +890,7 @@ More information about the NS CPMG 2-site expanded model is available from:
 
 \subsection{The full NS 2-site 3D CPMG model}
 \label{sect: dispersion: NS CPMG 2-site 3D full model}
-\index{relaxation dispersion!NS CPMG 2-site 3D full model|textbf}
+\index{relaxation dispersion!model!NS CPMG 2-site 3D full|textbf}
 
 This is the numerical model for 2-site exchange using 3D magnetisation vectors.
 It is selected by setting the model to `NS CPMG 2-site 3D full'.
@@ -909,7 +909,7 @@ More information about the NS CPMG 2-site 3D full model is available from:
 
 \subsection{The reduced NS 2-site 3D CPMG model}
 \label{sect: dispersion: NS CPMG 2-site 3D model}
-\index{relaxation dispersion!NS CPMG 2-site 3D model|textbf}
+\index{relaxation dispersion!model!NS CPMG 2-site 3D|textbf}
 
 This is the numerical model for 2-site exchange using 3D magnetisation vectors, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
 It is selected by setting the model to `NS CPMG 2-site 3D'.
@@ -928,7 +928,7 @@ More information about the NS CPMG 2-site 3D model is available from:
 
 \subsection{The full NS 2-site star CPMG model}
 \label{sect: dispersion: NS CPMG 2-site star full model}
-\index{relaxation dispersion!NS CPMG 2-site star full model|textbf}
+\index{relaxation dispersion!model!NS CPMG 2-site star full|textbf}
 
 This is the numerical model for 2-site exchange using complex conjugate matrices.
 It is selected by setting the model to `NS CPMG 2-site star full'.
@@ -947,7 +947,7 @@ More information about the NS CPMG 2-site star full model is available from:
 
 \subsection{The reduced NS 2-site star CPMG model}
 \label{sect: dispersion: NS CPMG 2-site star model}
-\index{relaxation dispersion!NS CPMG 2-site star model|textbf}
+\index{relaxation dispersion!model!NS CPMG 2-site star|textbf}
 
 This is the numerical model for 2-site exchange using complex conjugate matrices, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
 It is selected by setting the model to `NS CPMG 2-site star'.
@@ -967,7 +967,7 @@ More information about the NS CPMG 2-site star model is available from:
 
 \section{The analytic MMQ CPMG models}
 \label{sect: dispersion: analytic MMQ CPMG models}
-\index{relaxation dispersion!Analytic MMQ CPMG model|textbf}
+\index{relaxation dispersion!model category!analytic MMQ CPMG|textbf}
 
 These are the analytic models designed for handling combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG-type experiments.
 This data combination is labelled as multiple multiple quantum data or MMQ.
@@ -978,7 +978,7 @@ This data combination is labelled as multiple multiple quantum data or MMQ.
 
 \subsection{The MMQ CR72 model}
 \label{sect: dispersion: MMQ CR72 model}
-\index{relaxation dispersion!MMQ CR72 model|textbf}
+\index{relaxation dispersion!model!MMQ CR72|textbf}
 
 This is the analytic CR72 model for 2-site exchange on most times scales (Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}) extended for multiple types of multiple quantum data (MMQ) by \citet{Korzhnev04a}.
 It is selected by setting the model to `MMQ CR72'.
@@ -1040,7 +1040,7 @@ More information about the MMQ CR72 model is available from:
 
 \section{The numeric MMQ CPMG models}
 \label{sect: dispersion: numeric MMQ CPMG models}
-\index{relaxation dispersion!Numeric MMQ CPMG model|textbf}
+\index{relaxation dispersion!model category!numeric MMQ CPMG|textbf}
 
 These are the numeric models designed for handling combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG-type experiments.
 This data combination is labelled as multiple multiple quantum data or MMQ.
@@ -1051,7 +1051,7 @@ This data combination is labelled as multiple multiple quantum data or MMQ.
 
 \subsection{The NS MMQ 2-site model}
 \label{sect: dispersion: NS MMQ 2-site model}
-\index{relaxation dispersion!NS MMQ 2-site model|textbf}
+\index{relaxation dispersion!model!NS MMQ 2-site|textbf}
 
 This is the numerical model for 2-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05b}.
 It is selected by setting the model to `NS MMQ 2-site'.
@@ -1172,7 +1172,7 @@ More information about the NS MMQ 2-site model is available from:
 
 \subsection{The NS MMQ 3-site linear model}
 \label{sect: dispersion: NS MMQ 3-site linear model}
-\index{relaxation dispersion!NS MMQ 3-site linear model|textbf}
+\index{relaxation dispersion!model!NS MMQ 3-site linear|textbf}
 
 This is the numerical model for 3-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05b}.
 As this model is linear, the assumption that $\kAC$~= $\kCA$~= 0 has been made.
@@ -1255,7 +1255,7 @@ More information about the NS MMQ 3-site linear model is available from:
 
 \subsection{The NS MMQ 3-site model}
 \label{sect: dispersion: NS MMQ 3-site model}
-\index{relaxation dispersion!NS MMQ 3-site model|textbf}
+\index{relaxation dispersion!model!NS MMQ 3-site|textbf}
 
 This is the numerical model for 3-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05b}.
 However it has been extended to allow the $A \leftrightarrow C$ transition.
@@ -1328,7 +1328,7 @@ More information about the NS MMQ 3-site model is available from:
 
 \section{The analytic $\Ronerho$ models}
 \label{sect: dispersion: analytic R1rho models}
-\index{relaxation dispersion!Analytic R1rho model|textbf}
+\index{relaxation dispersion!model category!analytic R1rho|textbf}
 
 These are the analytic models designed for $\Ronerho$-type experiments.
 
@@ -1338,7 +1338,7 @@ These are the analytic models designed for $\Ronerho$-type experiments.
 
 \subsection{The M61 2-site fast exchange $\Ronerho$ model}
 \label{sect: dispersion: M61 model}
-\index{relaxation dispersion!M61 model|textbf}
+\index{relaxation dispersion!model!M61|textbf}
 
 This is the model for 2-site fast exchange for on-resonance $\Ronerho$-type data.
 It is selected by setting the model to `M61', here named after \citet{Meiboom61}.
@@ -1365,7 +1365,7 @@ More information about the M61 model is available from:
 
 \subsection{The M61 skew 2-site fast exchange $\Ronerho$ model}
 \label{sect: dispersion: M61 skew model}
-\index{relaxation dispersion!M61 skew model|textbf}
+\index{relaxation dispersion!model!M61 skew|textbf}
 
 This is the second model for 2-site fast exchange for on-resonance $\Ronerho$-type data from \citet{Meiboom61}.
 It is selected by setting the model to `M61 skew'.
@@ -1390,7 +1390,7 @@ More information about the M61 skew model is available from:
 
 \subsection{The DPL94 2-site fast exchange $\Ronerho$ model}
 \label{sect: dispersion: DPL94 model}
-\index{relaxation dispersion!DPL94 model|textbf}
+\index{relaxation dispersion!model!DPL94|textbf}
 
 This is the model for 2-site fast exchange for $\Ronerho$-type data.
 It is selected by setting the model to `DPL94', here named after \citet{Davis94}.
@@ -1420,7 +1420,7 @@ More information about the DPL94 model is available from:
 
 \subsection{The TP02 2-site exchange $\Ronerho$ model}
 \label{sect: dispersion: TP02 model}
-\index{relaxation dispersion!TP02 model|textbf}
+\index{relaxation dispersion!model!TP02|textbf}
 
 This is the model for 2-site exchange for off-resonance $\Ronerho$-type data from \citet{TrottPalmer02}.
 It is selected by setting the model to `TP02'.
@@ -1464,7 +1464,7 @@ More information about the TP02 model is available from:
 
 \subsection{The TAP03 2-site exchange $\Ronerho$ model}
 \label{sect: dispersion: TAP03 model}
-\index{relaxation dispersion!TAP03 model|textbf}
+\index{relaxation dispersion!model!TAP03|textbf}
 
 This is the model for 2-site exchange for off-resonance $\Ronerho$-type data from \citet{Trott03}.
 It is selected by setting the model to `TAP03'.
@@ -1507,7 +1507,7 @@ More information about the TAP03 model is available from:
 
 \subsection{The MP05 2-site exchange $\Ronerho$ model}
 \label{sect: dispersion: MP05 model}
-\index{relaxation dispersion!MP05 model|textbf}
+\index{relaxation dispersion!model!MP05|textbf}
 
 This is the model for 2-site exchange for off-resonance $\Ronerho$-type data for all time scales from \citet{MiloushevPalmer05}.
 It is selected by setting the model to `MP05'.
@@ -1540,7 +1540,7 @@ More information about the MP05 model is available from:
 
 \section{The numeric $\Ronerho$ models}
 \label{sect: dispersion: numeric R1rho models}
-\index{relaxation dispersion!Numeric R1rho model|textbf}
+\index{relaxation dispersion!model category!numeric R1rho|textbf}
 
 These are the numeric models designed for $\Ronerho$-type experiments.
 
@@ -1550,7 +1550,7 @@ These are the numeric models designed for $\Ronerho$-type experiments.
 
 \subsection{The NS 2-site $\Ronerho$ model}
 \label{sect: dispersion: NS R1rho 2-site model}
-\index{relaxation dispersion!NS R1rho 2-site model|textbf}
+\index{relaxation dispersion!model!NS R1rho 2-site|textbf}
 
 This is the numerical model for 2-site exchange using 3D magnetisation vectors.
 It is selected by setting the model to `NS R1rho 2-site'.
@@ -1595,7 +1595,7 @@ More information about the NS R1rho 2-site model is available from:
 
 \subsection{The NS 3-site $\Ronerho$ model}
 \label{sect: dispersion: NS R1rho 3-site model}
-\index{relaxation dispersion!NS R1rho 3-site model|textbf}
+\index{relaxation dispersion!model!NS R1rho 3-site|textbf}
 
 This is the numerical model for 3-site exchange using 3D magnetisation vectors.
 It is selected by setting the model to `NS R1rho 3-site'.
@@ -1681,7 +1681,7 @@ More information about the NS R1rho 3-site model is available from:
 
 \subsection{The NS 3-site linear $\Ronerho$ model}
 \label{sect: dispersion: NS R1rho 3-site linear model}
-\index{relaxation dispersion!NS R1rho 3-site linear model|textbf}
+\index{relaxation dispersion!model!NS R1rho 3-site linear|textbf}
 
 This is the numerical model for 3-site linear exchange using 3D magnetisation vectors.
 The assumption that $\kAC$~= $\kCA$~= 0 has been made to linearise this model.
@@ -2343,10 +2343,10 @@ Synthetic data, or experimental data, can be obtained from the literature.
 
 Some of the missing models include:
 \begin{description}
-  \item[`TP04':]\index{relaxation dispersion!TP04 model}  The $\Ronerho$-type data \citet{TrottPalmer04} N-site analytic equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pone, \dots, \pN, \aveomega, \konetwo, \dots\, \koneN\}$.
+  \item[`TP04':]\index{relaxation dispersion!model!TP04}  The $\Ronerho$-type data \citet{TrottPalmer04} N-site analytic equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pone, \dots, \pN, \aveomega, \konetwo, \dots\, \koneN\}$.
   \item[`* $\Ronerho$':]  All of the 3-site and N-site models as summarised in Table~1 of \citet{PalmerMassi06}.
-  \item[`BK13':]\index{relaxation dispersion!BK13 model}  The $\Ronerho$-type data \citet{Baldwin2013} off-resonance 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  For details and code, see the \href{https://web.archive.org/https://gna.org/support/?3155}{archived Gna!\ support request \#3155}.
-  \item[`BK13 full':]\index{relaxation dispersion!BK13 full model}  The $\Ronerho$-type data full \citet{Baldwin2013} off-resonance 2-site equation for all time scales with parameters $\{\RonerhoprimeA, \RonerhoprimeB, \dots, \pA, \dw, \kex\}$.  For details and code, see the \href{https://web.archive.org/https://gna.org/support/?3155}{archived Gna!\ support request \#3155}.
+  \item[`BK13':]\index{relaxation dispersion!model!BK13}  The $\Ronerho$-type data \citet{Baldwin2013} off-resonance 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  For details and code, see the \href{https://web.archive.org/https://gna.org/support/?3155}{archived Gna!\ support request \#3155}.
+  \item[`BK13 full':]\index{relaxation dispersion!model!BK13 full}  The $\Ronerho$-type data full \citet{Baldwin2013} off-resonance 2-site equation for all time scales with parameters $\{\RonerhoprimeA, \RonerhoprimeB, \dots, \pA, \dw, \kex\}$.  For details and code, see the \href{https://web.archive.org/https://gna.org/support/?3155}{archived Gna!\ support request \#3155}.
 \end{description}
 
 Information for how these can be added is given in the next section.
@@ -2358,7 +2358,7 @@ Information for how these can be added is given in the next section.
 \section{Tutorial for adding relaxation dispersion models}
 \label{sect: dispersion: model tutorial}
 
-As the field of NMR relaxation dispersion has a very long history, it is not possible to include all analytic and numeric relaxation dispersion models for both CPMG-type\index{relaxation dispersion!CPMG-type experiment} or $\Ronerho$-type\index{relaxation dispersion!$\Ronerho$-type experiment} experiments in relax.
+As the field of NMR relaxation dispersion has a very long history, it is not possible to include all analytic and numeric relaxation dispersion models for both CPMG-type\index{relaxation dispersion!experiment!CPMG-type} or $\Ronerho$-type\index{relaxation dispersion!experiment!$\Ronerho$-type} experiments in relax.
 However it is not too difficult to add new models for your own needs if you have some Python, Matlab, Mathematica, or similar scripting skills.
 The steps required are detailed on the \href{http://wiki.nmr-relax.com/}{relax wiki} page \url{http://wiki.nmr-relax.com/Tutorial\_for\_adding\_relaxation\_dispersion\_models\_to\_relax}.
 
