@@ -26,6 +26,7 @@ env:
     - MPI=false
     - WXPYTHON=false
     - OLD_MATPLOTLIB=false
+    - FSFCV=false
 
 matrix:
   include:
@@ -60,6 +61,7 @@ matrix:
     # Linux python 3.7, Ubuntu Xenial 16.04 https://docs.travis-ci.com/user/reference/xenial https://github.com/travis-ci/travis-ci/issues/9815
     - python: 3.7
       language: python
+      env: FSFCV=true
       dist: xenial
     # Try upgrade all pip packages
     - python: 3.7
@@ -138,6 +140,9 @@ script:
     - if [[ $WXPYTHON == "true"  && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
     - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
     - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
+
+    # Run the FSF copyright validation script.
+    - if [[ $FSFCV == "true" ]]; then ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
 
 cache: pip
 git:
