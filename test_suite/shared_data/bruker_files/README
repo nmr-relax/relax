@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2017 Edward d'Auvergne                                        #
+# Copyright (C) 2017,2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,6 +26,9 @@ Licensing
 These files are licensed under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version:
 
 T1_demo_1UBQ_H_trunc.txt:                                                               Copyright (C) 2012 Mengjun Xue (mengjun.xue@mailbox.tu-berlin.de)
+bug_13_APO_T1_500_trunc.txt:                                                            Copyright (C) 2019 Stefano Luciano Ciurli
+bug_13_APO_T2_500_trunc.txt:                                                            Copyright (C) 2019 Stefano Luciano Ciurli
+bug_13_sequence:                                                                        Copyright (C) 2019 Stefano Luciano Ciurli
 bug_22411_T1.txt:                                                                       Copyright (C) 2014 Olena Dobrovolska (olena.dobrovolska@unibo.it)
 bug_22411_T1_sequence:                                                                  Copyright (C) 2014 Olena Dobrovolska (olena.dobrovolska@unibo.it)
 errors_R1.txt:                                                                          Copyright (C) 2011 Edward d'Auvergne
