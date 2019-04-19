@@ -43,6 +43,11 @@ matrix:
         #- conda update -q conda
         - conda info -a
 
+        # xvfs setup for wxPython testing.
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
+
     # Test run with MPI 2 processors.
     # Python 3.6 is standard version on Redhat 7 and Ubuntu LTS 18.04 and TS 16.04
     - python: 3.6
