@@ -24,6 +24,7 @@ language: python
 env:
   global:
     - API_BUILD=false
+    - FSFCV=false
     - MPI=false
     - OLD_MATPLOTLIB=false
     - TEST=true
@@ -133,6 +134,13 @@ matrix:
         - conda config --set always_yes yes --set changeps1 no
         - conda info -a
 
+    # FSF copyright validation, Linux (Ubuntu Xenial 16.04), Python 3.7.
+    - name: "FSF copyright validation"
+      python: 3.7
+      language: python
+      env: TEST=false FSFCV=true
+      dist: xenial
+
 install:
     # Fail on first error.
     - set -e
@@ -188,6 +196,9 @@ script:
 
     # API documentation build.
     - if [[ $API_BUILD == "true" ]]; then scons api_manual_html; fi
+
+    # Run the FSF copyright validation script.
+    - if [[ $FSFCV == "true" ]]; then git fetch --unshallow && ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
 
 cache: pip
 git:
