@@ -24,13 +24,14 @@ env:
     - UPGRADE=false
     - MPI=false
     - WXPYTHON=false
+    - OLD_MATPLOTLIB=false
 
 matrix:
   include:
     # default: Ubuntu Trusty 14.04 https://docs.travis-ci.com/user/reference/trusty/
     - python: 2.7
       language: python
-      env: WXPYTHON=true
+      env: WXPYTHON=true OLD_MATPLOTLIB=true
       before_install:
         # Conda is used to install wxPython 3.0.
         - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -94,15 +95,22 @@ matrix:
 install:
     # Fail on first error
     - set -e
+
     # Find Python.h to build with scons
     - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
     - echo "MPI=$MPI ; OS=$TRAVIS_OS_NAME ; PIPUPGRADE=$UPGRADE ; VIRTUAL_ENV=$VIRTUAL_ENV ; PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+
     # Get newer pip and whell for binary caching support
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo -H pip install --upgrade pip wheel; fi
-    # Install python packages with pip: scons minfx bmrblib numpy scipy matplotlib
+
+    # Install python packages with pip: scons minfx bmrblib numpy scipy
     - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
     - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
+
+    # Manually install matplotlib for version compatibility.
+    - if [[ $OLD_MATPLOTLIB == "true" ]]; then pip install matplotlib=2.2.4; else pip install matplotlib; fi
+
     # Install python package with pip for running with multiple processors
     - if [[ $MPI == "true" ]]; then pip install mpi4py; fi
 
