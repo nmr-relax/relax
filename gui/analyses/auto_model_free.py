@@ -436,7 +436,7 @@ class Auto_model_free(Base_analysis):
                 missing.append(msg % ("bond length data", "value.set"))
 
             # Test if the unit vectors have been loaded.
-            if vector_check and (not hasattr(interatom, 'vector') or interatom.vector == None):
+            if vector_check and (not hasattr(interatom, 'vector') or interatom.vector is None):
                 missing.append(msg % ("unit vectors", "interatom.unit_vectors"))
 
         # Return the container and list of missing data.

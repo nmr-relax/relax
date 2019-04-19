@@ -203,7 +203,7 @@ class Sequence:
                 self._field.SetToolTipString(tooltip)
 
             # Set the default value.
-            if self.default != None:
+            if self.default is not None:
                 self._field.SetValue(self.convert_to_gui_seq(self.default))
 
         # Initialise the combo list input field.
