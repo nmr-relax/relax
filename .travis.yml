@@ -23,8 +23,10 @@
 language: python
 env:
   global:
+    - FSFCV=false
     - MPI=false
     - OLD_MATPLOTLIB=false
+    - TEST=true
     - UPGRADE=false
     - WXPYTHON=false
 
@@ -113,6 +115,13 @@ matrix:
         # - mpiexec -np 2 python relax --multi='mpi4py' -i
         # - mpiexec -np 2 python -m mpi4py relax --multi='mpi4py' -i
 
+    # FSF copyright validation, Linux (Ubuntu Xenial 16.04), Python 3.7.
+    - name: "FSF copyright validation"
+      python: 3.7
+      language: python
+      env: TEST=false FSFCV=true
+      dist: xenial
+
 install:
     # Fail on first error.
     - set -e
@@ -148,20 +157,23 @@ script:
     - set -e
 
     # relax information printout.
-    - if [[ $MPI == "false" ]]; then ./relax -i; fi
-    - if [[ $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
+    - if [[ $MPI == "false" && $TEST == "true" ]]; then ./relax -i; fi
+    - if [[ $MPI == "true" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
 
     # Single processor test suite execution.
-    - if [[ $MPI == "false" && $WXPYTHON == "true"  ]]; then ./relax --time --test-suite; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" ]]; then ./relax --time --system-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" ]]; then ./relax --time --unit-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" ]]; then ./relax --time --verification-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "true"  && $TEST == "true" ]]; then ./relax --time --test-suite; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --system-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --unit-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --verification-tests; fi
 
     # Multiple processor test suite execution.
-    - if [[ $MPI == "true" && $WXPYTHON == "true"  ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --verification-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "true"  && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --verification-tests; fi
+
+    # Run the FSF copyright validation script.
+    - if [[ $FSFCV == "true" ]]; then git fetch --unshallow && ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
 
 cache: pip
 git:
