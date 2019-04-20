@@ -45,7 +45,7 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, is_r1_optimised
 from specific_analyses.relax_disp.data import INTERPOLATE_OFFSET, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.model import nesting_model, nesting_param
+from specific_analyses.relax_disp.model import Model_class, nesting_model, nesting_param
 from status import Status; status = Status()
 
 
@@ -802,23 +802,16 @@ class Relax_disp:
         if file_name_ini == None:
             file_name_ini = param
 
-        # If the model is in the list of models which support the parameter.
+        # Normal model.
         write_result = False
         if model != None:
-            # Get the model params.
-            model_params = deepcopy(MODEL_PARAMS[model])
-
-            if param in model_params:
+            if param in Model_class(model=model).params:
                 write_result = True
 
         # If this is the final pipe, then check if the model has been tested at any time.
         elif model == None:
-            # Loop through all tested models.
             for model_tested in models_tested:
-                # If one of the models tested has a parameter which belong in the list of models which support the parameter, then write it out.
-                model_params = deepcopy(MODEL_PARAMS[model_tested])
-
-                if param in model_params:
+                if param in Model_class(model=model_tested).params:
                     write_result = True
                     break
 
