@@ -32,7 +32,31 @@ from functools import partial
 from operator import attrgetter, ne
 
 # relax module imports.
-from lib.dispersion.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_NOREX, EXP_TYPE_R2EFF, MODEL_DESC, MODEL_EQ, MODEL_EXP_TYPE, MODEL_NEST, MODEL_PARAMS, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_PARAMS_NS_MMQ_2SITE, MODEL_PARAMS_NS_MMQ_3SITE, MODEL_PARAMS_NS_MMQ_3SITE_LINEAR, MODEL_PARAMS_NS_R1RHO_2SITE, MODEL_PARAMS_NS_R1RHO_3SITE, MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR, MODEL_SITES, MODEL_YEAR, PARAMS_R20
+from lib.dispersion.variables import EQ_ANALYTIC, \
+    EQ_NUMERIC, \
+    EQ_SILICO, \
+    EXP_TYPE_CPMG_MMQ, \
+    EXP_TYPE_R1RHO, \
+    EXP_TYPE_CPMG_SQ, \
+    EXP_TYPE_NOREX, \
+    EXP_TYPE_R2EFF, \
+    MODEL_DESC, \
+    MODEL_EQ, \
+    MODEL_EXP_TYPE, \
+    MODEL_NEST, \
+    MODEL_PARAMS, \
+    MODEL_PARAMS_LM63, \
+    MODEL_PARAMS_LM63_3SITE, \
+    MODEL_PARAMS_NS_MMQ_2SITE, \
+    MODEL_PARAMS_NS_MMQ_3SITE, \
+    MODEL_PARAMS_NS_MMQ_3SITE_LINEAR, \
+    MODEL_PARAMS_NS_R1RHO_2SITE, \
+    MODEL_PARAMS_NS_R1RHO_3SITE, \
+    MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR, \
+    MODEL_SITES, \
+    MODEL_YEAR, \
+    PARAMS_R1, \
+    PARAMS_R20
 from specific_analyses.relax_disp.data import is_r1_optimised
 
 
@@ -208,6 +232,10 @@ def nesting_param(model_params=None, nested_model_params=None):
             # If copying from a complex model to a simple model.
             elif param == 'r2' and 'r2a' in nested_model_params:
                 par_dic[param] = 'r2a'
+
+        # The R1 parameter.
+        elif param in PARAMS_R1:
+            par_dic[param] = param
 
         # All other parameters.
         elif param in nested_model_params:
