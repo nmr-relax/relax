@@ -806,7 +806,7 @@ class Relax_disp:
         write_result = False
         if model != None:
             # Get the model params.
-            model_params = MODEL_PARAMS[model]
+            model_params = deepcopy(MODEL_PARAMS[model])
 
             if param in model_params:
                 write_result = True
@@ -816,7 +816,7 @@ class Relax_disp:
             # Loop through all tested models.
             for model_tested in models_tested:
                 # If one of the models tested has a parameter which belong in the list of models which support the parameter, then write it out.
-                model_params = MODEL_PARAMS[model_tested]
+                model_params = deepcopy(MODEL_PARAMS[model_tested])
 
                 if param in model_params:
                     write_result = True

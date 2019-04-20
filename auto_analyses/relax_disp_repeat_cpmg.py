@@ -2683,7 +2683,7 @@ class Relax_disp_rep:
 
             # Printout.
             section(file=sys.stdout, text="Results writing for pipe='%s"%(pipe_name), prespace=2, postspace=0)
-            model_params = MODEL_PARAMS[model]
+            model_params = deepcopy(MODEL_PARAMS[model])
             subsection(file=sys.stdout, text="Model %s, with params='%s"%(model, model_params), prespace=0)
 
             # Set path
@@ -2765,7 +2765,7 @@ class Relax_disp_rep:
         write_result = False
         if model != None:
             # Get the model params.
-            model_params = MODEL_PARAMS[model]
+            model_params = deepcopy(MODEL_PARAMS[model])
 
             if param in model_params:
                 write_result = True
@@ -2775,7 +2775,7 @@ class Relax_disp_rep:
             # Loop through all tested models.
             for model_tested in models_tested:
                 # If one of the models tested has a parameter which belong in the list of models which support the parameter, then write it out.
-                model_params = MODEL_PARAMS[model_tested]
+                model_params = deepcopy(MODEL_PARAMS[model_tested])
 
                 if param in model_params:
                     write_result = True

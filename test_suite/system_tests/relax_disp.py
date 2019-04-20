@@ -6329,14 +6329,14 @@ class Relax_disp(SystemTestCase):
         """Test that all models which can nest, have all their parameters converted."""
 
         # Set the experiment type.
-        cdp.exp_type_list = EXP_TYPE_LIST
+        cdp.exp_type_list = copy.deepcopy(EXP_TYPE_LIST)
 
         # Get info for all models.
         all_models_info = models_info(models=MODEL_LIST_FULL)
 
         # Loop over all models.
         print("Printing the listed of nested models for each model.")
-        print("#########################################")
+        print("####################################################")
         for model_info in all_models_info:
             print("%s"%model_info.model),
             print("<-"),
@@ -6355,7 +6355,7 @@ class Relax_disp(SystemTestCase):
             # Now loop over the nested models.
             for nested_model in nest_list:
                 # Get the params for the nested model.
-                nested_model_params = MODEL_PARAMS[nested_model]
+                nested_model_params = copy.deepcopy(MODEL_PARAMS[nested_model])
 
                 # Get the dictionary of parameter conversion.
                 par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)

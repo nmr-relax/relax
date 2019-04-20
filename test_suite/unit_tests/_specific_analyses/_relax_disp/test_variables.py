@@ -19,6 +19,9 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from copy import deepcopy
+
 # relax module imports.
 from lib.dispersion.variables import MODEL_CR72, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_3SITE
 from lib.dispersion.variables import MODEL_EXP_TYPE, MODEL_EQ, MODEL_PARAMS, MODEL_SITES, MODEL_YEAR
@@ -33,7 +36,7 @@ class Test_variables(UnitTestCase):
         """Unit test of the MODEL_PARAM dictionary."""
 
         # Test parameter return from model parameter dictionary.
-        params_cr72 = MODEL_PARAMS[MODEL_CR72]
+        params_cr72 = deepcopy(MODEL_PARAMS[MODEL_CR72])
 
         # Test the return.
         self.assertEqual(params_cr72, ['r2', 'pA', 'dw', 'kex'])

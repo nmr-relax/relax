@@ -25,6 +25,9 @@
 # Module docstring.
 """The relaxation dispersion API object."""
 
+# Python module imports.
+from copy import deepcopy
+
 # relax module imports.
 from lib.dispersion.variables import MODEL_DESC, MODEL_LIST_FULL, MODEL_PARAMS, MODEL_R2EFF
 from lib.errors import RelaxError
@@ -170,7 +173,7 @@ def select_model(model=MODEL_R2EFF):
 
     # All other models.
     else:
-        params = MODEL_PARAMS[model]
+        params = deepcopy(MODEL_PARAMS[model])
 
     # Printout.
     print(MODEL_DESC[model])

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Troels E. Linnet                                         #
-# Copyright (C) 2014 Edward d'Auvergne                                        #
+# Copyright (C) 2014,2019 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,6 +19,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+
+# Python module imports.
+from copy import deepcopy
 
 # relax module imports.
 from lib.dispersion.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_MMQ_CR72, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
@@ -415,8 +418,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_LM63_3SITE
-        nested_model_params = MODEL_PARAMS_LM63
+        model_params = deepcopy(MODEL_PARAMS_LM63_3SITE)
+        nested_model_params = deepcopy(MODEL_PARAMS_LM63)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -439,8 +442,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_CR72_FULL
-        nested_model_params = MODEL_PARAMS_CR72
+        model_params = deepcopy(MODEL_PARAMS_CR72_FULL)
+        nested_model_params = deepcopy(MODEL_PARAMS_CR72)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -463,8 +466,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_CR72
-        nested_model_params = MODEL_PARAMS_CR72_FULL
+        model_params = deepcopy(MODEL_PARAMS_CR72)
+        nested_model_params = deepcopy(MODEL_PARAMS_CR72_FULL)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -486,8 +489,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_B14_FULL
-        nested_model_params = MODEL_PARAMS_CR72_FULL
+        model_params = deepcopy(MODEL_PARAMS_B14_FULL)
+        nested_model_params = deepcopy(MODEL_PARAMS_CR72_FULL)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -510,8 +513,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_TAP03
-        nested_model_params = MODEL_PARAMS_MP05
+        model_params = deepcopy(MODEL_PARAMS_TAP03)
+        nested_model_params = deepcopy(MODEL_PARAMS_MP05)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -533,8 +536,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_NS_R1RHO_3SITE
-        nested_model_params = MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR
+        model_params = deepcopy(MODEL_PARAMS_NS_R1RHO_3SITE)
+        nested_model_params = deepcopy(MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -560,8 +563,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_NS_R1RHO_3SITE
-        nested_model_params = MODEL_PARAMS_NS_R1RHO_2SITE
+        model_params = deepcopy(MODEL_PARAMS_NS_R1RHO_3SITE)
+        nested_model_params = deepcopy(MODEL_PARAMS_NS_R1RHO_2SITE)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -587,8 +590,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_NS_MMQ_2SITE
-        nested_model_params = MODEL_PARAMS_MMQ_CR72
+        model_params = deepcopy(MODEL_PARAMS_NS_MMQ_2SITE)
+        nested_model_params = deepcopy(MODEL_PARAMS_MMQ_CR72)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -611,8 +614,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_NS_MMQ_3SITE
-        nested_model_params = MODEL_PARAMS_NS_MMQ_3SITE_LINEAR
+        model_params = deepcopy(MODEL_PARAMS_NS_MMQ_3SITE)
+        nested_model_params = deepcopy(MODEL_PARAMS_NS_MMQ_3SITE_LINEAR)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -640,8 +643,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_NS_MMQ_3SITE
-        nested_model_params = MODEL_PARAMS_NS_MMQ_2SITE
+        model_params = deepcopy(MODEL_PARAMS_NS_MMQ_3SITE)
+        nested_model_params = deepcopy(MODEL_PARAMS_NS_MMQ_2SITE)
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
