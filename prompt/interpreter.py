@@ -366,6 +366,11 @@ def exec_script(name, globals):
         else:
             exec(compile(open(name).read(), name, 'exec'), globals)
 
+    except KeyboardInterrupt:
+        sys.stderr.write("XASDFASDF\n")
+        sys.stderr.flush()
+        raise KeyboardInterrupt
+
     finally:
         # Remove the script path.
         sys.path.reverse()
@@ -412,6 +417,9 @@ def interact_prompt(self, intro=None, local={}):
                 more = self.push(line)
         except KeyboardInterrupt:
             self.write("\nKeyboardInterrupt\n")
+            self.flush()
+            if status.test_mode:
+                raise
             self.resetbuffer()
             more = False
 
@@ -485,8 +493,10 @@ def interact_script(self, intro=None, local={}, script_file=None, show_script=Tr
 
     # Catch ctrl-C.
     except KeyboardInterrupt:
+        sys.stderr.write("\nScript execution cancelled ASDFASDFASF.\n")
+        sys.stderr.flush()
         # Throw the error.
-        if status.debug:
+        if status.debug or status.test_mode:
             raise
 
         # Be nicer to the user.
@@ -605,6 +615,12 @@ def runcode(self, code):
 
     # Allow the system to exit.
     except SystemExit:
+        raise
+
+    # All for keyboard input.
+    except KeyboardInterrupt:
+        self.write("wqwerqwer")
+        self.flush()
         raise
 
     # Handle RelaxErrors nicely.
