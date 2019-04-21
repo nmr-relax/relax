@@ -287,6 +287,9 @@ class Validate:
     def __init__(self):
         """Run the validation."""
 
+        # Initialise a successful status.
+        self.status = 0
+
         # Process the command line options.
         self.process_args()
 
