@@ -186,7 +186,7 @@ class Test_suite_runner:
         # Catch the keyboard interrupt.
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt:  Terminating all tests.\n")
-            return False
+            sys.exit(1)
 
         # Catch GUI app set up errors.
         except:
@@ -233,7 +233,7 @@ class Test_suite_runner:
         # Catch the keyboard interrupt.
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt:  Terminating all tests.\n")
-            return False
+            sys.exit(1)
 
         # All tests were run successfully.
         return self.system_result
@@ -271,7 +271,7 @@ class Test_suite_runner:
         # Catch the keyboard interrupt.
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt:  Terminating all tests.\n")
-            return False
+            sys.exit(1)
 
         # All tests were run successfully.
         return self.unit_result
@@ -307,7 +307,7 @@ class Test_suite_runner:
         # Catch the keyboard interrupt.
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt:  Terminating all tests.\n")
-            return False
+            sys.exit(1)
 
         # All tests were run successfully.
         return self.verification_result
