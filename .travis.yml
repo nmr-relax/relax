@@ -113,7 +113,9 @@ install:
 
     # Install python packages with pip: scons minfx bmrblib numpy scipy
     - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
-    - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
+    - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements_py3.txt; fi
+    - if [[ $UPGRADE == "true" ]]; then pip3 install -U -r devel_scripts/travis-ci/requirements.txt; fi
+    - if [[ $UPGRADE == "true" ]]; then pip3 install -U -r devel_scripts/travis-ci/requirements_py3.txt; fi
 
     # Manually install matplotlib for version compatibility.
     - if [[ $OLD_MATPLOTLIB == "true" ]]; then pip install matplotlib==2.2.4; else pip install matplotlib; fi
