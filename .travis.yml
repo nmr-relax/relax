@@ -119,24 +119,26 @@ install:
 
     # Find Python.h to build with scons.
     - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
+
+    # Debugging printout of environmental variables.
     - echo "MPI=$MPI ; OS=$TRAVIS_OS_NAME ; PIPUPGRADE=$UPGRADE ; VIRTUAL_ENV=$VIRTUAL_ENV ; PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
 
     # Get newer pip and whell for binary caching support.
-    - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
-    - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo -H pip install --upgrade pip wheel; fi
+    - if [ $TRAVIS_OS_NAME == "linux" ]; then sudo -H pip install --upgrade pip wheel; fi
+    - if [ $TRAVIS_OS_NAME == "osx" ]; then sudo -H pip install --upgrade pip wheel; fi
 
     # Install python packages with pip: scons minfx bmrblib numpy scipy.
-    - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
-    - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
+    - if [ $UPGRADE == "false" ]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
+    - if [ $UPGRADE == "true" ]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
 
     # Manually install matplotlib for version compatibility.
-    - if [[ $OLD_MATPLOTLIB == "true" ]]; then pip install matplotlib==2.2.4; else pip install matplotlib; fi
+    - if [ $OLD_MATPLOTLIB == "true" ]; then pip install matplotlib==2.2.4; else pip install matplotlib; fi
 
     # Install python package with pip for running with multiple processors.
-    - if [[ $MPI == "true" ]]; then pip install mpi4py; fi
+    - if [ $MPI == "true" ]; then pip install mpi4py; fi
 
     # Install wxPython 3.0 using Conda.
-    - if [[ $WXPYTHON == "true" ]]; then conda install -c https://conda.anaconda.org/travis wxpython; fi
+    - if [ $WXPYTHON == "true" ]; then conda install -c https://conda.anaconda.org/travis wxpython; fi
 
     # Compile the C modules.
     - scons
@@ -146,18 +148,20 @@ script:
     - set -e
 
     # relax information printout.
-    - if [[ $MPI == "false" ]]; then ./relax -i; fi
+    - if [ $MPI == "false" ]; then ./relax -i; fi
+    - if [ $MPI == "true" ]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
 
     # Single processor test suite execution.
-    - if [[ $WXPYTHON == "true" &&  $MPI == "false" ]]; then ./relax --time --test-suite; fi
-    - if [[ $WXPYTHON == "false" && $MPI == "false" ]]; then ./relax --time --system-tests; fi
-    - if [[ $WXPYTHON == "false" && $MPI == "false" ]]; then ./relax --time --unit-tests; fi
+    - if [ $MPI == "false" && $WXPYTHON == "true"  ]; then ./relax --time --test-suite; fi
+    - if [ $MPI == "false" && $WXPYTHON == "false" ]; then ./relax --time --system-tests; fi
+    - if [ $MPI == "false" && $WXPYTHON == "false" ]; then ./relax --time --unit-tests; fi
+    - if [ $MPI == "false" && $WXPYTHON == "false" ]; then ./relax --time --verification-tests; fi
 
     # Multiple processor test suite execution.
-    - if [[ $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
-    - if [[ $WXPYTHON == "true"  && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
-    - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
-    - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
+    - if [ $MPI == "true" && $WXPYTHON == "true"  ]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
+    - if [ $MPI == "true" && $WXPYTHON == "false" ]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
+    - if [ $MPI == "true" && $WXPYTHON == "false" ]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
+    - if [ $MPI == "true" && $WXPYTHON == "false" ]; then mpirun -np 2 ./relax --multi='mpi4py' --time --verification-tests; fi
 
 cache: pip
 git:
