@@ -27,6 +27,7 @@ from datetime import datetime
 from glob import glob
 from os import F_OK, access, chdir, getcwd, listdir, path, remove, rename, sep, system
 from re import search
+from subprocess import PIPE, Popen
 import sys
 
 # relax module imports.
@@ -222,7 +223,7 @@ def compile_api_manual_html(target, source, env):
     ####################################
 
     # Program name, output, target, docformat, css, name, and url.
-    epydoc_cmd = 'epydoc' + ' --' + output + ' -o ' + target + ' --docformat ' + docformat + ' --css ' + css + ' --name ' + name + ' --url ' + url
+    epydoc_cmd = 'epydoc' + ' --' + output + ' -o ' + target + ' --docformat ' + docformat + ' --css ' + css + ' --name ' + name + ' --url ' + url + ' --simple-term'
     if 'link' in locals():
         epydoc_cmd += ' --navlink \'%s\'' % link
 
@@ -272,7 +273,7 @@ def compile_api_manual_html(target, source, env):
         epydoc_cmd = epydoc_cmd + ' --exclude=' + name
 
     # All the files of the current directory.
-    blacklist = ['README', 'relax.bat', 'relax_gui_mode.py']
+    blacklist = ['README.md', 'relax', 'relax.bat', 'relax_gui_mode.py']
     files = listdir(getcwd())
     for file in files:
         # Blacklisted.
@@ -294,12 +295,33 @@ def compile_api_manual_html(target, source, env):
     # Execute Epydoc.
     #################
 
-    # Print out.
+    # Printout.
     print("Running the command:\n$ " + epydoc_cmd + "\n\n\n")
 
     # System call.
-    system(epydoc_cmd)
+    pipe = Popen(epydoc_cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=False)
 
+    # Parse the output to check for issues.
+    error = False
+    for line in pipe.stdout.readlines():
+        if len(line.strip()) and line[0] in ['+', '|']:
+            # Printout.
+            sys.stdout.write(line)
+
+            # The file info.
+            row = line.split()
+            if len(row) >= 2 and row[1] == 'File':
+                # Skip wxPython.
+                if "/wx/" in row[2]:
+                    pass
+
+                # Problem found.
+                else:
+                    error = True
+
+    # Fail.
+    if error:
+        raise NameError("Errors or warnings found.")
 
 
     # Modify the CSS file.
