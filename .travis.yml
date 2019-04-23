@@ -144,19 +144,19 @@ script:
     # relax information printout.
     - if [[ $MPI == "false" ]]; then ./relax -i; fi
 
-    #    # Single processor test suite execution.
-    #    - if [[ $WXPYTHON == "true" &&  $MPI == "false" ]]; then ./relax --time --test-suite; fi
-    #    - if [[ $WXPYTHON == "false" && $MPI == "false" ]]; then ./relax --time --system-tests; fi
-    #    - if [[ $WXPYTHON == "false" && $MPI == "false" ]]; then ./relax --time --unit-tests; fi
-    #
-    #    # Multiple processor test suite execution.
-    #    - if [[ $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
-    #    - if [[ $WXPYTHON == "true"  && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
-    #    - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
-    #    - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
+    # Single processor test suite execution.
+    - if [[ $WXPYTHON == "true" &&  $MPI == "false" ]]; then ./relax --time --test-suite; fi
+    - if [[ $WXPYTHON == "false" && $MPI == "false" ]]; then ./relax --time --system-tests; fi
+    - if [[ $WXPYTHON == "false" && $MPI == "false" ]]; then ./relax --time --unit-tests; fi
+
+    # Multiple processor test suite execution.
+    - if [[ $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
+    - if [[ $WXPYTHON == "true"  && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
+    - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
+    - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
 
     # Run the FSF copyright validation script.
-    - if [[ $FSFCV == "true" ]]; then git fetch --unshallow; ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py -d info.py; fi
+    - if [[ $FSFCV == "true" ]]; then git fetch --unshallow; ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
 
 cache: pip
 git:
