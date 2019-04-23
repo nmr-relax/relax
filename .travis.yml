@@ -91,7 +91,7 @@ matrix:
 
         # Fix for matplotlib and non-framework Python.
         - mkdir -p $HOME/.matplotlib/
-        - echo 'backend: TkAgg' > $HOME/.matplotlib/matplotlibrc
+        - "echo 'backend: TkAgg' > $HOME/.matplotlib/matplotlibrc"
 
     # MS Windows (10), Python 3.7.
     - name: "MS Windows (10), Python 3.7, single processor, no GUI tests."
