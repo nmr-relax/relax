@@ -318,14 +318,36 @@ class Validate:
             repo_flag = False
 
         # Initial printout.
-        if file_arg:
-            sys.stdout.write("\nFSF copyright notice compliance checking for the file '%s%s%s'.\n" % (directory, sep, file_arg))
+        if self.args.committer_info:
+            sys.stdout.write("committer_info = {\n")
+            sys.stdout.flush()
         else:
-            sys.stdout.write("\nFSF copyright notice compliance checking for the directory '%s'.\n" % directory)
-        if not repo_flag:
-            sys.stdout.write("No version control repository found, only checking for missing copyrights!\n")
-        sys.stdout.write("\n")
-        sys.stdout.flush()
+            if file_arg:
+                sys.stdout.write("\nFSF copyright notice compliance checking for the file '%s%s%s'.\n" % (directory, sep, file_arg))
+            else:
+                sys.stdout.write("\nFSF copyright notice compliance checking for the directory '%s'.\n" % directory)
+            if not repo_flag:
+                sys.stdout.write("No version control repository found, only checking for missing copyrights!\n")
+            sys.stdout.write("\n")
+            sys.stdout.flush()
+
+        # Pre-saved committer information.
+        presaved_committer_info = []
+        for i in range(len(self.config.REPOS)):
+            # Unpack.
+            repo_path, repo_type, repo_start, repo_end, repo_head = self.config.REPOS[i]
+
+            # Not pre-saved.
+            if repo_type != "committer_info":
+                presaved_committer_info.append(None)
+                continue
+
+            # Read and store the data.
+            file = self.open_read_file(repo_path)
+            _locals = locals()
+            exec(file.read(), {}, _locals)
+            presaved_committer_info.append(_locals["committer_info"])
+            file.close()
 
         # Counters.
         files_total = 0
@@ -364,7 +386,7 @@ class Validate:
 
                 # Count the file.
                 files_total += 1
-                if not self.args.verbose:
+                if not self.args.verbose and not self.args.committer_info:
                     self.progress_meter(files_total)
 
                 # Full path to the file.
@@ -417,7 +439,7 @@ class Validate:
                     files_valid += 1
                     continue
 
-                # Get the committer and year information from the repository logs.
+                # Get the committer and year information from the repository logs or stored committer info file.
                 committer_info = {}
                 for i in range(len(self.config.REPOS)):
                     # Unpack.
@@ -437,9 +459,32 @@ class Validate:
                         self.git_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.GIT_START, author_switch=self.config.AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end)
 
                     # SVN history.
-                    else:
+                    elif repo_type == 'svn':
                         self.svn_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.SVN_START, author_switch=self.config.AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end)
+
+                    # Pre-saved committer information file.
+                    elif repo_type == 'committer_info':
+                        if file_path in presaved_committer_info[i]:
+                            for committer in presaved_committer_info[i][file_path]:
+                                # A new committer.
+                                if committer not in committer_info:
+                                    committer_info[committer] = []
+
+                                # Loop over the years.
+                                for year in presaved_committer_info[i][file_path][committer]:
+                                    if year not in committer_info[committer]:
+                                        committer_info[committer].append(year)
+
+                    # Config error.
+                    else:
+                        raise NameError("Unknown repository type '%s'." % repo_type) 
+
                 self.committer_info_cleanup(file_path_rename, committer_info)
+
+                # Output the committer info.
+                if self.args.committer_info:
+                    sys.stdout.write("    \"%s\": %s,\n" % (file_path, committer_info))
+                    continue
 
                 # Add any additional committer years.
                 if file_path in self.config.ADDITIONAL_COPYRIGHT_YEARS:
@@ -582,16 +627,19 @@ class Validate:
             percent_nonvalid = files_nonvalid / valid_sum * 100
 
         # Final printout.
-        sys.stdout.write("\n\nStatistics:\n\n")
-        sys.stdout.write("    %-35s %8i\n" % ("All files:", files_total))
-        sys.stdout.write("    %-35s %8i\n" % ("Blacklisted files:", files_blacklisted))
-        if repo_flag:
-            sys.stdout.write("    %-35s %8i\n" % ("Untracked files:", files_untracked))
-        sys.stdout.write("\n")
-        sys.stdout.write("    %-35s %8i\n" % ("Validated file count:", valid_sum))
-        sys.stdout.write("    %-35s %8i %8.2f%%\n" % ("Missing copyright notices:", files_missing, percent_missing))
-        if repo_flag and not self.args.missing:
-            sys.stdout.write("    %-35s %8i %8.2f%%\n" % ("Non-matching copyright notices:", files_nonvalid, percent_nonvalid))
+        if self.args.committer_info:
+            sys.stdout.write("}\n")
+        else:
+            sys.stdout.write("\n\nStatistics:\n\n")
+            sys.stdout.write("    %-35s %8i\n" % ("All files:", files_total))
+            sys.stdout.write("    %-35s %8i\n" % ("Blacklisted files:", files_blacklisted))
+            if repo_flag:
+                sys.stdout.write("    %-35s %8i\n" % ("Untracked files:", files_untracked))
+            sys.stdout.write("\n")
+            sys.stdout.write("    %-35s %8i\n" % ("Validated file count:", valid_sum))
+            sys.stdout.write("    %-35s %8i %8.2f%%\n" % ("Missing copyright notices:", files_missing, percent_missing))
+            if repo_flag and not self.args.missing:
+                sys.stdout.write("    %-35s %8i %8.2f%%\n" % ("Non-matching copyright notices:", files_nonvalid, percent_nonvalid))
 
         # Store the status for returning to the shell.
         self.status = files_missing + files_nonvalid
@@ -1131,6 +1179,7 @@ class Validate:
         parser.add_argument('--blank-config', action='store_true', dest='blank', default=False, help="Print out a blank configuration file for use with this program and then quit.")
         parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False, help="Verbose output.")
         parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help="Activate the debugging mode (this will also turn on the verbosity flag).")
+        parser.add_argument('--committer-info', action='store_true', dest='committer_info', default=False, help="Output the committer information for the currently configured repositories.  The contents output into a file can be subsequently used in the config file to avoid having to load history from old repositories.")
 
         # Parse and store the arguments.
         self.args = parser.parse_args()

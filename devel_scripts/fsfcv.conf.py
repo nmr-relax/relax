@@ -31,15 +31,16 @@ SIG_CODE = 8
 
 # The repository checkout copies, to allow for repository migrations, ordered by date from oldest to newest.
 # The data consists of:
-#       0 - The repository path.
-#       1 - The repository type (either "svn" or "git").
+#       0 - The repository path or committer information file path.
+#       1 - The repository type (either "svn", "git", or "committer_info").
 #       2 - The start date.
 #       3 - The end date.
 #       4 - The optional HEAD directory for svn.
 # Type:  list of [str, str, int, int, str or None]
 REPOS = [
 #    ["https://svn.code.sf.net/p/nmr-relax/code-svn-archive", "svn", 2001, 2016, "trunk"],    # The online repository, but far too slow to use.
-    ["/data/relax/relax_sf_svn_archive", "svn", 2001, 2016, ""],
+    #["/data/relax/relax_sf_svn_archive", "svn", 2001, 2016, ""],
+    ["devel_scripts/fsfcv.svn_committer_info.bz2", "committer_info", 2001, 2016, ""],
     [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
 ]
 
@@ -294,6 +295,8 @@ GIT_START = {
         "Created a data container for storing experimental details. (2009-10-09 18:24:11 +0000)",
     "data_store/gui.py":
         "Created some data structures for holding all the GUI specific information. (2010-01-26 16:27:29 +0000)",
+    "devel_scripts/README":
+        "FSF Copyright Validation script: Support for saving and reading the committer information. (2019-04-23 14:33:17 +0200)",
     "devel_scripts/memory_management/GUI_uf_align_tensor_init.py":
         "Created a script for testing the memory management when calling the time GUI user function. (2015-02-04 13:18:26 +0000)",
     "devel_scripts/memory_management/GUI_uf_time.py":
