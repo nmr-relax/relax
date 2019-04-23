@@ -23,10 +23,10 @@
 language: python
 env:
   global:
-    - UPGRADE=false
     - MPI=false
-    - WXPYTHON=false
     - OLD_MATPLOTLIB=false
+    - UPGRADE=false
+    - WXPYTHON=false
 
 matrix:
   include:
