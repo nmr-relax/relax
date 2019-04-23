@@ -190,7 +190,7 @@ script:
     - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --verification-tests; fi
 
     # API documentation build.
-    - if [[ $API_BUILD == "true" ]]; then scons api_manual_html; fi
+    - if [[ $API_BUILD == "true" && $TEST == "false" ]]; then scons api_manual_html; fi
 
     # Run the FSF copyright validation script.
     - if [[ $FSFCV == "true" ]]; then git fetch --unshallow && ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
