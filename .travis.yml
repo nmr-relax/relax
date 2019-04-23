@@ -91,6 +91,10 @@ matrix:
         - virtualenv venv -p python3
         - source venv/bin/activate
 
+        # Fix for the Mac OS image rendering back end of matplotlib.
+        - mkdir -p $HOME/.matplotlib/
+        - "echo 'backend: TkAgg' > $HOME/.matplotlib/matplotlibrc"
+
     # MS Windows (10), Python 3.7.
     - name: "MS Windows (10), Python 3.7, single processor, no GUI tests."
       os: windows
