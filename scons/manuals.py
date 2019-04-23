@@ -310,8 +310,8 @@ def compile_api_manual_html(target, source, env):
 
             # The file info.
             row = line.split()
-            if len(row) >= 2 and row[1] == 'File':
-                # Skip wxPython.
+            if len(row) >= 2 and row[1] in ['File', 'In']:
+                # Skip wxPython docstring errors (not import errors).
                 if "/wx/" in row[2]:
                     pass
 
