@@ -70,15 +70,6 @@ matrix:
       language: python
       dist: xenial
 
-    # FSF copyright validation, Linux (Ubuntu Xenial 16.04), Python 3.7.
-    #   https://docs.travis-ci.com/user/reference/xenial
-    #   https://github.com/travis-ci/travis-ci/issues/9815
-    - name: "FSF copyright validation"
-      python: 3.7
-      language: python
-      env: FSFCV=true
-      dist: xenial
-
     # Linux (Ubuntu Xenial 16.04), Python 3.7.
     # Try upgrade all pip packages.
     - name: "Linux (Ubuntu 16.04), Python 3.7, single processor, no GUI tests, upgraded pip packages."
@@ -122,6 +113,15 @@ matrix:
         # Do not work
         # - mpiexec -np 2 python relax --multi='mpi4py' -i
         # - mpiexec -np 2 python -m mpi4py relax --multi='mpi4py' -i
+
+    # FSF copyright validation, Linux (Ubuntu Xenial 16.04), Python 3.7.
+    #   https://docs.travis-ci.com/user/reference/xenial
+    #   https://github.com/travis-ci/travis-ci/issues/9815
+    - name: "FSF copyright validation"
+      python: 3.7
+      language: python
+      env: FSFCV=true
+      dist: xenial
 
 install:
     # Fail on first error.
