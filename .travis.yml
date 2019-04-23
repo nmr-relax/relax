@@ -89,6 +89,9 @@ matrix:
         - virtualenv venv -p python3
         - source venv/bin/activate
 
+        # Fix for matplotlib and non-framework Python.
+        - echo "backend: TkAgg" > ~/.matplotlib/matplotlibrc
+
     # MS Windows (10), Python 3.7.
     - name: "MS Windows (10), Python 3.7, single processor, no GUI tests."
       os: windows
