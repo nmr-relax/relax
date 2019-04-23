@@ -156,7 +156,7 @@ script:
     #    - if [[ $WXPYTHON == "false" && $MPI == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
 
     # Run the FSF copyright validation script.
-    - if [[ $FSFCV == "true" ]]; then ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py -d info.py; fi
+    - if [[ $FSFCV == "true" ]]; then git fetch --unshallow; ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py -d info.py; fi
 
 cache: pip
 git:
