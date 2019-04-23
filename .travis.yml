@@ -23,11 +23,13 @@
 language: python
 env:
   global:
-    - UPGRADE=false
-    - MPI=false
-    - WXPYTHON=false
-    - OLD_MATPLOTLIB=false
+    - API_BUILD=false
     - FSFCV=false
+    - MPI=false
+    - OLD_MATPLOTLIB=false
+    - TEST=true
+    - UPGRADE=false
+    - WXPYTHON=false
 
 matrix:
   include:
@@ -114,13 +116,17 @@ matrix:
         # - mpiexec -np 2 python relax --multi='mpi4py' -i
         # - mpiexec -np 2 python -m mpi4py relax --multi='mpi4py' -i
 
+    # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
+    - name: "API documentation build"
+      python: 2.7
+      language: python
+      env: TEST=false API_BUILD=true
+
     # FSF copyright validation, Linux (Ubuntu Xenial 16.04), Python 3.7.
-    #   https://docs.travis-ci.com/user/reference/xenial
-    #   https://github.com/travis-ci/travis-ci/issues/9815
     - name: "FSF copyright validation"
       python: 3.7
       language: python
-      env: FSFCV=true
+      env: TEST=false FSFCV=true
       dist: xenial
 
 install:
@@ -147,6 +153,9 @@ install:
     # Install python package with pip for running with multiple processors.
     - if [[ $MPI == "true" ]]; then pip install mpi4py; fi
 
+    # Install epydoc for the API documentation build.
+    - if [[ $API_BUILD == "true" ]]; then pip install epydoc; fi
+
     # Install wxPython 3.0 using Conda.
     - if [[ $WXPYTHON == "true" ]]; then conda install -c https://conda.anaconda.org/travis wxpython; fi
 
@@ -158,20 +167,23 @@ script:
     - set -e
 
     # relax information printout.
-    - if [[ $MPI == "false" && $FSFCV == "false" ]]; then ./relax -i; fi
-    - if [[ $MPI == "true" && $FSFCV == "false" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
+    - if [[ $MPI == "false" && $TEST == "true" ]]; then ./relax -i; fi
+    - if [[ $MPI == "true" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
 
     # Single processor test suite execution.
-    - if [[ $MPI == "false" && $WXPYTHON == "true"  && $FSFCV == "false" ]]; then ./relax --time --test-suite; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $FSFCV == "false" ]]; then ./relax --time --system-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $FSFCV == "false" ]]; then ./relax --time --unit-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $FSFCV == "false" ]]; then ./relax --time --verification-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "true"  && $TEST == "true" ]]; then ./relax --time --test-suite; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --system-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --unit-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --verification-tests; fi
 
     # Multiple processor test suite execution.
-    - if [[ $MPI == "true" && $WXPYTHON == "true"  && $FSFCV == "false" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $FSFCV == "false" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $FSFCV == "false" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $FSFCV == "false" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --verification-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "true"  && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --verification-tests; fi
+
+    # API documentation build.
+    - if [[ $API_BUILD == "true" ]]; then scons api_manual_html; fi
 
     # Run the FSF copyright validation script.
     - if [[ $FSFCV == "true" ]]; then git fetch --unshallow && ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
