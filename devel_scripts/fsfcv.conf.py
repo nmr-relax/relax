@@ -33,16 +33,39 @@ SIG_CODE = 8
 # The data consists of:
 #       0 - The repository path or committer information file path.
 #       1 - The repository type (either "svn", "git", or "committer_info").
-#       2 - The start date.
-#       3 - The end date.
+#       2 - The start date (year).
+#       3 - The end date (year).
 #       4 - The optional HEAD directory for svn.
 # Type:  list of [str, str, int, int, str or None]
-REPOS = [
-#    ["https://svn.code.sf.net/p/nmr-relax/code-svn-archive", "svn", 2001, 2016, "trunk"],    # The online repository, but far too slow to use.
-    #["/data/relax/relax_sf_svn_archive", "svn", 2001, 2016, ""],
-    ["devel_scripts/fsfcv.svn_committer_info.bz2", "committer_info", 2001, 2016, ""],
-    [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
-]
+repo_types = 'svn archive'
+
+# Online SVN repository, but far too slow to use (and SourceForge might terminate the nmr-relax project).
+if repo_types == 'online svn':
+    REPOS = [
+        ["https://svn.code.sf.net/p/nmr-relax/code-svn-archive", "svn", 2001, 2016, "trunk"],
+        [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
+    ]
+
+# Local SVN archive.
+elif repo_types == 'svn archive':
+    REPOS = [
+        ["/data/relax/relax_sf_svn_archive", "svn", 2001, 2016, ""],
+        [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
+    ]
+
+# Saved SVN committer information.
+elif repo_types == 'saved svn':
+    REPOS = [
+        ["devel_scripts/fsfcv.svn_committer_info.bz2", "committer_info", 2001, 2016, ""],
+        [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
+    ]
+
+# Saved committer information history (to end 2018).
+elif repo_types == 'saved info':
+    REPOS = [
+        ["devel_scripts/fsfcv.committer_info.bz2", "committer_info", 2001, 2018, ""],
+        [".", "git", 2019, 2050, None],
+    ]
 
 # README file creation variables, for appending copyright notices to README files.
 README_APPEND_NOTICE = False
