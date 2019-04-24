@@ -119,7 +119,7 @@ matrix:
     - name: "API documentation build"
       python: 2.7
       language: python
-      env: WXPYTHON=true TEST=false API_BUILD=true
+      env: WXPYTHON=true OLD_MATPLOTLIB=true TEST=false API_BUILD=true
       before_install:
         # Conda is used to install wxPython 3.0.
         - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
