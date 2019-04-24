@@ -324,7 +324,7 @@ def compile_api_manual_html(target, source, env):
     for issue in issues:
         # Skip wxPython docstring errors (not import errors).
         if "wx/" in issue:
-            pass
+            continue
 
         # Fail on everything else.
         raise NameError("Errors or warnings found.")
