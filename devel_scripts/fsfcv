@@ -464,20 +464,20 @@ class Validate:
 
                     # Pre-saved committer information file.
                     elif repo_type == 'committer_info':
-                        if file_path in presaved_committer_info[i]:
-                            for committer in presaved_committer_info[i][file_path]:
+                        if file_path_rename in presaved_committer_info[i]:
+                            for committer in presaved_committer_info[i][file_path_rename]:
                                 # A new committer.
                                 if committer not in committer_info:
                                     committer_info[committer] = []
 
                                 # Loop over the years.
-                                for year in presaved_committer_info[i][file_path][committer]:
+                                for year in presaved_committer_info[i][file_path_rename][committer]:
                                     if year not in committer_info[committer]:
                                         committer_info[committer].append(year)
 
                     # Config error.
                     else:
-                        raise NameError("Unknown repository type '%s'." % repo_type) 
+                        raise NameError("Unknown repository type '%s'." % repo_type)
 
                 self.committer_info_cleanup(file_path_rename, committer_info)
 
@@ -488,7 +488,7 @@ class Validate:
                         committer_info[author].sort()
 
                     # Output the info and skip the rest.
-                    sys.stdout.write("    \"%s\": %s,\n" % (file_path, committer_info))
+                    sys.stdout.write("    \"%s\": %s,\n" % (file_path_rename, committer_info))
                     sys.stdout.flush()
                     continue
 
