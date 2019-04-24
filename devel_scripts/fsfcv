@@ -335,7 +335,7 @@ class Validate:
         presaved_committer_info = []
         for i in range(len(self.config.REPOS)):
             # Unpack.
-            repo_path, repo_type, repo_start, repo_end, repo_head = self.config.REPOS[i]
+            repo_path, repo_type, repo_start, repo_end, repo_head, trunc_flag = self.config.REPOS[i]
 
             # Not pre-saved.
             if repo_type != "committer_info":
@@ -443,7 +443,7 @@ class Validate:
                 committer_info = {}
                 for i in range(len(self.config.REPOS)):
                     # Unpack.
-                    repo_path, repo_type, repo_start, repo_end, repo_head = self.config.REPOS[i]
+                    repo_path, repo_type, repo_start, repo_end, repo_head, trunc_flag = self.config.REPOS[i]
 
                     # Find renames in later repositories.
                     file_path_rename = file_path
@@ -456,11 +456,11 @@ class Validate:
 
                     # Git history.
                     if repo_type == 'git':
-                        self.git_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.GIT_START, author_switch=self.config.AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end)
+                        self.git_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.GIT_START, author_switch=self.config.AUTHOR_SWITCH, committer_info=committer_info, after=repo_start, before=repo_end, trunc=trunc_flag)
 
                     # SVN history.
                     elif repo_type == 'svn':
-                        self.svn_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.SVN_START, author_switch=self.config.AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end)
+                        self.svn_log_data(file_path_rename, repo_path=repo_path, exclude=self.config.EXCLUDE, start_commit=self.config.SVN_START, author_switch=self.config.AUTHOR_SWITCH, svn_head=repo_head, committer_info=committer_info, after=repo_start, before=repo_end, trunc=trunc_flag)
 
                     # Pre-saved committer information file.
                     elif repo_type == 'committer_info':
@@ -961,7 +961,7 @@ class Validate:
         return year_string
 
 
-    def git_log_data(self, file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], committer_info={}, after=None, before=None):
+    def git_log_data(self, file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], committer_info={}, after=None, before=None, trunc=False):
         """Get the committers and years of significant commits from the git log.
 
         @param file_path:           The full file path to obtain the git info for.
@@ -980,6 +980,8 @@ class Validate:
         @type after:                int or None
         @keyword before:            Show commits older than a specific date.
         @type before:               int or None
+        @keyword trunc:             A flag which if True indicates a truncated start (so don't add the first commit).
+        @type trunc:                bool
         """
 
         # Init.
@@ -1109,12 +1111,22 @@ class Validate:
 
         # Always include the very first commit.
         if first_committer:
-            if first_committer not in committer_info:
-                committer_info[first_committer] = []
-            if not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer]):
-                if self.args.debug:
-                    sys.stdout.write(debug_format % ("Adding first commit.", first_committer, first_commit_key))
-                committer_info[first_committer].append(first_year)
+            # Handle truncated start dates.
+            if trunc:
+                # If no one else is recorded, then assume this is the real first commit.
+                if len(committer_info) == 0:
+                    if self.args.debug:
+                        sys.stdout.write(debug_format % ("Adding first commit.", first_committer, first_commit_key))
+                    committer_info[first_committer] = [first_year]
+
+            # Normal starting date.
+            else:
+                if first_committer not in committer_info:
+                    committer_info[first_committer] = []
+                if not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer]):
+                    if self.args.debug:
+                        sys.stdout.write(debug_format % ("Adding first commit.", first_committer, first_commit_key))
+                    committer_info[first_committer].append(first_year)
 
 
     def open_read_file(self, file_name=None):
@@ -1319,7 +1331,7 @@ class Validate:
             self.config.REPOS.append(['.', type, None, None, None])
 
 
-    def svn_log_data(self, file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], svn_head=None, committer_info={}, after=None, before=None):
+    def svn_log_data(self, file_path, repo_path=None, exclude=[], start_commit=[], author_switch=[], svn_head=None, committer_info={}, after=None, before=None, trunc=False):
         """Get the committers and years of significant commits from the svn log.
 
         @param file_path:           The full file path to obtain the git info for.
@@ -1340,6 +1352,8 @@ class Validate:
         @type after:                int or None
         @keyword before:            Show commits older than a specific date.
         @type before:               int or None
+        @keyword trunc:             A flag which if True indicates a truncated start (so don't add the first commit).
+        @type trunc:                bool
         """
 
         # Init.
@@ -1540,12 +1554,22 @@ class Validate:
 
         # Always include the very first commit.
         if first_committer:
-            if first_committer not in committer_info:
-                committer_info[first_committer] = []
-            if not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer]):
-                if self.args.debug:
-                    sys.stdout.write(debug_format % ("Adding first commit.", first_committer, first_commit_key))
-                committer_info[first_committer].append(first_year)
+            # Handle truncated start dates.
+            if trunc:
+                # If no one else is recorded, then assume this is the real first commit.
+                if len(committer_info) == 0:
+                    if self.args.debug:
+                        sys.stdout.write(debug_format % ("Adding first commit.", first_committer, first_commit_key))
+                    committer_info[first_committer] = [first_year]
+
+            # Normal starting date.
+            else:
+                if first_committer not in committer_info:
+                    committer_info[first_committer] = []
+                if not len(committer_info[first_committer]) or first_year < min(committer_info[first_committer]):
+                    if self.args.debug:
+                        sys.stdout.write(debug_format % ("Adding first commit.", first_committer, first_commit_key))
+                    committer_info[first_committer].append(first_year)
 
 
     def translate_committer_name(self, committer):

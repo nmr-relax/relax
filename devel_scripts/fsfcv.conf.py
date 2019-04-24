@@ -36,35 +36,36 @@ SIG_CODE = 8
 #       2 - The start date (year).
 #       3 - The end date (year).
 #       4 - The optional HEAD directory for svn.
+#       5 - Flag which if True indicates a truncated start (so don't add the first commit).
 # Type:  list of [str, str, int, int, str or None]
 repo_types = 'saved info'
 
 # Online SVN repository, but far too slow to use (and SourceForge might terminate the nmr-relax project).
 if repo_types == 'online svn':
     REPOS = [
-        ["https://svn.code.sf.net/p/nmr-relax/code-svn-archive", "svn", 2001, 2016, "trunk"],
-        [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
+        ["https://svn.code.sf.net/p/nmr-relax/code-svn-archive", "svn", 2001, 2016, "trunk", False],
+        [".", "git", 2001, 2050, None, False],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
     ]
 
 # Local SVN archive.
 elif repo_types == 'svn archive':
     REPOS = [
-        ["/data/relax/relax_sf_svn_archive", "svn", 2001, 2016, ""],
-        [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
+        ["/data/relax/relax_sf_svn_archive", "svn", 2001, 2016, "", False],
+        [".", "git", 2001, 2050, None, False],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
     ]
 
 # Saved SVN committer information.
 elif repo_types == 'saved svn':
     REPOS = [
-        ["devel_scripts/fsfcv.svn_committer_info.bz2", "committer_info", 2001, 2016, ""],
-        [".", "git", 2001, 2050, None],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
+        ["devel_scripts/fsfcv.svn_committer_info.bz2", "committer_info", 2001, 2016, "", False],
+        [".", "git", 2001, 2050, None, False],    # Overlapping with the original svn repository to pull in non-tracked svn branch merges.
     ]
 
 # Saved committer information history (to end 2018).
 elif repo_types == 'saved info':
     REPOS = [
-        ["devel_scripts/fsfcv.committer_info.bz2", "committer_info", 2001, 2018, ""],
-        [".", "git", 2019, 2050, None],
+        ["devel_scripts/fsfcv.committer_info.bz2", "committer_info", 2001, 2018, "", False],
+        [".", "git", 2019, 2050, None, True],
     ]
 
 # README file creation variables, for appending copyright notices to README files.
