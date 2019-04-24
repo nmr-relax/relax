@@ -272,8 +272,8 @@ def compile_api_manual_html(target, source, env):
     for name in exclude:
         epydoc_cmd = epydoc_cmd + ' --exclude=' + name
 
-    # All the files of the current directory.
-    blacklist = ['README.md', 'relax', 'relax.bat', 'relax_gui_mode.py']
+    # Process all files and directories in the base relax directory.
+    blacklist = ['relax_gui_mode.py']
     files = listdir(getcwd())
     for file in files:
         # Blacklisted.
@@ -286,6 +286,10 @@ def compile_api_manual_html(target, source, env):
 
         # Hidden files and directories.
         if search('^\.', file):
+            continue
+
+        # Not a Python file.
+        if not path.isdir(file) and not search('.py$', file):
             continue
 
         # Otherwise add it.
