@@ -37,7 +37,7 @@ SIG_CODE = 8
 #       3 - The end date (year).
 #       4 - The optional HEAD directory for svn.
 # Type:  list of [str, str, int, int, str or None]
-repo_types = 'svn archive'
+repo_types = 'saved info'
 
 # Online SVN repository, but far too slow to use (and SourceForge might terminate the nmr-relax project).
 if repo_types == 'online svn':
