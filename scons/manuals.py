@@ -305,26 +305,28 @@ def compile_api_manual_html(target, source, env):
     # System call.
     pipe = Popen(epydoc_cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=False)
 
-    # Parse the output to check for issues.
-    error = False
+    # Parse the output.
+    issues = []
     for line in pipe.stdout.readlines():
         if len(line.strip()) and line[0] in ['+', '|']:
             # Printout.
             sys.stdout.write(line)
 
-            # The file info.
-            row = line.split()
-            if len(row) >= 2 and row[1] in ['File', 'In']:
-                # Skip wxPython docstring errors (not import errors).
-                if "/wx/" in row[2]:
-                    pass
+            # A new issue
+            if search("^\+----------", line):
+                issues.append("")
+                continue
 
-                # Problem found.
-                else:
-                    error = True
+            # Append the text.
+            issues[-1] += line[2:].rstrip()
 
-    # Fail.
-    if error:
+    # Check for issues.
+    for issue in issues:
+        # Skip wxPython docstring errors (not import errors).
+        if "wx/" in issue:
+            pass
+
+        # Fail on everything else.
         raise NameError("Errors or warnings found.")
 
 
