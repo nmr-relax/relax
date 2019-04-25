@@ -320,7 +320,6 @@ class Validate:
         # Initial printout.
         if self.args.committer_info:
             sys.stdout.write("committer_info = {\n")
-            sys.stdout.flush()
         else:
             if file_arg:
                 sys.stdout.write("\nFSF copyright notice compliance checking for the file '%s%s%s'.\n" % (directory, sep, file_arg))
@@ -329,7 +328,16 @@ class Validate:
             if not repo_flag:
                 sys.stdout.write("No version control repository found, only checking for missing copyrights!\n")
             sys.stdout.write("\n")
-            sys.stdout.flush()
+        sys.stdout.write("\nRepository information:\n\n")
+        rule = "-" * 112 + "\n"
+        sys.stdout.write(rule)
+        sys.stdout.write("%-50s %-15s %-10s %-10s %-10s %-12s\n" % ("Path", "Type", "Start", "End", "SVN HEAD", "Trunc start"))
+        sys.stdout.write(rule)
+        for i in range(len(self.config.REPOS)):
+            sys.stdout.write("%-50s %-15s %-10s %-10s %-10s %-10s\n" % tuple(self.config.REPOS[i]))
+        sys.stdout.write(rule)
+        sys.stdout.write("\n\n")
+        sys.stdout.flush()
 
         # Pre-saved committer information.
         presaved_committer_info = []
