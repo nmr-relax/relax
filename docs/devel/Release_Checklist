@@ -23,22 +23,9 @@
 Preparations
 ============
 
-Prior to release, check that everything is ready.  Firstly compile the C modules and run the test suite - on all possible architectures - on the master branch by typing:
+Prior to release, check that everything is ready.  These steps are now automated thanks to Travis CI (https://en.wikipedia.org/wiki/Travis_CI).  Simply check that the latest master branch builds are passing:
 
-$ git checkout master
-$ scons clean_all
-$ scons
-$ relax --test-suite
-
-Then check that the docstrings are correct by building the API documentation with:
-
-$ scons api_manual_html
-$ scons clean
-
-Check through all the error and warning messages.  And finally make sure all copyright notices are correct by running:
-
-$ ./devel_scripts/fsfcv -c devel_scripts/fsfcv.conf.py
-
+    - https://travis-ci.com/nmr-relax/relax/builds
 
 
 Temporary branch
