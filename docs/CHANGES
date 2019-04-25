@@ -20,6 +20,67 @@
 ###############################################################################
 
 
+Version 4.1.2
+(25 April 2019, from master)
+https://sourceforge.net/p/nmr-relax/code/ci/4.1.2/tree/
+
+    Features:
+        * relax GUI: Improved tooltips for the buttons of the user function windows and wizards.  This follows from the mailing list discussion at https://sourceforge.net/p/nmr-relax/mailman/message/36611489/.
+        * User manual: Addition of the newly published frame order reference.
+        * Formatting improvements for the user manual bibliography and index sections.
+
+
+    Changes:
+        * Development scripts: Improvements to the Python detection in the Python module seeking script.
+        * Release checklist document: Updated the text to better match the new release process.
+        * HTML manual: CSS fix for newer LaTeX2HTML versions.  The text width in the HTML appears to now be fixed to a maximum width matching the text dimensions in the PDF.  This looks bad together with the wider images and code snippets.
+        * System tests: Added two tests to catch bug #12 (https://sourceforge.net/p/nmr-relax/tickets/12/).  This is the failure to catch the '#' character when setting the molecule name.  The tests are Structure.test_bug_12_hash_in_mol_name_via_arg and Structure.test_bug_12_hash_in_mol_name_via_file.  These cover the two ways a '#' character can enter a molecule name - via the file name or via the set_mol_name argument.  Both the structure.read_pdb and structure.read_xyz user functions are checked.
+        * Test suite: 2 new system tests to catch the failure of reading newer Bruker DC files.  The system tests are Bruker.test_bug_13_T1_read_fail and Bruker.test_bug_13_T2_read_fail and these catch bug #13 (https://sourceforge.net/p/nmr-relax/tickets/13/).
+        * User function definitions: Clarifications for the bruker.read text.
+        * User manual: Clean up of the bibliography entry titles.  Species names are properly italicised with genus names capitalised, nuclear isotopes are superscripted, R1rho, R2, etc. are properly subscripted, the Perrin articles are translated into English, symbols are now symbols, and unnecessary capitalisation has been removed from the bibtex.
+        * User manual: Standardisation of the frame order indexing.
+        * User manual: Standardisation of the relaxation dispersion indexing.
+        * Travis CI config: Attempt at installing wxPython for Ubuntu and Python 2.7.  This would allow for the whole test suite to be run on Travis CI on at least one OS.  The instructions come from the stackoverflow response by dthor at https://stackoverflow.com/questions/29290011/using-travis-ci-with-wxpython-tests.
+        * FSF Copyright Validation script: The script now returns an exit status.
+        * Travis CI config: Avoid updating Conda.  This seems to cause a breakage in installing matplotlib.
+        * Travis CI: matplotlib is now manually installed to allow for older versions on Python 2.7.  The current pip default of 3.0.3 is incompatible with Python 2.7.  It is not clear how the installation of Conda (for wxPython support) caused the 3.0.3 version to be installed instead of the 2.2.4 version.  So now the version is manually set in the Travis CI script.
+        * Travis CI config: Enable xvfb to allow for wxPython and testing of the GUI.
+        * Test suite: Restored the original test suite order to reveal relaxation dispersion bugs.  The system tests should come first.  This allows the maximum amount of code that might accidentally change read-only variables to run prior to the unit tests, where such changes are often subsequently picked up.
+        * Test suite: The keyboard interrupt terminates the test suite once again.
+        * FSF Copyright Validation script: The return status now starts at 0 to allow for early returns.
+        * FSF Copyright Validation script: Support for saving and reading the committer information.  This allows the committer information (file name, committer name, and copyright years) from older repositories to be saved and later read into the script.  In this case, the old Subversion history has been read and the committer information placed into the fsfcv.svn_committer_info.bz2 file (in the devel_scripts/ directory).  This compressed file is now specified in the fsfcv.conf.py configuration file.  The result is that the fsfcv script can be run on the relax git repository without requiring a checkout of the old SVN repository.
+        * Travis CI config: Improvements to the comments and spacing.
+        * API manual: Scons compilation via epydoc now fails if a warning or error is found.  This manually parses the epydoc output to skip the unavoidable wxPython warnings.  Any error or warning will now cause an error to be raised.  This results in a non-zero return code from scons to allow the api_manual_html target to be checked in scripts.
+        * Travis CI config: Named all of the jobs.
+        * Travis CI config: General clean up and execution of the software verification tests.
+        * API manual: Scons compilation via epydoc now fails if an import error occurs.
+        * Travis CI config: Alphabetical ordering of environmental variables and required Python packages.
+        * Travis CI config: Creation of an API documentation build job.
+        * Travis CI config: Fix for the Mac OS X build.  This job passes, but the test suite fails with the following traceback message when trying to import matplotlib: "ImportError: Python is not installed as a framework. The Mac OS X backend will not be able to function correctly if Python is not installed as a framework. See the Python documentation for more information on installing Python as a framework on Mac OS X. Please either reinstall Python as a framework, or try one of the other backends. If you are using (Ana)Conda please install python.app and replace the use of 'python' with 'pythonw'. See 'Working with Matplotlib on OSX' in the Matplotlib FAQ for more information.". The fix is simply to create $HOME/.matplotlib/matplotlibrc with the contents 'backend: TkAgg'.
+        * API manual: Greater filtering of the file list passed to epydoc.  Now only relax modules ending in *.py are processed.  That means that all base directory scripts, including 'sconstruct', are excluded from the API documentation.
+        * API manual: More reliable parsing of the epydoc output to detect non-wxPython issues.
+        * FSF Copyright Validation configuration: Improvements to the repository configuration section.  The different configurations can now be chosen via a variable, rather than requiring code to be uncommented.
+        * FSF Copyright Validation script: Sorted the years for the committer information output.  This makes it easier to read the file and will help with compression.
+        * FSF Copyright Validation script: A new file with all committer information up to 2018.  This is to allow for much faster execution of the FSFCV script, by only looking at the git log from the start of 2019.
+        * FSF Copyright Validation script: Support for skipping the first commit.  This is for truncated history, where for example the git repository start date is set to a later date than the git repository migration or initial SVN commit, when the committer information up to a given date is read from a file.
+        * FSF Copyright Validation script: Fix for tracking renames when saved committer information is used.
+        * Travis CI config: Execution of the FSF copyright validation script as part of the testing.  This is set to run only on a new Python 3.7 build job, simply to avoid unnecessary repetition.  All of the git history needs to be fetched for the script to work, and the script requires the pytz Python module.
+        * FSF Copyright Validation script: Addition of a repository configuration printout.  This is to help in debugging, as it is otherwise not clear where the source of the copyright information comes from.
+        * Release checklist document: Rewrote the 'preparation' instructions for Travis CI.  All previous manual checking is now performed automatically by Travis CI for each push to the GitHub mirror repository.
+
+
+    Bugfixes:
+        * relax GUI: wxPython-Phoenix 4.x fix to allow relax to start again.  In the later wxPython versions, relax would not be able to start either the GUI or any of the test suite due to a new error "wx._core.PyNoAppError: The wx.App object must be created first!".  This was not present in wxPython-Phoenix 3.  The Relax_icons class (a wx.IconBundle derived class) is no longer instantiated on import.
+        * Structure loading: Fix for bug #12, the acceptance of the invalid '#' character in molecule names.  See https://sourceforge.net/p/nmr-relax/tickets/12/.  A simple check has not been added to the load_pdb() and load_xyz() functions of the internal structural object in lib.structure.internal.object.  This ensures that the '#' character can never be set as the molecule name, independently if it was taken from a file name or set via the set_mol_name arguments of the structure.read_pdb or structure.read_xyz user functions.
+        * Bruker DC: Complete redesign of the backend to support reading newer (or older) file versions.  This fixes bug #13 (https://sourceforge.net/p/nmr-relax/tickets/13/), the failure of reading newer Bruker DC files.  The backend has been resigned so that the relax library produces a complex Python object representation of the Bruker DC results file.  This object now stores all of the data present within the Bruker DC file.  The design is more flexible as precise column ordering no longer matters.
+        * Fix for bug #14, the freezing of user functions in the GUI.  See https://sourceforge.net/p/nmr-relax/tickets/14/.  The user functions freeze if an error occurs that is not a RelaxError, with the mouse pointer stuck on the busy cursor.  These non-RelaxErrors are now caught and manually dealt with by the GUI interpreter.  Like all GUI freezing bugs, this was introduced with the huge GUI speed up prior in relax 4.1.0.  These also only to appear to be a freeze, but it is actually the failure to update and show the relax controller combined with not turning off the busy mouse cursor.
+        * GUI bug fix: Avoidance of the numpy depreciation of '== None'.  This deprecation causes the GUI to fail with recent numpy versions.
+        * Relaxation dispersion: Protection of all of the MODEL_PARAMS_* variables from modification.  These are now only used with copy.deepcopy().  This removes a number of bugs in which the lists, which should be read-only, are permanently modified by the addition of 'r1'.  The system tests add 'r1' and then the unit tests subsequently fail.  This would also be an issue if an experiment without the 'r1' parameter is analysed after one with that parameter, without restarting relax.
+        * Relaxation dispersion bug fix: The 'r1' parameter was missing from the nested parameter algorithm.  This is the nesting_param() function of the specific_analyses.relax_disp.model module.  The 'r1' parameter must be treated differently from the other model parameters, just as the 'r2*' parameters are.
+        * Dispersion auto-analysis: Bug fix for the plotting of the R1 parameter.  The plotting relied on the insertion of the 'r1' parameter into the read only MODEL_PARAMS_* variables of lib.dispersion.variables.  Now the Model_class class from specific_analyses.relax_disp.models is being used to dynamically determine the parameters of the model.
+
+
+
 Version 4.1.1
 (8 March 2019, from master)
 https://sourceforge.net/p/nmr-relax/code/ci/4.1.1/tree/
