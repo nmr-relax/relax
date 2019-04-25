@@ -118,6 +118,7 @@ BLACKLISTED_FILES = [
     'devel_scripts/travis-ci/requirements.txt',                 # Configuration script.
     'docs/COPYING',                                             # The original GPLv3 licence text.
     'docs/html/clean',                                          # Trivial script.
+    'docs/relax.pdf',                                           # Copyright statements within the PDF file itself.
     'docs/latex/gpl-3.0.tex',                                   # The original GPLv3 licence text.
     'docs/latex/nth.sty',                                       # Public domain.
     'docs/latex/relax_version.tex',                             # Single line auto-generated file.
