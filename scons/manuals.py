@@ -326,6 +326,10 @@ def compile_api_manual_html(target, source, env):
         if "wx/" in issue:
             continue
 
+        # Skip pystarlib docstring errors (not import errors).
+        if "pystarlib/" in issue:
+            continue
+
         # Fail on everything else.
         raise NameError("Errors or warnings found.")
 
