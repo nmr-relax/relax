@@ -214,7 +214,7 @@ Modify the http://www.nmr-relax.com/download.html webpage to point to the newest
 Manual
 ------
 
-Create the HTML version of the manual with the commands:
+For the HTML manual, the latest 'relax_manual/rX' branch of the relax fork of latex2html must be used (https://sourceforge.net/p/nmr-relax/code-latex2html/ci/master/tree/).  The 'bmrblib/' and 'minfx/' directories from the checked out repositories must also be present.  Create the manual with the commands:
 
 $ cd relax_git_repository_directory/
 $ git checkout 4.1.0
@@ -230,6 +230,7 @@ $ cp -urvp relax_git_repository_directory/docs/html/* .
 
 To restore any missing redirects, finally run:
 
+$ cd ..
 $ python .setup_redirects.py
 
 Commit the changes with a message such as "Updated the relax HTML manual at http://www.nmr-relax.com/manual/index.html to version 4.1.0.".
