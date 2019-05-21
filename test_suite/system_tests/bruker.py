@@ -97,6 +97,50 @@ class Bruker(SystemTestCase):
             i += 1
 
 
+    def test_bug_15_NOE_read_fail(self):
+        """Test catching U{bug #15<https://sourceforge.net/p/nmr-relax/tickets/15/>}, the failure reading a Bruker DC NOE file as submitted by Stefano Ciurli."""
+
+        # The data ID.
+        ri_ids = ['T1_500', 'T2_500', 'NOE_500']
+        types = ['R1', 'R2', 'NOE']
+        files = ['bug_13_APO_T1_500_trunc.txt', 'bug_13_APO_T2_500_trunc.txt', 'bug_15_APO_Noe_500_trunc.txt']
+
+        # The data path.
+        dir = path.join(status.install_path, 'test_suite', 'shared_data', 'bruker_files')
+
+        # Create a data pipe and read the sequence.
+        self.interpreter.pipe.create('bug_13', 'mf')
+        self.interpreter.sequence.read(file='bug_13_sequence', dir=dir, res_num_col=2, res_name_col=1)
+
+        # Read the Bruker DC files to trigger the bug.
+        for i in range(len(ri_ids)):
+            self.interpreter.bruker.read(ri_id=ri_ids[i], file=files[i], dir=dir)
+
+        # Check the data in the relax data store.
+        self.assertEqual(cdp.ri_ids, ri_ids)
+        for i in range(len(ri_ids)):
+            self.assertEqual(cdp.spectrometer_frq[ri_ids[i]], 500.125*1e6)
+            self.assertEqual(cdp.ri_type[ri_ids[i]], types[i])
+
+        # The R1, R2, and NOE values and errors.
+        data = [
+            [1.830269, 1.729287, 1.623507],
+            [15.517992, 15.604246, 15.371578],
+            [0.6650, 0.6706, 0.6903]
+        ]
+        error = [
+            [0.0228767, 0.0210908, 0.0239931],
+            [0.2379555, 0.2386264, 0.3294271],
+            [0.031798, 0.034442, 0.040653]
+        ]
+        j = 0
+        for spin in spin_loop():
+            for i in range(len(ri_ids)):
+                self.assertAlmostEqual(spin.ri_data[ri_ids[i]], data[i][j])
+                self.assertAlmostEqual(spin.ri_data_err[ri_ids[i]], error[i][j])
+            j += 1
+
+
     def test_bug_22411_T1_read_fail(self):
         """Test catching U{bug #22411<https://web.archive.org/web/https://gna.org/bugs/?22411>}, the failure in reading a Bruker DC T1 file as submitted by Olena Dobrovolska."""
 
