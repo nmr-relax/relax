@@ -398,11 +398,11 @@ class DCResults(DCSection):
                         self.indices['Tx_err'] = j
                     elif self._data[i][j] == 'errorScale' and self._data[i][j-2] in ['T1 [s]', 'T2 [s]']:
                         self.indices['Tx_err_scale'] = j
-                    elif self._data[i][j] in ['R1 [rad/s]', 'R2 [rad/s]', 'NOE', 'NOE [none]']:
+                    elif self._data[i][j] in ['R1 [rad/s]', 'R2 [rad/s]', 'NOE', 'NOE [ ]', 'NOE [none]']:
                         self.indices['Rx'] = j
                     elif self._data[i][j] in ['R1 sd [rad/s]', 'R2 sd [rad/s]']:
                         self.indices['Rx_err'] = j
-                    elif self._data[i][j] == 'error' and self._data[i][j-1] in ['NOE', 'NOE [none]']:
+                    elif self._data[i][j] == 'error' and self._data[i][j-1] in ['NOE', 'NOE [ ]', 'NOE [none]']:
                         self.indices['Rx_err'] = j
                     elif self._data[i][j] == 'fitInfo':
                         self.indices['fit_info'] = j
