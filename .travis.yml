@@ -38,6 +38,7 @@ matrix:
     - name: "Linux (Ubuntu 14.04), Python 2.7, single processor, all tests."
       python: 2.7
       language: python
+      dist: trusty
       env: WXPYTHON=true OLD_MATPLOTLIB=true
       before_install:
         # Conda is used to install wxPython 3.0.
@@ -59,6 +60,7 @@ matrix:
     - name: "Linux (Ubuntu 14.04), Python 3.6, MPI multi processor, no GUI tests."
       python: 3.6
       language: python
+      dist: trusty
       env: MPI=true
       before_install:
         # apt-get install for OpenMPI http://wiki.nmr-relax.com/OpenMPI
