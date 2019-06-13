@@ -33,12 +33,14 @@ env:
 
 matrix:
   include:
-    # Default: Linux (Ubuntu Trusty 14.04), Python 2.7, single processor.
+    # Linux (Ubuntu Xenial 16.04), Python 2.7, single processor.
     #   https://docs.travis-ci.com/user/reference/trusty/
-    - name: "Linux (Ubuntu 14.04), Python 2.7, single processor, all tests."
+    - name: "Linux (Ubuntu 16.04), Python 2.7, single processor, all tests."
       python: 2.7
       language: python
-      dist: trusty
+      dist: xenial
+      services:
+        - xvfb
       env: WXPYTHON=true OLD_MATPLOTLIB=true
       before_install:
         # Conda is used to install wxPython 3.0.
@@ -49,11 +51,6 @@ matrix:
         - conda config --set always_yes yes --set changeps1 no
         #- conda update -q conda
         - conda info -a
-
-        # xvfb setup for wxPython testing.
-        - "export DISPLAY=:99.0"
-        - "sh -e /etc/init.d/xvfb start"
-        - sleep 3 # give xvfb some time to start
 
     # Linux (Ubuntu Trusty 14.04), Python 3.6, multi processor (2 MPI processors).
     # Python 3.6 is standard version on Redhat 7 and Ubuntu LTS 18.04 and TS 16.04
