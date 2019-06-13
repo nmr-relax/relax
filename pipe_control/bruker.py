@@ -54,7 +54,7 @@ def read(ri_id=None, file=None, dir=None):
     dc_object = create_object(file=file, dir=dir)
 
     # Name the spins if needed.
-    name_spin(name=dc_object.sample_information.spin_name, force=True)
+    name_spin(name=dc_object.sample_information.spin_name, force=False, warn_flag=False)
 
     # Pack the data.
     values = []

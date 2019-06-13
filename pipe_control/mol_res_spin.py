@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004,2006-2014,2017 Edward d'Auvergne                    #
+# Copyright (C) 2003-2004,2006-2014,2017,2019 Edward d'Auvergne               #
 # Copyright (C) 2006-2007 Chris MacRaild                                      #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
@@ -2403,7 +2403,7 @@ def name_residue(res_id, name=None, force=False):
         status.spin_lock.release(sys._getframe().f_code.co_name)
 
 
-def name_spin(spin_id=None, name=None, pipe=None, force=False):
+def name_spin(spin_id=None, name=None, pipe=None, force=False, warn_flag=True):
     """Name the spins.
 
     @keyword spin_id:   The spin identification string.
@@ -2414,6 +2414,8 @@ def name_spin(spin_id=None, name=None, pipe=None, force=False):
     @type pipe:         str
     @keyword force:     A flag which if True will cause the named spin to be renamed.  If None, then the warning messages will not mention the need to change this flag to rename.
     @type force:        bool or None
+    @keyword warn_flag: A flag which if True will cause warnings to be printed out if the spin has already been named.
+    @type warn_flag:    bool
     """
 
     # The data pipe.
@@ -2429,10 +2431,11 @@ def name_spin(spin_id=None, name=None, pipe=None, force=False):
         # Rename the matching spins.
         for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
             if spin.name and force != True:
-                if force == False:
-                    warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
-                else:
-                    warn(RelaxWarning("The spin '%s' is already named." % id))
+                if warn_flag:
+                    if force == False:
+                        warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
+                    else:
+                        warn(RelaxWarning("The spin '%s' is already named." % id))
             else:
                 spin.name = name
 
