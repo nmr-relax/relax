@@ -26,7 +26,7 @@ env:
     - API_BUILD=false
     - FSFCV=false
     - MPI=false
-    - OLD_MATPLOTLIB=false
+    - OLD_PY2_PACKAGES=false
     - TEST=true
     - UPGRADE=false
     - WXPYTHON=false
@@ -41,7 +41,7 @@ matrix:
       dist: xenial
       services:
         - xvfb
-      env: WXPYTHON=true OLD_MATPLOTLIB=true
+      env: WXPYTHON=true OLD_PY2_PACKAGES=true
       before_install:
         # Conda is used to install wxPython 3.0.
         - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -124,7 +124,7 @@ matrix:
       python: 2.7
       language: python
       dist: trusty
-      env: WXPYTHON=true OLD_MATPLOTLIB=true TEST=false API_BUILD=true
+      env: WXPYTHON=true OLD_PY2_PACKAGES=true TEST=false API_BUILD=true
       before_install:
         # Conda is used to install wxPython 3.0.
         - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -155,14 +155,15 @@ install:
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo -H pip install --upgrade pip wheel; fi
 
-    # Install python packages with pip: scons minfx bmrblib numpy scipy.
+    # Manually install matplotlib and scipy for Python 2.7 compatibility.
+    - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install matplotlib==2.2.4; else pip install matplotlib; fi
+    - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install scipy==1.2.2; else pip install scipy; fi
+
+    # Install Python packages with pip: scons minfx bmrblib numpy scipy.
     - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
     - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
 
-    # Manually install matplotlib for version compatibility.
-    - if [[ $OLD_MATPLOTLIB == "true" ]]; then pip install matplotlib==2.2.4; else pip install matplotlib; fi
-
-    # Install python package with pip for running with multiple processors.
+    # Install Python package with pip for running with multiple processors.
     - if [[ $MPI == "true" ]]; then pip install mpi4py; fi
 
     # Install epydoc for the API documentation build.
