@@ -19,6 +19,33 @@
 #                                                                             #
 ###############################################################################
 
+Version 4.1.3
+(14 June 2019, from master)
+https://sourceforge.net/p/nmr-relax/code/ci/4.1.3/tree/
+
+    Features:
+        N/A
+
+
+    Changes:
+        * FSF Copyright Validation configuration: Blacklisted the PDF user manual.  This allows the checking of relax tags to pass.
+        * Release checklist document: Describe the relax fork of latex2html.
+        * API manual: No longer raise errors when parsing the pystarlib docstrings.
+        * Release checklist document: Minor improvements to match the practical aspects of the release.
+        * User manual: Proper abbreviation of the "Quarterly Reviews of Biophysics" journal name.
+        * Test suite: New system test to catch the failure of reading newer Bruker DC NOE data files.  The system test is Bruker.test_bug_15_NOE_read_fail and it catches bug #15 (https://sourceforge.net/p/nmr-relax/tickets/15/).  The test uses truncated data from Stefano Ciurli as attached to the bug report.
+        * Bruker DC: Silence the warnings about spin names already existing.  The user does not need to see such warnings.
+        * Travis CI config: Explicitly set 'trusty' as the distribution name for the default images.  In the support request titled "Failure of GUI testing via xvfb" (https://support.travis-ci.com/hc/en-us/requests/7654), the Travis CI support staff suggested that we explicitly set 'dist: trusty'.
+        * Bruker DC: A different way to silence the warnings about spin names already existing.  The previous attempt at setting the force flag to True was causing failures in a number of system tests.  Therefore a new flag 'warn_flag' has been added to pipe_control.mol_res_spin.name_spin() to allow warnings to be explicitly silenced.
+        * Travis CI config: Use Xenial for running all tests on Linux and Python 2.7.  This is from the support request titled "Failure of GUI testing via xvfb" (https://support.travis-ci.com/hc/en-us/requests/7654).
+        * Travis CI config: Manual support for old SciPy versions on Python 2.7.  SciPy 1.3.0 now requires Python >= 3.5.  Therefore the OLD_MATPLOTLIB variable has been renamed to OLD_PY2_PACKAGES and, when set, is now used to install old matplotlib and scipy versions when using Python 2.7.
+        * Travis CI config: Deactivate the Mac OS X updates to avoid timeouts.  The 'brew update' and 'brew upgrade python3' take up half of the build time for the Mac OS X target.  This large amount of time sometimes causes this build to hit the Travis CI time limits.
+
+
+    Bugfixes:
+        * Bruker DC: Support for handling newer versions of the NOE data file.  This fixes bug #15 (https://sourceforge.net/p/nmr-relax/tickets/15/), the failure to read newer versions of the Bruker DC NOE data files.  This was simply a parsing issue as the NOE column is now "NOE [ ]" whereas previous DC versions used the text "NOE" or "NOE [none]".
+
+
 
 Version 4.1.2
 (25 April 2019, from master)
