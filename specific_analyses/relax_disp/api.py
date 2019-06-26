@@ -26,7 +26,9 @@
 """The relaxation dispersion API object."""
 
 # Python module imports.
-import bmrblib
+import dep_check
+if dep_check.bmrblib_module:
+    import bmrblib
 from copy import deepcopy
 from numpy import int32, sqrt, zeros
 from re import match, search

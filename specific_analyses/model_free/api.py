@@ -25,7 +25,9 @@
 
 
 # Python module imports.
-import bmrblib
+import dep_check
+if dep_check.bmrblib_module:
+    import bmrblib
 from copy import deepcopy
 from math import pi
 from minfx.grid import grid_split

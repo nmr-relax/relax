@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2015,2017 Edward d'Auvergne                              #
+# Copyright (C) 2006-2015,2017,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -64,6 +64,22 @@ if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
 
 class Mf(SystemTestCase):
     """TestCase class for the functional tests of model-free analysis."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip some tests if bmrblib is not installed.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(Mf, self).__init__(methodName)
+
+        # Missing module.
+        if not dep_check.bmrblib_module and methodName in ['test_bug_24131_bmrb_deposition', 'test_bug_24131_missing_interaction']:
+            # Store in the status object.
+            status.skipped_tests.append([methodName, 'Bmrblib', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
