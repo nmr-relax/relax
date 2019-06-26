@@ -1,6 +1,6 @@
 ################################################################################
 #                                                                              #
-# Copyright (C) 2011 Edward d'Auvergne                                         #
+# Copyright (C) 2011,2019 Edward d'Auvergne                                    #
 #                                                                              #
 # This file is part of the program relax.                                      #
 #                                                                              #
@@ -34,6 +34,29 @@ from status import Status; status = Status()
 
 class RelaxTestLoader(TestLoader):
     """Replacement TestLoader class."""
+
+    def loadTestsFromNames(self, names, module=None):
+        """Replacement method for handling skipped tests."""
+
+        # Get the test names.
+        testCaseNames = self.getTestCaseNames(module)
+
+        # Generate a list of test cases.
+        case_list = []
+        for name in names:
+            # Initialise the test case.
+            test_case = module(name)
+
+            # Skip.
+            if status.skip_blacklisted_tests and status.skipped_tests and name in list(zip(*status.skipped_tests))[0]:
+                continue
+
+            # Append the test case.
+            case_list.append(test_case)
+
+        # Return the test suite.
+        return self.suiteClass(case_list)
+
 
     def loadTestsFromTestCase(self, testCaseClass):
         """Replacement method for skipping tests."""
