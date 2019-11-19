@@ -143,7 +143,10 @@ class Mol_res_spin_tree(wx.Window):
         width, height = self.GetClientSize()
 
         # Set the tree dimensions.
-        self.tree.SetDimensions(0, 0, width, height)
+        if dep_check.wx_classic:
+            self.tree.SetDimensions(0, 0, width, height)
+        else:
+            self.tree.SetSize(0, 0, width, height)
 
 
     def _right_click(self, event):
