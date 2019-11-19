@@ -204,7 +204,7 @@ class Pipe_editor(wx.Frame):
             info = popup_menus[i]
 
             # Add the menu item.
-            menu.AppendItem(build_menu_item(menu, id=info['id'], text=info['text'], icon=info['icon']))
+            build_menu_item(menu, id=info['id'], text=info['text'], icon=info['icon'])
 
             # Bind clicks.
             self.Bind(wx.EVT_MENU, info['method'], id=info['id'])

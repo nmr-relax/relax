@@ -28,6 +28,7 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+import dep_check
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.misc import add_border
@@ -363,7 +364,7 @@ class Base_list(object):
             info = popup_menus[i]
 
             # Add the menu item.
-            menu.AppendItem(build_menu_item(menu, id=info['id'], text=info['text'], icon=info['icon']))
+            build_menu_item(menu, id=info['id'], text=info['text'], icon=info['icon'])
 
             # Bind clicks.
             self.element.Bind(wx.EVT_MENU, info['method'], id=info['id'])

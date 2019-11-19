@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2010 Michael Bieri                                       #
-# Copyright (C) 2009-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2011,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,8 +26,11 @@
 # Python module imports.
 import wx
 
+# relax module imports.
+import dep_check
 
-def build_menu_item(menu, parent=None, id=-1, text='', tooltip='', icon=None, fn=None):
+
+def build_menu_item(menu, parent=None, id=-1, text='', tooltip='', icon=None, fn=None, append=True):
     """Construct and return the menu sub-item.
 
     @param menu:        The menu object to place this entry in.
@@ -42,6 +45,8 @@ def build_menu_item(menu, parent=None, id=-1, text='', tooltip='', icon=None, fn
     @type icon:         None or str
     @keyword fn:        The function to bind to the menu entry.
     @type fn:           class method
+    @keyword append:    A flag which if true will cause the element to be appended to the given menu.
+    @type append:       bool
     @return:            The initialised wx.MenuItem() instance.
     @rtype:             wx.MenuItem() instance
     """
@@ -56,6 +61,13 @@ def build_menu_item(menu, parent=None, id=-1, text='', tooltip='', icon=None, fn
     # Bind the menu entry.
     if fn and parent:
         parent.Bind(wx.EVT_MENU, fn, id=id)
+
+    # Append the item.
+    if append:
+        if dep_check.old_wx:
+             menu.AppendItem(element)
+        else:
+             menu.Append(element)
 
     # Return the element.
     return element
