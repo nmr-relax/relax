@@ -110,11 +110,14 @@ except ImportError:
 
 # wx module (detecting the Phoenix).
 wx_classic = True
+wx_stable = True
 try:
     import wx
     wx_module = True
     if version_comparison("%i.%i.%i" % (wx.VERSION[0], wx.VERSION[1], wx.VERSION[2]), "3.0.3") != -1:
         wx_classic = False
+        if version_comparison("%i.%i.%i" % (wx.VERSION[0], wx.VERSION[1], wx.VERSION[2]), "6.0.0") != 1:
+            wx_stable = False
 except ImportError:
     wx_module = False
     message = sys.exc_info()[1]
