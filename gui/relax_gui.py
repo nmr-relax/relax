@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014,2019 Edward d'Auvergne                              #
 # Copyright (C) 2016 Troels Schwarz-Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -30,12 +30,14 @@ import platform
 from re import search
 import sys
 from time import sleep
+from warnings import warn
 import webbrowser
 import wx
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.gui import Gui
+import dep_check
 from graphics import IMAGE_PATH, fetch_icon
 from gui.about import About_relax
 from gui.analyses import Analysis_controller
@@ -58,6 +60,7 @@ from gui.string_conv import gui_to_str
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from info import Info_box
 from lib.errors import RelaxNoPipeError
+from lib.warnings import RelaxWarning
 from lib.io import io_streams_restore
 from pipe_control import state
 from pipe_control.pipes import cdp_name
@@ -267,11 +270,25 @@ class Main(wx.Frame):
 
         # The relax icon.
         image = wx.StaticBitmap(self, -1, bitmap_setup(IMAGE_PATH+'ulysses_shadowless_400x168.png'))
-
-        # Add the icon to the main spacer with spacing.
         sizer.AddStretchSpacer()
         sizer.Add(image, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         sizer.AddStretchSpacer()
+
+        # wxPython-Phoenix instability warning text.
+        if not dep_check.wx_stable:
+            text = [
+                "wxPython-Phoenix version %s.%s.%s detected." % (wx.VERSION[0], wx.VERSION[1], wx.VERSION[2]),
+                "This version of Phoenix is not stable and relax support is experimental.",
+                "Not all features of the GUI may be available or functional.",
+                "Please use wxPython \"Classic\" instead - otherwise use at your own risk."
+            ]
+            for i in range(len(text)):
+                element = wx.StaticText(self, -1, text[i])
+                element.SetFont(font.roman_font_18)
+                element.SetForegroundColour("red")
+                sizer.Add(element, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ADJUST_MINSIZE, 0)
+            sizer.AddStretchSpacer()
+            warn(RelaxWarning("  ".join(text)))
 
         # Re-perform the layout of the GUI elements, and refresh.
         self.Layout()
