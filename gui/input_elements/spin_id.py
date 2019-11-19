@@ -146,8 +146,8 @@ class Spin_id:
                 tooltip += element
 
         # Set the tooltip.
-        text.SetToolTipString(tooltip)
-        self._field.SetToolTipString(tooltip)
+        text.SetToolTip(wx.ToolTip(tooltip))
+        self._field.SetToolTip(wx.ToolTip(tooltip))
 
 
     def Clear(self):

@@ -331,7 +331,7 @@ class New_analysis_page(Wiz_page):
 
         # Set the tool tip.
         if tooltip != None:
-            button.SetToolTipString(tooltip)
+            button.SetToolTip(wx.ToolTip(tooltip))
 
         # Button properties.
         button.SetMinSize(size)

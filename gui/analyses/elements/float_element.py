@@ -115,8 +115,8 @@ class Float_ctrl:
 
         # Tooltip.
         if tooltip:
-            self.label.SetToolTipString(tooltip)
-            self.field.SetToolTipString(tooltip)
+            self.label.SetToolTip(wx.ToolTip(tooltip))
+            self.field.SetToolTip(wx.ToolTip(tooltip))
 
 
     def Enable(self, enable=True):

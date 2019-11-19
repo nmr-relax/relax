@@ -313,7 +313,7 @@ class Grid_base:
         # Add VD list import
         if self.label =='R1':
             add_vd = wx.Button(self.parent, -1, "+VD")
-            add_vd.SetToolTipString("Add VD (variable delay) list to automatically fill in R1 relaxation times.")
+            add_vd.SetToolTip(wx.ToolTip("Add VD (variable delay) list to automatically fill in R1 relaxation times."))
             add_vd.SetMinSize((50, 50))
             self.gui.Bind(wx.EVT_BUTTON, self.load_delay, add_vd)
             button_sizer.Add(add_vd, 0, wx.ADJUST_MINSIZE, 0)
@@ -321,13 +321,13 @@ class Grid_base:
         # Add Vc list import
         if self.label =='R2':
             add_vc = wx.Button(self.parent, -1, "+VC")
-            add_vc.SetToolTipString("Add VC (variable counter) list to automatically fill in R2 relaxation times.")
+            add_vc.SetToolTip(wx.ToolTip("Add VC (variable counter) list to automatically fill in R2 relaxation times."))
             add_vc.SetMinSize((50, 50))
             button_sizer.Add(add_vc, 0, wx.ADJUST_MINSIZE, 0)
 
             # Time of counter
             self.vc_time = wx.TextCtrl(self.parent, -1, "0")
-            self.vc_time.SetToolTipString("Time of counter loop in seconds.")
+            self.vc_time.SetToolTip(wx.ToolTip("Time of counter loop in seconds."))
             self.vc_time.SetMinSize((50, 20))
             self.vc_time.SetFont(wx.Font(7, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
             button_sizer.Add(self.vc_time, 0, 0, 0)

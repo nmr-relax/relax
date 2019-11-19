@@ -246,10 +246,10 @@ class Combo_list:
         # Tooltip.
         if self._tooltip:
             if index == 0:
-                text.SetToolTipString(self._tooltip)
-            combo.SetToolTipString(self._tooltip)
+                text.SetToolTip(wx.ToolTip(self._tooltip))
+            combo.SetToolTip(wx.ToolTip(self._tooltip))
             if index <= 1 and button != None:
-                button.SetToolTipString(self._tooltip)
+                button.SetToolTip(wx.ToolTip(self._tooltip))
 
 
     def _delete(self, event):
