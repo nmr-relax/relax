@@ -139,7 +139,7 @@ class Menu:
         build_menu_item(sub_menu, id=MENU_TOOLS_TEST_SUITE_UNIT, text="&Unit tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16"))
         build_menu_item(sub_menu, id=MENU_TOOLS_TEST_SUITE_GUI, text="&GUI tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16"))
         build_menu_item(sub_menu, id=MENU_TOOLS_TEST_SUITE_VERIFICATION, text="&Verification tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16"))
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             menu.AppendItem(test_suite_item)
         else:
             menu.Append(test_suite_item)
@@ -211,7 +211,7 @@ class Menu:
                 self.gui.Bind(wx.EVT_MENU, item[3], id=item[0])
 
             # Append the menu item.
-            if dep_check.old_wx:
+            if dep_check.wx_classic:
                 menu.AppendItem(menu_item)
             else:
                 menu.Append(menu_item)

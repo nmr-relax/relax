@@ -64,7 +64,7 @@ def build_menu_item(menu, parent=None, id=-1, text='', tooltip='', icon=None, fn
 
     # Append the item.
     if append:
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
              menu.AppendItem(element)
         else:
              menu.Append(element)

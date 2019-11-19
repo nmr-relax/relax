@@ -92,7 +92,7 @@ def build_uf_menus(parent=None, menubar=None):
             if class_name not in class_list:
                 # Add the last sub menu.
                 if class_item != None:
-                    if dep_check.old_wx:
+                    if dep_check.wx_classic:
                         menu.AppendItem(class_item)
                     else:
                         menu.Append(class_item)
@@ -117,7 +117,7 @@ def build_uf_menus(parent=None, menubar=None):
         else:
             # Add the last sub menu.
             if class_item != None:
-                if dep_check.old_wx:
+                if dep_check.wx_classic:
                     menu.AppendItem(class_item)
                 else:
                     menu.Append(class_item)
@@ -136,7 +136,7 @@ def build_uf_menus(parent=None, menubar=None):
 
     # Add the very last sub menu.
     if class_item != None:
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             menu.AppendItem(class_item)
         else:
             menu.Append(class_item)

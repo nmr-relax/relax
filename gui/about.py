@@ -186,7 +186,7 @@ class About_base(wx.Frame):
         self.offset(-self.virt_y)
 
         # Finish.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             self.dc.EndDrawing()
 
 

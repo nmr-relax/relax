@@ -78,7 +78,7 @@ class Spin_ctrl:
         size_horizontal = size[1] + 8
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((spacer, -1))
         else:
             sizer.AddSpacer(spacer)
@@ -91,13 +91,13 @@ class Spin_ctrl:
         self.control.SetValue(default)
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((spacer, -1))
         else:
             sizer.AddSpacer(spacer)
 
         # No button, so add a spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((width_button, -1))
         else:
             sizer.AddSpacer(width_button)

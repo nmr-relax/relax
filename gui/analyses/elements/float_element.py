@@ -78,7 +78,7 @@ class Float_ctrl:
         size_horizontal = size[1] + 8
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((spacer, -1))
         else:
             sizer.AddSpacer(spacer)
@@ -99,13 +99,13 @@ class Float_ctrl:
         self.field.Bind(wx.EVT_KEY_UP, self.end_input)
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((spacer, -1))
         else:
             sizer.AddSpacer(spacer)
 
         # Empty space where buttons normally are.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((width_button, -1))
         else:
             sizer.AddSpacer(width_button)

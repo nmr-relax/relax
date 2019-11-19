@@ -93,7 +93,7 @@ class Selector_dir:
 
         # Spacing.
         x, y = text.GetSize()
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
             sub_sizer.AddSpacer(divider - x)

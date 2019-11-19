@@ -250,7 +250,7 @@ class Selector_file:
 
         # Spacing.
         x, y = text.GetSize()
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
             sub_sizer.AddSpacer(divider - x)
@@ -418,7 +418,7 @@ class Selector_file_multiple:
 
         # Spacing.
         x, y = text.GetSize()
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
             sub_sizer.AddSpacer(divider - x)
@@ -635,7 +635,7 @@ class Selector_file_window(wx.Dialog):
 
         # Set the frame properties.
         self.SetSize(self.SIZE)
-        if not dep_check.old_wx and status.show_gui:
+        if not dep_check.wx_classic and status.show_gui:
             self.Centre()
         self.SetFont(font.normal)
 

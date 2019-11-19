@@ -86,7 +86,7 @@ class Boolean_ctrl:
         size_horizontal = size[1] + 8
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((spacer, -1))
         else:
             sizer.AddSpacer(spacer)
@@ -100,7 +100,7 @@ class Boolean_ctrl:
         sizer.Add(self.field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((spacer, -1))
         else:
             sizer.AddSpacer(spacer)

@@ -91,7 +91,7 @@ class Text_ctrl:
         size_horizontal = size[1] + 8
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((spacer, -1))
         else:
             sizer.AddSpacer(spacer)
@@ -107,7 +107,7 @@ class Text_ctrl:
         sizer.Add(self.field, 1, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((spacer, -1))
         else:
             sizer.AddSpacer(spacer)
@@ -129,7 +129,7 @@ class Text_ctrl:
 
         # No button, so add a spacer.
         else:
-            if dep_check.old_wx:
+            if dep_check.wx_classic:
                 sizer.AddSpacer((width_button, -1))
             else:
                 sizer.AddSpacer(width_button)
