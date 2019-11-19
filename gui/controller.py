@@ -645,19 +645,35 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.StyleSetFont(0, font.modern_small)
 
         # Create the STDERR style (style num 1).
-        self.StyleSetForeground(1, wx.NamedColour('red'))
+        if dep_check.wx_classic:
+            colour = wx.NamedColour('red')
+        else:
+            colour = wx.Colour('red')
+        self.StyleSetForeground(1, colour)
         self.StyleSetFont(1, font.modern_small)
 
         # Create the relax prompt style (style num 2).
-        self.StyleSetForeground(2, wx.NamedColour('blue'))
+        if dep_check.wx_classic:
+            colour = wx.NamedColour('blue')
+        else:
+            colour = wx.Colour('blue')
+        self.StyleSetForeground(2, colour)
         self.StyleSetFont(2, font.modern_small_bold)
 
         # Create the relax warning style (style num 3).
-        self.StyleSetForeground(3, wx.NamedColour('orange red'))
+        if dep_check.wx_classic:
+            colour = wx.NamedColour('orange red')
+        else:
+            colour = wx.Colour('orange red')
+        self.StyleSetForeground(3, colour)
         self.StyleSetFont(3, font.modern_small)
 
         # Create the relax debugging style (style num 4).
-        self.StyleSetForeground(4, wx.NamedColour('dark green'))
+        if dep_check.wx_classic:
+            colour = wx.NamedColour('dark green')
+        else:
+            colour = wx.Colour('dark green')
+        self.StyleSetForeground(4, colour)
         self.StyleSetFont(4, font.modern_small)
 
         # Initilise the find dialog.
