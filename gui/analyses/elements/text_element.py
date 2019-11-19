@@ -139,10 +139,10 @@ class Text_ctrl:
 
         # Tooltip.
         if tooltip:
-            self.label.SetToolTipString(tooltip)
-            self.field.SetToolTipString(tooltip)
+            self.label.SetToolTip(wx.ToolTip(tooltip))
+            self.field.SetToolTip(wx.ToolTip(tooltip))
         if button and tooltip_button:
-            self.button.SetToolTipString(tooltip_button)
+            self.button.SetToolTip(wx.ToolTip(tooltip_button))
 
 
     def Enable(self, enable=True):

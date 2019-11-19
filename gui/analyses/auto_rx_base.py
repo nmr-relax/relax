@@ -158,7 +158,7 @@ class Auto_rx(Base_analysis):
         self.button_select_model.SetBitmapLabel(wx.Bitmap(fetch_icon("oxygen.actions.list-add", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_select_model.SetFont(font.normal)
         self.button_select_model.SetSize((-1, 25))
-        self.button_select_model.SetToolTipString("Select the model for the exponential curve via the relax_fit.select_model user function.")
+        self.button_select_model.SetToolTip(wx.ToolTip("Select the model for the exponential curve via the relax_fit.select_model user function."))
         self.gui.Bind(wx.EVT_BUTTON, self.select_model, self.button_select_model)
         sizer.Add(self.button_select_model, 1, wx.ALL|wx.EXPAND, 0)
 

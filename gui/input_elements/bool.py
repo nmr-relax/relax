@@ -111,8 +111,8 @@ class Selector_bool:
 
         # Tooltip.
         if tooltip:
-            text.SetToolTipString(tooltip)
-            self.combo.SetToolTipString(tooltip)
+            text.SetToolTip(wx.ToolTip(tooltip))
+            self.combo.SetToolTip(wx.ToolTip(tooltip))
 
 
     def Clear(self):

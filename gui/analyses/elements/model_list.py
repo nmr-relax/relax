@@ -122,10 +122,10 @@ class Model_list:
 
         # Tooltip.
         if self.tooltip:
-            label.SetToolTipString(self.tooltip)
-            self.field.SetToolTipString(self.tooltip)
+            label.SetToolTip(wx.ToolTip(self.tooltip))
+            self.field.SetToolTip(wx.ToolTip(self.tooltip))
         if self.tooltip_button:
-            self.button.SetToolTipString(self.tooltip_button)
+            self.button.SetToolTip(wx.ToolTip(self.tooltip_button))
 
         # Add the contents to the main box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)

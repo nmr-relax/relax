@@ -200,7 +200,7 @@ class Auto_relax_disp(Base_analysis):
         self.button_isotope.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.nuclear_symbol", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_isotope.SetFont(font.normal)
         self.button_isotope.SetSize((-1, 25))
-        self.button_isotope.SetToolTipString("Set the nuclear isotope types via the spin.isotope user function.")
+        self.button_isotope.SetToolTip(wx.ToolTip("Set the nuclear isotope types via the spin.isotope user function."))
         self.gui.Bind(wx.EVT_BUTTON, self.spin_isotope, self.button_isotope)
         sizer.Add(self.button_isotope, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -209,7 +209,7 @@ class Auto_relax_disp(Base_analysis):
         self.button_r1.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.fid", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_r1.SetFont(font.normal)
         self.button_r1.SetSize((-1, 25))
-        self.button_r1.SetToolTipString("Load the %s relaxation data for the off-resonance %s-type experiments.  For all other experiment types this is unused.  One %s data set per magnetic field strength must be loaded."%(r1, r1rho, r1))
+        self.button_r1.SetToolTip(wx.ToolTip("Load the %s relaxation data for the off-resonance %s-type experiments.  For all other experiment types this is unused.  One %s data set per magnetic field strength must be loaded."%(r1, r1rho, r1)))
         self.gui.Bind(wx.EVT_BUTTON, self.load_r1_data, self.button_r1)
         sizer.Add(self.button_r1, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -218,7 +218,7 @@ class Auto_relax_disp(Base_analysis):
         self.button_chemical_shift.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.chemical_shift", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_chemical_shift.SetFont(font.normal)
         self.button_chemical_shift.SetSize((-1, 25))
-        self.button_chemical_shift.SetToolTipString("Read chemical shifts from a peak list for the off-resonance %s-type experiments.  For all other experiment types this is unused."%r1rho)
+        self.button_chemical_shift.SetToolTip(wx.ToolTip("Read chemical shifts from a peak list for the off-resonance %s-type experiments.  For all other experiment types this is unused."%r1rho))
         self.gui.Bind(wx.EVT_BUTTON, self.load_cs_data, self.button_chemical_shift)
         sizer.Add(self.button_chemical_shift, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -227,7 +227,7 @@ class Auto_relax_disp(Base_analysis):
         self.button_interatom_define.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.dipole_pair", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_interatom_define.SetFont(font.normal)
         self.button_interatom_define.SetSize((-1, 25))
-        self.button_interatom_define.SetToolTipString("Define the interatomic interations via the interatom.define user function for the MQ dispersion models.")
+        self.button_interatom_define.SetToolTip(wx.ToolTip("Define the interatomic interations via the interatom.define user function for the MQ dispersion models."))
         self.gui.Bind(wx.EVT_BUTTON, self.interatom_define, self.button_interatom_define)
         sizer.Add(self.button_interatom_define, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -237,7 +237,7 @@ class Auto_relax_disp(Base_analysis):
         self.button_value_set.SetFont(font.normal)
         self.button_value_set.SetSize((-1, 25))
         tooltip = "Set certain parameters to experimentally determined values.\n\nThis is simply used to speed up optimisation by skipping this parameter in the initial grid search.  The result is that the number of dimensions in the grid search is decreased, resulting in roughly one order of magnitude decrease in time for each parameter in this part of the analysis.  Important to note is that the parameter will be optimised after the initial grid search."
-        self.button_value_set.SetToolTipString(tooltip)
+        self.button_value_set.SetToolTip(wx.ToolTip(tooltip))
         self.gui.Bind(wx.EVT_BUTTON, self.value_set, self.button_value_set)
         sizer.Add(self.button_value_set, 1, wx.ALL|wx.EXPAND, 0)
 

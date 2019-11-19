@@ -29,6 +29,7 @@ import wx
 import wx.stc
 
 # relax module imports.
+import dep_check
 from graphics import IMAGE_PATH, fetch_icon
 from gui.components.menu import build_menu_item
 from gui.fonts import font
@@ -185,8 +186,8 @@ class Controller(wx.Frame):
 
         # Tooltip.
         if tooltip:
-            text.SetToolTipString(tooltip)
-            gauge.SetToolTipString(tooltip)
+            text.SetToolTip(wx.ToolTip(tooltip))
+            gauge.SetToolTip(wx.ToolTip(tooltip))
 
         # Return the gauge.
         return gauge
@@ -248,8 +249,8 @@ class Controller(wx.Frame):
 
         # Tooltip.
         if tooltip:
-            text.SetToolTipString(tooltip)
-            field.SetToolTipString(tooltip)
+            text.SetToolTip(wx.ToolTip(tooltip))
+            field.SetToolTip(wx.ToolTip(tooltip))
 
         # Handle key events.
         field.Bind(wx.EVT_KEY_DOWN, self.handler_key_down)

@@ -150,7 +150,7 @@ class Free_file_format:
                 button = buttons.ThemedGenBitmapTextButton(self.parent, -1, None, "")
                 button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.document-save', "22x22"), wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
-                button.SetToolTipString("Save the free file format settings within the relax data store.")
+                button.SetToolTip(wx.ToolTip("Save the free file format settings within the relax data store."))
                 button.SetMinSize(self.size_square_button)
 
                 # Add the button.
@@ -168,7 +168,7 @@ class Free_file_format:
                 button = buttons.ThemedGenBitmapTextButton(self.parent, -1, None, "")
                 button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit-delete', "22x22"), wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
-                button.SetToolTipString("Reset the free file format settings to the original values.")
+                button.SetToolTip(wx.ToolTip("Reset the free file format settings to the original values."))
                 button.SetMinSize(self.size_square_button)
 
                 # Add the button.
@@ -222,7 +222,7 @@ class Free_file_format:
         # The edit button.
         button = wx.BitmapButton(self.parent, -1, wx.Bitmap(fetch_icon("oxygen.actions.document-properties"), wx.BITMAP_TYPE_ANY))
         button.SetMinSize((self.height_element, self.height_element))
-        button.SetToolTipString("Open the free file format editing window.")
+        button.SetToolTip(wx.ToolTip("Open the free file format editing window."))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.parent.Bind(wx.EVT_BUTTON, self.open_window, button)
 
@@ -240,8 +240,8 @@ class Free_file_format:
 
         # Tooltip.
         tooltip = "The free file format settings."
-        text.SetToolTipString(tooltip)
-        self.field.SetToolTipString(tooltip)
+        text.SetToolTip(wx.ToolTip(tooltip))
+        self.field.SetToolTip(wx.ToolTip(tooltip))
 
         # Set the values.
         self.set_vals()
@@ -604,7 +604,7 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Save")
         button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.document-save', "22x22"), wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
-        button.SetToolTipString("Save the free file format settings within the relax data store.")
+        button.SetToolTip(wx.ToolTip("Save the free file format settings within the relax data store."))
         button.SetMinSize(self.SIZE_BUTTON)
         button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
         self.Bind(wx.EVT_BUTTON, self.save, button)
@@ -616,7 +616,7 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Reset")
         button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit-delete', "22x22"), wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
-        button.SetToolTipString("Reset the free file format settings to the original values.")
+        button.SetToolTip(wx.ToolTip("Reset the free file format settings to the original values."))
         button.SetMinSize(self.SIZE_BUTTON)
         button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
         self.Bind(wx.EVT_BUTTON, self.reset, button)

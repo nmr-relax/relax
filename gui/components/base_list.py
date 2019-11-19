@@ -172,7 +172,7 @@ class Base_list(object):
             self.parent.Bind(wx.EVT_BUTTON, self.button_info[i]['method'], button)
 
             # Set the tooltip.
-            button.SetToolTipString(self.button_info[i]['tooltip'])
+            button.SetToolTip(wx.ToolTip(self.button_info[i]['tooltip']))
 
             # Store as a class object.
             setattr(self, self.button_info[i]['object'], button)

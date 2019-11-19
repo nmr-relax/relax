@@ -191,7 +191,7 @@ class Export_bmrb_window(wx.Frame):
         button.SetMinSize(self.button_size)
         button_sizer.Add(button, 0, 0, 0)
         self.Bind(wx.EVT_BUTTON, self.action_preview, button)
-        button.SetToolTipString("Preview the NMR-STAR formatted data.")
+        button.SetToolTip(wx.ToolTip("Preview the NMR-STAR formatted data."))
 
         # Spacing.
         button_sizer.AddSpacer(self.button_spacing)
@@ -203,7 +203,7 @@ class Export_bmrb_window(wx.Frame):
         button.SetMinSize(self.button_size)
         button_sizer.Add(button, 0, 0, 0)
         self.Bind(wx.EVT_BUTTON, self.action_export, button)
-        button.SetToolTipString("Create the NMR-STAR formatted file for BMRB deposition.")
+        button.SetToolTip(wx.ToolTip("Create the NMR-STAR formatted file for BMRB deposition."))
 
         # Spacing.
         button_sizer.AddSpacer(self.button_spacing)
@@ -215,7 +215,7 @@ class Export_bmrb_window(wx.Frame):
         button.SetMinSize(self.button_size)
         button_sizer.Add(button, 0, 0, 0)
         self.Bind(wx.EVT_BUTTON, self.action_cancel, button)
-        button.SetToolTipString("Cancel the BMRB export.")
+        button.SetToolTip(wx.ToolTip("Cancel the BMRB export."))
 
 
     def add_header(self, sizer):
@@ -293,7 +293,7 @@ class Export_bmrb_window(wx.Frame):
         text = wx.StaticText(self.main_panel, -1, ' The data pipe to export:  ', style=wx.ALIGN_LEFT)
         tooltip = "The name of the data pipe to export to NMR-STAR format for BMRB export."
         text.SetFont(font.normal)
-        text.SetToolTipString(tooltip)
+        text.SetToolTip(wx.ToolTip(tooltip))
         pipe_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Spacing.
@@ -301,7 +301,7 @@ class Export_bmrb_window(wx.Frame):
 
         # The pipe selection.
         self.pipe_name = wx.ComboBox(self.main_panel, -1, "", style=wx.CB_DROPDOWN|wx.CB_READONLY, choices=[])
-        self.pipe_name.SetToolTipString(tooltip)
+        self.pipe_name.SetToolTip(wx.ToolTip(tooltip))
         self.Bind(wx.EVT_COMBOBOX, self.update_pipes, self.pipe_name)
         pipe_sizer.Add(self.pipe_name, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 

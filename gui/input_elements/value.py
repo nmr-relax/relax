@@ -221,8 +221,8 @@ class Value:
 
         # Tooltip.
         if tooltip:
-            text.SetToolTipString(tooltip)
-            self._field.SetToolTipString(tooltip)
+            text.SetToolTip(wx.ToolTip(tooltip))
+            self._field.SetToolTip(wx.ToolTip(tooltip))
 
 
     def Clear(self):

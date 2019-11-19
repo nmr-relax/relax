@@ -104,8 +104,8 @@ class Spin_ctrl:
 
         # Tooltip.
         if tooltip:
-            self.label.SetToolTipString(tooltip)
-            self.control.SetToolTipString(tooltip)
+            self.label.SetToolTip(wx.ToolTip(tooltip))
+            self.control.SetToolTip(wx.ToolTip(tooltip))
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)

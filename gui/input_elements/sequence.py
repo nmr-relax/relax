@@ -185,7 +185,7 @@ class Sequence:
             # The edit button.
             button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.edit-rename', "16x16"), wx.BITMAP_TYPE_ANY))
             button.SetMinSize((height_element, height_element))
-            button.SetToolTipString("Edit the values.")
+            button.SetToolTip(wx.ToolTip("Edit the values."))
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             parent.Bind(wx.EVT_BUTTON, self.open_dialog, button)
 
@@ -203,8 +203,8 @@ class Sequence:
 
             # Tooltip.
             if tooltip:
-                text.SetToolTipString(tooltip)
-                self._field.SetToolTipString(tooltip)
+                text.SetToolTip(wx.ToolTip(tooltip))
+                self._field.SetToolTip(wx.ToolTip(tooltip))
 
             # Set the default value.
             if self.default is not None:
@@ -646,7 +646,7 @@ class Sequence_window(wx.Dialog):
             button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Add")
             button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"), wx.BITMAP_TYPE_ANY))
             button.SetFont(font.normal)
-            button.SetToolTipString("Add an item to the list.")
+            button.SetToolTip(wx.ToolTip("Add an item to the list."))
             button.SetMinSize(self.SIZE_BUTTON)
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.add_element, button)
@@ -658,7 +658,7 @@ class Sequence_window(wx.Dialog):
             button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Delete")
             button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22"), wx.BITMAP_TYPE_ANY))
             button.SetFont(font.normal)
-            button.SetToolTipString("Delete the last item.")
+            button.SetToolTip(wx.ToolTip("Delete the last item."))
             button.SetMinSize(self.SIZE_BUTTON)
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.delete, button)
@@ -670,7 +670,7 @@ class Sequence_window(wx.Dialog):
             button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Delete all")
             button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit-delete', "22x22"), wx.BITMAP_TYPE_ANY))
             button.SetFont(font.normal)
-            button.SetToolTipString("Delete all items.")
+            button.SetToolTip(wx.ToolTip("Delete all items."))
             button.SetMinSize(self.SIZE_BUTTON)
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.delete_all, button)
