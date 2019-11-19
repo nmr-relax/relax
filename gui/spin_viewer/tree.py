@@ -101,7 +101,10 @@ class Mol_res_spin_tree(wx.Window):
 
         # The tree roots.
         self.root = self.tree.AddRoot("Spin system information")
-        self.tree.SetPyData(self.root, "root")
+        if dep_check.wx_classic:
+            self.tree.SetPyData(self.root, "root")
+        else:
+            self.tree.SetItemData(self.root, "root")
 
         # Build the icon list.
         icon_list = wx.ImageList(self.icon_size, self.icon_size)
@@ -980,7 +983,10 @@ class Mol_res_spin_tree(wx.Window):
                 'id': mol_id,
                 'select': is_mol_selected(mol_id)
             }
-            self.tree.SetPyData(mol_branch_id, data)
+            if dep_check.wx_classic:
+                self.tree.SetPyData(mol_branch_id, data)
+            else:
+                self.tree.SetItemData(mol_branch_id, data)
 
             # Add the id to the tracking structure.
             self.tree_ids[mol_branch_id] = {}
@@ -1062,7 +1068,10 @@ class Mol_res_spin_tree(wx.Window):
                 'id': res_id,
                 'select': is_res_selected(res_id)
             }
-            self.tree.SetPyData(res_branch_id, data)
+            if dep_check.wx_classic:
+                self.tree.SetPyData(res_branch_id, data)
+            else:
+                self.tree.SetItemData(res_branch_id, data)
 
             # Add the id to the tracking structure.
             self.tree_ids[mol_branch_id][res_branch_id] = {}
@@ -1147,7 +1156,10 @@ class Mol_res_spin_tree(wx.Window):
                 'id': spin_id,
                 'select': is_spin_selected(spin_id)
             }
-            self.tree.SetPyData(spin_branch_id, data)
+            if dep_check.wx_classic:
+                self.tree.SetPyData(spin_branch_id, data)
+            else:
+                self.tree.SetItemData(spin_branch_id, data)
 
             # Add the id to the tracking structure.
             self.tree_ids[mol_branch_id][res_branch_id][spin_branch_id] = True
