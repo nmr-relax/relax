@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012,2014-2015 Edward d'Auvergne                         #
+# Copyright (C) 2010-2012,2014-2015,2019 Edward d'Auvergne                    #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -27,6 +27,7 @@
 import wx
 
 # relax module imports.
+import dep_check
 from graphics import WIZARD_IMAGE_PATH, fetch_icon
 from gui.icons import Relax_icons
 from gui.misc import gui_raise
@@ -311,7 +312,10 @@ class Spin_view_window(wx.Frame):
 
         # The spin loading button.
         tooltip = "Load spins from either a sequence file or from a 3D structure file."
-        self.bar.AddLabelTool(TB_SPIN_LOADER_ID, "Load spins", wx.Bitmap(fetch_icon('relax.spin', '32x32'), wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(fetch_icon('relax.spin_grey', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
+        if dep_check.wx_classic:
+            self.bar.AddLabelTool(TB_SPIN_LOADER_ID, "Load spins", wx.Bitmap(fetch_icon('relax.spin', '32x32'), wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(fetch_icon('relax.spin_grey', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
+        else:
+            self.bar.AddTool(TB_SPIN_LOADER_ID, "Load spins", wx.Bitmap(fetch_icon('relax.spin', '32x32'), wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(fetch_icon('relax.spin_grey', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip)
         self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=TB_SPIN_LOADER_ID)
 
         # A separator.
@@ -319,7 +323,10 @@ class Spin_view_window(wx.Frame):
 
         # The refresh button.
         tooltip = "Refresh the spin view."
-        self.bar.AddLabelTool(TB_REFRESH, "Refresh", wx.Bitmap(fetch_icon('oxygen.actions.view-refresh', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
+        if dep_check.wx_classic:
+            self.bar.AddLabelTool(TB_REFRESH, "Refresh", wx.Bitmap(fetch_icon('oxygen.actions.view-refresh', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
+        else:
+            self.bar.AddTool(TB_REFRESH, "Refresh", wx.Bitmap(fetch_icon('oxygen.actions.view-refresh', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip)
         self.Bind(wx.EVT_TOOL, self.refresh, id=TB_REFRESH)
 
         # A separator.
