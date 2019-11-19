@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,6 +27,7 @@
 import wx
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.components.menu import build_menu_item
 from gui.message import Question
@@ -161,8 +162,10 @@ class Mol_res_spin_tree(wx.Window):
         # The python data (with catch for wxPython 2.9 behaviour).
         if not item.IsOk():
             self.info = None
-        else:
+        elif dep_check.wx_classic:
             self.info = self.tree.GetItemPyData(item)
+        else:
+            self.info = self.tree.GetItemData(item)
 
         # Bring up the default menu.
         if self.info == None:
@@ -196,7 +199,10 @@ class Mol_res_spin_tree(wx.Window):
         item = event.GetItem()
 
         # The python data.
-        info = self.tree.GetItemPyData(item)
+        if dep_check.wx_classic:
+            info = self.tree.GetItemPyData(item)
+        else:
+            info = self.tree.GetItemData(item)
 
         # Display the container.
         self.gui.spin_viewer.container.display(info)
@@ -520,7 +526,10 @@ class Mol_res_spin_tree(wx.Window):
             return
 
         # Return the associated python data.
-        return self.tree.GetItemPyData(item)
+        if dep_check.wx_classic:
+            return self.tree.GetItemPyData(item)
+        else:
+            return self.tree.GetItemData(item)
 
 
     def menu_default(self):
@@ -740,7 +749,10 @@ class Mol_res_spin_tree(wx.Window):
         prune_list = []
         for key in self.tree_ids:
             # Get the python data.
-            info = self.tree.GetItemPyData(key)
+            if dep_check.wx_classic:
+                info = self.tree.GetItemPyData(key)
+            else:
+                info = self.tree.GetItemData(key)
 
             # No info.
             if info == None or 'id' not in info:
@@ -769,7 +781,10 @@ class Mol_res_spin_tree(wx.Window):
         prune_list = []
         for key in self.tree_ids[mol_branch_id]:
             # Get the python data.
-            info = self.tree.GetItemPyData(key)
+            if dep_check.wx_classic:
+                info = self.tree.GetItemPyData(key)
+            else:
+                info = self.tree.GetItemData(key)
 
             # No info.
             if info == None or 'id' not in info:
@@ -803,7 +818,10 @@ class Mol_res_spin_tree(wx.Window):
         prune_list = []
         for key in self.tree_ids[mol_branch_id][res_branch_id]:
             # Get the python data.
-            info = self.tree.GetItemPyData(key)
+            if dep_check.wx_classic:
+                info = self.tree.GetItemPyData(key)
+            else:
+                info = self.tree.GetItemData(key)
 
             # No info.
             if info == None or 'id' not in info:
@@ -932,7 +950,10 @@ class Mol_res_spin_tree(wx.Window):
         new_mol = True
         for key in self.tree_ids:
             # Get the python data.
-            data = self.tree.GetItemPyData(key)
+            if dep_check.wx_classic:
+                data = self.tree.GetItemPyData(key)
+            else:
+                data = self.tree.GetItemData(key)
 
             # No info.
             if data == None or 'id' not in data:
@@ -1009,7 +1030,10 @@ class Mol_res_spin_tree(wx.Window):
         new_res = True
         for key in self.tree_ids[mol_branch_id]:
             # Get the python data.
-            data = self.tree.GetItemPyData(key)
+            if dep_check.wx_classic:
+                data = self.tree.GetItemPyData(key)
+            else:
+                data = self.tree.GetItemData(key)
 
             # No info.
             if data == None or 'id' not in data:
@@ -1089,7 +1113,10 @@ class Mol_res_spin_tree(wx.Window):
         new_spin = True
         for key in self.tree_ids[mol_branch_id][res_branch_id]:
             # Get the python data.
-            data = self.tree.GetItemPyData(key)
+            if dep_check.wx_classic:
+                data = self.tree.GetItemPyData(key)
+            else:
+                data = self.tree.GetItemData(key)
 
             # No info.
             if data == None or 'id' not in data:
