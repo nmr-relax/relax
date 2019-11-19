@@ -531,7 +531,6 @@ class Mol_res_spin_tree(wx.Window):
 
         # The load spins entry.
         item = build_menu_item(menu, id=MENU_ROOT_LOAD_SPINS, text="Load spins", icon=fetch_icon("relax.spin", "16x16"))
-        menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
 
@@ -564,7 +563,6 @@ class Mol_res_spin_tree(wx.Window):
 
         # Add the items and activate them.
         for item in items:
-            menu.AppendItem(item)
             if status.exec_lock.locked():
                 item.Enable(False)
 
@@ -576,7 +574,6 @@ class Mol_res_spin_tree(wx.Window):
             item = build_menu_item(menu, id=MENU_MOLECULE_MOLECULE_DESELECT, text="&Deselect", icon=fetch_icon("relax.molecule_grey"))
         else:
             item = build_menu_item(menu, id=MENU_MOLECULE_MOLECULE_SELECT, text="&Select", icon=fetch_icon("relax.molecule"))
-        menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
 
@@ -618,7 +615,6 @@ class Mol_res_spin_tree(wx.Window):
 
         # Add the items and activate them.
         for item in items:
-            menu.AppendItem(item)
             if status.exec_lock.locked():
                 item.Enable(False)
 
@@ -630,7 +626,6 @@ class Mol_res_spin_tree(wx.Window):
             item = build_menu_item(menu, id=MENU_RESIDUE_RESIDUE_DESELECT, text="&Deselect", icon=fetch_icon("relax.residue_grey"))
         else:
             item = build_menu_item(menu, id=MENU_RESIDUE_RESIDUE_SELECT, text="&Select", icon=fetch_icon("relax.residue"))
-        menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
 
@@ -669,7 +664,6 @@ class Mol_res_spin_tree(wx.Window):
 
         # Add the items and activate them.
         for item in items:
-            menu.AppendItem(item)
             if status.exec_lock.locked():
                 item.Enable(False)
 
@@ -703,7 +697,6 @@ class Mol_res_spin_tree(wx.Window):
 
         # Add the items and activate them.
         for item in items:
-            menu.AppendItem(item)
             if status.exec_lock.locked():
                 item.Enable(False)
 
@@ -715,7 +708,6 @@ class Mol_res_spin_tree(wx.Window):
             item = build_menu_item(menu, id=MENU_SPIN_SPIN_DESELECT, text="&Deselect", icon=fetch_icon("relax.spin_grey"))
         else:
             item = build_menu_item(menu, id=MENU_SPIN_SPIN_SELECT, text="&Select", icon=fetch_icon("relax.spin"))
-        menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
 

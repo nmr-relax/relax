@@ -30,6 +30,7 @@ from wx.lib import scrolledpanel
 import sys
 
 # relax module imports.
+import dep_check
 import lib.arg_check
 from graphics import fetch_icon
 from gui.components.free_file_format import Free_file_format
@@ -91,13 +92,16 @@ def build_uf_menus(parent=None, menubar=None):
             if class_name not in class_list:
                 # Add the last sub menu.
                 if class_item != None:
-                    menu.AppendItem(class_item)
+                    if dep_check.old_wx:
+                        menu.AppendItem(class_item)
+                    else:
+                        menu.Append(class_item)
 
                 # Get the user function class data object.
                 class_data = uf_info.get_class(class_name)
 
                 # Create the menu entry.
-                class_item = build_menu_item(menu, id=-1, text=class_data.menu_text, icon=fetch_icon(class_data.gui_icon, size='16x16'))
+                class_item = build_menu_item(menu, id=-1, text=class_data.menu_text, icon=fetch_icon(class_data.gui_icon, size='16x16'), append=False)
 
                 # Initialise the sub menu.
                 sub_menu = wx.Menu()
@@ -107,17 +111,20 @@ def build_uf_menus(parent=None, menubar=None):
                 class_list.append(class_name)
 
             # Create the user function menu entry.
-            sub_menu.AppendItem(build_menu_item(sub_menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+            build_menu_item(sub_menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16'))
 
         # No sub menu.
         else:
             # Add the last sub menu.
             if class_item != None:
-                menu.AppendItem(class_item)
+                if dep_check.old_wx:
+                    menu.AppendItem(class_item)
+                else:
+                    menu.Append(class_item)
                 class_item = None
 
             # The menu item.
-            menu.AppendItem(build_menu_item(menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16')))
+            build_menu_item(menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16'), append=False)
 
         # New menu.
         if menu_index == 0 and not search(pattern, name):
@@ -129,7 +136,10 @@ def build_uf_menus(parent=None, menubar=None):
 
     # Add the very last sub menu.
     if class_item != None:
-        menu.AppendItem(class_item)
+        if dep_check.old_wx:
+            menu.AppendItem(class_item)
+        else:
+            menu.Append(class_item)
 
     # Add the user function menu to the menu bar.
     title1 = "&User functions (a-m)"
