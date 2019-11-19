@@ -712,7 +712,7 @@ class Uf_page(Wiz_page):
         text_types.append('title')
 
         # The text size, then spacing after the title.
-        x, y = text.GetSizeTuple()
+        x, y = text.GetSize()
         tot_y += y
         tot_y += spacing
 
@@ -725,7 +725,7 @@ class Uf_page(Wiz_page):
             text.SetFont(font.normal_italic)
 
             # The text size.
-            x, y = text.GetSizeTuple()
+            x, y = text.GetSize()
             tot_y += y
 
             # The spacing after the element.
@@ -805,7 +805,7 @@ class Uf_page(Wiz_page):
                         text_obj.Wrap(self._main_size - 20)
 
                     # The text size.
-                    x, y = text_obj.GetSizeTuple()
+                    x, y = text_obj.GetSize()
                     tot_y += y
 
                     # The spacing after each element (except the last).

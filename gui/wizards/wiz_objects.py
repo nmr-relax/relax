@@ -256,7 +256,7 @@ class Wiz_page(wx.Panel):
         text.Wrap(self._main_size - 20)
 
         # The text size.
-        x, y = text.GetSizeTuple()
+        x, y = text.GetSize()
 
         # Scrolling needed.
         if y > max_y-10:
