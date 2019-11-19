@@ -103,7 +103,7 @@ class Model_list:
         label = self.parent.add_static_text(sizer, self.parent, text=self.desc, width=self.parent.width_text)
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((self.parent.spacer_horizontal, -1))
         else:
             sizer.AddSpacer(self.parent.spacer_horizontal)
@@ -112,7 +112,7 @@ class Model_list:
         self.field = self.parent.add_text_control(sizer, self.parent, text=list_to_gui(self.GetValue()), editable=False)
 
         # Spacer.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sizer.AddSpacer((self.parent.spacer_horizontal, -1))
         else:
             sizer.AddSpacer(self.parent.spacer_horizontal)

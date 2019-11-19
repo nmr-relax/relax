@@ -55,7 +55,7 @@ class Relax_icons(wx.IconBundle):
 
         # This is disabled on Macs.
         if not 'darwin' in sys.platform:
-            if dep_check.old_wx:
+            if dep_check.wx_classic:
                 self.AddIconFromFile(status.install_path + sep + 'graphics' + sep + 'ulysses.ico', wx.BITMAP_TYPE_ANY)
             else:
                 self.AddIcon(status.install_path + sep + 'graphics' + sep + 'ulysses.ico', wx.BITMAP_TYPE_ANY)

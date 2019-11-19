@@ -172,14 +172,14 @@ class Combo_list:
 
             # Spacing.
             x, y = text.GetSize()
-            if dep_check.old_wx:
+            if dep_check.wx_classic:
                 sub_sizer.AddSpacer((self._divider - x, 0))
             else:
                 sub_sizer.AddSpacer(self._divider - x)
 
         # No description for other rows, so add a blank space.
         else:
-            if dep_check.old_wx:
+            if dep_check.wx_classic:
                 sub_sizer.AddSpacer((self._divider, 0))
             else:
                 sub_sizer.AddSpacer(self._divider)
@@ -227,7 +227,7 @@ class Combo_list:
 
         # Otherwise empty spacing.
         else:
-            if dep_check.old_wx:
+            if dep_check.wx_classic:
                 sub_sizer.AddSpacer((27, 0))
             else:
                 sub_sizer.AddSpacer(27)

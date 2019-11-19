@@ -109,12 +109,12 @@ except ImportError:
     bmrblib_module = False
 
 # wx module (detecting the Phoenix).
-old_wx = True
+wx_classic = True
 try:
     import wx
     wx_module = True
     if version_comparison("%i.%i.%i" % (wx.VERSION[0], wx.VERSION[1], wx.VERSION[2]), "3.0.3") != -1:
-        old_wx = False
+        wx_classic = False
 except ImportError:
     wx_module = False
     message = sys.exc_info()[1]

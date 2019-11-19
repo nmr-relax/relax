@@ -202,7 +202,7 @@ class Free_file_format:
 
         # Spacing.
         x, y = text.GetSize()
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             sub_sizer.AddSpacer((self.divider - x, 0))
         else:
             sub_sizer.AddSpacer(self.divider - x)

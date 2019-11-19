@@ -33,7 +33,7 @@ import sys
 from time import sleep
 if dep_check.wx_module:
     import wx
-    if not dep_check.old_wx:
+    if not dep_check.wx_classic:
         import wx.adv
 
 # relax module imports.
@@ -129,7 +129,7 @@ class App(wx.App):
         timeout = 2500
 
         # The splash screen.
-        if dep_check.old_wx:
+        if dep_check.wx_classic:
             screen = wx.SplashScreen(bmp, wx.SPLASH_CENTRE_ON_PARENT | wx.SPLASH_TIMEOUT, timeout, None, -1)
         else:
             screen = wx.adv.SplashScreen(bmp, wx.adv.SPLASH_CENTRE_ON_PARENT | wx.adv.SPLASH_TIMEOUT, timeout, None, -1)
