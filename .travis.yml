@@ -21,6 +21,7 @@
 ###############################################################################
 
 language: python
+
 env:
   global:
     - API_BUILD=false
@@ -30,6 +31,7 @@ env:
     - TEST=true
     - UPGRADE=false
     - WXPYTHON=false
+    - PYTHON=""
 
 matrix:
   include:
@@ -103,6 +105,30 @@ matrix:
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
         - python -m pip install --upgrade pip
 
+    # Arm64 Linux (Ubuntu Bionic 18.04), Python 3.6 (system).
+    - name: "Arm64 Linux (Ubuntu 18.04), Python 3.6 (system), single processor, no GUI tests."
+      python: 3.6
+      language: python
+      os: linux
+      arch: arm64
+      dist: bionic
+      env:
+        - PYTHON="/usr/bin/python3"
+      before_install:
+        - sudo apt-get -y install python3-pip
+        - sudo apt-get -y install python3-numpy
+        - sudo apt-get -y install python3-matplotlib
+        - sudo apt-get -y install python3-scipy
+        - sudo apt-get -y install python3-mpi4py
+        - sudo apt-get -y install python3-wxgtk4.0
+        - sudo apt-get -y install scons
+      install:
+        - /usr/bin/python --version
+        - /usr/bin/python3 --version
+        - /usr/bin/pip3 --version
+        - /usr/bin/pip3 install -r devel_scripts/travis-ci/requirements.txt
+        - /usr/bin/python3 /usr/bin/scons
+
     # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
     - name: "API documentation build"
       python: 2.7
@@ -165,20 +191,20 @@ script:
     - set -e
 
     # relax information printout.
-    - if [[ $MPI == "false" && $TEST == "true" ]]; then ./relax -i; fi
-    - if [[ $MPI == "true" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
+    - if [[ $MPI == "false" && $TEST == "true" ]]; then $PYTHON ./relax -i; fi
+    - if [[ $MPI == "true" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' -i; fi
 
     # Single processor test suite execution.
-    - if [[ $MPI == "false" && $WXPYTHON == "true"  && $TEST == "true" ]]; then ./relax --time --test-suite; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --system-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --unit-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --verification-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "true"  && $TEST == "true" ]]; then $PYTHON ./relax --time --test-suite; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --system-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --unit-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --verification-tests; fi
 
     # Multiple processor test suite execution.
-    - if [[ $MPI == "true" && $WXPYTHON == "true"  && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --verification-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "true"  && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --test-suite; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --system-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --unit-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --verification-tests; fi
 
     # API documentation build.
     - if [[ $API_BUILD == "true" ]]; then scons api_manual_html; fi
