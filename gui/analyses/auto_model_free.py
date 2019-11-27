@@ -31,6 +31,7 @@ import wx.lib.buttons
 import wx.lib.mixins.listctrl
 
 # relax module imports.
+import dep_check
 from auto_analyses import dauvergne_protocol
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, fetch_icon
@@ -481,7 +482,10 @@ class Auto_model_free(Base_analysis):
         self.Bind(wx.EVT_BUTTON, self._about, button)
 
         # A cursor for the button.
-        cursor = wx.StockCursor(wx.CURSOR_QUESTION_ARROW)
+        if dep_check.wx_classic:
+            cursor = wx.StockCursor(wx.CURSOR_QUESTION_ARROW)
+        else:
+            cursor = wx.Cursor(wx.CURSOR_QUESTION_ARROW)
         button.SetCursor(cursor)
 
         # Pack the button.

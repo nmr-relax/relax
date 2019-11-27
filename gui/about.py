@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2012,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -209,7 +209,10 @@ class About_base(wx.Frame):
         # Only change if needed.
         if over_url and self.cursor_type == 'normal':
             # Build the cursor.
-            select_cursor = wx.StockCursor(wx.CURSOR_HAND)
+            if dep_check.wx_classic:
+                select_cursor = wx.StockCursor(wx.CURSOR_HAND)
+            else:
+                select_cursor = wx.Cursor(wx.CURSOR_HAND)
 
             # Set the cursor.
             self.window.SetCursor(select_cursor)
@@ -220,7 +223,10 @@ class About_base(wx.Frame):
         # Normal cursor.
         if not over_url and self.cursor_type == 'select':
             # Build the cursor.
-            select_cursor = wx.StockCursor(wx.CURSOR_ARROW)
+            if dep_check.wx_classic:
+                select_cursor = wx.StockCursor(wx.CURSOR_ARROW)
+            else:
+                select_cursor = wx.Cursor(wx.CURSOR_ARROW)
 
             # Set the cursor.
             self.window.SetCursor(select_cursor)
