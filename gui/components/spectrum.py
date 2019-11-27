@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2010 Michael Bieri                                       #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,6 +28,7 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
@@ -446,11 +447,17 @@ class Spectra_list(Base_list):
         for i in range(len(cdp.spectrum_ids)):
             # Set the CPMG frequency.
             if hasattr(cdp, 'cpmg_frqs') and cdp.spectrum_ids[i] in cdp.cpmg_frqs:
-                self.element.SetStringItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
+                if dep_check.wx_classic:
+                    self.element.SetStringItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
+                else:
+                    self.element.SetItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
 
             # Set the spin-lock field strength.
             if hasattr(cdp, 'spin_lock_nu1') and cdp.spectrum_ids[i] in cdp.spin_lock_nu1:
-                self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_nu1[cdp.spectrum_ids[i]]))
+                if dep_check.wx_classic:
+                    self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_nu1[cdp.spectrum_ids[i]]))
+                else:
+                    self.element.SetItem(i, index, float_to_gui(cdp.spin_lock_nu1[cdp.spectrum_ids[i]]))
 
         # Successful.
         return True
@@ -479,7 +486,10 @@ class Spectra_list(Base_list):
                 continue
 
             # Set the value.
-            self.element.SetStringItem(i, index, float_to_gui(cdp.exp_type[cdp.spectrum_ids[i]]))
+            if dep_check.wx_classic:
+                self.element.SetStringItem(i, index, float_to_gui(cdp.exp_type[cdp.spectrum_ids[i]]))
+            else:
+                self.element.SetItem(i, index, float_to_gui(cdp.exp_type[cdp.spectrum_ids[i]]))
 
         # Successful.
         return True
@@ -510,7 +520,10 @@ class Spectra_list(Base_list):
                 continue
 
             # Set the value (in MHz).
-            self.element.SetStringItem(i, index, float_to_gui(cdp.spectrometer_frq[cdp.spectrum_ids[i]]/1e6))
+            if dep_check.wx_classic:
+                self.element.SetStringItem(i, index, float_to_gui(cdp.spectrometer_frq[cdp.spectrum_ids[i]]/1e6))
+            else:
+                self.element.SetItem(i, index, float_to_gui(cdp.spectrometer_frq[cdp.spectrum_ids[i]]/1e6))
 
         # Successful.
         return True
@@ -535,7 +548,10 @@ class Spectra_list(Base_list):
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
             if hasattr(cdp, 'spin_lock_offset') and cdp.spectrum_ids[i] in cdp.spin_lock_offset:
-                self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_offset[cdp.spectrum_ids[i]]))
+                if dep_check.wx_classic:
+                    self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_offset[cdp.spectrum_ids[i]]))
+                else:
+                    self.element.SetItem(i, index, float_to_gui(cdp.spin_lock_offset[cdp.spectrum_ids[i]]))
 
         # Successful.
         return True
@@ -659,7 +675,10 @@ class Spectra_list(Base_list):
                 continue
 
             # Set the value.
-            self.element.SetStringItem(i, index, str_to_gui(table[cdp.spectrum_type[cdp.spectrum_ids[i]]]))
+            if dep_check.wx_classic:
+                self.element.SetStringItem(i, index, str_to_gui(table[cdp.spectrum_type[cdp.spectrum_ids[i]]]))
+            else:
+                self.element.SetItem(i, index, str_to_gui(table[cdp.spectrum_type[cdp.spectrum_ids[i]]]))
 
         # Successful.
         return True
@@ -692,7 +711,10 @@ class Spectra_list(Base_list):
                 continue
 
             # Set the value.
-            self.element.SetStringItem(i, index, float_to_gui(cdp.relax_times[cdp.spectrum_ids[i]]))
+            if dep_check.wx_classic:
+                self.element.SetStringItem(i, index, float_to_gui(cdp.relax_times[cdp.spectrum_ids[i]]))
+            else:
+                self.element.SetItem(i, index, float_to_gui(cdp.relax_times[cdp.spectrum_ids[i]]))
 
         # Successful.
         return True
@@ -741,7 +763,10 @@ class Spectra_list(Base_list):
                     text = "%s, " % text
 
             # Set the value.
-            self.element.SetStringItem(i, index, str_to_gui(text))
+            if dep_check.wx_classic:
+                self.element.SetStringItem(i, index, str_to_gui(text))
+            else:
+                self.element.SetItem(i, index, str_to_gui(text))
 
         # Successful.
         return True
@@ -805,7 +830,10 @@ class Spectra_list(Base_list):
 
             # Set the IDs.
             for i in range(n):
-                self.element.InsertStringItem(i, str_to_gui(cdp.spectrum_ids[i]))
+                if dep_check.wx_classic:
+                    self.element.InsertStringItem(i, str_to_gui(cdp.spectrum_ids[i]))
+                else:
+                    self.element.InsertItem(i, str_to_gui(cdp.spectrum_ids[i]))
 
         # The NOE spectrum type.
         if self.noe_spectrum_type(index):

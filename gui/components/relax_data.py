@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2010 Michael Bieri                                       #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,6 +28,7 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.components.relax_data_meta import Relax_data_meta_list
@@ -326,13 +327,22 @@ class Relax_data_list(Base_list):
             for i in range(n):
                 # Set the IDs.
                 id = cdp.ri_ids[i]
-                self.element.InsertStringItem(i, str_to_gui(id))
+                if dep_check.wx_classic:
+                    self.element.InsertStringItem(i, str_to_gui(id))
+                else:
+                    self.element.InsertItem(i, str_to_gui(id))
 
                 # Set the data types.
-                self.element.SetStringItem(i, 1, str_to_gui(table[cdp.ri_type[id]]))
+                if dep_check.wx_classic:
+                    self.element.SetStringItem(i, 1, str_to_gui(table[cdp.ri_type[id]]))
+                else:
+                    self.element.SetItem(i, 1, str_to_gui(table[cdp.ri_type[id]]))
 
                 # Set the frequencies.
-                self.element.SetStringItem(i, 2, float_to_gui(cdp.spectrometer_frq[id]))
+                if dep_check.wx_classic:
+                    self.element.SetStringItem(i, 2, float_to_gui(cdp.spectrometer_frq[id]))
+                else:
+                    self.element.SetItem(i, 2, float_to_gui(cdp.spectrometer_frq[id]))
 
 
     def view_metadata(self, event=None):

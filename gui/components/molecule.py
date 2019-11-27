@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2010 Michael Bieri                                       #
-# Copyright (C) 2009-2012,2014 Edward d'Auvergne                              #
+# Copyright (C) 2009-2012,2014,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,6 +28,7 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.string_conv import gui_to_str, str_to_gui
@@ -195,19 +196,31 @@ class Molecule(Base_list):
         i = 0
         for mol, mol_id in molecule_loop(return_id=True):
             # Set the index.
-            self.element.InsertStringItem(i, str_to_gui(mol_id))
+            if dep_check.wx_classic:
+                self.element.InsertStringItem(i, str_to_gui(mol_id))
+            else:
+                self.element.InsertItem(i, str_to_gui(mol_id))
 
             # Set the molecule name.
             if mol.name != None:
-                self.element.SetStringItem(i, 1, str_to_gui(mol.name))
+                if dep_check.wx_classic:
+                    self.element.SetStringItem(i, 1, str_to_gui(mol.name))
+                else:
+                    self.element.SetItem(i, 1, str_to_gui(mol.name))
 
             # Set the molecule type.
             if hasattr(mol, 'type'):
-                self.element.SetStringItem(i, 2, str_to_gui(mol.type))
+                if dep_check.wx_classic:
+                    self.element.SetStringItem(i, 2, str_to_gui(mol.type))
+                else:
+                    self.element.SetItem(i, 2, str_to_gui(mol.type))
 
             # Set the thiol state.
             if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'thiol_state'):
-                self.element.SetStringItem(i, 3, str_to_gui(cdp.exp_info.thiol_state))
+                if dep_check.wx_classic:
+                    self.element.SetStringItem(i, 3, str_to_gui(cdp.exp_info.thiol_state))
+                else:
+                    self.element.SetItem(i, 3, str_to_gui(cdp.exp_info.thiol_state))
 
             # Increment the counter.
             i += 1

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012,2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012,2014,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -616,17 +616,26 @@ class Sequence_window(wx.Dialog):
         for i in range(len(values)):
             # Fixed dimension sequences - set the values of the pre-created list.
             if not self.variable_length:
-                self.sequence.SetStringItem(i, 1, self.convert_to_gui(values[i]))
+                if dep_check.wx_classic:
+                    self.sequence.SetStringItem(i, 1, self.convert_to_gui(values[i]))
+                else:
+                    self.sequence.SetItem(i, 1, self.convert_to_gui(values[i]))
 
             # Variable dimension sequences - append the item to the end of the blank list.
             else:
                 # The first element already exists.
                 if i != 0:
                     # First add the index+1.
-                    self.sequence.InsertStringItem(i, int_to_gui(i+1))
+                    if dep_check.wx_classic:
+                        self.sequence.InsertStringItem(i, int_to_gui(i+1))
+                    else:
+                        self.sequence.InsertItem(i, int_to_gui(i+1))
 
                 # Then set the value.
-                self.sequence.SetStringItem(i, 1, self.convert_to_gui(values[i]))
+                if dep_check.wx_classic:
+                    self.sequence.SetStringItem(i, 1, self.convert_to_gui(values[i]))
+                else:
+                    self.sequence.SetItem(i, 1, self.convert_to_gui(values[i]))
 
 
     def add_buttons(self, sizer):
@@ -699,11 +708,17 @@ class Sequence_window(wx.Dialog):
 
         # Add a new row with the index at the start.
         if self.variable_length:
-            self.sequence.InsertStringItem(next, int_to_gui(next+1))
+            if dep_check.wx_classic:
+                self.sequence.InsertStringItem(next, int_to_gui(next+1))
+            else:
+                self.sequence.InsertItem(next, int_to_gui(next+1))
 
         # Add a new empty row.
         else:
-            self.sequence.InsertStringItem(next, str_to_gui(''))
+            if dep_check.wx_classic:
+                self.sequence.InsertStringItem(next, str_to_gui(''))
+            else:
+                self.sequence.InsertItem(next, str_to_gui(''))
 
 
     def add_list(self, sizer):
@@ -742,11 +757,17 @@ class Sequence_window(wx.Dialog):
 
                 # Add a title to the first column.
                 if self.titles:
-                    self.sequence.SetStringItem(i, 0, str_to_gui(self.titles[i]))
+                    if dep_check.wx_classic:
+                        self.sequence.SetStringItem(i, 0, str_to_gui(self.titles[i]))
+                    else:
+                        self.sequence.SetItem(i, 0, str_to_gui(self.titles[i]))
 
                 # Otherwise add numbers starting from 1.
                 else:
-                    self.sequence.SetStringItem(i, 0, int_to_gui(i+1))
+                    if dep_check.wx_classic:
+                        self.sequence.SetStringItem(i, 0, int_to_gui(i+1))
+                    else:
+                        self.sequence.SetItem(i, 0, int_to_gui(i+1))
 
 
     def close(self, event):
