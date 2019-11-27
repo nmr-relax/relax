@@ -96,26 +96,12 @@ matrix:
     # MS Windows (10), Python 3.7.
     - name: "MS Windows (10), Python 3.7, single processor, no GUI tests."
       os: windows
-      language: sh
-      python: 3.7
+      language: shell
+      python: "3.7"
       before_install:
-        - choco install python3 --x86
+        - choco install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-        - python -m pip install --upgrade pip wheel
-        # Install Microsoft-MPI : https://github.com/Microsoft/Microsoft-MPI
-        # - wget -i "https://github.com"`curl -sL https://github.com/Microsoft/Microsoft-MPI/releases/latest | grep "download" | grep ".msi" | cut -d'"' -f2`
-        # - wget -i "https://github.com"`curl -sL https://github.com/Microsoft/Microsoft-MPI/releases/latest | grep "download" | grep ".exe" | cut -d'"' -f2`
-        # - msiexec.exe /i msmpisdk.msi ACCEPT=YES /qr+
-        # - msmpisetup.exe -force -unattend
-        # - set MSMPI
-        # - rm msmpisdk.msi msmpisetup.exe
-
-        # Works
-        # - mpiexec -np 2 echo "hello world"
-        # - mpiexec -np 2 python -m mpi4py -c "print('Hello')"
-        # Do not work
-        # - mpiexec -np 2 python relax --multi='mpi4py' -i
-        # - mpiexec -np 2 python -m mpi4py relax --multi='mpi4py' -i
+        - python -m pip install --upgrade pip
 
     # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
     - name: "API documentation build"
