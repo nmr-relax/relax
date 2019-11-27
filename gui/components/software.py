@@ -24,6 +24,7 @@
 """Module containing the software GUI element for listing the software used in the analysis."""
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.string_conv import str_to_gui
@@ -95,4 +96,7 @@ class Software(Base_list):
             n = len(cdp.exp_info.software)
             for i in range(n):
                 # Set the software name.
-                self.element.InsertStringItem(i, str_to_gui(cdp.exp_info.software[i].name))
+                if dep_check.wx_classic:
+                    self.element.InsertStringItem(i, str_to_gui(cdp.exp_info.software[i].name))
+                else:
+                    self.element.InsertItem(i, str_to_gui(cdp.exp_info.software[i].name))

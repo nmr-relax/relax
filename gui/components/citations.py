@@ -24,6 +24,7 @@
 """Module containing the citations GUI element for listing the citations relevant for the analysis."""
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.string_conv import str_to_gui
@@ -78,4 +79,7 @@ class Citations(Base_list):
             n = len(cdp.exp_info.citations)
             for i in range(n):
                 # Set the citation ID.
-                self.element.InsertStringItem(i, str_to_gui(cdp.exp_info.citations[i].cite_id))
+                if dep_check.wx_classic:
+                    self.element.InsertStringItem(i, str_to_gui(cdp.exp_info.citations[i].cite_id))
+                else:
+                    self.element.InsertItem(i, str_to_gui(cdp.exp_info.citations[i].cite_id))

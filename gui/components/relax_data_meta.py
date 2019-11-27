@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2010 Michael Bieri                                       #
-# Copyright (C) 2009-2012,2014 Edward d'Auvergne                              #
+# Copyright (C) 2009-2012,2014,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,6 +27,7 @@
 import wx
 
 # relax module imports.
+import dep_check
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.string_conv import gui_to_str, str_to_gui
@@ -242,16 +243,28 @@ class Relax_data_meta_list(Base_list):
             for i in range(n):
                 # Set the IDs.
                 id = cdp.ri_ids[i]
-                self.element.InsertStringItem(i, str_to_gui(id))
+                if dep_check.wx_classic:
+                    self.element.InsertStringItem(i, str_to_gui(id))
+                else:
+                    self.element.InsertItem(i, str_to_gui(id))
 
                 # Set the peak intensity types.
                 if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and id in cdp.exp_info.peak_intensity_type:
-                    self.element.SetStringItem(i, 1, str_to_gui(cdp.exp_info.peak_intensity_type[id]))
+                    if dep_check.wx_classic:
+                        self.element.SetStringItem(i, 1, str_to_gui(cdp.exp_info.peak_intensity_type[id]))
+                    else:
+                        self.element.SetItem(i, 1, str_to_gui(cdp.exp_info.peak_intensity_type[id]))
 
                 # Set the temperature calibration methods.
                 if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and id in cdp.exp_info.temp_calibration:
-                    self.element.SetStringItem(i, 2, str_to_gui(cdp.exp_info.temp_calibration[id]))
+                    if dep_check.wx_classic:
+                        self.element.SetStringItem(i, 2, str_to_gui(cdp.exp_info.temp_calibration[id]))
+                    else:
+                        self.element.SetItem(i, 2, str_to_gui(cdp.exp_info.temp_calibration[id]))
 
                 # Set the temperature control methods.
                 if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and id in cdp.exp_info.temp_control:
-                    self.element.SetStringItem(i, 3, str_to_gui(cdp.exp_info.temp_control[id]))
+                    if dep_check.wx_classic:
+                        self.element.SetStringItem(i, 3, str_to_gui(cdp.exp_info.temp_control[id]))
+                    else:
+                        self.element.SetItem(i, 3, str_to_gui(cdp.exp_info.temp_control[id]))

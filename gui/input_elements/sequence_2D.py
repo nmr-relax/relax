@@ -27,6 +27,7 @@ import wx
 import wx.lib.mixins.listctrl
 
 # relax module imports.
+import dep_check
 from gui.input_elements.sequence import Sequence, Sequence_list_ctrl, Sequence_window
 from gui.string_conv import int_to_gui
 from lib.check_types import is_list, is_list_of_lists
@@ -265,12 +266,18 @@ class Sequence_window_2D(Sequence_window):
 
             # Append a row for variable dimension sequences (the first element already exists).
             if self.variable_length and i != 0:
-                self.sequence.InsertStringItem(i, int_to_gui(i+1))
+                if dep_check.wx_classic:
+                    self.sequence.InsertStringItem(i, int_to_gui(i+1))
+                else:
+                    self.sequence.InsertItem(i, int_to_gui(i+1))
 
             # Loop over the values.
             for j in range(self.dim[1]):
                 # Set the value.
-                self.sequence.SetStringItem(i, j+self.offset, self.convert_to_gui(values[i][j]))
+                if dep_check.wx_classic:
+                    self.sequence.SetStringItem(i, j+self.offset, self.convert_to_gui(values[i][j]))
+                else:
+                    self.sequence.SetItem(i, j+self.offset, self.convert_to_gui(values[i][j]))
 
         # Refresh.
         self.Refresh()
