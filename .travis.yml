@@ -117,6 +117,14 @@ matrix:
         # - mpiexec -np 2 python relax --multi='mpi4py' -i
         # - mpiexec -np 2 python -m mpi4py relax --multi='mpi4py' -i
 
+    # arm64 Linux (Ubuntu Bionic 18.04), Python 3.7.
+    - name: "arm64 Linux (Ubuntu 18.04), Python 3.7, single processor, no GUI tests."
+      python: 3.7
+      language: python
+      os: linux
+      arch: arm64
+      dist: bionic
+
     # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
     - name: "API documentation build"
       python: 2.7
