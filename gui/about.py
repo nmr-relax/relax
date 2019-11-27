@@ -151,7 +151,10 @@ class About_base(wx.Frame):
 
         # The buffer for buffered drawing (work around for a GTK bug, the bitmap must be square!!!).
         size = max(self.virt_x, self.virt_y)
-        self.buffer = wx.EmptyBitmap(size, size)
+        if dep_check.wx_classic:
+            self.buffer = wx.EmptyBitmap(size, size)
+        else:
+            self.buffer = wx.Bitmap(size, size)
 
         # Create the device context.
         self.dc = wx.BufferedDC(None, self.buffer)
