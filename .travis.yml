@@ -153,11 +153,12 @@ install:
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo -H pip install --upgrade pip wheel; fi
 
-    # Manually install matplotlib and scipy for Python 2.7 compatibility.
+    # Manually install packages for Python 2.7 compatibility.
+    - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install numpy==1.16.5; else pip install numpy; fi
     - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install matplotlib==2.2.4; else pip install matplotlib; fi
     - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install scipy==1.2.2; else pip install scipy; fi
 
-    # Install Python packages with pip: scons minfx bmrblib numpy scipy.
+    # Install Python packages with pip.
     - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
     - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
 
