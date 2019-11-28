@@ -120,10 +120,9 @@ matrix:
       install:
         - /usr/bin/python --version
         - /usr/bin/python3 --version
-        - ls /usr/bin/
-        - /usr/bin/pip3 --version
+        - /usr/bin/python3 pip --version
         - export PATH=/usr/bin:$PATH
-        - /usr/bin/pip install -r devel_scripts/travis-ci/requirements.txt
+        - /usr/bin/python3 pip install -r devel_scripts/travis-ci/requirements.txt
         - /usr/bin/python3 /usr/bin/scons
 
     # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
