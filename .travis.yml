@@ -125,6 +125,15 @@ matrix:
         - export PATH=/usr/bin:$PATH
         - /usr/bin/pip3 install -r devel_scripts/travis-ci/requirements.txt
         - /usr/bin/python3 /usr/bin/scons
+      script:
+        # Fail on first error.
+        - set -e
+
+        # relax information printout.
+        - /usr/bin/python3 relax -i
+
+        # Single processor test suite execution.
+        - /usr/bin/python3 relax --time --test-suite
 
     # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
     - name: "API documentation build"
