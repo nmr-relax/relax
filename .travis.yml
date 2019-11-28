@@ -129,9 +129,9 @@ matrix:
         - sudo apt-get -y install scons
       install:
         - /usr/bin/python --version
-        - /usr/bin/pip --version
+        - /usr/bin/pip2 --version
         - export PATH=/usr/bin:$PATH
-        - /usr/bin/pip install -r devel_scripts/travis-ci/requirements.txt
+        - /usr/bin/pip2 install -r devel_scripts/travis-ci/requirements.txt
         - /usr/bin/python /usr/bin/scons
 
     # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
