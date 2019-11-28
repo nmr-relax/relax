@@ -104,9 +104,9 @@ matrix:
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
         - python -m pip install --upgrade pip
 
-    # Arm64 Linux (Ubuntu Xenial 16.04), Python 3.5 (system).
-    - name: "Arm64 Linux (Ubuntu 16.04), Python 3.5 (system), single processor, no GUI tests."
-      python: 3.5
+    # Arm64 Linux (Ubuntu Xenial 16.04), Python 3.6 (system).
+    - name: "Arm64 Linux (Ubuntu 16.04), Python 3.6 (system), single processor, no GUI tests."
+      python: 3.6
       language: python
       os: linux
       arch: arm64
