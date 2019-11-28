@@ -118,9 +118,13 @@ matrix:
         - sudo apt-get -y install python3-mpi4py
         - sudo apt-get -y install scons
       install:
+        - /usr/bin/python --version
+        - /usr/bin/python3 --version
+        - /usr/bin/pip --version
+        - /usr/bin/pip3 --version
         - export PATH=/usr/bin:$PATH
-        - pip install -r devel_scripts/travis-ci/requirements.txt
-        - scons
+        - /usr/bin/pip install -r devel_scripts/travis-ci/requirements.txt
+        - /usr/bin/python3 /usr/bin/scons
 
     # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
     - name: "API documentation build"
