@@ -126,6 +126,8 @@ matrix:
         - export PATH=/usr/bin:$PATH
         - /usr/bin/pip3 install -r devel_scripts/travis-ci/requirements.txt
         - /usr/bin/python3 /usr/bin/scons
+      services:
+        - xvfb
       script:
         # Fail on first error.
         - set -e
