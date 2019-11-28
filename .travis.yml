@@ -31,6 +31,7 @@ env:
     - TEST=true
     - UPGRADE=false
     - WXPYTHON=false
+    - PYTHON=""
 
 matrix:
   include:
@@ -111,6 +112,9 @@ matrix:
       os: linux
       arch: arm64
       dist: bionic
+      env:
+        - PYTHON="/usr/bin/python3"
+        - WXPYTHON=true
       before_install:
         - "export DISPLAY=:99.0"
         - "sh -e /etc/init.d/xvfb start"
@@ -129,15 +133,6 @@ matrix:
         - export PATH=/usr/bin:$PATH
         - /usr/bin/pip3 install -r devel_scripts/travis-ci/requirements.txt
         - /usr/bin/python3 /usr/bin/scons
-      script:
-        # Fail on first error.
-        - set -e
-
-        # relax information printout.
-        - /usr/bin/python3 relax -i
-
-        # Single processor test suite execution.
-        - /usr/bin/python3 relax --time --test-suite
 
     # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
     - name: "API documentation build"
@@ -201,20 +196,20 @@ script:
     - set -e
 
     # relax information printout.
-    - if [[ $MPI == "false" && $TEST == "true" ]]; then ./relax -i; fi
-    - if [[ $MPI == "true" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' -i; fi
+    - if [[ $MPI == "false" && $TEST == "true" ]]; then $PYTHON ./relax -i; fi
+    - if [[ $MPI == "true" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' -i; fi
 
     # Single processor test suite execution.
-    - if [[ $MPI == "false" && $WXPYTHON == "true"  && $TEST == "true" ]]; then ./relax --time --test-suite; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --system-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --unit-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then ./relax --time --verification-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "true"  && $TEST == "true" ]]; then $PYTHON ./relax --time --test-suite; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --system-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --unit-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --verification-tests; fi
 
     # Multiple processor test suite execution.
-    - if [[ $MPI == "true" && $WXPYTHON == "true"  && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --test-suite; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --system-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --unit-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 ./relax --multi='mpi4py' --time --verification-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "true"  && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --test-suite; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --system-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --unit-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --verification-tests; fi
 
     # API documentation build.
     - if [[ $API_BUILD == "true" ]]; then scons api_manual_html; fi
