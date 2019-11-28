@@ -113,12 +113,9 @@ matrix:
       arch: arm64
       dist: bionic
       env:
-        - PYTHON="/usr/bin/python3"
+        - PYTHON="xvfb-run /usr/bin/python3"
         - WXPYTHON=true
-      service:
-        - xvfb
       before_install:
-        - "export DISPLAY=:99.0"
         - sudo apt-get -y install python3-pip
         - sudo apt-get -y install python3-numpy
         - sudo apt-get -y install python3-matplotlib
