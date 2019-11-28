@@ -112,16 +112,12 @@ matrix:
       os: linux
       arch: arm64
       dist: bionic
-      env:
-        - PYTHON="xvfb-run /usr/bin/python3"
-        - WXPYTHON=true
       before_install:
         - sudo apt-get -y install python3-pip
         - sudo apt-get -y install python3-numpy
         - sudo apt-get -y install python3-matplotlib
         - sudo apt-get -y install python3-scipy
         - sudo apt-get -y install python3-mpi4py
-        - sudo apt-get -y install python3-wxgtk4.0
         - sudo apt-get -y install scons
       install:
         - /usr/bin/python --version
