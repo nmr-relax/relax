@@ -198,6 +198,10 @@ cache: pip
 git:
   depth: 10
 
+addons:
+  apt:
+    package: libblas-dev liblapack-dev
+
 notifications:
   # https://docs.travis-ci.com/user/notifications/#configuring-email-notifications
   # Pull Request builds do not trigger email notifications.
