@@ -21,6 +21,11 @@
 ###############################################################################
 
 language: python
+
+addons:
+  apt:
+    packages: libblas-dev liblapack-dev
+
 env:
   global:
     - API_BUILD=false
@@ -103,8 +108,8 @@ matrix:
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
         - python -m pip install --upgrade pip
 
-    # arm64 Linux (Ubuntu Bionic 18.04), Python 3.7.
-    - name: "arm64 Linux (Ubuntu 18.04), Python 3.7, single processor, no GUI tests."
+    # Arm64 Linux (Ubuntu Bionic 18.04), Python 3.7.
+    - name: "Arm64 Linux (Ubuntu 18.04), Python 3.7, single processor, no GUI tests."
       python: 3.7
       language: python
       os: linux
@@ -197,10 +202,6 @@ script:
 cache: pip
 git:
   depth: 10
-
-addons:
-  apt:
-    package: libblas-dev liblapack-dev
 
 notifications:
   # https://docs.travis-ci.com/user/notifications/#configuring-email-notifications
