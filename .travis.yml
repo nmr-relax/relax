@@ -120,7 +120,7 @@ matrix:
       install:
         - /usr/bin/python --version
         - /usr/bin/python3 --version
-        - /usr/bin/pip --version
+        - ls /usr/bin/
         - /usr/bin/pip3 --version
         - export PATH=/usr/bin:$PATH
         - /usr/bin/pip install -r devel_scripts/travis-ci/requirements.txt
