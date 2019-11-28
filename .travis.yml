@@ -24,7 +24,11 @@ language: python
 
 addons:
   apt:
-    packages: libblas-dev liblapack-dev
+    packages:
+      - gfortran
+      - libatlas-base-dev
+      - libblas-dev
+      - liblapack-dev
 
 env:
   global:
