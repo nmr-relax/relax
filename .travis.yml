@@ -105,34 +105,34 @@ matrix:
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
         - python -m pip install --upgrade pip
 
-    # Arm64 Linux (Ubuntu Bionic 18.04), Python 3.6 (system).
-    - name: "Arm64 Linux (Ubuntu 18.04), Python 3.6 (system), single processor, all tests."
-      python: 3.6
+    # Arm64 Linux (Ubuntu Bionic 18.04), Python 2.7 (system).
+    - name: "Arm64 Linux (Ubuntu 18.04), Python 2.7 (system), single processor, all tests."
+      python: 2.7
       language: python
       os: linux
       arch: arm64
       dist: bionic
       env:
-        - PYTHON="/usr/bin/python3"
+        - PYTHON="/usr/bin/python"
         - WXPYTHON=true
       service:
         - xvfb
       before_install:
         - "export DISPLAY=:99.0"
-        - sudo apt-get -y install python3-pip
-        - sudo apt-get -y install python3-numpy
-        - sudo apt-get -y install python3-matplotlib
-        - sudo apt-get -y install python3-scipy
-        - sudo apt-get -y install python3-mpi4py
-        - sudo apt-get -y install python3-wxgtk4.0
+        - sudo apt-get -y install python-pip
+        - sudo apt-get -y install python-numpy
+        - sudo apt-get -y install python-matplotlib
+        - sudo apt-get -y install python-scipy
+        - sudo apt-get -y install python-mpi4py
+        - sudo apt-get -y install python-wxgtk3.0
+        - sudo apt-get -y install python-wxtools
         - sudo apt-get -y install scons
       install:
         - /usr/bin/python --version
-        - /usr/bin/python3 --version
-        - /usr/bin/pip3 --version
+        - /usr/bin/pip --version
         - export PATH=/usr/bin:$PATH
-        - /usr/bin/pip3 install -r devel_scripts/travis-ci/requirements.txt
-        - /usr/bin/python3 /usr/bin/scons
+        - /usr/bin/pip install -r devel_scripts/travis-ci/requirements.txt
+        - /usr/bin/python /usr/bin/scons
 
     # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
     - name: "API documentation build"
