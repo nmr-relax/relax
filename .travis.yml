@@ -112,8 +112,6 @@ matrix:
       arch: arm64
       dist: bionic
       env: WXPYTHON=true
-      virtualenv:
-        system_site_packages: true
       before_install:
         - sudo apt-get -y install python-numpy
         - sudo apt-get -y install python-matplotlib
@@ -121,6 +119,8 @@ matrix:
         - sudo apt-get -y install python-mpi4py
         - sudo apt-get -y install python-wxgtk3.0
         - sudo apt-get -y install scons
+      virtualenv:
+        system_site_packages: true
       install:
         - pip install -r devel_scripts/travis-ci/requirements.txt
         - scons
