@@ -57,6 +57,7 @@ jobs:
         - conda config --set always_yes yes --set changeps1 no
         #- conda update -q conda
         - conda info -a
+        - conda install -c https://conda.anaconda.org/travis wxpython
 
     # Linux (Ubuntu Trusty 14.04), Python 3.6, multi processor (2 MPI processors).
     # Python 3.6 is standard version on Redhat 7 and Ubuntu LTS 18.04 and TS 16.04
@@ -84,11 +85,23 @@ jobs:
         - mkdir -p $HOME/.matplotlib/
         - "echo 'backend: TkAgg' > $HOME/.matplotlib/matplotlibrc"
 
+    # MS Windows (10), Python 2.7.
+    - name: "MS Windows (10), Python 2.7, single processor, all tests."
+      os: windows
+      language: shell
+      python: 2.7
+      env: WXPYTHON=true
+      before_install:
+        - choco install python2
+        - choco install python-wxwidgets
+        - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
+        - python -m pip install --upgrade pip
+
     # MS Windows (10), Python 3.7.
     - name: "MS Windows (10), Python 3.7, single processor, no GUI tests."
       os: windows
       language: shell
-      python: "3.7"
+      python: 3.7
       before_install:
         - choco install python3 --version 3.7.4
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
@@ -129,6 +142,7 @@ jobs:
         - hash -r
         - conda config --set always_yes yes --set changeps1 no
         - conda info -a
+        - conda install -c https://conda.anaconda.org/travis wxpython
 
         # Install the required epydoc Python module.
         - pip install epydoc
@@ -168,9 +182,6 @@ install:
 
     # Install Python package with pip for running with multiple processors.
     - if [[ $MPIRUN != "" ]]; then pip install mpi4py; fi
-
-    # Install wxPython 3.0 using Conda.
-    - if [[ $WXPYTHON == "true" ]]; then conda install -c https://conda.anaconda.org/travis wxpython; fi
 
     # Compile the C modules.
     - scons
