@@ -36,7 +36,6 @@ env:
     - OLD_PY2_PACKAGES=false
     - PYTHON=""
     - RELAX_ARGS=""
-    - UPGRADE=false
     - WXPYTHON=false
 
 jobs:
@@ -75,14 +74,6 @@ jobs:
       python: 3.7
       language: python
       dist: xenial
-
-    # Linux (Ubuntu Xenial 16.04), Python 3.7.
-    # Try upgrade all pip packages.
-    - name: "Linux (Ubuntu 16.04), Python 3.7, single processor, no GUI tests, upgraded pip packages."
-      python: 3.7
-      language: python
-      dist: xenial
-      env: UPGRADE=true
 
     # Mac OS X (10.13), Python 3.7.
     - name: "Mac OS X (10.13), Python 3.7, single processor, no GUI tests."
@@ -172,7 +163,7 @@ install:
     - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
 
     # Debugging printout of environmental variables.
-    - echo "MPIRUN=$MPIRUN ; OS=$TRAVIS_OS_NAME ; PIPUPGRADE=$UPGRADE ; VIRTUAL_ENV=$VIRTUAL_ENV ; PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    - echo "MPIRUN=$MPIRUN ; OS=$TRAVIS_OS_NAME ; VIRTUAL_ENV=$VIRTUAL_ENV ; PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
 
     # Get newer pip and whell for binary caching support.
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
@@ -184,8 +175,7 @@ install:
     - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install scipy==1.2.2; else pip install scipy; fi
 
     # Install Python packages with pip.
-    - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
-    - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
+    - pip install -r devel_scripts/travis-ci/requirements.txt
 
     # Install Python package with pip for running with multiple processors.
     - if [[ $MPIRUN != "" ]]; then pip install mpi4py; fi
