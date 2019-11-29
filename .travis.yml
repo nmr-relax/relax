@@ -35,76 +35,6 @@ env:
 
 matrix:
   include:
-    # Linux (Ubuntu Xenial 16.04), Python 2.7, single processor.
-    #   https://docs.travis-ci.com/user/reference/trusty/
-    - name: "Linux (Ubuntu 16.04), Python 2.7, single processor, all tests."
-      python: 2.7
-      language: python
-      dist: xenial
-      services:
-        - xvfb
-      env: WXPYTHON=true OLD_PY2_PACKAGES=true
-      before_install:
-        # Conda is used to install wxPython 3.0.
-        - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
-        - bash miniconda.sh -b -p $HOME/miniconda
-        - export PATH="$HOME/miniconda/bin:$PATH"
-        - hash -r
-        - conda config --set always_yes yes --set changeps1 no
-        #- conda update -q conda
-        - conda info -a
-
-    # Linux (Ubuntu Trusty 14.04), Python 3.6, multi processor (2 MPI processors).
-    # Python 3.6 is standard version on Redhat 7 and Ubuntu LTS 18.04 and TS 16.04
-    - name: "Linux (Ubuntu 14.04), Python 3.6, MPI multi processor, no GUI tests."
-      python: 3.6
-      language: python
-      dist: trusty
-      env: MPI=true
-      before_install:
-        # apt-get install for OpenMPI http://wiki.nmr-relax.com/OpenMPI
-        - sudo apt-get update && sudo apt-get install -y openmpi-bin libopenmpi-dev ssh
-
-    # Linux (Ubuntu Xenial 16.04), Python 3.7.
-    #   https://docs.travis-ci.com/user/reference/xenial
-    #   https://github.com/travis-ci/travis-ci/issues/9815
-    - name: "Linux (Ubuntu 16.04), Python 3.7, single processor, no GUI tests."
-      python: 3.7
-      language: python
-      dist: xenial
-
-    # Linux (Ubuntu Xenial 16.04), Python 3.7.
-    # Try upgrade all pip packages.
-    - name: "Linux (Ubuntu 16.04), Python 3.7, single processor, no GUI tests, upgraded pip packages."
-      python: 3.7
-      language: python
-      dist: xenial
-      env: UPGRADE=true
-
-    # Mac OS X (10.13), Python 3.7.
-    - name: "Mac OS X (10.13), Python 3.7, single processor, no GUI tests."
-      os: osx
-      language: sh
-      python: 3.7
-      before_install:
-        - python3 -m pip install virtualenv
-        - virtualenv venv -p python3
-        - source venv/bin/activate
-
-        # Fix for the Mac OS image rendering back end of matplotlib.
-        - mkdir -p $HOME/.matplotlib/
-        - "echo 'backend: TkAgg' > $HOME/.matplotlib/matplotlibrc"
-
-    # MS Windows (10), Python 3.7.
-    - name: "MS Windows (10), Python 3.7, single processor, no GUI tests."
-      os: windows
-      language: shell
-      python: "3.7"
-      before_install:
-        - choco install python3 --version 3.7.4
-        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-        - python -m pip install --upgrade pip
-
     # Arm64 Linux (Ubuntu Bionic 18.04), Python 3.6 (system).
     - name: "Arm64 Linux (Ubuntu 18.04), Python 3.6 (system), single processor, all tests."
       python: 3.6
@@ -129,88 +59,15 @@ matrix:
         - /usr/bin/pip3 install -r devel_scripts/travis-ci/requirements.txt
         - /usr/bin/python3 /usr/bin/scons
 
-    # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
-    - name: "API documentation build"
-      python: 2.7
-      language: python
-      dist: trusty
-      env: WXPYTHON=true OLD_PY2_PACKAGES=true TEST=false API_BUILD=true
-      before_install:
-        # Conda is used to install wxPython 3.0.
-        - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
-        - bash miniconda.sh -b -p $HOME/miniconda
-        - export PATH="$HOME/miniconda/bin:$PATH"
-        - hash -r
-        - conda config --set always_yes yes --set changeps1 no
-        - conda info -a
-
-    # FSF copyright validation, Linux (Ubuntu Xenial 16.04), Python 3.7.
-    - name: "FSF copyright validation"
-      python: 3.7
-      language: python
-      env: TEST=false FSFCV=true
-      dist: xenial
-
-install:
-    # Fail on first error.
-    - set -e
-
-    # Find Python.h to build with scons.
-    - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
-
-    # Debugging printout of environmental variables.
-    - echo "MPI=$MPI ; OS=$TRAVIS_OS_NAME ; PIPUPGRADE=$UPGRADE ; VIRTUAL_ENV=$VIRTUAL_ENV ; PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-
-    # Get newer pip and whell for binary caching support.
-    - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
-    - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo -H pip install --upgrade pip wheel; fi
-
-    # Manually install packages for Python 2.7 compatibility.
-    - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install numpy==1.16.5; else pip install numpy; fi
-    - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install matplotlib==2.2.4; else pip install matplotlib; fi
-    - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install scipy==1.2.2; else pip install scipy; fi
-
-    # Install Python packages with pip.
-    - if [[ $UPGRADE == "false" ]]; then pip install -r devel_scripts/travis-ci/requirements.txt; fi
-    - if [[ $UPGRADE == "true" ]]; then pip install -U -r devel_scripts/travis-ci/requirements.txt; fi
-
-    # Install Python package with pip for running with multiple processors.
-    - if [[ $MPI == "true" ]]; then pip install mpi4py; fi
-
-    # Install epydoc for the API documentation build.
-    - if [[ $API_BUILD == "true" ]]; then pip install epydoc; fi
-
-    # Install wxPython 3.0 using Conda.
-    - if [[ $WXPYTHON == "true" ]]; then conda install -c https://conda.anaconda.org/travis wxpython; fi
-
-    # Compile the C modules.
-    - scons
-
 script:
     # Fail on first error.
     - set -e
 
     # relax information printout.
     - if [[ $MPI == "false" && $TEST == "true" ]]; then $PYTHON ./relax -i; fi
-    - if [[ $MPI == "true" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' -i; fi
 
     # Single processor test suite execution.
-    - if [[ $MPI == "false" && $WXPYTHON == "true"  && $TEST == "true" ]]; then $PYTHON ./relax --time --test-suite; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --system-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --unit-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --verification-tests; fi
-
-    # Multiple processor test suite execution.
-    - if [[ $MPI == "true" && $WXPYTHON == "true"  && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --test-suite; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --system-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --unit-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --verification-tests; fi
-
-    # API documentation build.
-    - if [[ $API_BUILD == "true" ]]; then scons api_manual_html; fi
-
-    # Run the FSF copyright validation script.
-    - if [[ $FSFCV == "true" ]]; then git fetch --unshallow && ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --system-tests N_state_model.test_populations; fi
 
 cache: pip
 git:
