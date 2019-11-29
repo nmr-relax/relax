@@ -30,6 +30,7 @@ from tempfile import mkdtemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from lib.compat import linux_distribution
 from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from lib.geometry.coord_transform import cartesian_to_spherical
@@ -43,7 +44,7 @@ SYSTEM = platform.system()
 RELEASE = platform.release()
 VERSION = platform.version()
 WIN32_VER = platform.win32_ver()
-DIST = platform.dist()
+DIST = linux_distribution()
 ARCH = platform.architecture()
 MACH = platform.machine()
 PROC = platform.processor()

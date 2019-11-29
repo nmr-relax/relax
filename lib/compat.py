@@ -120,6 +120,12 @@ try:
 except:
     numpy_norm_axis = False
 
+# Linux distribution information.
+try:
+    from platform import linux_distribution
+except ImportError:
+    from distro import linux_distribution
+
 
 def bz2_open(file, mode='r'):
     """Abstract the numerous ways BZ2 files are handled in Python.

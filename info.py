@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2001-2014,2016-2017 Edward d'Auvergne                         #
+# Copyright (C) 2001-2014,2016-2017,2019 Edward d'Auvergne                    #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -47,6 +47,7 @@ import sys
 from textwrap import wrap
 
 # relax module imports.
+from lib.compat import linux_distribution
 from status import Status; status = Status()
 from version import repo_head, repo_type, repo_url, version, version_full
 
@@ -818,8 +819,8 @@ class Info_box(object):
             text = text + (format % ("Version: ", platform.version()))
         if hasattr(platform, 'win32_ver') and platform.win32_ver()[0]:
             text = text + (format % ("Win32 version: ", (platform.win32_ver()[0] + " " + platform.win32_ver()[1] + " " + platform.win32_ver()[2] + " " + platform.win32_ver()[3])))
-        if hasattr(platform, 'linux_distribution') and platform.linux_distribution()[0]:
-            text = text + (format % ("GNU/Linux version: ", (platform.linux_distribution()[0] + " " + platform.linux_distribution()[1] + " " + platform.linux_distribution()[2])))
+        if linux_distribution()[0]:
+            text = text + (format % ("GNU/Linux version: ", (linux_distribution()[0] + " " + linux_distribution()[1] + " " + linux_distribution()[2])))
         if hasattr(platform, 'mac_ver') and platform.mac_ver()[0]:
             text = text + (format % ("Mac version: ", (platform.mac_ver()[0] + " (" + platform.mac_ver()[1][0] + ", " + platform.mac_ver()[1][1] + ", " + platform.mac_ver()[1][2] + ") " + platform.mac_ver()[2])))
         if hasattr(platform, 'dist'):

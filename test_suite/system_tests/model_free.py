@@ -32,6 +32,7 @@ from tempfile import mkdtemp, mkstemp
 from auto_analyses.dauvergne_protocol import dAuvergne_protocol
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from lib.compat import linux_distribution
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
@@ -47,7 +48,7 @@ SYSTEM = platform.system()
 RELEASE = platform.release()
 VERSION = platform.version()
 WIN32_VER = platform.win32_ver()
-DIST = platform.dist()
+DIST = linux_distribution()
 ARCH = platform.architecture()
 MACH = platform.machine()
 PROC = platform.processor()
