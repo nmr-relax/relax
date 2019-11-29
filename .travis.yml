@@ -67,13 +67,11 @@ jobs:
       dist: trusty
       env: MPIRUN="mpirun -np 2" RELAX_ARGS="--multi=mpi4py"
 
-    # Linux (Ubuntu Xenial 16.04), Python 3.7.
-    #   https://docs.travis-ci.com/user/reference/xenial
-    #   https://github.com/travis-ci/travis-ci/issues/9815
-    - name: "Linux (Ubuntu 16.04), Python 3.7, single processor, no GUI tests."
+    # Linux (Ubuntu Bionic 18.04), Python 3.7.
+    - name: "Linux (Ubuntu 18.04), Python 3.7, single processor, no GUI tests."
       python: 3.7
       language: python
-      dist: xenial
+      dist: bionic
 
     # Mac OS X (10.13), Python 3.7.
     - name: "Mac OS X (10.13), Python 3.7, single processor, no GUI tests."
