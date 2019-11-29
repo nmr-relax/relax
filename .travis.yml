@@ -32,7 +32,6 @@ addons:
 
 env:
   global:
-    - API_BUILD=false
     - FSFCV=false
     - MPI=false
     - OLD_PY2_PACKAGES=false
@@ -133,12 +132,12 @@ jobs:
         - /usr/bin/pip3 install -r devel_scripts/travis-ci/requirements.txt
         - /usr/bin/python3 /usr/bin/scons
 
-    # API documentation build, Linux (Ubuntu Xenial 14.04), Python 2.7.
+    # API documentation build, Linux (Ubuntu Trusty 14.04), Python 2.7.
     - name: "API documentation build"
       python: 2.7
       language: python
       dist: trusty
-      env: WXPYTHON=true OLD_PY2_PACKAGES=true TEST=false API_BUILD=true
+      env: WXPYTHON=true OLD_PY2_PACKAGES=true TEST=false
       before_install:
         # Conda is used to install wxPython 3.0.
         - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -147,6 +146,11 @@ jobs:
         - hash -r
         - conda config --set always_yes yes --set changeps1 no
         - conda info -a
+
+        # Install the required epydoc Python module.
+        - pip install epydoc
+      script:
+        - scons api_manual_html
 
     # FSF copyright validation, Linux (Ubuntu Xenial 16.04), Python 3.7.
     - name: "FSF copyright validation"
@@ -181,9 +185,6 @@ install:
     # Install Python package with pip for running with multiple processors.
     - if [[ $MPI == "true" ]]; then pip install mpi4py; fi
 
-    # Install epydoc for the API documentation build.
-    - if [[ $API_BUILD == "true" ]]; then pip install epydoc; fi
-
     # Install wxPython 3.0 using Conda.
     - if [[ $WXPYTHON == "true" ]]; then conda install -c https://conda.anaconda.org/travis wxpython; fi
 
@@ -209,9 +210,6 @@ script:
     - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --system-tests; fi
     - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --unit-tests; fi
     - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --verification-tests; fi
-
-    # API documentation build.
-    - if [[ $API_BUILD == "true" ]]; then scons api_manual_html; fi
 
     # Run the FSF copyright validation script.
     - if [[ $FSFCV == "true" ]]; then git fetch --unshallow && ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
