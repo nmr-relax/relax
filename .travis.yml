@@ -23,6 +23,13 @@
 language: python
 os: linux
 
+addons:
+  apt:
+    packages:
+        - openmpi-bin
+        - libopenmpi-dev
+        - ssh
+
 env:
   global:
     - API_BUILD=false
@@ -62,9 +69,6 @@ jobs:
       language: python
       dist: trusty
       env: MPI=true
-      before_install:
-        # apt-get install for OpenMPI http://wiki.nmr-relax.com/OpenMPI
-        - sudo apt-get update && sudo apt-get install -y openmpi-bin libopenmpi-dev ssh
 
     # Linux (Ubuntu Xenial 16.04), Python 3.7.
     #   https://docs.travis-ci.com/user/reference/xenial
