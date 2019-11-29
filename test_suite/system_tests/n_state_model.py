@@ -1134,7 +1134,7 @@ class N_state_model(SystemTestCase):
         self.assertEqual(len(cdp.probs), 3)
         self.assertAlmostEqual(cdp.probs[0], 0.3, 3)
         self.assertAlmostEqual(cdp.probs[1], 0.6, 2)
-        self.assertAlmostEqual(cdp.probs[2], 0.1, 3)
+        self.assertAlmostEqual(cdp.probs[2], 0.1, 2)
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.chi2, 0.0, 2)
