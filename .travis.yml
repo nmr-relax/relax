@@ -34,7 +34,6 @@ env:
   global:
     - MPI=false
     - OLD_PY2_PACKAGES=false
-    - TEST=true
     - UPGRADE=false
     - WXPYTHON=false
     - PYTHON=""
@@ -136,7 +135,7 @@ jobs:
       python: 2.7
       language: python
       dist: trusty
-      env: WXPYTHON=true OLD_PY2_PACKAGES=true TEST=false
+      env: WXPYTHON=true OLD_PY2_PACKAGES=true
       before_install:
         # Conda is used to install wxPython 3.0.
         - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -155,7 +154,6 @@ jobs:
     - name: "FSF copyright validation"
       python: 3.7
       language: python
-      env: TEST=false
       dist: xenial
       install:
         - set -e
@@ -200,20 +198,20 @@ script:
     - set -e
 
     # relax information printout.
-    - if [[ $MPI == "false" && $TEST == "true" ]]; then $PYTHON ./relax -i; fi
-    - if [[ $MPI == "true" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' -i; fi
+    - if [[ $MPI == "false" ]]; then $PYTHON ./relax -i; fi
+    - if [[ $MPI == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' -i; fi
 
     # Single processor test suite execution.
-    - if [[ $MPI == "false" && $WXPYTHON == "true"  && $TEST == "true" ]]; then $PYTHON ./relax --time --test-suite; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --system-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --unit-tests; fi
-    - if [[ $MPI == "false" && $WXPYTHON == "false" && $TEST == "true" ]]; then $PYTHON ./relax --time --verification-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "true"  ]]; then $PYTHON ./relax --time --test-suite; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" ]]; then $PYTHON ./relax --time --system-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" ]]; then $PYTHON ./relax --time --unit-tests; fi
+    - if [[ $MPI == "false" && $WXPYTHON == "false" ]]; then $PYTHON ./relax --time --verification-tests; fi
 
     # Multiple processor test suite execution.
-    - if [[ $MPI == "true" && $WXPYTHON == "true"  && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --test-suite; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --system-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --unit-tests; fi
-    - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --verification-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "true"  ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --test-suite; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --system-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --unit-tests; fi
+    - if [[ $MPI == "true" && $WXPYTHON == "false" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --verification-tests; fi
 
 cache: pip
 git:
