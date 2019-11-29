@@ -1115,7 +1115,7 @@ def set_xh_vect(spin_line, col, spin, spin_id1=None, spin_id2=None, spin_hash1=N
     # Get the interatomic data container.
     interatom = return_interatom(spin_hash1=spin_hash1, spin_hash2=spin_hash2)
     if interatom == None:
-        raise RelaxError("No interatomic interaction between spins '%s' and '%s' could be found." (spin_id1, spin_id2))
+        raise RelaxError("No interatomic interaction between spins '%s' and '%s' could be found." % (spin_id1, spin_id2))
 
     # The vector.
     vector = eval(spin_line[col['xh_vect']])
