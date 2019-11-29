@@ -21,6 +21,7 @@
 ###############################################################################
 
 language: python
+os: linux
 
 env:
   global:
@@ -33,7 +34,7 @@ env:
     - WXPYTHON=false
     - PYTHON=""
 
-matrix:
+jobs:
   include:
     # Linux (Ubuntu Xenial 16.04), Python 2.7, single processor.
     #   https://docs.travis-ci.com/user/reference/trusty/
@@ -84,7 +85,7 @@ matrix:
     # Mac OS X (10.13), Python 3.7.
     - name: "Mac OS X (10.13), Python 3.7, single processor, no GUI tests."
       os: osx
-      language: sh
+      language: shell
       python: 3.7
       before_install:
         - python3 -m pip install virtualenv
@@ -109,7 +110,6 @@ matrix:
     - name: "Arm64 Linux (Ubuntu 18.04), Python 3.6 (system), single processor, no GUI tests."
       python: 3.6
       language: python
-      os: linux
       arch: arm64
       dist: bionic
       env:
