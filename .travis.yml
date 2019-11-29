@@ -32,7 +32,6 @@ addons:
 
 env:
   global:
-    - FSFCV=false
     - MPI=false
     - OLD_PY2_PACKAGES=false
     - TEST=true
@@ -156,8 +155,15 @@ jobs:
     - name: "FSF copyright validation"
       python: 3.7
       language: python
-      env: TEST=false FSFCV=true
+      env: TEST=false
       dist: xenial
+      before_install:
+        - pip install pytz
+      install:
+        - set -e
+      script:
+        - git fetch --unshallow
+        - ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py
 
 install:
     # Fail on first error.
@@ -210,9 +216,6 @@ script:
     - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --system-tests; fi
     - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --unit-tests; fi
     - if [[ $MPI == "true" && $WXPYTHON == "false" && $TEST == "true" ]]; then mpirun -np 2 $PYTHON ./relax --multi='mpi4py' --time --verification-tests; fi
-
-    # Run the FSF copyright validation script.
-    - if [[ $FSFCV == "true" ]]; then git fetch --unshallow && ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py; fi
 
 cache: pip
 git:
