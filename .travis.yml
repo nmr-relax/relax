@@ -44,7 +44,6 @@ jobs:
     #   https://docs.travis-ci.com/user/reference/trusty/
     - name: "Linux (Ubuntu 16.04), Python 2.7, single processor, all tests."
       python: 2.7
-      language: python
       dist: xenial
       services:
         - xvfb
@@ -63,14 +62,12 @@ jobs:
     # Python 3.6 is standard version on Redhat 7 and Ubuntu LTS 18.04 and TS 16.04
     - name: "Linux (Ubuntu 14.04), Python 3.6, MPI multi processor, no GUI tests."
       python: 3.6
-      language: python
       dist: trusty
       env: MPIRUN="mpirun -np 2" RELAX_ARGS="--multi='mpi4py'"
 
     # Linux (Ubuntu Bionic 18.04), Python 3.7.
     - name: "Linux (Ubuntu 18.04), Python 3.7, single processor, no GUI tests."
       python: 3.7
-      language: python
       dist: bionic
 
     # Mac OS X (10.13), Python 3.7.
@@ -100,7 +97,6 @@ jobs:
     # Arm64 Linux (Ubuntu Bionic 18.04), Python 3.6 (system).
     - name: "Arm64 Linux (Ubuntu 18.04), Python 3.6 (system), single processor, no GUI tests."
       python: 3.6
-      language: python
       arch: arm64
       dist: bionic
       env:
@@ -123,7 +119,6 @@ jobs:
     # API documentation build, Linux (Ubuntu Trusty 14.04), Python 2.7.
     - name: "API documentation build"
       python: 2.7
-      language: python
       dist: trusty
       env: WXPYTHON=true OLD_PY2_PACKAGES=true
       before_install:
@@ -143,7 +138,6 @@ jobs:
     # FSF copyright validation, Linux (Ubuntu Xenial 16.04), Python 3.7.
     - name: "FSF copyright validation"
       python: 3.7
-      language: python
       dist: xenial
       install:
         - set -e
