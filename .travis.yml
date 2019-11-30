@@ -85,14 +85,14 @@ jobs:
         - mkdir -p $HOME/.matplotlib/
         - "echo 'backend: TkAgg' > $HOME/.matplotlib/matplotlibrc"
 
-    # MS Windows (10), Python 3.7.
-    - name: "MS Windows (10), Python 3.7, single processor, no GUI tests."
+    # MS Windows (10), Python 2.7.
+    - name: "MS Windows (10), Python 2.7, single processor, all tests."
       os: windows
       language: shell
-      python: "3.7"
+      python: 2.7
       env: WXPYTHON=true
       before_install:
-        - choco install python3 --version 3.7.4
+        - choco install python --version 2.7.17
         - choco install python-wxwidgets
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
         - python -m pip install --upgrade pip
