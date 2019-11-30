@@ -404,6 +404,8 @@ class Relax:
                     parser.error("the script file " + repr(self.script_file) + " does not exist")
 
         # Set the multi-processor type and number.
+        if options.multiprocessor not in ['uni', 'mpi4py']:
+            parser.error("The processor type '%s' is not supported.\n" % options.multiprocessor)
         self.multiprocessor_type = options.multiprocessor
         self.n_processors = options.n_processors
 

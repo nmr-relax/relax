@@ -163,11 +163,6 @@ def load_multiprocessor(processor_name, callback, processor_size, verbosity=1):
     @rtype:                 multi.processor.Processor instance
     """
 
-    # Check that the processor type is supported.
-    if processor_name not in ['uni', 'mpi4py']:
-        _sys.stderr.write("The processor type '%s' is not supported.\n" % processor_name)
-        _sys.exit()
-
     # Store the verbosity level.
     _verbosity.set(verbosity)
 
