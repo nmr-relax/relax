@@ -63,7 +63,7 @@ jobs:
     - name: "Linux (Ubuntu 14.04), Python 3.6, MPI multi processor, no GUI tests."
       python: 3.6
       dist: trusty
-      env: MPIRUN="mpirun -np 2" RELAX_ARGS="--multi='mpi4py'"
+      env: MPIRUN="mpirun -np 2" RELAX_ARGS="--multi=mpi4py"
 
     # Linux (Ubuntu Bionic 18.04), Python 3.7.
     - name: "Linux (Ubuntu 18.04), Python 3.7, single processor, no GUI tests."
