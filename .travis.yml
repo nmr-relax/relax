@@ -141,6 +141,8 @@ jobs:
     - name: "FSF copyright validation"
       python: 3.7
       dist: xenial
+      before_install:
+        - pip install pytz
       install:
         - set -e
       script:
