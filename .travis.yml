@@ -93,8 +93,8 @@ jobs:
       env: WXPYTHON=true
       before_install:
         - choco install python-wxwidgets
-        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-        - python2 -m pip install --upgrade pip
+        - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
+        - python -m pip install --upgrade pip
 
     # Arm64 Linux (Ubuntu Bionic 18.04), Python 3.6 (system).
     - name: "Arm64 Linux (Ubuntu 18.04), Python 3.6 (system), single processor, no GUI tests."
