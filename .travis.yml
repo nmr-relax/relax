@@ -92,7 +92,7 @@ jobs:
       python: 2.7
       env: WXPYTHON=true
       before_install:
-        - choco install python2
+        - choco install python
         - choco install python-wxwidgets
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
         - python -m pip install --upgrade pip
