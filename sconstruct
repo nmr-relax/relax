@@ -60,11 +60,13 @@ MACH = platform.uname()[4]
 # Symbolic link flag.
 SYMLINK_FLAG = 1
 
-# Force a different target archictecture for MS Windows, as the Python 2.x downloads are only 32-bit.
-WIN_TARGET_OVERRIDE = False
-if platform.python_version_tuple()[0] == '2':
-    WIN_TARGET_OVERRIDE = True
+# Determine the target architecture based on the Python binary (currently Windows only).
 TARGET_ARCH = None
+arch = platform.architecture()[0]
+if arch == '32bit':
+    TARGET_ARCH = 'x86'
+elif arch == '64bit':
+    TARGET_ARCH = 'x86_64'
 
 # GNU/Linux.
 if SYSTEM == 'Linux':
@@ -80,27 +82,17 @@ elif SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
     # Set the system to 'Windows' no matter what.
     SYSTEM = 'Windows'
 
-    # Force a default of 32-bit.
-    if WIN_TARGET_OVERRIDE:
-        TARGET_ARCH = 'x86'
+    # 32 bit.
+    if arch == '32bit':
         SYS = 'Win32'
 
-    # Determine the architecture.
+    # 64 bit.
+    elif arch == '64bit':
+        SYS = 'Win64'
+
+    # Unknown.
     else:
-        # Architecture.
-        arch = platform.architecture()[0]
-
-        # 32 bit.
-        if arch == '32bit':
-            SYS = 'Win32'
-
-        # 64 bit.
-        elif arch == '64bit':
-            SYS = 'Win64'
-
-        # Unknown.
-        else:
-            SYS = 'Win'
+        SYS = 'Win'
 
     # Windows installation path.
     INSTALL_PATH = 'C:\\'
