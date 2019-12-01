@@ -64,9 +64,9 @@ SYMLINK_FLAG = 1
 TARGET_ARCH = None
 arch = platform.architecture()[0]
 if arch == '32bit':
-    TARGET_ARCH = 'x86_64'
-elif arch == '64bit':
     TARGET_ARCH = 'x86'
+elif arch == '64bit':
+    TARGET_ARCH = 'x86_64'
 
 # GNU/Linux.
 if SYSTEM == 'Linux':
@@ -680,10 +680,12 @@ class Main:
         # Print out string returning function.
         def print_string(target, source, env):
             string = "\n\n\n\n"
-            string = string + "###########################\n"
-            string = string + "# Compiling the C modules #\n"
-            string = string + "###########################\n\n\n"
-            string = string + "Building the relaxation curve fitting module " + str(self.relax_fit_object[0]) + "\n"
+            string += "###########################\n"
+            string += "# Compiling the C modules #\n"
+            string += "###########################\n\n\n"
+            string += "Building the relaxation curve fitting module '%s'." % self.relax_fit_object[0]
+            if SYSTEM == 'Windows':
+                string += "Arch: '%s'" % TARGET_ARCH
             return string
 
         # Add the printout as an action to take before constructing the first object.
