@@ -683,9 +683,9 @@ class Main:
             string += "###########################\n"
             string += "# Compiling the C modules #\n"
             string += "###########################\n\n\n"
-            string += "Building the relaxation curve fitting module '%s'." % self.relax_fit_object[0]
+            string += "Building the relaxation curve fitting module '%s'.\n" % self.relax_fit_object[0]
             if SYSTEM == 'Windows':
-                string += "Arch: '%s'" % TARGET_ARCH
+                string += "MS Windows target arch: '%s'\n" % TARGET_ARCH
             return string
 
         # Add the printout as an action to take before constructing the first object.
