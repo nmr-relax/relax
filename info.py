@@ -242,6 +242,8 @@ class Info_box(object):
         # Default to all info.
         else:
             file_type = data[0][:-1]
+            if hasattr(file_type, 'decode'):
+                file_type = file_type.decode()
             for i in range(1, len(data)):
                 row = data[i].split('\t')
                 arch[i] = row[1][:-1]
