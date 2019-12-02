@@ -406,7 +406,7 @@ class Main:
         temp_extns = ['so', 'sconsign', 'dll', 'pyd']
 
         # Print out.
-        print("\nRemoving the files ending in " + str(temp_extns) + ".\n")
+        print("\nRemoving the files ending in %s.\n" % temp_extns)
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
@@ -442,7 +442,7 @@ class Main:
         temp_extns = ['pyc', 'pyo', 'bak', 'o', 'os', 'obj', 'exp', 'lib']
 
         # Print out.
-        print("\nRemoving the files ending in " + str(temp_extns) + ".\n")
+        print("\nRemoving the files ending in %s.\n" % temp_extns)
 
         # Walk through the directories.
         for root, dirs, files in walk(getcwd()):
@@ -546,45 +546,46 @@ class Main:
         """The help message."""
 
         # Intro.
-        string = '\nHelp for using Scons to build the various components of relax.\n\n'
+        target_format = "  %-25s%-40s\n"
+        string = "\nHelp for using Scons to build the various components of relax.\n\n"
 
         # Usage message.
-        string = string + 'usage: scons [target]\n'
+        string += "usage: scons [target]\n"
 
         # No target.
-        string = string + '\nNo target:\n'
-        string = string + '  %-25s\n' % ('compile the C modules')
+        string += "\nNo target:\n"
+        string += "  %-25s\n" % ("Compile the C modules.")
 
         # Standard targets.
-        string = string + '\nStandard targets:\n'
-        string = string + '  %-25s%-40s\n' % ('install', 'install relax')
-        string = string + '  %-25s%-40s\n' % ('uninstall', 'uninstall relax')
-        string = string + '  %-25s%-40s\n' % ('binary_dist', 'create the binary distribution packages')
-        string = string + '  %-25s%-40s\n' % ('source_dist', 'create the source distribution packages')
-        string = string + '  %-25s%-40s\n' % ('clean', 'remove the temporary files')
-        string = string + '  %-25s%-40s\n' % ('clean_all', 'remove the compiled and temporary files')
-        string = string + '  %-25s%-40s\n' % ('user_manual_pdf', 'create the user manual (PDF version)')
-        string = string + '  %-25s%-40s\n' % ('user_manual_pdf_nofetch', 'create the user manual (PDF version, without fetching the docstrings)')
-        string = string + '  %-25s%-40s\n' % ('user_manual_html', 'create the user manual (HTML version)')
-        string = string + '  %-25s%-40s\n' % ('user_manual_html_nofetch', 'create the user manual (HTML version, without fetching the docstrings)')
-        string = string + '  %-25s%-40s\n' % ('api_manual_html', 'create the API documentation manual (HTML version)')
+        string += "\nStandard targets:\n"
+        string += target_format % ("install", "Install relax.")
+        string += target_format % ("uninstall", "Uninstall relax.")
+        string += target_format % ("binary_dist", "Create the binary distribution packages.")
+        string += target_format % ("source_dist", "Create the source distribution packages.")
+        string += target_format % ("clean", "Remove the temporary files.")
+        string += target_format % ("clean_all", "Remove the compiled and temporary files.")
+        string += target_format % ("user_manual_pdf", "Create the user manual (PDF version).")
+        string += target_format % ("user_manual_pdf_nofetch", "Create the user manual (PDF version, without fetching the docstrings).")
+        string += target_format % ("user_manual_html", "Create the user manual (HTML version).")
+        string += target_format % ("user_manual_html_nofetch", "Create the user manual (HTML version, without fetching the docstrings).")
+        string += target_format % ("api_manual_html", "Create the API documentation manual (HTML version).")
 
         # Specific targets.
-        string = string + '\nSpecific targets:\n'
-        string = string + '  %-25s%-40s\n' % ('package_bin', 'package the binary distribution')
-        string = string + '  %-25s%-40s\n' % ('package_src', 'package the source distribution')
-        string = string + '  %-25s%-40s\n' % ('gpg_bin', 'GPG sign the binary distribution file')
-        string = string + '  %-25s%-40s\n' % ('gpg_src', 'GPG sign the source distribution file')
-        string = string + '  %-25s%-40s\n' % ('version_check', 'check the relax version number')
-        string = string + '  %-25s%-40s\n' % ('manual_version_file', 'create the relax version number LaTeX file')
-        string = string + '  %-25s%-40s\n' % ('manual_copyright_file', 'create the LaTeX file containing the copyright notice')
-        string = string + '  %-25s%-40s\n' % ('replicate_title_check', 'check for replicated titles in the LaTeX sources')
-        string = string + '  %-25s%-40s\n' % ('fetch_docstrings', 'fetch and LaTeX format the docstrings')
-        string = string + '  %-25s%-40s\n' % ('compile_user_manual_pdf', 'compile the PDF version of the user manual from the LaTeX sources')
-        string = string + '  %-25s%-40s\n' % ('compile_user_manual_html', 'compile the HTML version of the user manual from the LaTeX sources')
-        string = string + '  %-25s%-40s\n' % ('compile_api_manual_html', 'compile the HTML version of the API documentation manual using Epydoc')
-        string = string + '  %-25s%-40s\n' % ('manual_clean', 'remove the temporary manual files')
-        string = string + '  %-25s%-40s\n' % ('manual_clean_nodeps', 'remove the temporary manual files (with no manual environments dependent on it)')
+        string += "\nSpecific targets:\n"
+        string += target_format % ("package_bin", "Package the binary distribution.")
+        string += target_format % ("package_src", "Package the source distribution.")
+        string += target_format % ("gpg_bin", "GPG sign the binary distribution file.")
+        string += target_format % ("gpg_src", "GPG sign the source distribution file.")
+        string += target_format % ("version_check", "Check the relax version number.")
+        string += target_format % ("manual_version_file", "Create the relax version number LaTeX file.")
+        string += target_format % ("manual_copyright_file", "Create the LaTeX file containing the copyright notice.")
+        string += target_format % ("replicate_title_check", "Check for replicated titles in the LaTeX sources.")
+        string += target_format % ("fetch_docstrings", "Fetch and LaTeX format the docstrings.")
+        string += target_format % ("compile_user_manual_pdf", "Compile the PDF version of the user manual from the LaTeX sources.")
+        string += target_format % ("compile_user_manual_html", "Compile the HTML version of the user manual from the LaTeX sources.")
+        string += target_format % ("compile_api_manual_html", "Compile the HTML version of the API documentation manual using Epydoc.")
+        string += target_format % ("manual_clean", "Remove the temporary manual files.")
+        string += target_format % ("manual_clean_nodeps", "Remove the temporary manual files (with no manual environments dependent on it).")
 
         # Set the help message.
         Help(string)
@@ -688,10 +689,12 @@ class Main:
         # Print out string returning function.
         def print_string(target, source, env):
             string = "\n\n\n\n"
-            string = string + "###########################\n"
-            string = string + "# Compiling the C modules #\n"
-            string = string + "###########################\n\n\n"
-            string = string + "Building the relaxation curve fitting module " + str(self.relax_fit_object[0]) + "\n"
+            string += "###########################\n"
+            string += "# Compiling the C modules #\n"
+            string += "###########################\n\n\n"
+            string += "Building the relaxation curve fitting module '%s'.\n" % self.relax_fit_object[0]
+            if SYSTEM == 'Windows':
+                string += "MS Windows target arch: %s\n" % TARGET_ARCH
             return string
 
         # Add the printout as an action to take before constructing the first object.
@@ -706,7 +709,7 @@ class Main:
         print("#######################################")
         print("# Checking the program version number #")
         print("#######################################\n\n")
-        print("Version number: " + version + "\n")
+        print("Version number: %s\n" % version)
 
         # Test.
         if version == "repository commit":
