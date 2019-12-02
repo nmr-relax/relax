@@ -587,6 +587,13 @@ class Main:
         string += target_format % ("manual_clean", "Remove the temporary manual files.")
         string += target_format % ("manual_clean_nodeps", "Remove the temporary manual files (with no manual environments dependent on it).")
 
+        # Environmental variables.
+        string += "\nOptional environmental variables:\n"
+        string += target_format % ("CC", "The compiler to use.")
+        string += target_format % ("CFLAGS", "The compiler flags.")
+        string += target_format % ("LDFLAGS", "The linker flags.")
+        string += target_format % ("PYTHON_INCLUDE_DIR", "Manually specify where the version-specific 'Python.h' file is located.")
+
         # Set the help message.
         Help(string)
 
