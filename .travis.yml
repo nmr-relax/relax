@@ -91,7 +91,7 @@ jobs:
       python: 2.7
       env: WXPYTHON=true
       before_install:
-        - choco install python2 -ForceX86
+        - choco install python2 --forcex86
         - choco install wxpython
         - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
         - python -m pip install --upgrade pip
