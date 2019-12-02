@@ -40,51 +40,6 @@ env:
 
 jobs:
   include:
-    # Linux (Ubuntu Xenial 16.04), Python 2.7, single processor.
-    #   https://docs.travis-ci.com/user/reference/trusty/
-    - name: "Linux (Ubuntu 16.04), Python 2.7, single processor, all tests."
-      python: 2.7
-      dist: xenial
-      services:
-        - xvfb
-      env: WXPYTHON=true OLD_PY2_PACKAGES=true
-      before_install:
-        # Conda is used to install wxPython 3.0.
-        - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
-        - bash miniconda.sh -b -p $HOME/miniconda
-        - export PATH="$HOME/miniconda/bin:$PATH"
-        - hash -r
-        - conda config --set always_yes yes --set changeps1 no
-        #- conda update -q conda
-        - conda info -a
-        - conda install -c https://conda.anaconda.org/travis wxpython
-
-    # Linux (Ubuntu Trusty 14.04), Python 3.6, multi processor (2 MPI processors).
-    # Python 3.6 is standard version on Redhat 7 and Ubuntu LTS 18.04 and TS 16.04
-    - name: "Linux (Ubuntu 14.04), Python 3.6, MPI multi processor, no GUI tests."
-      python: 3.6
-      dist: trusty
-      env: MPIRUN="mpirun -np 2" RELAX_ARGS="--multi=mpi4py"
-
-    # Linux (Ubuntu Bionic 18.04), Python 3.7.
-    - name: "Linux (Ubuntu 18.04), Python 3.7, single processor, no GUI tests."
-      python: 3.7
-      dist: bionic
-
-    # Mac OS X (10.13), Python 3.7.
-    - name: "Mac OS X (10.13), Python 3.7, single processor, no GUI tests."
-      os: osx
-      language: shell
-      python: 3.7
-      before_install:
-        - python3 -m pip install virtualenv
-        - virtualenv venv -p python3
-        - source venv/bin/activate
-
-        # Fix for the Mac OS image rendering back end of matplotlib.
-        - mkdir -p $HOME/.matplotlib/
-        - "echo 'backend: TkAgg' > $HOME/.matplotlib/matplotlibrc"
-
     # MS Windows (10), Python 2.7.
     - name: "MS Windows (10), Python 2.7, single processor, all tests."
       os: windows
@@ -96,70 +51,6 @@ jobs:
         - choco install python-wxwidgets
         - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
         - python -m pip install --upgrade pip
-
-    # MS Windows (10), Python 3.7.
-    - name: "MS Windows (10), Python 3.7, single processor, no GUI tests."
-      os: windows
-      language: shell
-      python: 3.7
-      before_install:
-        - choco install python3 --version 3.7.4
-        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-        - python -m pip install --upgrade pip
-
-    # Arm64 Linux (Ubuntu Bionic 18.04), Python 3.6 (system).
-    - name: "Arm64 Linux (Ubuntu 18.04), Python 3.6 (system), single processor, no GUI tests."
-      python: 3.6
-      arch: arm64
-      dist: bionic
-      env:
-        - PYTHON="/usr/bin/python3"
-      before_install:
-        - sudo apt-get -y install python3-pip
-        - sudo apt-get -y install python3-numpy
-        - sudo apt-get -y install python3-matplotlib
-        - sudo apt-get -y install python3-scipy
-        - sudo apt-get -y install python3-mpi4py
-        - sudo apt-get -y install python3-wxgtk4.0
-        - sudo apt-get -y install scons
-      install:
-        - /usr/bin/python --version
-        - /usr/bin/python3 --version
-        - /usr/bin/pip3 --version
-        - /usr/bin/pip3 install -r devel_scripts/travis-ci/requirements.txt
-        - /usr/bin/python3 /usr/bin/scons
-
-    # API documentation build, Linux (Ubuntu Trusty 14.04), Python 2.7.
-    - name: "API documentation build"
-      python: 2.7
-      dist: trusty
-      env: WXPYTHON=true OLD_PY2_PACKAGES=true
-      before_install:
-        # Conda is used to install wxPython 3.0.
-        - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
-        - bash miniconda.sh -b -p $HOME/miniconda
-        - export PATH="$HOME/miniconda/bin:$PATH"
-        - hash -r
-        - conda config --set always_yes yes --set changeps1 no
-        - conda info -a
-        - conda install -c https://conda.anaconda.org/travis wxpython
-
-        # Install the required epydoc Python module.
-        - pip install epydoc
-      script:
-        - scons api_manual_html
-
-    # FSF copyright validation, Linux (Ubuntu Xenial 16.04), Python 3.7.
-    - name: "FSF copyright validation"
-      python: 3.7
-      dist: xenial
-      before_install:
-        - pip install pytz
-      install:
-        - set -e
-      script:
-        - git fetch --unshallow
-        - ./devel_scripts/fsfcv -v -c ./devel_scripts/fsfcv.conf.py
 
 install:
     # Fail on first error.
@@ -205,10 +96,7 @@ script:
     - $MPIRUN $PYTHON ./relax $RELAX_ARGS -i
 
     # Test suite execution.
-    - if [[ $WXPYTHON == "true"  ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time -d --test-suite; fi
-    - if [[ $WXPYTHON == "false" ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time --system-tests; fi
-    - if [[ $WXPYTHON == "false" ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time --unit-tests; fi
-    - if [[ $WXPYTHON == "false" ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time --verification-tests; fi
+    - if [[ $WXPYTHON == "true"  ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time -d --gui-tests; fi
 
 cache: pip
 
