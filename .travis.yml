@@ -205,7 +205,7 @@ script:
     - $MPIRUN $PYTHON ./relax $RELAX_ARGS -i
 
     # Test suite execution.
-    - if [[ $WXPYTHON == "true"  ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time --test-suite; fi
+    - if [[ $WXPYTHON == "true"  ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time -d --test-suite; fi
     - if [[ $WXPYTHON == "false" ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time --system-tests; fi
     - if [[ $WXPYTHON == "false" ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time --unit-tests; fi
     - if [[ $WXPYTHON == "false" ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time --verification-tests; fi
