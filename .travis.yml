@@ -158,9 +158,6 @@ install:
     # Find Python.h to build with scons.
     - export PYTHON_INCLUDE_DIR=`python -c 'from distutils import sysconfig; print(sysconfig.get_python_inc())'`
 
-    # Debugging printout of environmental variables.
-    - echo "MPIRUN=$MPIRUN ; OS=$TRAVIS_OS_NAME ; VIRTUAL_ENV=$VIRTUAL_ENV ; PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-
     # Get newer pip and whell for binary caching support.
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo -H pip install --upgrade pip wheel; fi
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo -H pip install --upgrade pip wheel; fi
@@ -179,6 +176,17 @@ install:
     # Compile the C modules.
     - scons
 
+before_script:
+    # Debugging printout of environmental variables.
+    - echo "OS=$TRAVIS_OS_NAME"
+    - echo "VIRTUAL_ENV=$VIRTUAL_ENV"
+    - echo "PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    - echo "MPIRUN=$MPIRUN"
+    - echo "OLD_PY2_PACKAGES=$OLD_PY2_PACKAGES"
+    - echo "PYTHON=$PYTHON"
+    - echo "RELAX_ARGS=$RELAX_ARGS"
+    - echo "WXPYTHON=$WXPYTHON"
+
 script:
     # Fail on first error.
     - set -e
@@ -193,6 +201,7 @@ script:
     - if [[ $WXPYTHON == "false" ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time --verification-tests; fi
 
 cache: pip
+
 git:
   depth: 10
 
