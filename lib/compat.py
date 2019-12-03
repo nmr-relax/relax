@@ -124,7 +124,10 @@ except:
 try:
     from platform import linux_distribution
 except ImportError:
-    from distro import linux_distribution
+    try:
+        from distro import linux_distribution
+    except ImportError:
+        def linux_distribution(): return [None]
 
 
 def bz2_open(file, mode='r'):
