@@ -37,6 +37,7 @@ env:
     - PYTHON=""
     - RELAX_ARGS=""
     - WXPYTHON=false
+    - WXPYTHON_PIP=false
 
 jobs:
   include:
@@ -44,7 +45,8 @@ jobs:
     - name: "MS Windows (10), Python 3.7, single processor, no GUI tests."
       os: windows
       language: shell
-      python: "3.7"
+      python: 3.7
+      env: WXPYTHON_PIP=true
       before_install:
         - choco install python3 --version 3.7.4
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
@@ -72,8 +74,9 @@ install:
     # Install Python package with pip for running with multiple processors.
     - if [[ $MPIRUN != "" ]]; then pip install mpi4py; fi
 
-    # Install wxPython 3.0 using Conda.
+    # Install wxPython.
     - if [[ $WXPYTHON == "true" ]]; then conda install -c https://conda.anaconda.org/travis wxpython; fi
+    - if [[ $WXPYTHON_PIP == "true" ]]; then pip install wxPython; fi
 
     # Compile the C modules.
     - scons
