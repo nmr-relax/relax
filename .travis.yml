@@ -96,7 +96,7 @@ script:
     - $MPIRUN $PYTHON ./relax $RELAX_ARGS -i
 
     # Test suite execution.
-    - if [[ $WXPYTHON == "true"  ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time -d --gui-tests; fi
+    - if [[ $WXPYTHON == "true"  ]]; then $MPIRUN $PYTHON ./relax $RELAX_ARGS --time --no-capt --gui-tests; fi
 
 cache: pip
 
