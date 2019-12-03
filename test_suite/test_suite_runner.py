@@ -330,19 +330,19 @@ class Test_suite_runner:
 
         # System/functional test summary.
         if hasattr(self, 'system_result'):
-            summary_line("System/functional tests", self.system_result)
+            summary_line("System/functional tests", self.system_result, width=status.text_width)
 
         # Unit test summary.
         if hasattr(self, 'unit_result'):
-            summary_line("Unit tests", self.unit_result)
+            summary_line("Unit tests", self.unit_result, width=status.text_width)
 
         # GUI test summary.
         if hasattr(self, 'gui_result'):
-            summary_line("GUI tests", self.gui_result)
+            summary_line("GUI tests", self.gui_result, width=status.text_width)
 
         # Verification test summary.
         if hasattr(self, 'verification_result'):
-            summary_line("Software verification tests", self.verification_result)
+            summary_line("Software verification tests", self.verification_result, width=status.text_width)
 
         # Synopsis.
         if hasattr(self, 'system_result') and hasattr(self, 'unit_result') and hasattr(self, 'gui_result') and hasattr(self, 'verification_result'):
@@ -350,7 +350,7 @@ class Test_suite_runner:
                 test_status = self.system_result and self.unit_result and self.verification_result
             else:
                 test_status = self.system_result and self.unit_result and self.gui_result and self.verification_result
-            summary_line("Synopsis", test_status)
+            summary_line("Synopsis", test_status, width=status.text_width)
 
         # End.
         print('\n\n')

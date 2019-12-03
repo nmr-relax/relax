@@ -68,6 +68,10 @@ class RelaxTestResult(TextTestResult):
         self.io_capture = io_capture
         self.category = category
 
+        # Set the separator widths.
+        self.separator1 = '=' * status.text_width
+        self.separator2 = '-' * status.text_width
+
 
     def addError(self, test, err):
         """Override of the TestResult.addError() method.
@@ -84,7 +88,7 @@ class RelaxTestResult(TextTestResult):
         # Extra formatting for no IO capture.
         if not self.io_capture:
             self.stream.write(self._exc_info_to_string(err, test))
-            divider('-', width=100)
+            divider('-', width=status.text_width)
 
         # Execute the base class method to print the 'E' and handle the error.
         super(RelaxTestResult, self).addError(test, err)
@@ -113,7 +117,7 @@ class RelaxTestResult(TextTestResult):
         # Extra formatting for no IO capture.
         if not self.io_capture:
             self.stream.write(self._exc_info_to_string(err, test))
-            divider('-', width=100)
+            divider('-', width=status.text_width)
 
         # Execute the base class method to print the 'F' and handle the failure.
         super(RelaxTestResult, self).addFailure(test, err)
@@ -136,7 +140,7 @@ class RelaxTestResult(TextTestResult):
 
         # Extra formatting for no IO capture.
         if not self.io_capture:
-            divider('-', width=100)
+            divider('-', width=status.text_width)
 
         # Execute the base class method to print the '.'.
         super(RelaxTestResult, self).addSuccess(test)
@@ -165,7 +169,7 @@ class RelaxTestResult(TextTestResult):
 
         # No capture.
         else:
-            test_title(format_test_name(test.id()), desc=test.shortDescription())
+            test_title(format_test_name(test.id()), desc=test.shortDescription(), width=status.text_width)
 
         # Place the test name in the status object.
         status.exec_lock.test_name = str(test)
