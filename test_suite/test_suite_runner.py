@@ -60,7 +60,7 @@ class Test_suite_runner:
         - Verification tests.
     """
 
-    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui', 'verification'], timing=False):
+    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui', 'verification'], timing=False, io_capture=True):
         """Store the list of tests to preform.
 
         The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
@@ -74,6 +74,8 @@ class Test_suite_runner:
         @type categories:       list of str
         @keyword timing:        A flag which if True will enable timing of individual tests.
         @type timing:           bool
+        @keyword io_capture:    A flag which if True will cause all IO to be captured and only printed out for failing or error tests.
+        @type io_capture:       bool
         """
 
         # Store the args.
@@ -83,9 +85,9 @@ class Test_suite_runner:
 
         # Set up the test runner.
         if from_gui:
-            self.runner = GuiTestRunner(stream=sys.stdout, timing=timing)
+            self.runner = GuiTestRunner(stream=sys.stdout, timing=timing, io_capture=io_capture)
         else:
-            self.runner = RelaxTestRunner(stream=sys.stdout, timing=timing)
+            self.runner = RelaxTestRunner(stream=sys.stdout, timing=timing, io_capture=io_capture)
 
         # Let the tests handle the keyboard interrupt (for Python 2.7 and higher).
         if hasattr(unittest, 'installHandler'):

@@ -219,7 +219,7 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
             self.exit_code = int(not runner.run_all_tests())
 
         # Execute the relax system tests.
@@ -232,7 +232,7 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
             self.exit_code = int(not runner.run_system_tests())
 
         # Execute the relax unit tests.
@@ -241,7 +241,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
             self.exit_code = int(not runner.run_unit_tests())
 
         # Execute the relax GUI tests.
@@ -250,7 +250,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
             self.exit_code = int(not runner.run_gui_tests())
 
         # Execute the relax verification tests.
@@ -259,7 +259,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
             self.exit_code = int(not runner.run_verification_tests())
 
         # Test mode.
@@ -311,6 +311,7 @@ class Relax:
         group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
         group.add_option('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the software verification tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
         group.add_option('--time', action='store_true', dest='tt', default=0, help='print out the timings of individual tests in the test suite')
+        group.add_option('--no-capt', action='store_true', dest='no_capture', default=0, help='disable IO capture in the test suite')
         group.add_option('--no-skip', action='store_true', dest='no_skip', default=0, help='a debugging option for relax developers to turn on all blacklisted tests, even those that will fail')
         parser.add_option_group(group)
 
@@ -377,6 +378,7 @@ class Relax:
         if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
             # Store the arguments.
             self.tests = args
+            self.io_capture = not options.no_capture
 
             # Test timings.
             self.test_timings = False
