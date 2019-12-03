@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007,2011-2012 Edward d'Auvergne                              #
+# Copyright (C) 2007,2011-2012,2019 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,6 +21,53 @@
 
 # Python module imports.
 import sys
+
+
+def divider(char, width=100):
+    """Write out a divider of the given width.
+
+    @param char:    The character to use for the divider.
+    @type char:     str
+    @keyword width: The number of characters to use.
+    @type width:    int
+    """
+
+    # Write out the divider.
+    sys.stdout.write(char*width)
+    sys.stdout.write("\n")
+
+
+def format_test_name(test_name, category=None):
+    """Generate the compact string representation of the test name.
+
+    @param test_name:   The original TestCase name.
+    @type test_name:    str
+    @keyword category:  The test category, one of 'system', 'unit', 'gui', or 'verification'.
+    @type category:     str
+    """
+
+    # Change the test name for all but unit tests.
+    if category != 'unit':
+        test_name = test_name.split('.')
+        test_name = "%s.%s" % (test_name[-2], test_name[-1])
+
+    # Handle errors.
+    elif search('Error', test_name):
+        pass
+
+    # Modify the unit test name.
+    else:
+        # Strip out the leading 'test_suite.unit_tests.' text.
+        test_name = test_name.replace('test_suite.unit_tests.', '')
+
+        # Split out the module name from the test name.
+        module_name, test_name = split('.Test_', test_name)
+
+        # Rebuild the test name.
+        test_name = "module %s, test Test_%s" % (module_name, test_name)
+
+    # Return the test name.
+    return test_name
 
 
 def subtitle(text):
@@ -73,6 +120,25 @@ def summary_line(name, passed, width=100):
 
     # Write out the line.
     sys.stdout.write("%s %s [ %s ]\n" % (name, dots, state))
+
+
+def test_title(name, desc=None, width=100):
+    """Format and write out a title for the test.
+
+    @param name:    The name of the test.
+    @type name:     str
+    @keyword desc:  An optional description for the test.
+    @type desc:     str
+    @keyword width: The console width.
+    @type width:    int
+    """
+
+    # Output the title.
+    divider('=', width=width)
+    sys.stdout.write("Starting test: %s\n" % name)
+    if desc:
+        sys.stdout.write("\n%s\n" % desc)
+    divider('-', width=width)
 
 
 def title(text):

@@ -60,7 +60,7 @@ class Test_suite_runner:
         - Verification tests.
     """
 
-    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui', 'verification'], timing=False):
+    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui', 'verification'], timing=False, io_capture=True):
         """Store the list of tests to preform.
 
         The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
@@ -74,6 +74,8 @@ class Test_suite_runner:
         @type categories:       list of str
         @keyword timing:        A flag which if True will enable timing of individual tests.
         @type timing:           bool
+        @keyword io_capture:    A flag which if True will cause all IO to be captured and only printed out for failing or error tests.
+        @type io_capture:       bool
         """
 
         # Store the args.
@@ -83,9 +85,9 @@ class Test_suite_runner:
 
         # Set up the test runner.
         if from_gui:
-            self.runner = GuiTestRunner(stream=sys.stdout, timing=timing)
+            self.runner = GuiTestRunner(stream=sys.stdout, timing=timing, io_capture=io_capture)
         else:
-            self.runner = RelaxTestRunner(stream=sys.stdout, timing=timing)
+            self.runner = RelaxTestRunner(stream=sys.stdout, timing=timing, io_capture=io_capture)
 
         # Let the tests handle the keyboard interrupt (for Python 2.7 and higher).
         if hasattr(unittest, 'installHandler'):
@@ -328,19 +330,19 @@ class Test_suite_runner:
 
         # System/functional test summary.
         if hasattr(self, 'system_result'):
-            summary_line("System/functional tests", self.system_result)
+            summary_line("System/functional tests", self.system_result, width=status.text_width)
 
         # Unit test summary.
         if hasattr(self, 'unit_result'):
-            summary_line("Unit tests", self.unit_result)
+            summary_line("Unit tests", self.unit_result, width=status.text_width)
 
         # GUI test summary.
         if hasattr(self, 'gui_result'):
-            summary_line("GUI tests", self.gui_result)
+            summary_line("GUI tests", self.gui_result, width=status.text_width)
 
         # Verification test summary.
         if hasattr(self, 'verification_result'):
-            summary_line("Software verification tests", self.verification_result)
+            summary_line("Software verification tests", self.verification_result, width=status.text_width)
 
         # Synopsis.
         if hasattr(self, 'system_result') and hasattr(self, 'unit_result') and hasattr(self, 'gui_result') and hasattr(self, 'verification_result'):
@@ -348,7 +350,7 @@ class Test_suite_runner:
                 test_status = self.system_result and self.unit_result and self.verification_result
             else:
                 test_status = self.system_result and self.unit_result and self.gui_result and self.verification_result
-            summary_line("Synopsis", test_status)
+            summary_line("Synopsis", test_status, width=status.text_width)
 
         # End.
         print('\n\n')
