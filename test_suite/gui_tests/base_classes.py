@@ -306,7 +306,9 @@ class GuiTestCase(TestCase):
         self.app = wx.GetApp()
 
         # Kill all windows.
+        wx.Yield()
         self.clean_up_windows()
+        wx.Yield()
 
         # Print out a list of all living windows to help ensure that custom Close() and Destroy() methods are cleaning up all objects.
         print("\n\nList of all living GUI elements - this must only include the main GUI window and the relax controller:")
