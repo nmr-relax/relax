@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2001-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2001-2014,2019 Edward d'Auvergne                              #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2007 Gary Thompson                                            #
 # Copyright (C) 2008 Sebastien Morin                                          #
@@ -36,8 +36,8 @@ if 'TERM' in os.environ and os.environ['TERM'] == 'xterm':
 import lib.compat
 
 # Python modules.
+from argparse import ArgumentParser
 import numpy
-from optparse import Option, OptionGroup, OptionParser
 from os import F_OK, access, getpid, putenv
 if dep_check.cprofile_module:
     import cProfile as profile
@@ -279,137 +279,135 @@ class Relax:
         """Process the command line arguments."""
 
         # Parser object.
-        parser = RelaxParser(self, usage="usage: %prog [options] [script_file]")
+        parser = RelaxParser(description="Molecular dynamics by NMR data analysis.")
 
-        # Recognised command line options for the UI.
-        group = OptionGroup(parser, 'UI options')
-        group.add_option('-p', '--prompt', action='store_true', dest='prompt', default=0, help='launch relax in prompt mode after running any optionally supplied scripts')
-        group.add_option('-g', '--gui', action='store_true', dest='gui', default=0, help='launch the relax GUI')
-        group.add_option('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
-        group.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
-        group.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
-        group.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
-        parser.add_option_group(group)
+        # Recognised command line arguments for the UI.
+        group = parser.add_argument_group('UI arguments')
+        group.add_argument('-p', '--prompt', action='store_true', dest='prompt', default=0, help='launch relax in prompt mode after running any optionally supplied scripts')
+        group.add_argument('-g', '--gui', action='store_true', dest='gui', default=0, help='launch the relax GUI')
+        group.add_argument('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
+        group.add_argument('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
+        group.add_argument('--licence', action='store_true', dest='licence', default=0, help='display the licence')
+        group.add_argument('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
 
-        # Recognised command line options for the multiprocessor.
-        group = OptionGroup(parser, 'Multi-processor options')
-        group.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
-        group.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=-1, help='set number of processors (may be ignored)')
-        parser.add_option_group(group)
+        # Recognised command line arguments for the multiprocessor.
+        group = parser.add_argument_group('Multi-processor arguments')
+        group.add_argument('-m', '--multi', action='store', type=str, dest='multiprocessor', default='uni', help='set multi processor method to one of \'uni\' or \'mpi4py\'')
+        group.add_argument('-n', '--processors', action='store', type=int, dest='n_processors', default=-1, help='set number of processors (may be ignored)')
 
-        # Recognised command line options for IO redirection.
-        group = OptionGroup(parser, 'IO redirection options')
-        group.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
-        group.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to both stdout and the file LOG_FILE', metavar='LOG_FILE')
-        parser.add_option_group(group)
+        # Recognised command line arguments for IO redirection.
+        group = parser.add_argument_group('IO redirection arguments')
+        group.add_argument('-l', '--log', action='store', type=str, dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
+        group.add_argument('-t', '--tee', action='store', type=str, dest='tee', help='tee relax output to both stdout and the file LOG_FILE', metavar='LOG_FILE')
 
-        # Recognised command line options for the test suite.
-        group = OptionGroup(parser, 'Test suite options')
-        group.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the full relax test suite')
-        group.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the system/functional tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
-        group.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the unit tests.  Module names, revealed with the --time option, can be supplied to perform a subset of all tests.')
-        group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
-        group.add_option('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the software verification tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
-        group.add_option('--time', action='store_true', dest='tt', default=0, help='print out the timings of individual tests in the test suite')
-        group.add_option('--no-capt', action='store_true', dest='no_capture', default=0, help='disable IO capture in the test suite')
-        group.add_option('--no-skip', action='store_true', dest='no_skip', default=0, help='a debugging option for relax developers to turn on all blacklisted tests, even those that will fail')
-        parser.add_option_group(group)
+        # Recognised command line arguments for the test suite.
+        group = parser.add_argument_group('Test suite arguments')
+        group.add_argument('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the full relax test suite')
+        group.add_argument('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the system/functional tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
+        group.add_argument('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the unit tests.  Module names, revealed with the --time option, can be supplied to perform a subset of all tests.')
+        group.add_argument('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
+        group.add_argument('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the software verification tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
+        group.add_argument('--time', action='store_true', dest='tt', default=0, help='print out the timings of individual tests in the test suite')
+        group.add_argument('--no-capt', '--no-capture', action='store_true', dest='no_capture', default=0, help='disable IO capture in the test suite')
+        group.add_argument('--no-skip', action='store_true', dest='no_skip', default=0, help='a debugging option for relax developers to turn on all blacklisted tests, even those that will fail')
 
-        # Recognised command line options for debugging.
-        group = OptionGroup(parser, 'Debugging options')
-        group.add_option('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
-        group.add_option('--error-state', action='store_true', dest='error_state', default=0, help='save a pickled state file when a RelaxError occurs')
-        group.add_option('--traceback', action='store_true', dest='traceback', default=0, help='show stack tracebacks on all RelaxErrors and RelaxWarnings')
-        group.add_option('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
-        group.add_option('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
-        parser.add_option_group(group)
+        # Recognised command line arguments for debugging.
+        group = parser.add_argument_group('Debugging arguments')
+        group.add_argument('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
+        group.add_argument('--error-state', action='store_true', dest='error_state', default=0, help='save a pickled state file when a RelaxError occurs')
+        group.add_argument('--traceback', action='store_true', dest='traceback', default=0, help='show stack tracebacks on all RelaxErrors and RelaxWarnings')
+        group.add_argument('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
+        group.add_argument('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
 
-        # Parse the options.
-        (options, args) = parser.parse_args()
+        # The script file or tests to run.
+        parser.add_argument('script', nargs='*', help='either the script file or one or more test classes or individual tests to run')
 
-        # Debugging options:  Debugging flag, escalate flag, traceback flag, and numpy warning to error conversion.
-        if options.debug:
+        # Parse the arguments.
+        args = parser.parse_args()
+
+        # Debugging arguments:  Debugging flag, escalate flag, traceback flag, and numpy warning to error conversion.
+        if args.debug:
             status.debug = True
-        if options.escalate:
+        if args.escalate:
             lib.warnings.ESCALATE = True
-        if options.traceback:
+        if args.traceback:
             status.traceback = True
             lib.warnings.TRACEBACK = True
-        if options.numpy_raise:
+        if args.numpy_raise:
             numpy.seterr(all='raise')
-        if options.error_state:
+        if args.error_state:
             lib.errors.SAVE_ERROR_STATE = True
 
         # Script prompt interactive inspection flag.
-        if options.prompt:
+        if args.prompt:
             status.prompt = True
 
         # Logging.
-        if options.log:
+        if args.log:
             # Exclusive modes.
-            if options.tee:
-                parser.error("the logging and tee options cannot be set simultaneously")
+            if args.tee:
+                parser.error("The logging and tee arguments cannot be set simultaneously.")
 
             # The log file.
-            self.log_file = options.log
+            self.log_file = args.log
 
             # Fail if the file already exists.
             if access(self.log_file, F_OK):
-                parser.error("the log file " + repr(self.log_file) + " already exists")
+                parser.error("The log file '%s' already exists." % self.log_file)
         else:
             self.log_file = None
 
         # Tee.
-        if options.tee:
+        if args.tee:
             # Exclusive modes.
-            if options.log:
-                parser.error("the tee and logging options cannot be set simultaneously")
+            if args.log:
+                parser.error("The tee and logging options cannot be set simultaneously.")
 
             # The tee file.
-            self.tee_file = options.tee
+            self.tee_file = args.tee
 
             # Fail if the file already exists.
             if access(self.tee_file, F_OK):
-                parser.error("the tee file " + repr(self.tee_file) + " already exists")
+                parser.error("The tee file '%s' already exists." % self.tee_file)
         else:
             self.tee_file = None
 
         # Test suite mode, therefore the args are the tests to run and not a script file.
-        if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
+        if args.test_suite or args.system_tests or args.unit_tests or args.gui_tests or args.verification_tests:
             # Store the arguments.
-            self.tests = args
-            self.io_capture = not options.no_capture
+            self.tests = args.script
+            self.io_capture = not args.no_capture
 
             # Test timings.
             self.test_timings = False
-            if options.tt:
+            if args.tt:
                 self.test_timings = True
 
             # Run blacklisted tests.
             status.skip_blacklisted_tests = True
-            if options.no_skip:
+            if args.no_skip:
                 status.skip_blacklisted_tests = False
 
-        # The argument is a script.
+        # The argument is a script (or nothing has been supplied).
         else:
             # Number of positional arguments should only be 0 or 1.  1 should be the script file.
-            if len(args) > 1:
-                parser.error("incorrect number of arguments")
+            if len(args.script) > 1:
+                parser.error("Incorrect number of arguments.")
 
             # Script file.
             self.script_file = None
-            if len(args) == 1:
-                self.script_file = args[0]
+            if len(args.script) == 1:
+                self.script_file = args.script[0]
 
                 # Test if the script file exists.
                 if not access(self.script_file, F_OK):
-                    parser.error("the script file " + repr(self.script_file) + " does not exist")
+                    parser.error("The script file '%s' does not exist." % self.script_file)
 
         # Set the multi-processor type and number.
-        if options.multiprocessor not in ['uni', 'mpi4py']:
-            parser.error("The processor type '%s' is not supported.\n" % options.multiprocessor)
-        self.multiprocessor_type = options.multiprocessor
-        self.n_processors = options.n_processors
+        if args.multiprocessor not in ['uni', 'mpi4py']:
+            parser.error("The processor type '%s' is not supported.\n" % args.multiprocessor)
+        self.multiprocessor_type = args.multiprocessor
+        self.n_processors = args.n_processors
 
         # Checks for the multiprocessor mode.
         if self.multiprocessor_type == 'mpi4py' and not dep_check.mpi4py_module:
@@ -420,73 +418,73 @@ class Relax:
         #################################################################
 
         # Show the version number.
-        if options.version:
+        if args.version:
             self.mode = 'version'
 
         # Show the info about this relax version.
-        elif options.info:
+        elif args.info:
             self.mode = 'info'
 
         # Run the relax tests.
-        elif options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
+        elif args.test_suite or args.system_tests or args.unit_tests or args.gui_tests or args.verification_tests:
             # Exclusive modes.
-            if options.test:
-                parser.error("executing the relax test suite and running relax in test mode are mutually exclusive")
-            elif options.licence:
-                parser.error("executing the relax test suite and running relax in licence mode are mutually exclusive")
+            if args.test:
+                parser.error("Executing the relax test suite and running relax in test mode are mutually exclusive.")
+            elif args.licence:
+                parser.error("Executing the relax test suite and running relax in licence mode are mutually exclusive.")
 
             # Set the mode.
-            if options.test_suite:
+            if args.test_suite:
                 self.mode = 'test suite'
-            elif options.system_tests:
+            elif args.system_tests:
                 self.mode = 'system tests'
-            elif options.unit_tests:
+            elif args.unit_tests:
                 self.mode = 'unit tests'
-            elif options.gui_tests:
+            elif args.gui_tests:
                 self.mode = 'GUI tests'
-            elif options.verification_tests:
+            elif args.verification_tests:
                 self.mode = 'verification tests'
 
             # Set the status flag.
             status.test_mode = True
 
         # Test mode.
-        elif options.test:
+        elif args.test:
             # Make sure no script is supplied.
             if self.script_file:
-                parser.error("a script should not be supplied in test mode")
+                parser.error("A script should not be supplied in test mode.")
 
             # Exclusive modes.
-            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
-                parser.error("the relax test mode and executing the test suite are mutually exclusive")
-            elif options.licence:
-                parser.error("the relax modes test and licence are mutually exclusive")
+            if args.test_suite or args.system_tests or args.unit_tests or args.gui_tests or args.verification_tests:
+                parser.error("The relax test mode and executing the test suite are mutually exclusive.")
+            elif args.licence:
+                parser.error("The relax modes test and licence are mutually exclusive.")
 
             # Set the mode.
             self.mode = 'test'
 
         # Licence mode.
-        elif options.licence:
+        elif args.licence:
             # Make sure no script is supplied.
             if self.script_file:
-                parser.error("a script should not be supplied in test mode")
+                parser.error("A script should not be supplied in test mode.")
 
             # Exclusive modes.
-            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
-                parser.error("the relax licence mode and executing the test suite are mutually exclusive")
-            elif options.test:
-                parser.error("the relax modes licence and test are mutually exclusive")
+            if args.test_suite or args.system_tests or args.unit_tests or args.gui_tests or args.verification_tests:
+                parser.error("The relax licence mode and executing the test suite are mutually exclusive.")
+            elif args.test:
+                parser.error("The relax modes licence and test are mutually exclusive.")
 
             # Set the mode.
             self.mode = 'licence'
 
         # GUI.
-        elif options.gui:
+        elif args.gui:
             # Exclusive models.
-            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
-                parser.error("the relax GUI mode and testing modes are mutually exclusive")
-            elif options.licence:
-                parser.error("the relax GUI mode and licence mode are mutually exclusive")
+            if args.test_suite or args.system_tests or args.unit_tests or args.gui_tests or args.verification_tests:
+                parser.error("The relax GUI mode and testing modes are mutually exclusive.")
+            elif args.licence:
+                parser.error("The relax GUI mode and licence mode are mutually exclusive.")
 
             # Missing wx module.
             if not dep_check.wx_module:
@@ -526,19 +524,15 @@ class Relax:
 
 
 
-class RelaxParser(OptionParser):
-    def __init__(self, relax, usage=None, option_list=None, option_class=Option, version=None, conflict_handler="error", description=None, formatter=None, add_help_option=1, prog=None):
-        """Subclassed OptionParser class with a replacement error function."""
-
-        # Relax base class.
-        self.relax = relax
-
-        # Run the __init__ method of the OptionParser class.
-        OptionParser.__init__(self, usage, option_list, option_class, version, conflict_handler, description, formatter, add_help_option, prog)
-
+class RelaxParser(ArgumentParser):
+    """A custom ArgumentParser class."""
 
     def error(self, message):
-        """Replacement error function."""
+        """Replace ArgumentParser.error() with a custom function, enabling the use of RelaxErrors.
+
+        @param message: The error message to output.
+        @type message:  str
+        """
 
         # Usage message.
         self.print_usage(sys.stderr)
@@ -550,8 +544,8 @@ class RelaxParser(OptionParser):
             instance = sys.exc_info()[1]
             sys.stderr.write(instance.__str__())
 
-        # Exit.
-        sys.exit()
+        # Exit with the Unix command line error code of 2.
+        sys.exit(2)
 
 
 # Start relax if this file is passed to Python.
