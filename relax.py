@@ -282,45 +282,45 @@ class Relax:
         parser = RelaxParser(description="Molecular dynamics by NMR data analysis.")
 
         # Recognised command line arguments for the UI.
-        group = parser.add_argument_group('UI arguments')
+        group = parser.add_argument_group('UI arguments', description="The arguments for selecting between the different user interfaces (UI) of relax.  If none of these arguments are supplied relax will default into prompt mode or, if a script is supplied, into script mode.")
         group.add_argument('-p', '--prompt', action='store_true', dest='prompt', default=0, help='launch relax in prompt mode after running any optionally supplied scripts')
-        group.add_argument('-g', '--gui', action='store_true', dest='gui', default=0, help='launch the relax GUI')
+        group.add_argument('-g', '--gui', action='store_true', dest='gui', default=0, help='launch the relax graphical user interface (GUI)')
         group.add_argument('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
         group.add_argument('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
         group.add_argument('--licence', action='store_true', dest='licence', default=0, help='display the licence')
         group.add_argument('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
 
         # Recognised command line arguments for the multiprocessor.
-        group = parser.add_argument_group('Multi-processor arguments')
+        group = parser.add_argument_group('Multi-processor arguments', description="The arguments allowing relax to run in multi-processor environments.")
         group.add_argument('-m', '--multi', action='store', type=str, dest='multiprocessor', default='uni', help='set multi processor method to one of \'uni\' or \'mpi4py\'')
         group.add_argument('-n', '--processors', action='store', type=int, dest='n_processors', default=-1, help='set number of processors (may be ignored)')
 
         # Recognised command line arguments for IO redirection.
-        group = parser.add_argument_group('IO redirection arguments')
+        group = parser.add_argument_group('IO redirection arguments', description="The arguments for sending relax output into a file.")
         group.add_argument('-l', '--log', action='store', type=str, dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
         group.add_argument('-t', '--tee', action='store', type=str, dest='tee', help='tee relax output to both stdout and the file LOG_FILE', metavar='LOG_FILE')
 
         # Recognised command line arguments for the test suite.
-        group = parser.add_argument_group('Test suite arguments')
+        group = parser.add_argument_group('Test suite arguments', description="The arguments for activating the relax test suite.  A subset of tests can be selected by providing the name of one or more test classes, test modules, or individual tests.  The names of the tests are shown if the test fails, errors, when the test timings are active, or when IO capture is disabled.")
         group.add_argument('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the full relax test suite')
-        group.add_argument('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the system/functional tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
-        group.add_argument('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the unit tests.  Module names, revealed with the --time option, can be supplied to perform a subset of all tests.')
-        group.add_argument('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
-        group.add_argument('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the software verification tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
+        group.add_argument('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the system/functional tests')
+        group.add_argument('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the unit tests')
+        group.add_argument('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests')
+        group.add_argument('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the software verification tests')
         group.add_argument('--time', action='store_true', dest='tt', default=0, help='print out the timings of individual tests in the test suite')
         group.add_argument('--no-capt', '--no-capture', action='store_true', dest='no_capture', default=0, help='disable IO capture in the test suite')
         group.add_argument('--no-skip', action='store_true', dest='no_skip', default=0, help='a debugging option for relax developers to turn on all blacklisted tests, even those that will fail')
 
         # Recognised command line arguments for debugging.
-        group = parser.add_argument_group('Debugging arguments')
-        group.add_argument('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
+        group = parser.add_argument_group('Debugging arguments', "The arguments for helping to debug relax.")
+        group.add_argument('-d', '--debug', action='store_true', dest='debug', default=0, help='enable verbose debugging output')
         group.add_argument('--error-state', action='store_true', dest='error_state', default=0, help='save a pickled state file when a RelaxError occurs')
         group.add_argument('--traceback', action='store_true', dest='traceback', default=0, help='show stack tracebacks on all RelaxErrors and RelaxWarnings')
-        group.add_argument('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
-        group.add_argument('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
+        group.add_argument('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings into errors')
+        group.add_argument('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings into errors')
 
         # The script file or tests to run.
-        parser.add_argument('script', nargs='*', help='either the script file or one or more test classes or individual tests to run')
+        parser.add_argument('script', nargs='*', help='the script file or one or more test classes or individual tests to run')
 
         # Parse the arguments.
         args = parser.parse_args()
