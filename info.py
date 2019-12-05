@@ -539,7 +539,6 @@ class Info_box(object):
             path.append('')
 
         # Format the data.
-        print(path)
         fmt_package = "%%-%ss" % (self.format_max_width(package) + 2)
         fmt_status = "%%-%ss" % (self.format_max_width(status) + 2)
         fmt_version = "%%-%ss" % (self.format_max_width(version) + 2)
