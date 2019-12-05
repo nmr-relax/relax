@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013,2019 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,11 @@
 """Module containing the status singleton object."""
 
 # Python module imports.
-from os import F_OK, access, getcwd
+from os import F_OK, access, environ, getcwd
+try:
+    from os import get_terminal_size    # Only in Python >= 3.3.
+except ImportError:
+    def get_terminal_size(i): return None
 from os.path import sep
 import platform
 from re import search
@@ -135,11 +139,35 @@ class Status(object):
         # Set up the observer objects.
         self._setup_observers()
 
-        # Text wrapping on different operating systems.
-        if platform.uname()[0] in ['Windows', 'Microsoft']:
-            self.text_width = 79
-        else:
+        # Text wrapping widths on different operating systems.
+        self._set_text_width()
+
+
+    def _set_text_width(self):
+        """Define the text width for text formatting throughout relax.
+
+        The width will be based on that reported by the terminal, bracketed by an upper value of 100 characters.  If the value cannot be determined, on MS Windows it will be set to 79 characters to allow for the MS Windows cmd.exe prompt.
+        """
+
+        # Determine the value from the terminal, checking all IO streams (for Python >= 3.3).
+        size = None
+        self.text_width = None
+        for i in range(3):
+            try:
+                size = get_terminal_size(i)
+            except OSError:
+                continue
+        if size:
+            self.text_width = min(size[0], 100)
+
+        # Default fallback values.
+        if not self.text_width:
             self.text_width = 100
+            if platform.uname()[0] in ['Windows', 'Microsoft']:
+                self.text_width = 79
+
+        # Reset the COLUMNS environmental variable.
+        environ['COLUMNS'] = str(self.text_width)
 
 
     def _setup_observers(self):
