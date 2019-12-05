@@ -190,7 +190,9 @@ script:
     # Fail on first error.
     - set -e
 
-    # relax information printout.
+    # relax information printout and test other UI modes.
+    - $MPIRUN $PYTHON ./relax $RELAX_ARGS --test
+    - $MPIRUN $PYTHON ./relax $RELAX_ARGS --version
     - $MPIRUN $PYTHON ./relax $RELAX_ARGS -i
 
     # Test suite execution.
