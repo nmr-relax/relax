@@ -21,6 +21,7 @@
 
 # Python module imports.
 import sys
+from textwrap import wrap
 
 
 def divider(char, width=100):
@@ -137,7 +138,9 @@ def test_title(name, desc=None, width=100):
     divider('=', width=width)
     sys.stdout.write("Starting test: %s\n" % name)
     if desc:
-        sys.stdout.write("\n%s\n" % desc)
+        sys.stdout.write("\n")
+        for line in wrap(desc, width):
+            sys.stdout.write("%s\n" % line)
     divider('-', width=width)
 
 
