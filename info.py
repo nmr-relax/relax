@@ -270,7 +270,7 @@ class Info_box(object):
         # Loop over the data.
         for i in range(len(data)):
             # The string representation size.
-            size = len(repr(data[i]))
+            size = len(str(data[i]))
 
             # Find the max size.
             if size > width:
@@ -539,10 +539,11 @@ class Info_box(object):
             path.append('')
 
         # Format the data.
+        print(path)
         fmt_package = "%%-%ss" % (self.format_max_width(package) + 2)
         fmt_status = "%%-%ss" % (self.format_max_width(status) + 2)
         fmt_version = "%%-%ss" % (self.format_max_width(version) + 2)
-        fmt_path = "%%-%ss" % (self.format_max_width(path) + 2)
+        fmt_path = "%%-%ss" % (self.format_max_width(path))
 
         # Add the text.
         for i in range(len(package)):
@@ -551,7 +552,7 @@ class Info_box(object):
             text += fmt_version % version[i]
             text += fmt_path % path[i]
             text += '\n'
-        
+
         # Return the info string.
         return text
 
