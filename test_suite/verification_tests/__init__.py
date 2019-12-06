@@ -33,6 +33,7 @@ from unittest import TestSuite
 from lib.errors import RelaxError
 
 # relax software verification test module imports.
+from test_suite.formatting import format_test_name
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 from test_suite.verification_tests.library import Library
 from test_suite.verification_tests.status_object import Status_object
@@ -47,13 +48,15 @@ __all__ = [
 class Verification_test_runner:
     """Class for executing all of the software verification tests."""
 
-    def run(self, tests=None, runner=None):
+    def run(self, tests=None, runner=None, list_tests=False):
         """Run the software verification tests.
 
-        @keyword tests:     The list of system tests to preform.
-        @type tests:        list of str
-        @keyword runner:    A test runner such as TextTestRunner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
-        @type runner:       Test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
+        @keyword tests:         The list of system tests to preform.
+        @type tests:            list of str
+        @keyword runner:        A test runner such as TextTestRunner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
+        @type runner:           Test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
+        @keyword list_tests:    A flag which if True will cause the tests to be listed rather than executed.
+        @type list_tests:       bool
         """
 
         # Create an array of test suites (add your new TestCase classes here).
@@ -98,6 +101,13 @@ class Verification_test_runner:
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)
+
+        # Only list the tests.
+        if list_tests:
+            for suite in full_suite._tests:
+                for test in suite:
+                    print(format_test_name(test.id()))
+            return True
 
         # Run the test suite.
         results = runner.run(full_suite)

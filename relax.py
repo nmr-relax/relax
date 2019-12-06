@@ -219,7 +219,7 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture, list_tests=self.list_tests)
             self.exit_code = int(not runner.run_all_tests())
 
         # Execute the relax system tests.
@@ -232,7 +232,7 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture, list_tests=self.list_tests)
             self.exit_code = int(not runner.run_system_tests())
 
         # Execute the relax unit tests.
@@ -241,7 +241,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture, list_tests=self.list_tests)
             self.exit_code = int(not runner.run_unit_tests())
 
         # Execute the relax GUI tests.
@@ -250,7 +250,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture, list_tests=self.list_tests)
             self.exit_code = int(not runner.run_gui_tests())
 
         # Execute the relax verification tests.
@@ -259,7 +259,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Run the tests.
-            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture)
+            runner = Test_suite_runner(self.tests, timing=self.test_timings, io_capture=self.io_capture, list_tests=self.list_tests)
             self.exit_code = int(not runner.run_verification_tests())
 
         # Test mode.
@@ -310,6 +310,7 @@ class Relax:
         group.add_argument('--time', action='store_true', dest='tt', default=0, help='print out the timings of individual tests in the test suite')
         group.add_argument('--no-capt', '--no-capture', action='store_true', dest='no_capture', default=0, help='disable IO capture in the test suite')
         group.add_argument('--no-skip', action='store_true', dest='no_skip', default=0, help='a debugging option for relax developers to turn on all blacklisted tests, even those that will fail')
+        group.add_argument('--list-tests', action='store_true', dest='list_tests', default=0, help='list the selected tests instead of executing them')
 
         # Recognised command line arguments for debugging.
         group = parser.add_argument_group('Debugging arguments', "The arguments for helping to debug relax.")
@@ -377,6 +378,7 @@ class Relax:
             # Store the arguments.
             self.tests = args.script
             self.io_capture = not args.no_capture
+            self.list_tests = args.list_tests
 
             # Test timings.
             self.test_timings = False

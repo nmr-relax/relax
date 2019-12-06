@@ -60,7 +60,7 @@ class Test_suite_runner:
         - Verification tests.
     """
 
-    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui', 'verification'], timing=False, io_capture=True):
+    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui', 'verification'], timing=False, io_capture=True, list_tests=False):
         """Store the list of tests to preform.
 
         The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
@@ -76,12 +76,15 @@ class Test_suite_runner:
         @type timing:           bool
         @keyword io_capture:    A flag which if True will cause all IO to be captured and only printed out for failing or error tests.
         @type io_capture:       bool
+        @keyword list_tests:    A flag which if True will cause the tests to be listed rather than executed.
+        @type list_tests:       bool
         """
 
         # Store the args.
         self.tests = tests
         self.from_gui = from_gui
         self.categories = categories
+        self.list_tests = list_tests
 
         # Set up the test runner.
         if from_gui:
@@ -127,7 +130,8 @@ class Test_suite_runner:
             test_status = self.run_verification_tests(summary=False, reset=False) and test_status
 
         # Print out a summary of the test suite and return the combined status.
-        self.summary()
+        if not self.list_tests:
+            self.summary()
         return test_status
 
 
@@ -165,7 +169,7 @@ class Test_suite_runner:
                 # Execute the GUI tests.
                 gui_runner = GUI_test_runner()
                 self.runner.category = 'gui'
-                self.gui_result = gui_runner.run(self.tests, runner=self.runner)
+                self.gui_result = gui_runner.run(self.tests, runner=self.runner, list_tests=self.list_tests)
 
                 # Clean up for the GUI, if not in GUI mode.
                 if status.test_mode:
@@ -182,7 +186,7 @@ class Test_suite_runner:
                 self.gui_result = 'skip'
 
             # Print out a summary of the test suite.
-            if summary:
+            if summary and not self.list_tests:
                 self.summary()
 
         # Catch the keyboard interrupt.
@@ -194,7 +198,7 @@ class Test_suite_runner:
         except:
             print("Failure in setting up the GUI tests.\n")
             print_exc()
-            if summary:
+            if summary and not self.list_tests:
                 self.summary()
             self.gui_result = 'skip'
             return False
@@ -226,10 +230,10 @@ class Test_suite_runner:
             # Run the tests.
             system_runner = System_test_runner()
             self.runner.category = 'system'
-            self.system_result = system_runner.run(self.tests, runner=self.runner)
+            self.system_result = system_runner.run(self.tests, runner=self.runner, list_tests=self.list_tests)
 
             # Print out a summary of the test suite.
-            if summary:
+            if summary and not self.list_tests:
                 self.summary()
 
         # Catch the keyboard interrupt.
@@ -264,10 +268,10 @@ class Test_suite_runner:
             # Run the tests.
             unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
             self.runner.category = 'unit'
-            self.unit_result = unit_runner.run(self.tests, runner=self.runner)
+            self.unit_result = unit_runner.run(self.tests, runner=self.runner, list_tests=self.list_tests)
 
             # Print out a summary of the test suite.
-            if summary:
+            if summary and not self.list_tests:
                 self.summary()
 
         # Catch the keyboard interrupt.
@@ -300,10 +304,10 @@ class Test_suite_runner:
             # Run the tests.
             verification_runner = Verification_test_runner()
             self.runner.category = 'verification'
-            self.verification_result = verification_runner.run(self.tests, runner=self.runner)
+            self.verification_result = verification_runner.run(self.tests, runner=self.runner, list_tests=self.list_tests)
 
             # Print out a summary of the test suite.
-            if summary:
+            if summary and not self.list_tests:
                 self.summary()
 
         # Catch the keyboard interrupt.

@@ -31,6 +31,7 @@ import wx
 from lib.errors import RelaxError
 
 # relax GUI test module imports.
+from test_suite.formatting import format_test_name
 from test_suite.gui_tests.bmrb import Bmrb
 from test_suite.gui_tests.bruker import Bruker
 from test_suite.gui_tests.consistency_tests import Ct
@@ -66,16 +67,18 @@ __all__ = ['bmrb',
 class GUI_test_runner:
     """Class for executing all of the GUI tests."""
 
-    def run(self, tests=None, runner=None):
+    def run(self, tests=None, runner=None, list_tests=False):
         """Run the GUI tests.
 
         The GUI test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
 
 
-        @keyword tests:     The list of GUI tests to preform.
-        @type tests:        list of str
-        @keyword runner:    A test runner such as TextTestRunner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
-        @type runner:       Test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
+        @keyword tests:         The list of GUI tests to preform.
+        @type tests:            list of str
+        @keyword runner:        A test runner such as TextTestRunner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
+        @type runner:           Test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
+        @keyword list_tests:    A flag which if True will cause the tests to be listed rather than executed.
+        @type list_tests:       bool
         """
 
         # Create an array of test suites (add your new TestCase classes here).
@@ -134,6 +137,13 @@ class GUI_test_runner:
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)
+
+        # Only list the tests.
+        if list_tests:
+            for suite in full_suite._tests:
+                for test in suite:
+                    print(format_test_name(test.id()))
+            return True
 
         # Run the test suite.
         results = runner.run(full_suite)

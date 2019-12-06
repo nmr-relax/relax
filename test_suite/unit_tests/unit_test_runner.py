@@ -56,6 +56,7 @@ from optparse import OptionParser
 from textwrap import dedent
 
 # relax module imports.
+from test_suite.formatting import format_test_name
 try:
     from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 except ImportError:
@@ -574,15 +575,17 @@ class Unit_test_runner(object):
         return result
 
 
-    def run(self, tests=None, runner=None):
+    def run(self, tests=None, runner=None, list_tests=False):
         """Run a unit test or set of unit tests.
 
-        @keyword tests:     The list of system tests to perform.
-        @type tests:        list of str
-        @keyword runner:    A unit test runner such as TextTestRunner.  None indicates use of the default unit test runner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
-        @type runner:       Unit test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
-        @return:            A string indicating success or failure of the unit tests run.
-        @rtype:             str
+        @keyword tests:         The list of system tests to perform.
+        @type tests:            list of str
+        @keyword runner:        A unit test runner such as TextTestRunner.  None indicates use of the default unit test runner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
+        @type runner:           Unit test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
+        @keyword list_tests:    A flag which if True will cause the tests to be listed rather than executed.
+        @type list_tests:       bool
+        @return:                A string indicating success or failure of the unit tests run.
+        @rtype:                 str
         """
 
         msg = "Either set self.%s to a %s directory or set search_for_%s_path in self.__init__ to True"
@@ -660,6 +663,13 @@ class Unit_test_runner(object):
 
                 # Load the tests.
                 tests = load_test_case(package_path, module_name, class_name)
+
+        # Only list the tests.
+        if list_tests:
+            for suite in tests:
+                for test in suite:
+                    print(format_test_name(test.id()))
+            return True
 
         if runner == None:
             runner = unittest.TextTestRunner()
