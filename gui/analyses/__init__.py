@@ -226,7 +226,7 @@ class Analysis_controller:
         self._num_analyses -= 1
 
         # Shift the current page back one if necessary.
-        if self._current > index:
+        if self._current != None and self._current > index:
             self._current -= 1
             if status.debug:
                 print("debug> %s:  Switching the current analysis to index %s." % (full_name, self._current))
