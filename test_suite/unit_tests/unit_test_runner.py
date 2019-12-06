@@ -2,7 +2,7 @@
 ################################################################################
 #                                                                              #
 # Copyright (C) 2006-2007 Gary S Thompson                                      #
-# Copyright (C) 2007-2008,2010-2014 Edward d'Auvergne                          #
+# Copyright (C) 2007-2008,2010-2014,2019 Edward d'Auvergne                     #
 #                                                                              #
 #                                                                              #
 # This file is part of the program relax.                                      #

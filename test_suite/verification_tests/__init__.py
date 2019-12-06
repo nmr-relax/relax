@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006,2008-2012,2014 Edward d'Auvergne                         #
+# Copyright (C) 2006,2008-2012,2014,2019 Edward d'Auvergne                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
