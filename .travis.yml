@@ -160,7 +160,7 @@ install:
 
     # Manually install packages for Python 2.7 compatibility.
     - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install numpy==1.16.5; else pip install numpy; fi
-    - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install kiwisolver=1.1.0 matplotlib==2.2.4; else pip install matplotlib; fi
+    - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install matplotlib==2.2.4; else pip install matplotlib; fi
     - if [[ $OLD_PY2_PACKAGES == "true" ]]; then pip install scipy==1.2.2; else pip install scipy; fi
 
     # Install Python packages with pip.
