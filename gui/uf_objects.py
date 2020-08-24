@@ -124,7 +124,7 @@ def build_uf_menus(parent=None, menubar=None):
                 class_item = None
 
             # The menu item.
-            build_menu_item(menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16'), append=False)
+            build_menu_item(menu, id=uf_store[name]._uf_id, text=data.menu_text, icon=fetch_icon(data.gui_icon, size='16x16'), append=True)
 
         # New menu.
         if menu_index == 0 and not search(pattern, name):
