@@ -35,7 +35,7 @@ import lib.structure.internal.object
 from status import Status; status = Status()
 
 
-version = "repository commit"
+version = "5.0.0"
 repo_head = None
 repo_type = None
 repo_url = None
