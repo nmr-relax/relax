@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2016,2019 Edward d'Auvergne                              #
+# Copyright (C) 2006-2016,2019-2020 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -18,6 +18,92 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+
+Version 5.0.0
+(25 August 2020, from master)
+https://sourceforge.net/p/nmr-relax/code/ci/5.0.0/tree/
+
+    Features:
+        * Support for wxPython-Phoenix.
+        * Bmrblib: This Python package is now once again optional and relax can run without it.
+        * MS Windows builds are now 64-bit by default.
+        * Major improvements to relax text output.
+
+
+    Changes:
+        * TestSuite: Skipped tests are no longer run when individual tests are supplied on the command line.  The RelaxTestLoader.loadTestsFromNames() method has been implemented to gracefully handle the skipping of tests when only a single test is run.
+        * Travis CI config: Fixes for PyPI numpy no longer being compatible with Python 2.7.  Older versions of numpy now need to be manually specified for the Python 2.7 job.
+        * Travis CI config: Attempt at making the MS Windows build job run again.  The Travis CI infrastructure has changed yet again and the Windows job fails in the setup stage.  These changes are just a guess to try to make this work again.
+        * Travis CI config: 2nd attempt at making the MS Windows build job run again.  Chocolatey was automatically installing the new Python 3.8.0 but the paths pointed to the 3.7 version.  Now the 3.7.4 Python version is explicitly specified.
+        * SCons: Change for the MS Windows build architecture from the default of 32-bit to 64-bit.  Previously the default was 32-bit compilation on all Windows systems, via the WIN_TARGET_OVERRIDE flag, as official Python never used to release 64-bit builds for Windows systems.  As this is no longer the case, the 32-bit override is now only set for the old Python 2 versions.
+        * Travis CI config: Creation of a job for testing relax on an arm64 CPU.  The system Python and its packages are used to avoid timeouts on arm64.  Installing the Python packages via pip prior to running causes a Travis CI time out, as most of the 50 minutes allowed are used up by the compilation of SciPy.  Despite the successful installation of the wxPython site-package on the system Python3, the GUI tests are not activated as there is a problem with xvfb on the arm64 Travis CI jobs.
+        * N_state_model.test_populations system test: Loosened two of the checks to allow arm64 to pass.
+        * wxPython: Added the dep_check.old_wx flag for differentiating between Classic and Phoenix.
+        * wxPython-Phoenix: Fix for the wx.BoxSizer.AddSpacer() function calls.  The old wxPython conversion of the size argument to (size, size) breaks the layout, so that the tuple arguments are essential.  However tuple arguments are not allowed in wxPython-Phoenix.  Therefore the dep_check.old_wx flag is used to differentiate the behaviour of the different wxPythons.
+        * wxPython-Phoenix: Fix for the old wx.Sizer.DeleteWindows() method.  This method no longer exists, so instead the Clear() method with the deleteWindows argument (or delete_windows in Phoenix) is used instead.
+        * wxPython-Phoenix: Fix for the missing wx.SystemSettings_GetMetric() function.  This has been switched to wx.SystemSettings.GetMetric() which is present in the original wxPython and Phoenix.
+        * wxPython-Phoenix: Fixes for the relax gui About dialog.  The wx.Frame.Center() function call only works if the window is shown (i.e. it is broken in the test suite), and the wx.DC.EndDrawing() function has been dropped in Phoenix.
+        * wxPython-Phoenix: Fixes for the GUI sequence and file input elements.  The wx.Frame.Center() function call only works if the window is shown (i.e. it is broken in the test suite).
+        * wxPython-Phoenix: Support for the splash screen.  The wx.SplashScreen and associated variables have shifted into wx.adv.
+        * wxPython-Phoenix: Support for the relax icon.  The wx.IconBundle.AddIconFromFile() function have been replaced by wx.IconBundle.AddIcon() in the current phoenix.
+        * wxPython-Phoenix: Fix for the spin viewer window.  The wx.Window.GetClientSizeTuple() function does not exist in Phoenix.  However this can simply be replaced by wx.Window.GetClientSize() in the current code.
+        * Deletion hack: The wx.Bitmap.HasAlpha() function is missing in current phoenix.
+        * relax GUI: Fix for the window icons.
+        * wxPython-Phoenix: Switch away from the depreciated wx.Menu.AppendItem() function.  Classic still requires the calls to this function, but phoenix now uses wx.Menu.Append() instead.
+        * wxPython: Renamed the dep_check.old_wx flag to dep_check.wx_classic.
+        * wxPython-Phoenix: Prominent feedback warning the user about using unstable Phoenix versions.  This includes both a RelaxWarning on start up and placing the warning text in red in the center of the blank relax GUI main window.  Currently all Phoenix versions are labelled as unstable, however this can be changed in the future directly in the dep_check module.
+        * wxPython-Phoenix: Switch away from the depreciated wx.ToolBar.AddLabelTool() function.  This is still used for "Classic".  For Phoenix, the wx.ToolBar.AddTool() function is used instead.
+        * wxPython-Phoenix: Switch away from the depreciated wx.Window.SetToolTipString() function.  Instead wx.Window.SetToolTip(wx.ToolTip(text)) is used for both "Classic" and Phoenix.
+        * wxPython-Phoenix: Switch from wx.NamedColour() to wx.Colour() in the relax controller.  "Classic" still uses the old function.
+        * wxPython-Phoenix: Switch from the depreciated wx.Text.GetSizeTuple() to wx.Text.GetSize().  This seems to work on "Classic" as well.
+        * wxPython-Phoenix: Switch from the depreciated wx.TreeCtrl.GetItemPyData() function.  "Classic" is still using this function, but Phoenix is now using wx.TreeCtrl.GetItemData().
+        * wxPython-Phoenix: Switch from the depreciated wx.TreeCtrl.SetDimensions() function.  Instead SetSize() is now being used for Phoenix.
+        * wxPython-Phoenix: Switch from the depreciated wx.TreeCtrl.SetPyData() function.  "Classic" is still using this function, but Phoenix is now using wx.TreeCtrl.SetItemData().
+        * wxPython-Phoenix: Switch from the depreciated wx.StockCursor() wrapper function.  The overloaded wx.Cursor class can be used instead in Phoenix.
+        * wxPython-Phoenix: Switch from the depreciated wx.EmptyBitmap() wrapper function.  Instead Phoenix versions can simply use the overloaded wx.Bitmap class with the same arguments.
+        * wxPython-Phoenix: Switch from wrapper to overloaded functions for the wx.ListCtrl elements.
+        * Python 3.8 support: The platform.linux_distibution() function no longer exists.  This is now replaced by the distro site-package.  The lib.compat package deals with this difference.
+        * Model-free analysis: Obscure syntax error bug fix for an issue highlighted by Python 3.8.  The error in the set_xh_vect() function.  This is only encountered when reading an ancient relax 1.2 model-free results file.
+        * Travis CI config: Changes as suggested by the experimental Travis CI Build Config Explorer.  The config text was pasted into https://config.travis-ci.com/explore and changed as suggested.
+        * Travis CI config: Shifted the OpenMPI required packages into an apt 'addons' section.
+        * Travis CI config: Shifted the API doc 'build' specific parts into the jobs matrix.  This allows an environmental variable to be removed and a simplification of the 'script' section.
+        * Travis CI config: Shifted the FSF copyright validation specific parts into the jobs matrix.  This allows an environmental variable to be removed and a simplification of the 'script' section.
+        * Travis CI config: Removal of the now unused TEST environmental variable.
+        * Travis CI config: Simplification of the single processor and OpenMPI execution.  The MPIRUN and RELAX_ARGS arguments have been introduced.  These are normally unset but, for the OpenMPI jobs, they are set to "mpirun -np 2" and "--multi=mpi4py" respectively.  This allows the duplicated entries for the information printout and test suite execution to be collapsed into one.
+        * Travis CI config: Removal of the 'pip upgraded package' job.  This job does not seem to be necessary for testing relax.
+        * Travis CI config: Conversion of the Ubuntu Xenial job to Ubuntu Bionic.
+        * Travis CI config: Removal of the 'language' key in the jobs matrix when the value is 'python'.  This is a duplication as the language is set to Python outside of the matrix.
+        * Multi-processor: Shifted the processor type checking into the initial command line parsing.  This allows a non-zero error code to be returned to the shell.
+        * Travis CI config: Shifted the echoing of environmental vars into a new 'before_script' section.  This allows the echoing to occur for all jobs.
+        * Scons: Improvements to the string formatting and the printout for the C module compilation.  This includes showing the target architecture for MS Windows compilation.
+        * Scons: Document the environmental variables used.
+        * Information printout: Improved output for Python3 compiled C modules.  The bytesteam is now decoded.
+        * Scons: The MS Windows binary target architecture is now determined by the Python binary arch.
+        * Test suite: Implementation of a command line option for disabling IO capture.  This was previously handled by using the debug command line option which simply prevented IO capture.  This type of output is very hard to parse by eye, as the tests are not well separated and the debugging output is very verbose.  Now the --no-capt or --no-capture option has been implement to disable the IO capture.  The debug command line option no longer disables IO capture, rather it allows for finer control of the test suite in that verbose debugging output is now only shown for tests that do not pass.  When IO capture is disabled, extra formatted output is used to provide clear separators, titles, descriptions and endings for each test.
+        * Test suite: Argument reordering and better docstring documentation in the relax test suite runners.
+        * Test suite: All adjustable widths are now set using the value of status.text_width.  This include the separators for the tests and the test suite summary lines at the end.
+        * Fix for Python 2.5 support.
+        * Command line processing: Switch from the depreciated optparse Python module to argparse.  The argument parsing code and help text has also been improved.
+        * Travis CI config: Added the relax --test and --version modes.
+        * Travis CI config: Alphabetical ordering of the environmental variable printouts.
+        * Help: Improvements to the help printout, including new descriptions for the argument groups.
+        * Status object: Improved logic for determining the ideal text width for relax.
+        * Travis CI config: Added testing of the relax --help mode.
+        * Test suite: Added text wrapping set to the relax text width for the test description.  This is the description shown when running without IO capture.
+        * Information printout: Improved formatting for MS Windows.  The repr() function results in '\\' for path separators rather than '\', causing the formatting to be out.
+        * Information printout: Remove an accidentally committed debugging printout.
+        * Test suite: Addition of a new command line option for listing all of the test names.  The new '--list-tests' option will cause the names of the tests to be printed out and not run any tests.
+        * Travis CI config: Try to force a Py2 compatible version of kiwisolver, as needed by matplotlib.
+        * Travis CI config: The virtual machines with Python2 now seem to require SCons be manually installed.
+        * Test suite: Fixes for the Palmer.test_palmer_omp system test.  The modelfree4 binary type 'linux-x86_64-gcc' seems to now produce slightly different results with newer system libraries.  The checks in this test have been updated to reflect this.
+
+
+    Bugfixes:
+        * GUI: Bug fix for the deletion of analysis tabs on Python 3.  The value of None cannot be compared to an integer.  This bug appears to only be triggered by another bug - a GUI tearDown() or deletion failure on MS Windows with wxPython-Phoenix and Python 3.
+        * Bug fix: Restoration of the simple user function menus.
+
+
+
 
 Version 4.1.3
 (14 June 2019, from master)
