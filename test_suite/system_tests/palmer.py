@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
-# Copyright (C) 2008-2009,2012-2014,2017 Edward d'Auvergne                    #
+# Copyright (C) 2008-2009,2012-2014,2017,2020 Edward d'Auvergne               #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -254,7 +254,7 @@ class Palmer(SystemTestCase):
         elif binary == 'mac-i386':
             te = [52.197, 29.357, 12.676]
         elif binary == 'linux-x86_64-gcc':
-            te = [52.194, 29.359, 12.677]
+            te = [52.194, 29.351, 12.673]
         chi2 = [7.254, 8.0437, 0.5327]
         if binary in ['mac-i386', 'linux-x86_64-gcc']:
             chi2 = [7.254, 8.044, 0.5327]
@@ -279,24 +279,27 @@ class Palmer(SystemTestCase):
 
         # Final global values.
         final_pipe = pipes.get_pipe('aic')
-        self.assertEqual(final_pipe.chi2, 15.8304)
         if binary == 'linux-i386-gcc':
+            self.assertEqual(final_pipe.chi2, 15.8304)
             self.assertAlmostEqual(final_pipe.diff_tensor.tm, 8.443)
             self.assertAlmostEqual(final_pipe.diff_tensor.Dratio, 1.053)
             self.assertAlmostEqual(final_pipe.diff_tensor.theta * 360 / 2.0 / pi, 68.592)
             self.assertAlmostEqual(final_pipe.diff_tensor.phi * 360 / 2.0 / pi, 73.756)
         elif binary == 'linux-i386-pgf':
+            self.assertEqual(final_pipe.chi2, 15.8304)
             self.assertAlmostEqual(final_pipe.diff_tensor.tm, 8.443)
             self.assertAlmostEqual(final_pipe.diff_tensor.Dratio, 1.053)
             self.assertAlmostEqual(final_pipe.diff_tensor.theta * 360 / 2.0 / pi, 68.864)
             self.assertAlmostEqual(final_pipe.diff_tensor.phi * 360 / 2.0 / pi, 73.913)
         elif binary == 'mac-i386':
+            self.assertEqual(final_pipe.chi2, 15.8304)
             self.assertAlmostEqual(final_pipe.diff_tensor.tm, 8.459)
             self.assertAlmostEqual(final_pipe.diff_tensor.Dratio, 1.049)
             self.assertAlmostEqual(final_pipe.diff_tensor.theta * 360 / 2.0 / pi, 64.611)
             self.assertAlmostEqual(final_pipe.diff_tensor.phi * 360 / 2.0 / pi, 79.281)
         elif binary == 'linux-x86_64-gcc':
-            self.assertAlmostEqual(final_pipe.diff_tensor.tm, 8.445)
-            self.assertAlmostEqual(final_pipe.diff_tensor.Dratio, 1.052)
-            self.assertAlmostEqual(final_pipe.diff_tensor.theta * 360 / 2.0 / pi, 68.245)
-            self.assertAlmostEqual(final_pipe.diff_tensor.phi * 360 / 2.0 / pi, 74.290)
+            self.assertEqual(final_pipe.chi2, 15.8308)
+            self.assertAlmostEqual(final_pipe.diff_tensor.tm, 8.394)
+            self.assertAlmostEqual(final_pipe.diff_tensor.Dratio, 1.073)
+            self.assertAlmostEqual(final_pipe.diff_tensor.theta * 360 / 2.0 / pi, 77.152)
+            self.assertAlmostEqual(final_pipe.diff_tensor.phi * 360 / 2.0 / pi, 63.848)
