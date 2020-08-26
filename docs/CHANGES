@@ -20,7 +20,7 @@
 ###############################################################################
 
 Version 5.0.0
-(25 August 2020, from master)
+(24 August 2020, from master)
 https://sourceforge.net/p/nmr-relax/code/ci/5.0.0/tree/
 
     Features:
@@ -91,7 +91,6 @@ https://sourceforge.net/p/nmr-relax/code/ci/5.0.0/tree/
         * Travis CI config: Added testing of the relax --help mode.
         * Test suite: Added text wrapping set to the relax text width for the test description.  This is the description shown when running without IO capture.
         * Information printout: Improved formatting for MS Windows.  The repr() function results in '\\' for path separators rather than '\', causing the formatting to be out.
-        * Information printout: Remove an accidentally committed debugging printout.
         * Test suite: Addition of a new command line option for listing all of the test names.  The new '--list-tests' option will cause the names of the tests to be printed out and not run any tests.
         * Travis CI config: Try to force a Py2 compatible version of kiwisolver, as needed by matplotlib.
         * Travis CI config: The virtual machines with Python2 now seem to require SCons be manually installed.
