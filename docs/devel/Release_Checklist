@@ -160,7 +160,7 @@ Other files
 
 Build other distribution packages by checking out the tag and bundling minfx and bmrblib:
 
-$ cd /relax/git/repository/directory/
+$ cd $RELAX_REPOSITORY_DIR
 $ git fetch --all --tags
 $ git clean -ffxd    # Warning - permanent removal of all non-tracked files, including minfx and bmrblib git repository subdirectories.
 $ git checkout 4.1.0
@@ -216,17 +216,17 @@ Manual
 
 For the HTML manual, the latest 'relax_manual/rX' branch of the relax fork of latex2html must be used (https://sourceforge.net/p/nmr-relax/code-latex2html/ci/master/tree/).  The 'bmrblib/' and 'minfx/' directories from the checked out repositories must also be present.  Create the manual with the commands:
 
-$ cd relax_git_repository_directory/
+$ cd $RELAX_REPOSITORY_DIR
 $ git checkout 4.1.0
 $ scons user_manual_html
 
 Replace the old manual with the new in the website repository:
 
-$ cd website_git_repository_directory/
+$ cd $RELAX_WEBSITE_REPOSITORY_DIR
 $ git checkout master
 $ cd manual
 $ ./clean
-$ cp -urvp relax_git_repository_directory/docs/html/* .
+$ cp -urvp $RELAX_REPOSITORY_DIR/docs/html/* .
 
 To restore any missing redirects, finally run:
 
@@ -241,7 +241,7 @@ API documentation
 
 Firstly make sure that epydoc has been updated with the docs/devel/epydoc_graphvis_fix.patch changes, to allow for newer Graphvis versions to correctly create graphs.  Then create the API documentation for the current version with the command:
 
-$ cd relax_git_repository_directory/
+$ cd $RELAX_REPOSITORY_DIR/
 $ git checkout 4.1.0
 $ scons api_manual_html
 
