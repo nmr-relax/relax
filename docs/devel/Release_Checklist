@@ -33,8 +33,8 @@ Temporary branch
 
 Firstly create and switch to a local, and temporary, git branch using commands such as:
 
-$ git branch 4.1.0 master
-$ git checkout 4.1.0
+$ git branch 5.0.0 master
+$ git checkout 5.0.0
 
 This will create a new branch explicitly from the master branch.  A number of changes will be committed to this branch prior to tagging and deletion of the temporary branch.
 
@@ -43,7 +43,7 @@ This will create a new branch explicitly from the master branch.  A number of ch
 Version number
 ==============
 
-Change the version number in file 'version.py' and commit the change with a commit message such as "Updated the version number to relax 4.1.0.".
+Change the version number in file 'version.py' and commit the change with a commit message such as "Updated the version number to relax 5.0.0.".
 
 
 
@@ -54,7 +54,7 @@ Build the PDF version of the relax user manual, add it to the repository, commit
 
 $ scons user_manual_pdf
 $ git add -f docs/relax.pdf
-$ git commit -m "Added the relax 4.1.0 manual to the repository."
+$ git commit -m "Added the relax 5.0.0 manual to the repository."
 $ scons clean
 
 Copy the PDF manual to the mirror directory for the relax download site for uploading in one of the steps below.
@@ -95,10 +95,10 @@ Tagging
 
 Next tag the release, remove the temporary branch, and push the tag to the remote repositories with:
 
-$ git checkout 4.1.0
-$ git tag -m "relax version 4.1.0." 4.1.0
+$ git checkout 5.0.0
+$ git tag -m "relax version 5.0.0." 5.0.0
 $ git checkout master
-$ git branch -D 4.1.0
+$ git branch -D 5.0.0
 $ git push --tags
 
 If all the relax mirrors are configured as remotes with the 'pushremotes' alias, instead type:
@@ -117,7 +117,7 @@ Update and clean relax repositories with:
 
 $ git fetch --all --tags
 $ git clean -ffxd    # Warning - permanent removal of all non-tracked files, including minfx and bmrblib git repository subdirectories.
-$ git checkout 4.1.0
+$ git checkout 5.0.0
 
 
 Package bundling
@@ -152,7 +152,7 @@ Signing
 
 If the key is not supplied, or incorrectly supplied, the distribution file will be created but not signed.  To sign the file later, type:
 
-$ gpg --detach-sign --default-key xxxxx relax-4.1.0.GNU-Linux.x86_64.tar.bz2
+$ gpg --detach-sign --default-key xxxxx relax-5.0.0.GNU-Linux.x86_64.tar.bz2
 
 
 Other files
@@ -163,7 +163,7 @@ Build other distribution packages by checking out the tag and bundling minfx and
 $ cd $RELAX_REPOSITORY_DIR
 $ git fetch --all --tags
 $ git clean -ffxd    # Warning - permanent removal of all non-tracked files, including minfx and bmrblib git repository subdirectories.
-$ git checkout 4.1.0
+$ git checkout 5.0.0
 $ git clone --branch 1.0.12 --depth 1 git://git.code.sf.net/p/minfx/code minfx
 $ git clone --branch 1.0.4 --depth 1 git://git.code.sf.net/p/bmrblib/code bmrblib
 $ scons binary_dist [key=xxxxx]
@@ -208,7 +208,7 @@ These are then merged into the 'gh-pages' branch.  The website will be updated o
 Downloads
 ---------
 
-Modify the http://www.nmr-relax.com/download.html webpage to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Commit the updates with a message such as "Updated the http://www.nmr-relax.com/download.html webpage for the relax 4.1.0 release.".
+Modify the http://www.nmr-relax.com/download.html webpage to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Commit the updates with a message such as "Updated the http://www.nmr-relax.com/download.html webpage for the relax 5.0.0 release.".
 
 
 Manual
@@ -217,7 +217,7 @@ Manual
 For the HTML manual, the latest 'relax_manual/rX' branch of the relax fork of latex2html must be used (https://sourceforge.net/p/nmr-relax/code-latex2html/ci/master/tree/).  The 'bmrblib/' and 'minfx/' directories from the checked out repositories must also be present.  Create the manual with the commands:
 
 $ cd $RELAX_REPOSITORY_DIR
-$ git checkout 4.1.0
+$ git checkout 5.0.0
 $ scons user_manual_html
 
 Replace the old manual with the new in the website repository:
@@ -233,7 +233,7 @@ To restore any missing redirects, finally run:
 $ cd ..
 $ python .setup_redirects.py
 
-Commit the changes with a message such as "Updated the relax HTML manual at http://www.nmr-relax.com/manual/index.html to version 4.1.0.".
+Commit the changes with a message such as "Updated the relax HTML manual at http://www.nmr-relax.com/manual/index.html to version 5.0.0.".
 
 
 API documentation
@@ -242,14 +242,14 @@ API documentation
 Firstly make sure that epydoc has been updated with the docs/devel/epydoc_graphvis_fix.patch changes, to allow for newer Graphvis versions to correctly create graphs.  Then create the API documentation for the current version with the command:
 
 $ cd $RELAX_REPOSITORY_DIR/
-$ git checkout 4.1.0
+$ git checkout 5.0.0
 $ scons api_manual_html
 
 Then:
 
-    - Replace the old API documentation in the website repository and commit with a message such as "Updated the relax API documentation at http://www.nmr-relax.com/api/4.1/ to version 4.1.0.".
-    - If a new minor version is being released, create a new directory such as api/4.1/, copy the files there.
-    - Update the api/index.html file to add the new version, and commit with a message such as "Updated the relax version number to 4.1.0 on the http://www.nmr-relax.com/api/index.html webpage.".
+    - Replace the old API documentation in the website repository and commit with a message such as "Updated the relax API documentation at http://www.nmr-relax.com/api/5.0/ to version 5.0.0.".
+    - If a new minor version is being released, create a new directory such as api/5.0/, copy the files there.
+    - Update the api/index.html file to add the new version, and commit with a message such as "Updated the relax version number to 5.0.0 on the http://www.nmr-relax.com/api/index.html webpage.".
 
 
 
@@ -295,11 +295,11 @@ For the changes file text, make the following conversions:
     - Make links to the relax manual for all user functions:
         - To replace "structure.add_sheet" with "[http://www.nmr-relax.com/manual/structure_add_sheet.html structure.add_sheet]", set the vim register "@i" in the .vimrc file with:  let @i='v/[ ,\r\n]hxi[http://www.nmr-relax.com/manual/pa.html pa]?[/\.[a-z_]*.htmlr_/user function'
         - To replace "frame_order.decompose user function" with "[http://www.nmr-relax.com/manual/frame_order_decompose.html frame_order.decompose user function]", set the vim register "@u" in the .vimrc file with:  let @u='v/[ ,\r\n]hxi[http://www.nmr-relax.com/manual/pa.html p/user function2cwuser function]?[/\.[a-z_]*.htmlr_/user function'
-    - Make internal links for all relax versions (vi search for "[1-4]\.[0-9]*\.[0-9]*").
+    - Make internal links for all relax versions (vi search for "[1-5]\.[0-9]*\.[0-9]*").
     - Convert all symbols to use wiki formatting.
     - Convert all model parameters to use the {{:xyz}} parameter template infrastructure.
     - Convert all model names to internal wiki links (vi search "\<m[0-9]\>\|\<tm[0-9]\>\|No Rex\|R2eff\|LM63\|LM63 3-site\|CR72\|CR72 full\|IT99\|TSMFK01\|B14\|B14 full\|NS CPMG\|MMQ CR72\|NS MMQ\|M61\|DPL94\|TP02\|TAP03\|MP05\|NS R1rho\|BK13").
-    - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).  Open up the API documentation index (e.g. http://www.nmr-relax.com/api/4.1/identifier-index.html) and manually create the links.  This is a tedious task!
+    - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).  Open up the API documentation index (e.g. http://www.nmr-relax.com/api/5.0/identifier-index.html) and manually create the links.  This is a tedious task!
     - Add <code> tags for better formatting of certain elements (file and directory names, code elements, console output, GUI element, etc).
     - Convert any direct links if possible.
     - To avoid dead links, perform a final proof that all the links in the wiki article are correct by following the links.
@@ -322,9 +322,9 @@ Mailing list
 
 On the relax-announce mailing list (nmr-relax-announce att lists.sourceforge.net), write the release announcement:
 
-    - Subject:  "relax version 4.1.0."
+    - Subject:  "relax version 5.0.0."
     - Copy the 'Description' and 'Download' text from the wiki.  Do not include the section titles and remove any wiki markup, converting any important links to direct text.
-    - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_4.1.0 .'.  This is to direct both users and search engines to the wiki page (the users via the release email and the search engines via the multiple archives).
+    - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_5.0.0 .'.  This is to direct both users and search engines to the wiki page (the users via the release email and the search engines via the multiple archives).
     - At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release, removing one level of indentation (4 spaces).  Do not use the wiki text for this.
     - Include links to the trackers in the full list of changes, if not already present.
 
@@ -332,7 +332,7 @@ On the relax-announce mailing list (nmr-relax-announce att lists.sourceforge.net
 Softpedia
 ---------
 
-Most of the time, Softpedia will update their webpages for new releases.  If this does not occur after a week, inform Softpedia of the new release.  Use text such at "I would like to inform you of a new relax version announced at http://wiki.nmr-relax.com/Relax_4.1.0.".  The 
+Most of the time, Softpedia will update their webpages for new releases.  If this does not occur after a week, inform Softpedia of the new release.  Use text such at "I would like to inform you of a new relax version announced at http://wiki.nmr-relax.com/Relax_5.0.0.".  The 
 
     - Softpedia page for relax on GNU/Linux:  http://linux.softpedia.com/get/Science/relax-22351.shtml
     - Softpedia page for relax on MS Windows:  http://www.softpedia.com/get/Science-CAD/relax-project.shtml
@@ -342,12 +342,12 @@ Most of the time, Softpedia will update their webpages for new releases.  If thi
 Cross-linking
 -------------
 
-For better indexing by search engines, cross-link all the release announcements on the Wiki.  It may take a few days for all the links to be created.  For example for the relax 4.1.0 wiki article, use:
+For better indexing by search engines, cross-link all the release announcements on the Wiki.  It may take a few days for all the links to be created.  For example for the relax 5.0.0 wiki article, use:
 
 """
 For reference, the announcement for this release can also be found at following links:
 
-* [http://wiki.nmr-relax.com/Relax_4.1.0 Official release notes on the relax wiki].
+* [http://wiki.nmr-relax.com/Relax_5.0.0 Official release notes on the relax wiki].
 * [https://sourceforge.net/p/nmr-relax/mailman/message/36593472/ Mailing list message].
 * [https://www.mail-archive.com/nmr-relax-announce@lists.sourceforge.net/msg00001.html The Mail Archive].
 
@@ -362,8 +362,8 @@ README file
 
 For the SourceForge download area, a reStructuredText formatted README.rst file should be created.  This is automatically generated from the wiki page using html2rst (https://sourceforge.net/projects/html2rst/).  Install the program and run:
 
-$ html2rst --embedded-hyperlink http://wiki.nmr-relax.com/Relax_4.1.0 $RELAX_DOWNLOAD_PATH/4.1.0/README.rst
+$ html2rst --embedded-hyperlink http://wiki.nmr-relax.com/Relax_5.0.0 $RELAX_SF_MIRROR_DIR/5.0.0/README.rst
 
-Delete the wiki navigation text under the main title, make any fixes for wiki Lua errors (copy and modify the infobox table from an earlier README.rst file), delete all sections at the end from the "Navigation menu" to the image substitution definitions (e.g. ".. |relax logo| image:: "), delete the "|GNU General Public License, version 3 (GPL-3.0)|" and "|Powered by MediaWiki|" image references, and readd the image substitution definitions from an earlier README.rst file if Lua errors occurred.  The "|relax logo|" and "|The PDF version of the relax 4.1.0 user manual|" references may need to be shifted to be under the infobox table at the start, if SourceForge truncate the README.rst file.
+Delete the wiki navigation text under the main title, make any fixes for wiki Lua errors (copy and modify the infobox table from an earlier README.rst file), delete all sections at the end from the "Navigation menu" to the image substitution definitions (e.g. ".. |relax logo| image:: "), delete the "|GNU General Public License, version 3 (GPL-3.0)|" and "|Powered by MediaWiki|" image references, and readd the image substitution definitions from an earlier README.rst file if Lua errors occurred.  The "|relax logo|" and "|The PDF version of the relax 5.0.0 user manual|" references may need to be shifted to be under the infobox table at the start, if SourceForge truncate the README.rst file.
 
 Also add the relax release to the base README.rst file in the file download area.
