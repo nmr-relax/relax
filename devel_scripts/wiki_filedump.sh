@@ -25,7 +25,7 @@
 # Back up script for retrieving the MediaWiki files for the relax wiki.
 
 # Variables.
-BACKUP_FOLDER="/data/relax/wiki/ftpdump"
+BACKUP_FOLDER="/data/relax/wiki/filedump"
 MYDATE=`date '+%Y%m%d_%H%M'`
 MYTIME=`date '+%Y-%m-%d %T'`
 SF_USERNAME="USERNAME"
@@ -35,7 +35,7 @@ BACKUP_FOLDER_CURRENT="${BACKUP_FOLDER}/current"
 # Logging
 exec 3>&1 4>&2
 trap 'exec 2>&4 1>&3' 0 1 2 3
-exec 1>>${BACKUP_FOLDER}/ftpdump.log 2>&1
+exec 1>>${BACKUP_FOLDER}/filedump.log 2>&1
 
 # Make sure everything worked.
 exec_test() {
@@ -64,7 +64,7 @@ compress_base() {
     then
         rm -rf $BACKUP_FOLDER_CURRENT
         cp -p -r $BACKUP_FOLDER_MIRROR $BACKUP_FOLDER_CURRENT
-        tar -zcf ${BACKUP_FOLDER}/ftpdump_${MYDATE}.tar.gz $BACKUP_FOLDER_CURRENT/
+        tar -zcf ${BACKUP_FOLDER}/filedump_${MYDATE}.tar.gz $BACKUP_FOLDER_CURRENT/
     fi
 }
 
