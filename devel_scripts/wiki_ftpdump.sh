@@ -3,6 +3,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2013 Troels E. Linnet                                         #
+# Copyright (C) 2020 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,58 +22,54 @@
 #                                                                             #
 ###############################################################################
 
-# Script for dumping ftp server automatically using cron.
-#
-# This script was taken from the post Troels Linnet at: http://article.gmane.org/gmane.science.nmr.relax.devel/4168.
+# Back up script for retrieving the MediaWiki files for the relax wiki.
 
-# exec test
-exec_test () {
-[ $? -eq 0 ] && echo "-- Command successfully executed" || echo "-- Command failed; exit 1"
-}
-
-# Filenames
-dbhost="web3.gigahost.dk"
-# The following two fields are kept secret, to prevent abuse.
-# Please contact Troels Linnet at: tlinnet _at_ gmail dot com, for access.
-dbuser="secret"
-dbpwd="secret"
-
-mydate=`date '+%Y%m%d_%H%M'`
-mytime=`date '+%T %Y%m%d'`
-backupfolder="${HOME}/backup/ftpdump"
-backupfoldermirror="${backupfolder}/mirror"
-backupfoldercurrent="${backupfolder}/current"
-mkdir -p $backupfolder $backupfoldermirror $backupfoldercurrent
+# Variables.
+BACKUP_FOLDER="/data/relax/wiki/ftpdump"
+MYDATE=`date '+%Y%m%d_%H%M'`
+MYTIME=`date '+%Y-%m-%d %T'`
+SF_USERNAME="USERNAME"
+BACKUP_FOLDER_MIRROR="${BACKUP_FOLDER}/mirror"
+BACKUP_FOLDER_CURRENT="${BACKUP_FOLDER}/current"
 
 # Logging
 exec 3>&1 4>&2
 trap 'exec 2>&4 1>&3' 0 1 2 3
-exec 1>>${backupfolder}/ftpdump.log 2>&1
-# Everything below will go to the log file
+exec 1>>${BACKUP_FOLDER}/ftpdump.log 2>&1
 
-dump_base () {
-echo "###########################"
-echo "STARTING on: $mytime"
-echo "Mirror syncing..."
-cd $backupfoldermirror
-lftp -e "open ftp://${dbuser}:${dbpwd}@${dbhost} && mirror --no-perms --exclude-glob backup_scripts/ --exclude-glob cache/ --exclude-glob LocalSettings.php --parallel=10 && bye"
+# Make sure everything worked.
+exec_test() {
+    if [ $? -ne 0 ]; then
+       printf -- "Command failed, exiting script.\n\n"
+       exit 1;
+    fi
 }
 
-compress_base () {
-echo "Compressing current..."
-DIFF=`diff -q -r $backupfoldermirror $backupfoldercurrent`
-echo -e "Difference between sync and current is:\n$DIFF"
-DIFFARR=($DIFF)
-LENDIFFARR=${#DIFFARR[@]}
-if [ "$LENDIFFARR" -gt "0" ]
-then
-rm -rf $backupfoldercurrent
-cp -p -r $backupfoldermirror $backupfoldercurrent
-tar -zcf ${backupfolder}/ftpdump_${mydate}.tar.gz $backupfoldercurrent/
-fi
+dump_base() {
+    printf -- "#######################################\n"
+    printf -- "Starting file sync, $MYTIME\n"
+    printf -- "Mirror syncing...\n"
+    CMD="rsync -av --delete -e ssh $SF_USERNAME@web.sourceforge.net:/home/project-web/nmr-relax/htdocs/wiki/ $BACKUP_FOLDER_MIRROR"
+    printf -- "$CMD\n"
+    eval "$CMD"
 }
 
-dump_base ; exec_test
-compress_base ; exec_test
+compress_base() {
+    printf -- "Compressing current...\n"
+    DIFF=`diff -q -r $BACKUP_FOLDER_MIRROR $BACKUP_FOLDER_CURRENT`
+    printf -- "Difference between sync and current is: %s\n" "$DIFF"
+    DIFFARR=($DIFF)
+    LENDIFFARR=${#DIFFARR[@]}
+    if [ "$LENDIFFARR" -gt "0" ]
+    then
+        rm -rf $BACKUP_FOLDER_CURRENT
+        cp -p -r $BACKUP_FOLDER_MIRROR $BACKUP_FOLDER_CURRENT
+        tar -zcf ${BACKUP_FOLDER}/ftpdump_${MYDATE}.tar.gz $BACKUP_FOLDER_CURRENT/
+    fi
+}
 
-echo "Done, quit!"
+# The file backup.
+mkdir -p $BACKUP_FOLDER $BACKUP_FOLDER_MIRROR $BACKUP_FOLDER_CURRENT
+dump_base; exec_test
+compress_base; exec_test
+printf -- "Finished synchronisation.\n\n"
