@@ -877,6 +877,8 @@ class Validate:
 
             # The file name.
             original_name = lines[i+2].decode().split("\t")[2].strip()
+            if "=>" in original_name:
+                original_name = original_name.split("=>")[0].strip()
 
             # Increment the index.
             i += 3

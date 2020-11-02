@@ -322,6 +322,8 @@ GIT_START = {
         "Created some data structures for holding all the GUI specific information. (2010-01-26 16:27:29 +0000)",
     "devel_scripts/README":
         "FSF Copyright Validation script: Support for saving and reading the committer information. (2019-04-23 14:33:17 +0200)",
+    "devel_scripts/Docker/Ubuntu_18_04_01_relax_dev/Dockerfile":
+        "Adding Dockerfile for Ubuntu 18.04 LTS and development on Windows (2018-12-22 20:21:43 +0100)",
     "devel_scripts/memory_management/GUI_uf_align_tensor_init.py":
         "Created a script for testing the memory management when calling the time GUI user function. (2015-02-04 13:18:26 +0000)",
     "devel_scripts/memory_management/GUI_uf_time.py":
