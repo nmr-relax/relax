@@ -1239,7 +1239,7 @@ class Validate:
 
         # Dump the progress.
         if i % b == 0:
-            num = locale.format("%d", i, grouping=True)
+            num = locale.format_string("%d", i, grouping=True)
             file.write('\b%s files validated.\n' % num)
 
 
