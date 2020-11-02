@@ -37,10 +37,11 @@ MYTIME=`date '+%Y-%m-%d %T'`
 SF_USERNAME="USERNAME"
 FILENAME1="${DATABASE}_${MYDATE}.sql.gz"
 FILENAME2="${DATABASE}_${MYDATE}.xml.gz"
+FILENAME3="${DATABASE}*.gz"
 
 # Logging
 exec 3>&1 4>&2
-trap 'exec 2>&4 1>&3' 0 1 2 3
+#trap 'exec 2>&4 1>&3' 0 1 2 3
 exec 1>>${BACKUP_FOLDER}/${DATABASE}.log 2>&1
 
 # Make sure everything worked.
@@ -53,15 +54,27 @@ exec_test() {
 
 # Try the command few times, in case of a "Connection closed by 216.105.38.24 port 22" SF error.
 looping_sf_exec() {
-    eval "ssh -t $SF_USERNAME@shell.sourceforge.net '$1'"
+    CMD="ssh -t $SF_USERNAME@shell.sourceforge.net '$1'"
+    echo $CMD; eval $CMD
     while [ $? -ne 0 ] || (( count++ >= 5 )); do
-        eval "ssh -t $SF_USERNAME@shell.sourceforge.net '$1'"
+        echo $CMD; eval $CMD
     done
 }
 
-# The remote MySQL backup.
-printf -- "#################################################\n"
+# Initial printout.
+printf -- "\n#################################################\n"
 printf -- "Starting remote MySQL backup, $MYTIME\n"
+
+# First initialise the Shell Service, if necessary.
+printf -- "Opening the Shell Service...\n"
+CMD="ssh $SF_USERNAME@shell.sourceforge.net create"
+echo $CMD; eval $CMD
+while [ $? -ne 0 ] || (( count++ >= 5 )); do
+    echo $CMD; eval $CMD
+done
+exec_test
+
+# The remote MySQL backup.
 printf -- "Remote base dumping...\n"
 looping_sf_exec "mysqldump --opt --host=$DBHOST --user=$DBUSER --password=$DBPASSWD $DATABASE | gzip -f9 > $FILENAME1"; exec_test
 printf -- "Remote XML dumping...\n"
@@ -71,11 +84,13 @@ printf -- "Finished remote MySQL backup.\n\n"
 # Fetch the files.
 printf -- "Copying backup files.\n"
 mkdir -p $BACKUP_FOLDER
-rsync -av -e ssh $SF_USERNAME@frs.sourceforge.net:$FILENAME1 $BACKUP_FOLDER
-rsync -av -e ssh $SF_USERNAME@frs.sourceforge.net:$FILENAME2 $BACKUP_FOLDER
+CMD="rsync -av -e ssh $SF_USERNAME@frs.sourceforge.net:$FILENAME1 $BACKUP_FOLDER"
+echo $CMD; eval $CMD
+CMD="rsync -av -e ssh $SF_USERNAME@frs.sourceforge.net:$FILENAME2 $BACKUP_FOLDER"
+echo $CMD; eval $CMD
 printf -- "Finished copying.\n\n"
 
 # Remove the remote files.
 printf -- "Deleting remote backup files.\n"
-looping_sf_exec "rm -f $FILENAME1 $FILENAME2"; exec_test
+looping_sf_exec "rm -f $FILENAME3"; exec_test
 printf -- "Finished deleting.\n\n"
