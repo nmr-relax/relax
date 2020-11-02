@@ -2827,6 +2827,7 @@ FALSE_NEG_YEARS = {
     'docs/html/icons/prev.png':                                         [[2011, "Edward d'Auvergne"]],
     'docs/html/icons/up_g.png':                                         [[2011, "Edward d'Auvergne"]],
     'docs/html/icons/up.png':                                           [[2011, "Edward d'Auvergne"]],
+    'devel_scripts/fsfcv.committer_info.bz2':                           [[2020, "Edward d'Auvergne"]],
     'extern/sobol/sobol_test.py':                                       [[2012, "Edward d'Auvergne"]],
     'extern/sobol/sobol_test.sh':                                       [[2017, "Edward d'Auvergne"]],
     'extern/sobol/sobol_lib-not_tested.py':                             [[2012, "Edward d'Auvergne"]],
