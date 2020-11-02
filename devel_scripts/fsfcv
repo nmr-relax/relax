@@ -455,7 +455,7 @@ class Validate:
 
                     # Find renames in later repositories.
                     file_path_rename = file_path
-                    if repo_type != "committer_info" and i < (len(self.config.REPOS) - 1):
+                    if i < (len(self.config.REPOS) - 1):
                         if self.config.REPOS[i+1][1] == 'git':
                             start_commit = self.config.GIT_START
                         else:
