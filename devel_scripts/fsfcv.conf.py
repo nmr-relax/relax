@@ -37,7 +37,7 @@ SIG_CODE = 8
 #       3 - The end date (year).
 #       4 - The optional HEAD directory for svn.
 #       5 - Flag which if True indicates a truncated start (so don't add the first commit).
-# Type:  list of [str, str, int, int, str or None]
+# Type:  list of [str, str, int, int, str or None, bool]
 repo_types = 'saved info'
 
 # Online SVN repository, but far too slow to use (and SourceForge might terminate the nmr-relax project).
