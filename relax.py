@@ -138,17 +138,14 @@ class Relax:
     """
 
     def __init__(self):
-        """The top level class for initialising the program.
-
-        @keyword mode:          Force a relax mode, overriding the command line.
-        @type mode:             str
-        """
+        """The top level class for initialising the program."""
 
         # Get and store the PID of this process.
         self.pid = getpid()
 
         # Set up default process-management exit code
         self.exit_code = 0
+
 
     def run(self):
         """Execute relax.
