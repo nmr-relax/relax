@@ -1944,6 +1944,7 @@ ADDITIONAL_COPYRIGHT_YEARS = {
     'graphics/wizards/spectrum/README':                                 [[2017, "Edward d'Auvergne"]],
     'graphics/wizards/structure/README':                                [[2017, "Edward d'Auvergne"]],
     'graphics/wizards/value/README':                                    [[2017, "Edward d'Auvergne"]],
+    'sample_scripts/pivot_finder.py':                                   [[2013, "Edward d'Auvergne"], [2014, "Edward d'Auvergne"]],
     'test_suite/shared_data/README':                                                                    [[2017, "Edward d'Auvergne"]],
     'test_suite/shared_data/align_data/README':                                                         [[2017, "Edward d'Auvergne"]],
     'test_suite/shared_data/align_data/CaM/README':                                                     [[2017, "Edward d'Auvergne"]],
