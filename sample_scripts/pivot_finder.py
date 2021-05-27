@@ -1,4 +1,15 @@
-"""Script for determining the double pivot point motions of the CaM-IQ X-ray structure C-domain motions."""
+"""Script for determining the double pivot point motions of the CaM-IQ X-ray structure C-domain motions.
+
+The reference for this analysis is:
+
+    d’Auvergne, E. J. and Griesinger, C. (2019). The theory of frame ordering: observing motions in calmodulin complexes. Q. Rev. Biophys., 52, e3. (http://dx.doi.org/10.1017/S0033583519000015)
+
+The aim is to iteratively find the focal point of all motions.  The Kabsch algorithm consists of a translation of one centroid onto the other, followed by a rotation to superimpose 3D structures.  However, by specifying one centroid location for all structures in the PDB frame, the translation is eliminated and only the rotation remains.  This is a pivoted rotation which, if the centroids are not located at the pivot point, causes the centroid positions to translate.
+
+The RMSD between the superimposed models is calculated and adapted into a target function return value, whereby the parameters are simply the atomic [x, y, z] positions of the pivot being optimised.  This allows the motional pivot point to be optimisation via the Nelder-Mead simplex algorithm.  Once found, the structures are superimposed using this pivot point as the centroid position.  The algorithm has been implemented in the relax user function structure.find_pivot.
+
+Combined with the motional pivot algorithm, the following relax script was used to determine the pivot position and the domain displacements.  This is for the example of the C-domain motions.  It is hard-coded for two iterations of the algorithm to find two pivots.
+"""
 
 # Python module imports.
 from numpy import array
