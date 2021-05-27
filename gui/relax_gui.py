@@ -67,7 +67,7 @@ from pipe_control.pipes import cdp_name
 from pipe_control.reset import reset
 from pipe_control.system import pwd
 from status import Status; status = Status()
-from version import version
+from version import repo_head, version
 
 
 # wx IDs for the toolbar.
@@ -162,8 +162,12 @@ class Main(wx.Frame):
         # Build the controller, but don't show it.
         self.controller = Controller(self)
 
-        # Set the title.
-        self.SetTitle("relax " + version)
+        # Set the window title.
+        if version == "repository commit":
+            win_title = "relax %s %s" % (version, repo_head)
+        else:
+            win_title = "relax %s" % version
+        self.SetTitle(win_title)
 
         # Set up the status bar.
         self.status_bar = self.CreateStatusBar(4, 0)
