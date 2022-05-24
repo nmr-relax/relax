@@ -457,14 +457,14 @@ class Spectral_error_type_page(Wiz_page):
 
         # The RMSD radio button.
         self.radio_rmsd = wx.RadioButton(self, -1, "Baseplane RMSD.", style=wx.RB_GROUP)
-        sizer_radio.Add(self.radio_rmsd, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_radio.Add(self.radio_rmsd, 0, wx.LEFT, 0)
 
         # Spacing.
         sizer_radio.AddSpacer(10)
 
         # The replicated spectra radio button.
         self.radio_repl = wx.RadioButton(self, -1, "Replicated spectra.")
-        sizer_radio.Add(self.radio_repl, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_radio.Add(self.radio_repl, 0, wx.LEFT, 0)
 
         # Bind the buttons.
         self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_rmsd)

@@ -211,7 +211,7 @@ class Wiz_page(wx.Panel):
         # Add the graphics.
         if self.image_path:
             self.image = wx.StaticBitmap(self, -1, bitmap_setup(self.image_path))
-            sizer.Add(self.image, 0, wx.TOP|wx.ALIGN_CENTER_HORIZONTAL, 0)
+            sizer.Add(self.image, 0, wx.TOP, 0)
 
         # A spacer.
         sizer.AddSpacer(self.art_spacing)

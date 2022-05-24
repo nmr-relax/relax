@@ -98,7 +98,7 @@ class File_element:
         self.field = wx.TextCtrl(self.parent, -1, self.default)
         self.field.SetMinSize((-1, height_element))
         self.field.SetFont(font.normal)
-        sub_sizer.Add(self.field, 1, wx.EXPAND|wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        sub_sizer.Add(self.field, 1, wx.EXPAND|wx.ADJUST_MINSIZE, 0)
 
         # A little spacing.
         sub_sizer.AddSpacer(width_spacer)

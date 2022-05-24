@@ -499,7 +499,7 @@ class Load_method_page(Wiz_page):
         msg = "Please specify by which method spins should be loaded into the relax data store:"
         text = wx.StaticText(self, -1, msg)
         text.Wrap(self._main_size)
-        sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer.Add(text, 0, wx.LEFT, 0)
 
         # Spacing.
         sizer.AddStretchSpacer()
@@ -538,28 +538,28 @@ class Load_method_page(Wiz_page):
         else:
             style = wx.RB_GROUP
         self.radio_seq = wx.RadioButton(self, -1, "From a file containing sequence data.", style=style)
-        sizer_radio.Add(self.radio_seq, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_radio.Add(self.radio_seq, 0, wx.LEFT, 0)
 
         # Spacing.
         sizer_radio.AddSpacer(20)
 
         # The PDB radio button.
         self.radio_new_pdb = wx.RadioButton(self, -1, "From a new PDB structure file.")
-        sizer_radio.Add(self.radio_new_pdb, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_radio.Add(self.radio_new_pdb, 0, wx.LEFT, 0)
 
         # Spacing.
         sizer_radio.AddSpacer(20)
 
         # The XYZ radio button.
         self.radio_new_xyz = wx.RadioButton(self, -1, "From a new XYZ structure file.")
-        sizer_radio.Add(self.radio_new_xyz, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_radio.Add(self.radio_new_xyz, 0, wx.LEFT, 0)
 
         # Spacing.
         sizer_radio.AddSpacer(20)
 
         # The spectrum.read_spins radio button.
         self.radio_new_spectrum = wx.RadioButton(self, -1, "From a peak list or spectrum formatted file.")
-        sizer_radio.Add(self.radio_new_spectrum, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_radio.Add(self.radio_new_spectrum, 0, wx.LEFT, 0)
 
         # Bind the buttons.
         self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_seq)
