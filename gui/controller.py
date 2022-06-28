@@ -1187,7 +1187,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
                 end = self.GetLength()
 
                 # Change the style.
-                self.StartStyling(end - len_string, 31)
+                self.StartStyling(end - len_string)
                 self.SetStyling(len_string, stream_list[i])
 
             # Show the controller when there are errors or warnings.
