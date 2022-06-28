@@ -120,7 +120,7 @@ class Free_file_format:
         self.sizer.AddStretchSpacer()
 
         # Calculate the divider position.
-        divider = self.parent._div_left - border.GetMinSize()[0] / 2 - self.padding
+        divider = self.parent._div_left - border.GetMinSize()[0] / 2 - self.padding + 50
 
         # The columns.
         self.spin_id_col = Value(name='spin_id_col', parent=self.parent, value_type='int', sizer=field_sizer, desc="spin ID column", divider=divider, padding=self.padding, spacer=self.spacer, can_be_none=True)
