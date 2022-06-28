@@ -3148,6 +3148,7 @@ FALSE_NEG_YEARS = {
     'graphics/oxygen_icons/scalable/actions/small/48x48/help-about.svgz':       [[2012, "Edward d'Auvergne"]],
     'graphics/oxygen_icons/scalable/actions/small/48x48/zoom-in.svgz':          [[2014, "Edward d'Auvergne"]],
     'graphics/oxygen_icons/scalable/status/object-locked.svgz':                 [[2012, "Edward d'Auvergne"]],
+    'graphics/relax_icons/png/README':                                  [[2022, "Edward d'Auvergne"]],
     'graphics/screenshots/xmgrace_peak_intensities.agr':                [[2017, "Edward d'Auvergne"]],
     'graphics/screenshots/noe_analysis/grace.agr':                      [[2017, "Edward d'Auvergne"]],
     'graphics/wizards/oxygen-icon-weather-snow-scattered-night.png':    [[2012, "Edward d'Auvergne"]],
