@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2012,2022 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -65,6 +65,10 @@ __all__ = ['about',
            'wizard']
 
 
+# Size for the splash screen.
+SPLASH_SIZE = (640, 460)
+
+
 
 class App(wx.App):
     """The relax GUI wx application."""
@@ -113,23 +117,129 @@ class App(wx.App):
             self.gui.Show()
 
         # Show the splash screen.
-        self.show_splash()
+        splash = RelaxSplash(self.gui)
+        splash.CenterOnScreen(wx.BOTH)
 
         # All is good!
         return True
 
 
-    def show_splash(self):
-        """Build and show the splash screen."""
 
-        # The image.
+class RelaxSplash(wx.Frame):
+    """A special splash screen for the relax GUI."""
+
+    def __init__(self, parent):
+        """Set up the splash screen."""
+
+        # Set up the frame.
+        super(RelaxSplash, self).__init__(parent=parent, id=-1, title="RelaxSplash", size=SPLASH_SIZE, style=wx.FRAME_SHAPED | wx.BORDER_NONE | wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP)
+        self.SetBackgroundColour("white")
+
+        self.Show(True)
+
+        # Start the timer.
+        self.timer = wx.Timer(self)
+        self.timer.Start(4000)
+        self.Bind(wx.EVT_TIMER, self.handler_timer, self.timer)
+
+        # Set up the foreground and background panels.
+        panel_bg = RelaxBackgroundPanel(self)
+        panel_fg = RelaxForegroundPanel(self)
+
+        # Main sizer.
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+        main_sizer.Add(panel_bg, 1, wx.EXPAND, 20)
+        main_sizer.Add(panel_fg, 1, wx.EXPAND, 20)
+        self.SetSizer(main_sizer)
+
+        # Set the cursor as busy.
+        wx.BeginBusyCursor()
+
+        # Bind events.
+        self.Bind(wx.EVT_LEFT_DOWN, self.mouse_events)
+        self.Bind(wx.EVT_MIDDLE_DOWN, self.mouse_events)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.mouse_events)
+
+
+    def Destroy(self, event):
+        """Override the class method."""
+
+        # Stop the busy cursor.
+        wx.CallAfter(wx.EndBusyCursor)
+
+        # Stop the timer.
+        self.timer.Stop()
+
+        # Destroy the splash window.
+        super(RelaxSplash, self).Destroy()
+
+
+    def handler_timer(self, event):
+        """Close the splash screen."""
+
+        self.Destroy(event)
+
+
+    def mouse_events(self, event):
+        """Close the splash on mouse button clicks."""
+
+        self.Destroy(event)
+        event.Skip()
+
+
+
+class RelaxBackgroundPanel(wx.Panel):
+    """Custom panel for the animation part of the splash screen."""
+
+    def __init__(self, parent=None):
+        """Set up the custom panel."""
+
+        # Initialise the parent.
+        wx.Panel.__init__(self, parent, -1)
+        self.parent = parent
+
+        # Animation.
+        self.gif = wx.adv.Animation(IMAGE_PATH+'movie_mode1_relax.gif')
+        ani_ctrl = wx.adv.AnimationCtrl(self, id=-1, anim=self.gif, size=(480,428))
+        ani_ctrl.Play()
+
+        # Layout.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer2 = wx.BoxSizer(wx.VERTICAL)
+        sizer.AddSpacer(10)
+        sizer2.AddSpacer(20)
+        sizer2.Add(ani_ctrl)
+        sizer.Add(sizer2)
+        self.SetSizerAndFit(sizer)
+        self.Show()
+
+
+
+class RelaxForegroundPanel(wx.Panel):
+    """Custom panel for the bitmap part of the splash screen."""
+
+    def __init__(self, parent=None):
+        """Set up the custom panel."""
+
+        # Initialise the parent.
+        wx.Panel.__init__(self, parent, -1, style=wx.TRANSPARENT_WINDOW)
+        self.parent = parent
+
+        # Background image.
         bmp = wx.Bitmap(IMAGE_PATH+'relaxGUI_splash.png', wx.BITMAP_TYPE_ANY)
+        image = wx.StaticBitmap(self, -1, bmp)
 
-        # The timeout (ms).
-        timeout = 2500
+        # Layout.
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(image)
+        self.SetSizerAndFit(sizer)
 
-        # The splash screen.
-        if dep_check.wx_classic:
-            screen = wx.SplashScreen(bmp, wx.SPLASH_CENTRE_ON_PARENT | wx.SPLASH_TIMEOUT, timeout, None, -1)
-        else:
-            screen = wx.adv.SplashScreen(bmp, wx.adv.SPLASH_CENTRE_ON_PARENT | wx.adv.SPLASH_TIMEOUT, timeout, None, -1)
+        # Send mouse clicks to the parent.
+        image.Bind(wx.EVT_MOUSE_EVENTS, self.mouse_events)
+
+
+    def mouse_events(self, event):
+        """Send all mouse events to the parent."""
+
+        wx.PostEvent(self.parent, event)
+        event.Skip()
