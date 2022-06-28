@@ -95,7 +95,7 @@ class Info_box(object):
         self.desc_long = "The program relax is designed for the study of the dynamics of proteins or other macromolecules though the analysis of experimental NMR data. It is a community driven project created by NMR spectroscopists for NMR spectroscopists. It supports exponential curve fitting for the calculation of the R1 and R2 relaxation rates, calculation of the NOE, reduced spectral density mapping, and the Lipari and Szabo model-free analysis."
 
         # Copyright printout.
-        self.copyright_final_year = 2020
+        self.copyright_final_year = 2022
         self.copyright = []
         self.copyright.append("Copyright (C) 2001-2006 Edward d'Auvergne")
         self.copyright.append("Copyright (C) 2006-%s the relax development team" % self.copyright_final_year)
