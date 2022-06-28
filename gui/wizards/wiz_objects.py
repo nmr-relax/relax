@@ -277,7 +277,7 @@ class Wiz_page(wx.Panel):
         # Set up and add the panel to the sizer.
         panel.SetSizer(panel_sizer)
         panel.SetAutoLayout(1)
-        panel.SetupScrolling(scroll_x=False, scroll_y=True)
+        panel.SetupScrolling(scroll_x=False, scroll_y=True, scrollToTop=True)
         sizer.Add(panel, 0, wx.ALL|wx.EXPAND)
 
         # A line with spacing.

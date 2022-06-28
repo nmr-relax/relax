@@ -102,7 +102,9 @@ class Spin_id:
             raise RelaxError("The divider position has not been supplied.")
 
         # Spacing.
-        x, y = text.GetSize()
+        dc = wx.ScreenDC()
+        dc.SetFont(font.normal)
+        x, y = dc.GetTextExtent(desc)
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:

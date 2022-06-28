@@ -82,8 +82,10 @@ class Boolean_ctrl:
         sizer.Add(self.label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The size for all elements, based on this text.
-        size = self.label.GetSize()
-        size_horizontal = size[1] + 8
+        dc = wx.ScreenDC()
+        dc.SetFont(font.normal)
+        x, y = dc.GetTextExtent(text)
+        size_horizontal = y + 8
 
         # Spacer.
         if dep_check.wx_classic:

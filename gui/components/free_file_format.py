@@ -201,7 +201,9 @@ class Free_file_format:
             raise RelaxError("The divider position has not been supplied.")
 
         # Spacing.
-        x, y = text.GetSize()
+        dc = wx.ScreenDC()
+        dc.SetFont(font.normal)
+        x, y = dc.GetTextExtent("Free format file settings")
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((self.divider - x, 0))
         else:

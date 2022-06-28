@@ -131,7 +131,10 @@ class Value:
         sub_sizer.AddSpacer(padding)
 
         # The description.
-        text = wx.StaticText(parent, -1, desc, style=wx.ALIGN_LEFT)
+        dc = wx.ScreenDC()
+        dc.SetFont(font.normal)
+        size = dc.GetTextExtent(desc)
+        text = wx.StaticText(parent, -1, desc, size=size, style=wx.ALIGN_LEFT)
         text.SetFont(font.normal)
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
@@ -140,7 +143,7 @@ class Value:
             raise RelaxError("The divider position has not been supplied.")
 
         # Spacing.
-        x, y = text.GetSize()
+        x, y = size
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
@@ -205,7 +208,7 @@ class Value:
         # Set up the input field.
         self._field.SetMinSize((50, height_element))
         self._field.SetFont(font.normal)
-        sub_sizer.Add(self._field, 1, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        sub_sizer.Add(self._field, 1, wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)

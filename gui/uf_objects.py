@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013,2015,2019 Edward d'Auvergne                         #
+# Copyright (C) 2010-2013,2015,2019,2022 Edward d'Auvergne                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -712,7 +712,9 @@ class Uf_page(Wiz_page):
         text_types.append('title')
 
         # The text size, then spacing after the title.
-        x, y = text.GetSize()
+        dc = wx.ScreenDC()
+        dc.SetFont(font.subtitle)
+        x, y = dc.GetTextExtent(name)
         tot_y += y
         tot_y += spacing
 
@@ -725,7 +727,8 @@ class Uf_page(Wiz_page):
             text.SetFont(font.normal_italic)
 
             # The text size.
-            x, y = text.GetSize()
+            dc.SetFont(font.normal_italic)
+            x, y = dc.GetTextExtent(self.uf_data.title)
             tot_y += y
 
             # The spacing after the element.
@@ -841,14 +844,14 @@ class Uf_page(Wiz_page):
             # The text.
             panel_sizer.Add(text_elements[i], 0, wx.ALIGN_LEFT, 0)
 
-            # Spacer after all sections (except the end).
+            # Spacer after all elements (except the end).
             if i != n - 1:
                 panel_sizer.AddSpacer(spacing)
 
         # Set up and add the panel to the sizer.
         panel.SetSizer(panel_sizer)
         panel.SetAutoLayout(1)
-        panel.SetupScrolling(scroll_x=False, scroll_y=True)
+        panel.SetupScrolling(scroll_x=False, scroll_y=True, scrollToTop=True)
         sizer.Add(panel, 0, wx.ALL|wx.EXPAND)
 
         # A line with spacing.

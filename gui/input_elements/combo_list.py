@@ -29,6 +29,7 @@ import wx
 # relax module imports.
 import dep_check
 from graphics import fetch_icon
+from gui.fonts import font
 from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 from lib.errors import RelaxError
 
@@ -168,10 +169,13 @@ class Combo_list:
         # The description.
         if index == 0:
             text = wx.StaticText(self._parent, -1, self._desc, style=wx.ALIGN_LEFT)
+            text.SetFont(font.normal)
             sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
             # Spacing.
-            x, y = text.GetSize()
+            dc = wx.ScreenDC()
+            dc.SetFont(font.normal)
+            x, y = dc.GetTextExtent(self._desc)
             if dep_check.wx_classic:
                 sub_sizer.AddSpacer((self._divider - x, 0))
             else:
