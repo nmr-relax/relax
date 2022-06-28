@@ -68,6 +68,7 @@ class Container(wx.Window):
 
         # Resizing.
         self.Bind(wx.EVT_SIZE, self._resize)
+        self.Bind(wx.EVT_PAINT, self._resize)
 
 
     def _resize(self, event):
