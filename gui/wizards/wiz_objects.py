@@ -272,7 +272,7 @@ class Wiz_page(wx.Panel):
             panel.SetInitialSize(text.GetSize())
 
         # Add the text.
-        panel_sizer.Add(text, 0, wx.ALIGN_LEFT, 0)
+        panel_sizer.Add(text, 1, wx.EXPAND, 0)
 
         # Set up and add the panel to the sizer.
         panel.SetSizer(panel_sizer)
