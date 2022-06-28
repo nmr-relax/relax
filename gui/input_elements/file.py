@@ -105,7 +105,7 @@ class File_element:
 
         # The file selection button.
         button = wx.BitmapButton(self.parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-open', "16x16"), wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((height_element, height_element))
+        button.SetMinSize((-1, height_element))
         button.SetToolTip(wx.ToolTip("Select the file."))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.parent.Bind(wx.EVT_BUTTON, self.select_file, button)
@@ -117,7 +117,7 @@ class File_element:
 
             # The preview button.
             button = wx.BitmapButton(self.parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-preview', "16x16"), wx.BITMAP_TYPE_ANY))
-            button.SetMinSize((height_element, height_element))
+            button.SetMinSize((-1, height_element))
             button.SetToolTip(wx.ToolTip("Preview"))
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             self.parent.Bind(wx.EVT_BUTTON, self.preview_file, button)
@@ -269,7 +269,7 @@ class Selector_file:
 
         # The file selection button.
         button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-open', "16x16"), wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((height_element, height_element))
+        button.SetMinSize((-1, height_element))
         button.SetToolTip(wx.ToolTip("Select the file."))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         parent.Bind(wx.EVT_BUTTON, obj.select_event, button)
@@ -281,7 +281,7 @@ class Selector_file:
 
             # The preview button.
             button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-preview', "16x16"), wx.BITMAP_TYPE_ANY))
-            button.SetMinSize((height_element, height_element))
+            button.SetMinSize((-1, height_element))
             button.SetToolTip(wx.ToolTip("Preview"))
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             parent.Bind(wx.EVT_BUTTON, self.preview_file, button)
@@ -437,7 +437,7 @@ class Selector_file_multiple:
 
         # The edit button.
         button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-open', "16x16"), wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((height_element, height_element))
+        button.SetMinSize((-1, height_element))
         button.SetToolTip(wx.ToolTip("Choose the file(s)."))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         parent.Bind(wx.EVT_BUTTON, self.open_dialog, button)

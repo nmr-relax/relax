@@ -112,7 +112,7 @@ class Selector_dir:
 
         # The file selection button.
         button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-open-folder'), wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((height_element, height_element))
+        button.SetMinSize((-1, height_element))
         button.SetToolTip(wx.ToolTip("Select the directory."))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         parent.Bind(wx.EVT_BUTTON, obj.select_event, button)

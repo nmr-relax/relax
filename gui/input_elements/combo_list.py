@@ -214,14 +214,14 @@ class Combo_list:
         button = None
         if index == 0:
             button = wx.BitmapButton(self._parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "16x16"), wx.BITMAP_TYPE_ANY))
-            button.SetMinSize((27, 27))
+            button.SetMinSize((-1, 27))
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             self._parent.Bind(wx.EVT_BUTTON, self._add, button)
 
         # The delete button.
         elif index == self._min_length:
             button = wx.BitmapButton(self._parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "16x16"), wx.BITMAP_TYPE_ANY))
-            button.SetMinSize((27, 27))
+            button.SetMinSize((-1, 27))
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             self._parent.Bind(wx.EVT_BUTTON, self._delete, button)
 

@@ -184,7 +184,7 @@ class Sequence:
 
             # The edit button.
             button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.edit-rename', "16x16"), wx.BITMAP_TYPE_ANY))
-            button.SetMinSize((height_element, height_element))
+            button.SetMinSize((-1, height_element))
             button.SetToolTip(wx.ToolTip("Edit the values."))
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             parent.Bind(wx.EVT_BUTTON, self.open_dialog, button)

@@ -221,7 +221,7 @@ class Free_file_format:
 
         # The edit button.
         button = wx.BitmapButton(self.parent, -1, wx.Bitmap(fetch_icon("oxygen.actions.document-properties"), wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((self.height_element, self.height_element))
+        button.SetMinSize((-1, self.height_element))
         button.SetToolTip(wx.ToolTip("Open the free file format editing window."))
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         self.parent.Bind(wx.EVT_BUTTON, self.open_window, button)
