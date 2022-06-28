@@ -24,6 +24,7 @@
 """The main relax menu bar."""
 
 # Python module imports.
+from os import sep
 import sys
 import wx
 
@@ -224,8 +225,11 @@ class Menu:
         @type event:    wx event
         """
 
+        # The status object.
+        status = Status()
+
         # Print the GPL to STDOUT.
-        file = open('docs/COPYING')
+        file = open(status.install_path + sep + 'docs/COPYING')
         for line in file.readlines():
             sys.stdout.write(line)
         sys.stdout.flush()
