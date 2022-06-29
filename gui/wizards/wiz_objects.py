@@ -140,9 +140,10 @@ class Wiz_page(wx.Panel):
         sizer.AddSpacer(10)
 
         # The text.
-        title = wx.StaticText(self, -1, self.title)
-
-        # Font.
+        dc = wx.ScreenDC()
+        dc.SetFont(font.title)
+        size = dc.GetTextExtent(self.title)
+        title = wx.StaticText(self, -1, self.title, size=size)
         title.SetFont(font.title)
 
         # Add the title.
