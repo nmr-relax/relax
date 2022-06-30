@@ -40,6 +40,6 @@ uf.backend = pipe_control.reset.reset
 uf.menu_text = "&reset"
 uf.gui_icon = "oxygen.actions.dialog-close"
 uf.gui_sync = True    # Force synchronous operation, as asynchronous calls kill the GUI!
-uf.wizard_size = (600, 300)
+uf.wizard_size = (600, 400)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'reset.png'
