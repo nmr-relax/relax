@@ -149,7 +149,7 @@ def tensor_info_table(type=None, tm=None, Diso=None, Da=None, Dpar=None, Dper=No
 
     # Build the data for a table.
     contents = [["Diffusion type", type]]
-    contents.append(["tm (s)", tm])
+    contents.append(["tm (s/rad)", tm])
     contents.append(["Diso (rad/s)", Diso])
     if Da != None:
         contents.append(["Da (rad/s)", Da])
