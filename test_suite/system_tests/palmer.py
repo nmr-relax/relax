@@ -197,6 +197,8 @@ class Palmer(SystemTestCase):
             binary = 'linux-i386-pgf'   # Linux Portland C compiler modelfree4 version.
         elif spin.te * 1e12 == 52.194:
             binary = 'linux-x86_64-gcc'   # 64-bit Linux Gnu gcc modelfree4 version.
+        elif spin.te * 1e12 == 52.199:
+            binary = 'linux-x86_64-gcc_2024'   # 64-bit Linux Gnu gcc modelfree4 version (with newer linked libraries from around 2024).
         spin = return_spin(spin_id=':9@N', pipe='m1')
         if binary == None and spin.chi2 == 143.7:
             binary = 'mac-i386'         # Mac OS X intel binary.
@@ -210,11 +212,11 @@ class Palmer(SystemTestCase):
         spin_names = [':9@N', ':10@N', ':11@N']
         s2 = [[0.822, 0.799, 0.823], [0.788, 0.777, 0.812], [0.822, 0.799, 0.823]]
         te = [[None, None, None], [61.506, 36.087, 20.039], [None, None, None]]
-        if binary in ['mac-i386', 'linux-x86_64-gcc']:
+        if binary in ['mac-i386', 'linux-x86_64-gcc', 'linux-x86_64-gcc_2024']:
             te = [[None, None, None], [61.504, 36.087, 20.039], [None, None, None]]
         rex = [[None, None, None], [None, None, None], [0.0, 0.0, 0.0]]
         chi2 = [[143.6773, 105.1767, 61.6684], [40.9055, 57.1562, 48.4927], [143.6773, 105.1767, 61.6684]]
-        if binary in ['mac-i386', 'linux-x86_64-gcc']:
+        if binary in ['mac-i386', 'linux-x86_64-gcc', 'linux-x86_64-gcc_2024']:
             chi2 = [[143.7, 105.2, 61.67], [40.91, 57.16, 48.49], [143.7, 105.2, 61.67]]
 
         # Checks for model m1, m2, and m3 mfout file reading.
@@ -255,8 +257,10 @@ class Palmer(SystemTestCase):
             te = [52.197, 29.357, 12.676]
         elif binary == 'linux-x86_64-gcc':
             te = [52.194, 29.351, 12.673]
+        elif binary == 'linux-x86_64-gcc_2024':
+            te = [52.199, 29.357, 12.677]
         chi2 = [7.254, 8.0437, 0.5327]
-        if binary in ['mac-i386', 'linux-x86_64-gcc']:
+        if binary in ['mac-i386', 'linux-x86_64-gcc', 'linux-x86_64-gcc_2024']:
             chi2 = [7.254, 8.044, 0.5327]
 
         # Checks for the final mfout file reading.
