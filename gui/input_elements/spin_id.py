@@ -108,7 +108,7 @@ class Spin_id:
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
-            sub_sizer.AddSpacer(divider - x)
+            sub_sizer.AddSpacer(int(divider - x))
 
         # The input field.
         style = wx.CB_DROPDOWN

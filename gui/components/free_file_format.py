@@ -207,7 +207,7 @@ class Free_file_format:
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((self.divider - x, 0))
         else:
-            sub_sizer.AddSpacer(self.divider - x)
+            sub_sizer.AddSpacer(int(self.divider - x))
 
         # Initialise the text input field.
         self.field = wx.TextCtrl(self.parent, -1, '')

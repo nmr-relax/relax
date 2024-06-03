@@ -179,14 +179,14 @@ class Combo_list:
             if dep_check.wx_classic:
                 sub_sizer.AddSpacer((self._divider - x, 0))
             else:
-                sub_sizer.AddSpacer(self._divider - x)
+                sub_sizer.AddSpacer(int(self._divider - x))
 
         # No description for other rows, so add a blank space.
         else:
             if dep_check.wx_classic:
                 sub_sizer.AddSpacer((self._divider, 0))
             else:
-                sub_sizer.AddSpacer(self._divider)
+                sub_sizer.AddSpacer(int(self._divider))
 
         # The combo box element.
         style = wx.CB_DROPDOWN

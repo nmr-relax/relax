@@ -98,7 +98,7 @@ class Selector_dir:
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
-            sub_sizer.AddSpacer(divider - x)
+            sub_sizer.AddSpacer(int(divider - x))
 
         # The input field.
         self._field = wx.TextCtrl(parent, -1, default)

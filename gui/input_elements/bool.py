@@ -90,7 +90,7 @@ class Selector_bool:
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
-            sub_sizer.AddSpacer(divider - x)
+            sub_sizer.AddSpacer(int(divider - x))
 
         # The combo box element.
         style = wx.CB_DROPDOWN | wx.CB_READONLY

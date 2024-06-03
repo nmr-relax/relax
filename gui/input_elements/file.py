@@ -255,7 +255,7 @@ class Selector_file:
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
-            sub_sizer.AddSpacer(divider - x)
+            sub_sizer.AddSpacer(int(divider - x))
 
         # The input field.
         self._field = wx.TextCtrl(parent, -1, default)
@@ -425,7 +425,7 @@ class Selector_file_multiple:
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
-            sub_sizer.AddSpacer(divider - x)
+            sub_sizer.AddSpacer(int(divider - x))
 
         # The input field.
         self._field = wx.TextCtrl(parent, -1, default)

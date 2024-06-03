@@ -147,7 +147,7 @@ class Value:
         if dep_check.wx_classic:
             sub_sizer.AddSpacer((divider - x, 0))
         else:
-            sub_sizer.AddSpacer(divider - x)
+            sub_sizer.AddSpacer(int(divider - x))
 
         # Initialise the text input field.
         if self.element_type == 'text':
