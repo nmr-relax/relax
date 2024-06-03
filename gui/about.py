@@ -264,7 +264,7 @@ class About_base(wx.Frame):
 
         # Draw the text centred.
         if centre:
-            pos_x = (self.dim_x - x)/2
+            pos_x = int((self.dim_x - x)/2)
 
         # Draw the text.
         text = self.dc.DrawText(url_text, pos_x, self.offset())
@@ -305,7 +305,7 @@ class About_base(wx.Frame):
         x, y = self.dc.GetTextExtent(text)
 
         # Draw the text, with a spacer.
-        self.dc.DrawText(text, (self.virt_x - x)/2, self.offset(15))
+        self.dc.DrawText(text, int((self.virt_x - x)/2), self.offset(15))
 
         # Add the text extent.
         self.offset(y)
@@ -555,8 +555,8 @@ class About_relax(About_base):
         x2, y2 = self.dc.GetTextExtent(self.info.copyright[1])
 
         # Draw the text, with a starting spacer.
-        self.dc.DrawText(self.info.copyright[0], (self.dim_x - x1)/2, self.offset(15))
-        self.dc.DrawText(self.info.copyright[1], (self.dim_x - x2)/2, self.offset(y1+3))
+        self.dc.DrawText(self.info.copyright[0], int((self.dim_x - x1)/2), self.offset(15))
+        self.dc.DrawText(self.info.copyright[1], int((self.dim_x - x2)/2), self.offset(y1+3))
 
         # Add the text extent.
         self.offset(y2)
@@ -578,7 +578,7 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(self.info.desc)
 
         # Draw the text, with a spacer.
-        self.dc.DrawText(self.info.desc, (self.dim_x - x)/2, self.offset(15))
+        self.dc.DrawText(self.info.desc, int((self.dim_x - x)/2), self.offset(15))
 
         # Add the text extent.
         self.offset(y)
@@ -588,7 +588,7 @@ class About_relax(About_base):
         """Draw the relax icon on the canvas."""
 
         # Add the relax logo.
-        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), (self.dim_x - 400)/2, self.offset(20), True)
+        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), int((self.dim_x - 400)/2), self.offset(20), True)
 
         # Add the bitmap width to the offset.
         self.offset(168)
