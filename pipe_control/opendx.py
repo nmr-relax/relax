@@ -26,13 +26,13 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import float64, array, zeros
+from numpy import float64, array, percentile, zeros
 from time import asctime, localtime
 
 # relax module imports.
 from lib.errors import RelaxError
 from lib.io import open_write_file, write_data
-from extern.numpy_future import percentile
+#from extern.numpy_future import percentile
 from lib.software.opendx.files import write_config, write_general, write_point, write_program
 from pipe_control import value
 from specific_analyses.api import return_api
