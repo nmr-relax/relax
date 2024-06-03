@@ -306,7 +306,7 @@ class Sequence_window_2D(Sequence_window):
         # Add the columns.
         for i in range(self.dim[1]):
             self.sequence.InsertColumn(i+self.offset, self.titles[i])
-            self.sequence.SetColumnWidth(i+self.offset, (self.width - index_width)/self.dim[1])
+            self.sequence.SetColumnWidth(i+self.offset, int((self.width - index_width)/self.dim[1]))
 
         # Add the table to the sizer.
         sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
