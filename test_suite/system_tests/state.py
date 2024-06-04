@@ -271,7 +271,7 @@ class State(SystemTestCase):
         for i in range(len(pipe_types)):
             # Name.
             name = 'test' + repr(i)
-            self.assert_(name in ds)
+            self.assertTrue(name in ds)
 
             # Type.
             pipe = get_pipe(name)

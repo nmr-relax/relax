@@ -75,10 +75,10 @@ class Test_api(UnitTestCase):
         self.inst.duplicate_data('orig', 'new', model_info=0)
 
         # Check the original data.
-        self.assert_(hasattr(pipes.get_pipe('orig'), 'structure'))
+        self.assertTrue(hasattr(pipes.get_pipe('orig'), 'structure'))
 
         # Check the duplication.
-        self.assert_(hasattr(pipes.get_pipe('new'), 'structure'))
+        self.assertTrue(hasattr(pipes.get_pipe('new'), 'structure'))
 
 
     def test_duplicate_data_single_mf_model(self):

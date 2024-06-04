@@ -937,7 +937,7 @@ class Relax_disp(SystemTestCase):
         ]
         for name, value in data:
             # Does it exist?
-            self.assert_(hasattr(cdp, name))
+            self.assertTrue(hasattr(cdp, name))
 
             # Check the object.
             obj = getattr(cdp, name)
@@ -1122,7 +1122,7 @@ class Relax_disp(SystemTestCase):
         ]
         for name, value in data:
             # Does it exist?
-            self.assert_(hasattr(cdp, name))
+            self.assertTrue(hasattr(cdp, name))
 
             # Check the object.
             obj = getattr(cdp, name)
@@ -2994,14 +2994,14 @@ class Relax_disp(SystemTestCase):
         point_par = get_file_path(file_name=file_name_point+".par", dir=ds.tmpdir)
 
         # Test the files exists.
-        self.assert_(access(map_cfg, F_OK))
-        self.assert_(access(map_net, F_OK))
-        self.assert_(access(map_general, F_OK))
-        self.assert_(access(map_par, F_OK))
-        self.assert_(access(map_plot, F_OK))
-        self.assert_(access(point_general, F_OK))
-        self.assert_(access(point_point, F_OK))
-        self.assert_(access(point_par, F_OK))
+        self.assertTrue(access(map_cfg, F_OK))
+        self.assertTrue(access(map_net, F_OK))
+        self.assertTrue(access(map_general, F_OK))
+        self.assertTrue(access(map_par, F_OK))
+        self.assertTrue(access(map_plot, F_OK))
+        self.assertTrue(access(point_general, F_OK))
+        self.assertTrue(access(point_point, F_OK))
+        self.assertTrue(access(point_par, F_OK))
 
         # Open the files for testing.
         # Check the cfg file.
@@ -3337,11 +3337,11 @@ class Relax_disp(SystemTestCase):
         point_point = get_file_path(file_name=file_name_point, dir=result_dir)
 
         # Test the files exists.
-        self.assert_(access(map_cfg, F_OK))
-        self.assert_(access(map_net, F_OK))
-        self.assert_(access(map_general, F_OK))
-        self.assert_(access(point_general, F_OK))
-        self.assert_(access(point_point, F_OK))
+        self.assertTrue(access(map_cfg, F_OK))
+        self.assertTrue(access(map_net, F_OK))
+        self.assertTrue(access(map_general, F_OK))
+        self.assertTrue(access(point_general, F_OK))
+        self.assertTrue(access(point_point, F_OK))
 
         # Open the file, and assert the chi2 value is as expected.
         get_data = extract_data(file=map_name)
@@ -3433,12 +3433,12 @@ class Relax_disp(SystemTestCase):
         point_point = get_file_path(file_name=file_name_point, dir=result_dir)
 
         # Test the files exists.
-        self.assert_(access(map_cfg, F_OK))
-        self.assert_(access(map_net, F_OK))
-        self.assert_(access(map_general, F_OK))
-        self.assert_(access(map_par, F_OK))
-        self.assert_(access(point_general, F_OK))
-        self.assert_(access(point_point, F_OK))
+        self.assertTrue(access(map_cfg, F_OK))
+        self.assertTrue(access(map_net, F_OK))
+        self.assertTrue(access(map_general, F_OK))
+        self.assertTrue(access(map_par, F_OK))
+        self.assertTrue(access(point_general, F_OK))
+        self.assertTrue(access(point_point, F_OK))
 
         print("\nParams for dx map is")
         print(dx_params)
@@ -3462,7 +3462,7 @@ class Relax_disp(SystemTestCase):
         # The following test was taken out, since this a particular interesting case.
         # There exist a double minimum, where relax has not found the global minimum.
         # This is due to not grid searching for R2A, but using the minimum 
-        #self.assert_(pre_chi2 < test)
+        #self.assertTrue(pre_chi2 < test)
 
 
     def test_estimate_r2eff_err(self):
@@ -3710,8 +3710,8 @@ class Relax_disp(SystemTestCase):
                     # Assert point are higher than 0.0.
                     #point_info = "r2eff=%3.2f i0=%3.2f, at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f, at sim index %i." % (r2eff_sim_point, i0_sim_point, frq/1E6, offset, point, i)
                     #print(point_info)
-                    self.assert_(r2eff_sim_point > 0.0)
-                    self.assert_(i0_sim_point > 0.0)
+                    self.assertTrue(r2eff_sim_point > 0.0)
+                    self.assertTrue(i0_sim_point > 0.0)
 
         # Get the data.
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -3902,22 +3902,22 @@ class Relax_disp(SystemTestCase):
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['r1rho_1200.00000000_0.000_2000.000']/10000, res_data[i][3]/10000, places=3)
 
             # Check the simulation errors.
-            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['r1rho_1200.00000000_0.000_1000.000'] < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['r1rho_1200.00000000_0.000_2000.000'] < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['r1rho_1200.00000000_0.000_1000.000']/10000 < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['r1rho_1200.00000000_0.000_2000.000']/10000 < 5.0)
+            self.assertTrue(cdp.mol[0].res[i].spin[0].r2eff_err['r1rho_1200.00000000_0.000_1000.000'] < 5.0)
+            self.assertTrue(cdp.mol[0].res[i].spin[0].r2eff_err['r1rho_1200.00000000_0.000_2000.000'] < 5.0)
+            self.assertTrue(cdp.mol[0].res[i].spin[0].i0_err['r1rho_1200.00000000_0.000_1000.000']/10000 < 5.0)
+            self.assertTrue(cdp.mol[0].res[i].spin[0].i0_err['r1rho_1200.00000000_0.000_2000.000']/10000 < 5.0)
 
             # Check that certain parameters are not present.
             for param in blacklist:
                 print("\tChecking for the absence of the '%s' parameter." % param)
-                self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], param))
+                self.assertTrue(not hasattr(cdp.mol[0].res[i].spin[0], param))
 
         # Check the clustering information.
-        self.assert_(hasattr(cdp, 'clustering'))
+        self.assertTrue(hasattr(cdp, 'clustering'))
         keys = ['free spins', 'cluster']
         for key in keys:
-            self.assert_(key in cdp.clustering)
-        self.assert_('test' not in cdp.clustering)
+            self.assertTrue(key in cdp.clustering)
+        self.assertTrue('test' not in cdp.clustering)
         self.assertEqual(cdp.clustering['free spins'], [':2@N'])
         self.assertEqual(cdp.clustering['cluster'], [':1@N', ':3@N'])
 
@@ -3963,7 +3963,7 @@ class Relax_disp(SystemTestCase):
         print("\nChecking the R2eff input set files.")
         files = ['data_set_500.inp', 'data_set_500.inp']
         for file in files:
-            self.assert_(access(ds.tmpdir+sep+file, F_OK))
+            self.assertTrue(access(ds.tmpdir+sep+file, F_OK))
         data_set_500 = [
             "ID=500\n",
             "Sfrq = 500\n",
@@ -3999,7 +3999,7 @@ class Relax_disp(SystemTestCase):
         print("\nChecking the R2eff input files.")
         files = ['spin_70_N_500.cpmg', 'spin_70_N_800.cpmg', 'spin_71_N_500.cpmg', 'spin_71_N_800.cpmg']
         for file in files:
-            self.assert_(access(ds.tmpdir+sep+'input_r2eff'+sep+file, F_OK))
+            self.assertTrue(access(ds.tmpdir+sep+'input_r2eff'+sep+file, F_OK))
         spin_70_N_500 = [
             "#        nu_cpmg(Hz)              R2(1/s)              Esd(R2)\n",
             "  66.666600000000003   16.045540885533605    0.310924686180635\n",
@@ -5865,7 +5865,7 @@ class Relax_disp(SystemTestCase):
 
                         # Test the plot file exists.
                         print("Testing file access to graph: %s"%file_path)
-                        self.assert_(access(file_path, F_OK))
+                        self.assertTrue(access(file_path, F_OK))
 
                         # Now open, and compare content, line by line.
                         file_prod = open(file_path)
@@ -6466,8 +6466,8 @@ class Relax_disp(SystemTestCase):
                 r2eff_points.append(value)
 
                 # Test that values and errors are not nan.
-                self.assert_(not isnan(value))
-                self.assert_(not isnan(err))
+                self.assertTrue(not isnan(value))
+                self.assertTrue(not isnan(err))
 
 
         # Test the number of r2eff points. One is subtracted, due to one of the error values are "nan" in spin 51.
@@ -7125,55 +7125,55 @@ class Relax_disp(SystemTestCase):
 
         self.assertEqual(cdp.mol[0].res[10].num, 16)
         self.assertEqual(cdp.mol[0].res[10].spin[0].kex, ds.guess[':16@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[10].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[10].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[16].num, 25)
         self.assertEqual(cdp.mol[0].res[16].spin[0].kex, ds.guess[':25@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[16].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[16].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[17].num, 26)
         self.assertEqual(cdp.mol[0].res[17].spin[0].kex, ds.guess[':26@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[17].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[17].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[19].num, 28)
         self.assertEqual(cdp.mol[0].res[19].spin[0].kex, ds.guess[':28@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[19].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[19].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[29].num, 39)
         self.assertEqual(cdp.mol[0].res[29].spin[0].kex, ds.guess[':39@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[29].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[29].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[30].num, 40)
         self.assertEqual(cdp.mol[0].res[30].spin[0].kex, ds.guess[':40@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[30].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[30].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[31].num, 41)
         self.assertEqual(cdp.mol[0].res[31].spin[0].kex, ds.guess[':41@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[31].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[31].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[33].num, 43)
         self.assertEqual(cdp.mol[0].res[33].spin[0].kex, ds.guess[':43@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[33].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[33].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[34].num, 44)
         self.assertEqual(cdp.mol[0].res[34].spin[0].kex, ds.guess[':44@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[34].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[34].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[35].num, 45)
         self.assertEqual(cdp.mol[0].res[35].spin[0].kex, ds.guess[':45@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[35].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[35].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[38].num, 49)
         self.assertEqual(cdp.mol[0].res[38].spin[0].kex, ds.guess[':49@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[38].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[38].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[41].num, 52)
         self.assertEqual(cdp.mol[0].res[41].spin[0].kex, ds.guess[':52@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[41].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[41].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[42].num, 53)
         self.assertEqual(cdp.mol[0].res[42].spin[0].kex, ds.guess[':53@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[42].spin[0], 'ri_data'))
+        self.assertTrue(hasattr(cdp.mol[0].res[42].spin[0], 'ri_data'))
 
         # The dispersion models.
         MODELS = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
@@ -7344,7 +7344,7 @@ class Relax_disp(SystemTestCase):
                 file_path = get_file_path(file_name, result_dir_name+sep+result_folder)
 
                 print("Testing file access to graph: %s"%file_path)
-                self.assert_(access(file_path, F_OK))
+                self.assertTrue(access(file_path, F_OK))
 
         # Start testing all possible combinations of graphs.
         y_axis_types = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO]
@@ -7380,7 +7380,7 @@ class Relax_disp(SystemTestCase):
 
                         # Test the plot file exists.
                         print("Testing file access to graph: %s"%file_path)
-                        self.assert_(access(file_path, F_OK))
+                        self.assertTrue(access(file_path, F_OK))
 
                         # Now open, and compare content, line by line.
                         file_prod = open(file_path)
@@ -7522,7 +7522,7 @@ class Relax_disp(SystemTestCase):
         ]
         for name, value in data:
             # Does it exist?
-            self.assert_(hasattr(cdp, name))
+            self.assertTrue(hasattr(cdp, name))
 
             # Check the object.
             obj = getattr(cdp, name)
@@ -7659,7 +7659,7 @@ class Relax_disp(SystemTestCase):
         ]
         for name, value in data:
             # Does it exist?
-            self.assert_(hasattr(cdp, name))
+            self.assertTrue(hasattr(cdp, name))
 
             # Check the object.
             obj = getattr(cdp, name)
@@ -7787,11 +7787,11 @@ class Relax_disp(SystemTestCase):
             print("r2_600=%2.2f r2_500=%2.2f spin_id=%s resi=%i resn=%s"%(spin.r2[r20_key_600], spin.r2[r20_key_500], spin_id, resi, resn))
 
             # Testing the r2 values for the different fields are not the same.
-            self.assert_(spin.r2[r20_key_600] != spin.r2[r20_key_500])
+            self.assertTrue(spin.r2[r20_key_600] != spin.r2[r20_key_500])
 
             # Test values are larger than 0.
-            self.assert_(spin.r2[r20_key_600] > 0.0)
-            self.assert_(spin.r2[r20_key_500] > 0.0)
+            self.assertTrue(spin.r2[r20_key_600] > 0.0)
+            self.assertTrue(spin.r2[r20_key_500] > 0.0)
 
             # Loop over the experiment settings.
             r2eff_600 = []
@@ -8267,7 +8267,7 @@ class Relax_disp(SystemTestCase):
         # First check file exists
         for dir, file in files:
             print(dir+sep+file)
-            self.assert_(access(dir+sep+file, F_OK))
+            self.assertTrue(access(dir+sep+file, F_OK))
 
         # Define how files should look like
         data_set_600 = [
@@ -8384,7 +8384,7 @@ class Relax_disp(SystemTestCase):
             # First check file exists
             for dir, file in files:
                 print(dir+sep+file)
-                self.assert_(access(dir+sep+file, F_OK))
+                self.assertTrue(access(dir+sep+file, F_OK))
 
             ## Now check to local folder with dir argument.
             # Write input
@@ -8398,7 +8398,7 @@ class Relax_disp(SystemTestCase):
             # First check file exists
             for dir, file in files:
                 print(dir+sep+file)
-                self.assert_(access(dir+sep+file, F_OK))
+                self.assertTrue(access(dir+sep+file, F_OK))
 
 
     def test_sprangers_data_to_mmq_cr72(self, model=None):
@@ -9031,7 +9031,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.value.write(param='peak_intensity', file='int.out', dir=ds.tmpdir, scaling=1.0, force=True)
 
         # Test the file exists.
-        self.assert_(access(int_filepath, F_OK))
+        self.assertTrue(access(int_filepath, F_OK))
 
         # Open the files for testing.
         int_file = open(int_filepath, 'r')
@@ -9078,7 +9078,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.value.write(param='theta', file='theta.out', dir=ds.tmpdir, scaling=1.0, force=True)
 
         # Test the file exists.
-        self.assert_(access(theta_filepath, F_OK))
+        self.assertTrue(access(theta_filepath, F_OK))
 
         # Open the files for testing.
         theta_file = open(theta_filepath, 'r')
@@ -9127,7 +9127,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.value.write(param='w_eff', file='w_eff.out', dir=ds.tmpdir, scaling=1.0, force=True)
 
         # Test the file exists.
-        self.assert_(access(w_eff_filepath, F_OK))
+        self.assertTrue(access(w_eff_filepath, F_OK))
 
         # Open the files for testing.
         w_eff_file = open(w_eff_filepath, 'r')
@@ -9234,8 +9234,8 @@ class Relax_disp(SystemTestCase):
         w_eff_filepath = ds.tmpdir+sep+MODELS[0]+sep+'w_eff.out'
 
         # Test the files exists.
-        self.assert_(access(theta_filepath, F_OK))
-        self.assert_(access(w_eff_filepath, F_OK))
+        self.assertTrue(access(theta_filepath, F_OK))
+        self.assertTrue(access(w_eff_filepath, F_OK))
 
         # Open the files for testing.
         theta_file = open(theta_filepath, 'r')
@@ -10028,7 +10028,7 @@ class Relax_disp(SystemTestCase):
 
             # Test the file exists.
             print("Testing file access to: %s"%file_path)
-            self.assert_(access(file_path, F_OK))
+            self.assertTrue(access(file_path, F_OK))
 
             # Now open, and compare content, line by line.
             file_prod = open(file_path)

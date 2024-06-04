@@ -80,7 +80,7 @@ class PackageTestCase(UnitTestCase):
             print("    Module/package:  %s" % module)
 
             # Check if the module is in __all__.
-            self.assert_(module in self.package.__all__)
+            self.assertTrue(module in self.package.__all__)
 
         # Check for modules/packages in the __all__ list which do not exist.
         print("\nChecking for modules/packages in the __all__ list which do not exist.")

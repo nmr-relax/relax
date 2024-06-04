@@ -285,11 +285,11 @@ class Molecule_base_class(UnitTestCase):
         self.assertEqual(dp.mol[0].res[0].num, 1)
         self.assertEqual(dp.mol[0].res[0].name, 'Ala')
         self.assertEqual(dp.mol[0].res[0].spin[0].num, 111)
-        self.assert_(hasattr(dp.mol[0].res[0].spin[0], 'x'))
+        self.assertTrue(hasattr(dp.mol[0].res[0].spin[0], 'x'))
         self.assertEqual(dp.mol[0].res[1].num, 5)
         self.assertEqual(dp.mol[0].res[1].name, 'Ala')
         self.assertEqual(dp.mol[0].res[1].spin[0].num, 111)
-        self.assert_(hasattr(dp.mol[0].res[1].spin[0], 'x'))
+        self.assertTrue(hasattr(dp.mol[0].res[1].spin[0], 'x'))
 
 
     def test_delete_molecule_all(self):

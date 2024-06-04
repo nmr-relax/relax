@@ -50,32 +50,32 @@ class Test_pipe_container(TestCase):
         self.data_pipe.chi2 = PipeContainer()
 
         # Test that __repr__() returns a string.
-        self.assert_(type(self.data_pipe.__repr__()), str)
+        self.assertTrue(type(self.data_pipe.__repr__()), str)
 
 
     def test_PipeContainer_repr_empty_pipe(self):
         """Test the PipeContainer.__repr__() method for an empty data pipe."""
 
         # Test that __repr__() returns a string.
-        self.assert_(type(self.data_pipe.__repr__()), str)
+        self.assertTrue(type(self.data_pipe.__repr__()), str)
 
 
     def test_PipeContainer_is_empty(self):
         """Tests for the PipeContainer.is_empty() method."""
 
         # The newly initialised data pipe should be empty.
-        self.assert_(self.data_pipe.is_empty())
+        self.assertTrue(self.data_pipe.is_empty())
 
         # Add an object.
         self.data_pipe.x = 1
-        self.assert_(not self.data_pipe.is_empty())
+        self.assertTrue(not self.data_pipe.is_empty())
 
         # Reset the data pipe, and modify an object.
         self.setUp()
         self.data_pipe.mol[0].name = 'Ap4Aase'
-        self.assert_(not self.data_pipe.is_empty())
+        self.assertTrue(not self.data_pipe.is_empty())
 
         # The pipe type can be set in the empty data pipe.
         self.setUp()
         self.data_pipe.pipe_type = 'mf'
-        self.assert_(self.data_pipe.is_empty())
+        self.assertTrue(self.data_pipe.is_empty())

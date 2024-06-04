@@ -46,7 +46,7 @@ class State_base_class(UnitTestCase):
         # Test the contents of the empty singleton.
         self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
-        self.assert_(not hasattr(ds, 'y'))
+        self.assertTrue(not hasattr(ds, 'y'))
 
         # Load the state.
         self.state.load_state(state='basic_single_pipe', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
@@ -70,7 +70,7 @@ class State_base_class(UnitTestCase):
         # Test the contents of the empty singleton.
         self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
-        self.assert_(not hasattr(ds, 'y'))
+        self.assertTrue(not hasattr(ds, 'y'))
 
         # Load the state.
         self.state.load_state(state='basic_single_pipe', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
@@ -84,8 +84,8 @@ class State_base_class(UnitTestCase):
         dp_new = pipes.get_pipe('new')
 
         # Test the contents of the restored singleton (with subsequent data added).
-        self.assert_('orig' in ds)
-        self.assert_('new' in ds)
+        self.assertTrue('orig' in ds)
+        self.assertTrue('new' in ds)
         self.assertEqual(pipes.cdp_name(), 'new')
         self.assertEqual(dp_orig.x, 1)
         self.assertEqual(ds.y, 'Hello')
@@ -101,7 +101,7 @@ class State_base_class(UnitTestCase):
         # Test the contents of the empty singleton.
         self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
-        self.assert_(not hasattr(ds, 'y'))
+        self.assertTrue(not hasattr(ds, 'y'))
 
         # Load the state.
         self.state.load_state(state='basic_single_pipe', dir=status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
@@ -112,7 +112,7 @@ class State_base_class(UnitTestCase):
         # Test that there are no contents in the reset singleton.
         self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
-        self.assert_(not hasattr(ds, 'y'))
+        self.assertTrue(not hasattr(ds, 'y'))
 
 
     def test_save(self):

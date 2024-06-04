@@ -206,10 +206,10 @@ class Rdc(SystemTestCase):
         self.interpreter.rdc.copy(pipe_from='orig', align_id='tb')
 
         # Checks.
-        self.assert_(hasattr(cdp, 'align_ids'))
-        self.assert_('tb' in cdp.align_ids)
-        self.assert_(hasattr(cdp, 'rdc_ids'))
-        self.assert_('tb' in cdp.rdc_ids)
+        self.assertTrue(hasattr(cdp, 'align_ids'))
+        self.assertTrue('tb' in cdp.align_ids)
+        self.assertTrue(hasattr(cdp, 'rdc_ids'))
+        self.assertTrue('tb' in cdp.rdc_ids)
         self.assertEqual(count_spins(), 16)
         self.assertEqual(len(cdp.interatomic), 8)
         i = 0
@@ -269,10 +269,10 @@ class Rdc(SystemTestCase):
             print("\nChecking data pipe '%s'." % pipes[i])
 
             # Metadata.
-            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
-            self.assert_('tb' in ds[pipes[i]].align_ids)
-            self.assert_(hasattr(ds[pipes[i]], 'rdc_ids'))
-            self.assert_('tb' in ds[pipes[i]].rdc_ids)
+            self.assertTrue(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assertTrue('tb' in ds[pipes[i]].align_ids)
+            self.assertTrue(hasattr(ds[pipes[i]], 'rdc_ids'))
+            self.assertTrue('tb' in ds[pipes[i]].rdc_ids)
 
             # Spin data.
             self.assertEqual(count_spins(pipe=pipes[i]), 14)
@@ -281,16 +281,16 @@ class Rdc(SystemTestCase):
             for interatom in interatomic_loop(pipe=pipes[i]):
                 # Residue 6 in the 'new' data pipe has no RDCs.
                 if i == 1 and j == 1:
-                    self.assert_(not hasattr(interatom, 'rdc'))
-                    self.assert_(not hasattr(interatom, 'rdc_data_types'))
-                    self.assert_(not hasattr(interatom, 'absolute_rdc'))
+                    self.assertTrue(not hasattr(interatom, 'rdc'))
+                    self.assertTrue(not hasattr(interatom, 'rdc_data_types'))
+                    self.assertTrue(not hasattr(interatom, 'absolute_rdc'))
                 else:
                     self.assertAlmostEqual(rdcs[i][j], interatom.rdc['tb'])
-                    self.assert_(hasattr(interatom, 'rdc_data_types'))
-                    self.assert_('tb' in interatom.rdc_data_types)
+                    self.assertTrue(hasattr(interatom, 'rdc_data_types'))
+                    self.assertTrue('tb' in interatom.rdc_data_types)
                     self.assertEqual(interatom.rdc_data_types['tb'], 'D')
-                    self.assert_(hasattr(interatom, 'absolute_rdc'))
-                    self.assert_('tb' in interatom.absolute_rdc)
+                    self.assertTrue(hasattr(interatom, 'absolute_rdc'))
+                    self.assertTrue('tb' in interatom.absolute_rdc)
                     self.assertEqual(interatom.absolute_rdc['tb'], False)
                 j += 1
 
@@ -353,10 +353,10 @@ class Rdc(SystemTestCase):
             print("\nChecking data pipe '%s'." % pipes[i])
 
             # Metadata.
-            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
-            self.assert_('tb' in ds[pipes[i]].align_ids)
-            self.assert_(hasattr(ds[pipes[i]], 'rdc_ids'))
-            self.assert_('tb' in ds[pipes[i]].rdc_ids)
+            self.assertTrue(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assertTrue('tb' in ds[pipes[i]].align_ids)
+            self.assertTrue(hasattr(ds[pipes[i]], 'rdc_ids'))
+            self.assertTrue('tb' in ds[pipes[i]].rdc_ids)
 
             # Spin data.
             self.assertEqual(count_spins(pipe=pipes[i]), 14)
@@ -365,17 +365,17 @@ class Rdc(SystemTestCase):
             for interatom in interatomic_loop(pipe=pipes[i]):
                 # Residue 6 in the 'new' data pipe has no RDCs.
                 if i == 1 and j == 1:
-                    self.assert_(not hasattr(interatom, 'rdc'))
-                    self.assert_(not hasattr(interatom, 'rdc_data_types'))
-                    self.assert_(not hasattr(interatom, 'absolute_rdc'))
+                    self.assertTrue(not hasattr(interatom, 'rdc'))
+                    self.assertTrue(not hasattr(interatom, 'rdc_data_types'))
+                    self.assertTrue(not hasattr(interatom, 'absolute_rdc'))
                 else:
                     self.assertAlmostEqual(rdcs[i][j], interatom.rdc['tb'])
                     self.assertAlmostEqual(rdcs[i][j]+1.0, interatom.rdc_bc['tb'])
-                    self.assert_(hasattr(interatom, 'rdc_data_types'))
-                    self.assert_('tb' in interatom.rdc_data_types)
+                    self.assertTrue(hasattr(interatom, 'rdc_data_types'))
+                    self.assertTrue('tb' in interatom.rdc_data_types)
                     self.assertEqual(interatom.rdc_data_types['tb'], 'D')
-                    self.assert_(hasattr(interatom, 'absolute_rdc'))
-                    self.assert_('tb' in interatom.absolute_rdc)
+                    self.assertTrue(hasattr(interatom, 'absolute_rdc'))
+                    self.assertTrue('tb' in interatom.absolute_rdc)
                     self.assertEqual(interatom.absolute_rdc['tb'], False)
                 j += 1
 

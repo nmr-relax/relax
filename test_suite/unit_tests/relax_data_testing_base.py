@@ -79,8 +79,8 @@ class Relax_data_base_class(UnitTestCase):
 
             # Relaxation data.
             if self.Ap4Aase_600_NOE_val[i] == None:
-                self.assert_(not hasattr(spin, 'ri_data'))
-                self.assert_(not hasattr(spin, 'ri_data_err'))
+                self.assertTrue(not hasattr(spin, 'ri_data'))
+                self.assertTrue(not hasattr(spin, 'ri_data_err'))
             else:
                 self.assertEqual(spin.ri_data[ri_id], self.Ap4Aase_600_NOE_val[i])
                 self.assertEqual(spin.ri_data_err[ri_id], self.Ap4Aase_600_NOE_err[i])

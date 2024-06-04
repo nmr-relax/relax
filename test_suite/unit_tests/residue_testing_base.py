@@ -311,7 +311,7 @@ class Residue_base_class(UnitTestCase):
         self.assertEqual(dp.mol[0].res[0].num, 4)
         self.assertEqual(dp.mol[0].res[0].name, 'Gly')
         self.assertEqual(dp.mol[0].res[0].spin[0].num, 111)
-        self.assert_(hasattr(dp.mol[0].res[0].spin[0], 'x'))
+        self.assertTrue(hasattr(dp.mol[0].res[0].spin[0], 'x'))
 
 
     def test_delete_residue_num(self):
@@ -343,7 +343,7 @@ class Residue_base_class(UnitTestCase):
         self.assertEqual(dp.mol[0].res[2].num, 4)
         self.assertEqual(dp.mol[0].res[2].name, 'Gly')
         self.assertEqual(dp.mol[0].res[2].spin[0].num, 111)
-        self.assert_(hasattr(dp.mol[0].res[2].spin[0], 'x'))
+        self.assertTrue(hasattr(dp.mol[0].res[2].spin[0], 'x'))
 
 
     def test_delete_residue_all(self):
@@ -397,7 +397,7 @@ class Residue_base_class(UnitTestCase):
         self.assertEqual(dp.mol[0].res[0].num, 2)
         self.assertEqual(dp.mol[0].res[1].num, 4)
         self.assertEqual(dp.mol[0].res[1].spin[0].num, 111)
-        self.assert_(hasattr(dp.mol[0].res[1].spin[0], 'x'))
+        self.assertTrue(hasattr(dp.mol[0].res[1].spin[0], 'x'))
 
 
     def test_delete_residue_fail(self):

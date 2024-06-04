@@ -137,7 +137,7 @@ class Dasha(SystemTestCase):
             self.assertAlmostEqual(spin.csa, csa[i])
             self.assertEqual(spin.chi2, chi2[i])
             if ri_data[i] == None:
-                self.assert_(not hasattr(spin, 'ri_data'))
+                self.assertTrue(not hasattr(spin, 'ri_data'))
             else:
                 for ri_id in cdp.ri_ids:
                     if ri_id in ri_data[i]:

@@ -374,7 +374,7 @@ class Align_tensor(SystemTestCase):
 
         # Checks.
         self.assertEqual(len(cdp.align_tensors), 10)
-        self.assert_(hasattr(cdp.align_tensors, 'reduction'))
+        self.assertTrue(hasattr(cdp.align_tensors, 'reduction'))
         for i in range(5):
             # Full tensors.
             if i == 1:

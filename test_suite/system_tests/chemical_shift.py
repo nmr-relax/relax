@@ -127,7 +127,7 @@ class Chemical_shift(SystemTestCase):
         for spin in spin_loop():
             # No data.
             if i > 12:
-                self.assert_(not hasattr(spin, 'chemical_shift'))
+                self.assertTrue(not hasattr(spin, 'chemical_shift'))
 
             # Check the shift.
             self.assertEqual(spin.chemical_shift, cs[i])
@@ -156,7 +156,7 @@ class Chemical_shift(SystemTestCase):
         for spin in spin_loop():
             # No data.
             if i > 10:
-                self.assert_(not hasattr(spin, 'chemical_shift'))
+                self.assertTrue(not hasattr(spin, 'chemical_shift'))
 
             # Check the shift.
             self.assertEqual(spin.chemical_shift, cs[i])

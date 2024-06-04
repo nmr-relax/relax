@@ -52,7 +52,7 @@ class Test_mol_res_spin(TestCase):
         self.assertEqual(self.mol[1].name, name)
 
         # Test that the molecule's single spin system container does not have the object 'x'.
-        self.assert_(not hasattr(self.mol[1].res[0].spin[0], 'x'))
+        self.assertTrue(not hasattr(self.mol[1].res[0].spin[0], 'x'))
 
 
     def test_add_res(self):
@@ -70,7 +70,7 @@ class Test_mol_res_spin(TestCase):
         self.assertEqual(self.mol[0].res[1].num, num)
 
         # Test that the residues' single spin system container does not have the object 'x'.
-        self.assert_(not hasattr(self.mol[0].res[1].spin[0], 'x'))
+        self.assertTrue(not hasattr(self.mol[0].res[1].spin[0], 'x'))
 
 
     def test_add_spin(self):
@@ -89,46 +89,46 @@ class Test_mol_res_spin(TestCase):
         self.assertEqual(self.mol[0].res[0].spin[1].select, 0)
 
         # Test that the spin system container does not have the object 'x'.
-        self.assert_(not hasattr(self.mol[0].res[0].spin[1], 'x'))
+        self.assertTrue(not hasattr(self.mol[0].res[0].spin[1], 'x'))
 
 
     def test_mol_container_repr(self):
         """Unit test for the validity of the MoleculeContainer.__repr__() method."""
 
         # Test that __repr__() returns a string.
-        self.assert_(type(self.mol[0].__repr__()), str)
+        self.assertTrue(type(self.mol[0].__repr__()), str)
 
 
     def test_mol_list_repr(self):
         """Unit test for the validity of the MoleculeList.__repr__() method."""
 
         # Test that __repr__() returns a string.
-        self.assert_(type(self.mol.__repr__()), str)
+        self.assertTrue(type(self.mol.__repr__()), str)
 
 
     def test_res_container_repr(self):
         """Unit test for the validity of the ResidueContainer.__repr__() method."""
 
         # Test that __repr__() returns a string.
-        self.assert_(type(self.mol[0].res[0].__repr__()), str)
+        self.assertTrue(type(self.mol[0].res[0].__repr__()), str)
 
 
     def test_res_list_repr(self):
         """Unit test for the validity of the ResidueList.__repr__() method."""
 
         # Test that __repr__() returns a string.
-        self.assert_(type(self.mol[0].res.__repr__()), str)
+        self.assertTrue(type(self.mol[0].res.__repr__()), str)
 
 
     def test_spin_container_repr(self):
         """Unit test for the validity of the SpinContainer.__repr__() method."""
 
         # Test that __repr__() returns a string.
-        self.assert_(type(self.mol[0].res[0].spin[0].__repr__()), str)
+        self.assertTrue(type(self.mol[0].res[0].spin[0].__repr__()), str)
 
 
     def test_spin_list_repr(self):
         """Unit test for the validity of the SpinList.__repr__() method."""
 
         # Test that __repr__() returns a string.
-        self.assert_(type(self.mol[0].res[0].spin.__repr__()), str)
+        self.assertTrue(type(self.mol[0].res[0].spin.__repr__()), str)

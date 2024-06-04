@@ -128,13 +128,13 @@ class Peak_lists(SystemTestCase):
             # No data.
             else:
                 # There should be no intensity data.
-                self.assert_(not hasattr(spin, 'peak_intensity'))
+                self.assertTrue(not hasattr(spin, 'peak_intensity'))
 
                 # Do not perform the height checks.
                 continue
 
             # Check the data.
-            self.assert_(hasattr(spin, 'peak_intensity'))
+            self.assertTrue(hasattr(spin, 'peak_intensity'))
 
             # Check the values.
             for i in range(len(times)):

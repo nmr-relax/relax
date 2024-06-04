@@ -134,7 +134,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_mol('RNA'))
+        self.assertTrue(obj.contains_mol('RNA'))
 
 
     def test_Selection_contains_mol2(self):
@@ -144,7 +144,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu & #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_mol('RNA'))
+        self.assertTrue(not obj.contains_mol('RNA'))
 
 
     def test_Selection_contains_mol3(self):
@@ -154,7 +154,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_mol('XXX'))
+        self.assertTrue(not obj.contains_mol('XXX'))
 
 
     def test_Selection_contains_mol4(self):
@@ -164,7 +164,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_mol())
+        self.assertTrue(not obj.contains_mol())
 
 
     def test_Selection_contains_mol5(self):
@@ -174,7 +174,7 @@ class Test_selection(UnitTestCase):
         obj = Selection(":Glu")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_mol())
+        self.assertTrue(obj.contains_mol())
 
 
     def test_Selection_contains_mol_re1(self):
@@ -184,7 +184,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_mol('R*'))
+        self.assertTrue(obj.contains_mol('R*'))
 
 
     def test_Selection_contains_mol_re2(self):
@@ -194,7 +194,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_mol('*R*'))
+        self.assertTrue(obj.contains_mol('*R*'))
 
 
     def test_Selection_contains_res1(self):
@@ -204,7 +204,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_res(res_name='Glu'))
+        self.assertTrue(not obj.contains_res(res_name='Glu'))
 
 
     def test_Selection_contains_res2(self):
@@ -214,7 +214,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_res(res_name='Glu', mol='Ap4Aase'))
+        self.assertTrue(obj.contains_res(res_name='Glu', mol='Ap4Aase'))
 
 
     def test_Selection_contains_res3(self):
@@ -224,7 +224,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu & #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_res(res_name='Glu'))
+        self.assertTrue(not obj.contains_res(res_name='Glu'))
 
 
     def test_Selection_contains_res4(self):
@@ -234,7 +234,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_res(res_name='Ala'))
+        self.assertTrue(not obj.contains_res(res_name='Ala'))
 
 
     def test_Selection_contains_res5(self):
@@ -244,7 +244,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA:14@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_res())
+        self.assertTrue(not obj.contains_res())
 
 
     def test_Selection_contains_res6(self):
@@ -254,7 +254,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_res(mol='Ap4Aase'))
+        self.assertTrue(obj.contains_res(mol='Ap4Aase'))
 
 
     def test_Selection_contains_res7(self):
@@ -264,7 +264,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_res(mol='RNA'))
+        self.assertTrue(not obj.contains_res(mol='RNA'))
 
 
     def test_Selection_contains_res_re1(self):
@@ -274,7 +274,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_res(res_name='G*', mol='Ap4Aase'))
+        self.assertTrue(obj.contains_res(res_name='G*', mol='Ap4Aase'))
 
 
     def test_Selection_contains_res_re2(self):
@@ -284,7 +284,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_res(res_name='*G*', mol='Ap4Aase'))
+        self.assertTrue(obj.contains_res(res_name='*G*', mol='Ap4Aase'))
 
 
     def test_Selection_contains_spin1(self):
@@ -294,7 +294,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_spin(spin_name='C8'))
+        self.assertTrue(not obj.contains_spin(spin_name='C8'))
 
 
     def test_Selection_contains_spin2(self):
@@ -304,7 +304,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_spin(spin_name='C8', mol='RNA'))
+        self.assertTrue(obj.contains_spin(spin_name='C8', mol='RNA'))
 
 
     def test_Selection_contains_spin3(self):
@@ -314,7 +314,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu & #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_spin(spin_name='C8'))
+        self.assertTrue(not obj.contains_spin(spin_name='C8'))
 
 
     def test_Selection_contains_spin4(self):
@@ -324,7 +324,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_spin(spin_name='N3'))
+        self.assertTrue(not obj.contains_spin(spin_name='N3'))
 
 
     def test_Selection_contains_spin5(self):
@@ -334,7 +334,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA:14@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_spin())
+        self.assertTrue(not obj.contains_spin())
 
 
     def test_Selection_contains_spin6(self):
@@ -344,7 +344,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_spin(mol='Ap4Aase'))
+        self.assertTrue(obj.contains_spin(mol='Ap4Aase'))
 
 
     def test_Selection_contains_spin7(self):
@@ -354,7 +354,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_spin(mol='RNA'))
+        self.assertTrue(not obj.contains_spin(mol='RNA'))
 
 
     def test_Selection_contains_spin_re1(self):
@@ -364,7 +364,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_spin(spin_name='C*', mol='RNA'))
+        self.assertTrue(obj.contains_spin(spin_name='C*', mol='RNA'))
 
 
     def test_Selection_contains_spin_re2(self):
@@ -374,7 +374,7 @@ class Test_selection(UnitTestCase):
         obj = Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_spin(spin_name='*C*', mol='RNA'))
+        self.assertTrue(obj.contains_spin(spin_name='*C*', mol='RNA'))
 
 
     def test_Selection_memory(self):
@@ -401,7 +401,7 @@ class Test_selection(UnitTestCase):
         obj = Selection(":1-70")
 
         # Check that the residue ID is in the selection.
-        self.assert_(obj.contains_spin_id(':1'))
+        self.assertTrue(obj.contains_spin_id(':1'))
 
 
     def test_Selection_range_contains_resid2(self):
@@ -411,7 +411,7 @@ class Test_selection(UnitTestCase):
         obj = Selection(":1-70")
 
         # Check that the residue ID is in the selection.
-        self.assert_(not obj.contains_spin_id(':71'))
+        self.assertTrue(not obj.contains_spin_id(':71'))
 
 
     def test_Selection_range_contains_spinid(self):
@@ -421,7 +421,7 @@ class Test_selection(UnitTestCase):
         obj = Selection(":1-70")
 
         # Check that the residue ID is in the selection.
-        self.assert_(obj.contains_spin_id(':1@N'))
+        self.assertTrue(obj.contains_spin_id(':1@N'))
 
 
     def test_Selection_range_contains_spinid2(self):
@@ -431,7 +431,7 @@ class Test_selection(UnitTestCase):
         obj = Selection(":1-70")
 
         # Check that the residue ID is in the selection.
-        self.assert_(not obj.contains_spin_id(':71@C'))
+        self.assertTrue(not obj.contains_spin_id(':71@C'))
 
 
     def test_parse_token_single_element_num(self):

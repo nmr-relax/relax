@@ -138,14 +138,14 @@ class State(GuiTestCase):
         index = 0
 
         # Test that the model-free analysis tab is loaded.
-        self.assert_(not self.app.gui.analysis.init_state)
+        self.assertTrue(not self.app.gui.analysis.init_state)
         self.assertEqual(self.app.gui.analysis._num_analyses, 1)
         self.assertEqual(len(self.app.gui.analysis._analyses), 1)
         self.assertEqual(self.app.gui.analysis.notebook.GetPageCount(), 1)
-        self.assert_(self.app.gui.analysis._analyses[index].init_flag)
+        self.assertTrue(self.app.gui.analysis._analyses[index].init_flag)
 
         # Test the relax data store.
-        self.assert_(hasattr(ds, 'relax_gui'))
+        self.assertTrue(hasattr(ds, 'relax_gui'))
         self.assertEqual(ds.relax_gui.analyses[index].analysis_name, 'Model-free')
         self.assertEqual(ds.relax_gui.analyses[index].pipe_name, 'a')
 

@@ -617,8 +617,8 @@ class Test_parameters(UnitTestCase):
             A, b = linear_constraints(spins=spins, scaling_matrix=expected[model]['scaling_matrix'])
 
             # Array checks.
-            self.assert_(array_equal(A, expected[model]['A']))
-            self.assert_(array_equal(b, expected[model]['b']))
+            self.assertTrue(array_equal(A, expected[model]['A']))
+            self.assertTrue(array_equal(b, expected[model]['b']))
 
 
     def test_linear_constraints_single_spin(self):
@@ -1016,8 +1016,8 @@ class Test_parameters(UnitTestCase):
             A, b = linear_constraints(spins=[spin], scaling_matrix=expected[model]['scaling_matrix'])
 
             # Array checks.
-            self.assert_(array_equal(A, expected[model]['A']))
-            self.assert_(array_equal(b, expected[model]['b']))
+            self.assertTrue(array_equal(A, expected[model]['A']))
+            self.assertTrue(array_equal(b, expected[model]['b']))
 
 
     def test_loop_parameters_clustered_spins(self):

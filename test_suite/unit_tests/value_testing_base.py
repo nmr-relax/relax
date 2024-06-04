@@ -369,7 +369,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='j0', val=4.5e-9, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
 
 
@@ -386,7 +386,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='f_eta', val=2.3e-10, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 2.3e-10)
 
 
@@ -403,7 +403,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='f_r2', val=1.7e-12, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.7e-12)
 
 
@@ -420,7 +420,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='csa', val=-160e-6, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
 
 
@@ -437,7 +437,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='orientation', val=17, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'orientation'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'orientation'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].orientation, 17)
 
 
@@ -454,7 +454,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='tc', val=10, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'tc'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'tc'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].tc, 10)
 
 
@@ -471,9 +471,9 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 3.5e-10)
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 2.3e-12)
@@ -492,9 +492,9 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=1.9e-10, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 1.9e-10)
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 1.9e-10)
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.9e-10)
@@ -2687,7 +2687,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='j0', val=4.5e-9, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
 
 
@@ -2704,7 +2704,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='jwx', val=2.3e-10, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 2.3e-10)
 
 
@@ -2721,7 +2721,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='jwh', val=1.7e-12, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.7e-12)
 
 
@@ -2738,7 +2738,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='csa', val=-160e-6, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
 
 
@@ -2755,9 +2755,9 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param=['j0', 'jwx', 'jwh'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
         self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 3.5e-10)
         self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 2.3e-12)
@@ -2776,9 +2776,9 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param=['j0', 'jwx', 'jwh'], val=1.9e-10, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 1.9e-10)
         self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 1.9e-10)
         self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.9e-10)
@@ -3166,7 +3166,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='local_tm', val=1e-8, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'local_tm'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'local_tm'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].local_tm, 1e-8)
 
 
@@ -3183,7 +3183,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='s2', val=0.8, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 's2'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2, 0.8)
 
 
@@ -3200,7 +3200,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='s2f', val=0.45, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2f, 0.45)
 
 
@@ -3217,7 +3217,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='s2s', val=0.1, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2s, 0.1)
 
 
@@ -3234,7 +3234,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='te', val=12.5e-12, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'te'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'te'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].te, 12.5e-12)
 
 
@@ -3251,7 +3251,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='tf', val=20.1e-12, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'tf'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'tf'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].tf, 20.1e-12)
 
 
@@ -3268,7 +3268,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='ts', val=1.23e-9, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'ts'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'ts'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].ts, 1.23e-9)
 
 
@@ -3285,7 +3285,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='rex', val=2.34, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'rex'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'rex'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].rex, 2.34)
 
 
@@ -3302,7 +3302,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='csa', val=-172e-6, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
 
 
@@ -3319,8 +3319,8 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param=['s2f', 's2s'], val=[0.7, 0.9], spin_id='@112')
 
         # Test the parameters.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2f, 0.7)
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2s, 0.9)
 
@@ -3338,8 +3338,8 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param=['s2f', 's2s'], val=0.7, spin_id='@112')
 
         # Test the parameters.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2f, 0.7)
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2s, 0.7)
 
@@ -3547,7 +3547,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='rx', val=1.2, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'rx'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'rx'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].rx, 1.2)
 
 
@@ -3564,7 +3564,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='i0', val=520, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 520)
 
 
@@ -3581,7 +3581,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param='iinf', val=-1.7, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
 
 
@@ -3598,8 +3598,8 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param=['i0', 'iinf'], val=[123456, -1.7], spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 123456)
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
 
@@ -3617,7 +3617,7 @@ class Value_base_class(UnitTestCase):
         self.value_fns.set(param=['i0', 'iinf'], val=0.0, spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
+        self.assertTrue(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 0.0)
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, 0.0)

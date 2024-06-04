@@ -721,7 +721,7 @@ class Mf(SystemTestCase):
             for dir in dirs:
                 dir_path = "%s%s%s" % (root, sep, dir)
                 print("Checking for the directory '%s'." % dir_path)
-                self.assert_(path.isdir(dir_path))
+                self.assertTrue(path.isdir(dir_path))
 
         # Check the generated files.
         files = [
@@ -813,7 +813,7 @@ class Mf(SystemTestCase):
             for file in files:
                 file_path = "%s%s%s" % (root, sep, file)
                 print("Checking for the file '%s'." % file_path)
-                self.assert_(path.isfile(file_path))
+                self.assertTrue(path.isfile(file_path))
 
 
     def test_dauvergne_protocol_sphere(self):
@@ -1169,7 +1169,7 @@ class Mf(SystemTestCase):
         self.assertEqual(dp.mol[0].res[0].spin[0].select_sim, [True, False, True])
         self.assertEqual(dp.mol[0].res[1].spin[0].select_sim, [True, True, False])
         self.assertEqual(dp.mol[0].res[2].spin[0].select_sim, [True, True, True])
-        self.assert_(not hasattr(dp.mol[0].res[3].spin[0], 'select_sim'))
+        self.assertTrue(not hasattr(dp.mol[0].res[3].spin[0], 'select_sim'))
 
 
     def test_opendx_s2_te_rex(self):
@@ -3298,12 +3298,12 @@ class Mf(SystemTestCase):
         if chi2 != None:
             self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
         if iter != None:
-            self.assert_(spin.iter in iter, msg=mesg)
+            self.assertTrue(spin.iter in iter, msg=mesg)
         if f_count != None:
-            self.assert_(spin.f_count in f_count, msg=mesg)
+            self.assertTrue(spin.f_count in f_count, msg=mesg)
         if g_count != None:
-            self.assert_(spin.g_count in g_count, msg=mesg)
+            self.assertTrue(spin.g_count in g_count, msg=mesg)
         if h_count != None:
-            self.assert_(spin.h_count in h_count, msg=mesg)
+            self.assertTrue(spin.h_count in h_count, msg=mesg)
         if warning != None:
             self.assertEqual(spin.warning, warning, msg=mesg)

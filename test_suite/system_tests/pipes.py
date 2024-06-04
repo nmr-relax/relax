@@ -76,8 +76,8 @@ class Pipes(SystemTestCase):
         bundles = sorted(pipes.bundle_names())
         self.assertEqual(bundles, ['test bundle 1', 'test bundle 2'])
         for pipe, name in pipes.pipe_loop(name=True):
-            self.assert_(name in ['test pipe 1', 'test pipe 2', 'test pipe 3', 'test pipe 4', 'test pipe 5', 'test pipe 6'])
-            self.assert_(pipes.get_bundle(name) in ['test bundle 1', 'test bundle 2'])
+            self.assertTrue(name in ['test pipe 1', 'test pipe 2', 'test pipe 3', 'test pipe 4', 'test pipe 5', 'test pipe 6'])
+            self.assertTrue(pipes.get_bundle(name) in ['test bundle 1', 'test bundle 2'])
 
 
     def test_pipe_create(self):

@@ -121,7 +121,7 @@ class Relax_disp(GuiTestCase):
             self.assertEqual(spin.peak_intensity['0_2'], data_2[i])
 
             # The errors.
-            self.assert_(hasattr(spin, 'baseplane_rmsd'))
+            self.assertTrue(hasattr(spin, 'baseplane_rmsd'))
             self.assertEqual(spin.baseplane_rmsd['0_2'], 3000.0)
 
 

@@ -55,8 +55,8 @@ class Unit_vectors(SystemTestCase):
         # Leu 3.
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, 24)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
-        self.assert_(hasattr(cdp.interatomic[0], 'vector'))
-        self.assert_(cdp.interatomic[0].vector is not None)
+        self.assertTrue(hasattr(cdp.interatomic[0], 'vector'))
+        self.assertTrue(cdp.interatomic[0].vector is not None)
         self.assertAlmostEqual(cdp.interatomic[0].vector[0], 0.40899187)
         self.assertAlmostEqual(cdp.interatomic[0].vector[1], -0.80574458)
         self.assertAlmostEqual(cdp.interatomic[0].vector[2], 0.42837054)
@@ -82,8 +82,8 @@ class Unit_vectors(SystemTestCase):
         # Leu 3.
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
-        self.assert_(hasattr(cdp.interatomic[0], 'vector'))
-        self.assert_(cdp.interatomic[0].vector is not None)
+        self.assertTrue(hasattr(cdp.interatomic[0], 'vector'))
+        self.assertTrue(cdp.interatomic[0].vector is not None)
         self.assertAlmostEqual(cdp.interatomic[0].vector[0], 0.40899187)
         self.assertAlmostEqual(cdp.interatomic[0].vector[1], -0.80574458)
         self.assertAlmostEqual(cdp.interatomic[0].vector[2], 0.42837054)

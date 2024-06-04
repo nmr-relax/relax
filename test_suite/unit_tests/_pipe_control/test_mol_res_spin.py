@@ -922,7 +922,7 @@ class Test_mol_res_spin(UnitTestCase):
         # Test:
         self.assertEqual(len(sel), 1)
         for res in sel:
-            self.assert_(res.name == "Pro" and res.num == 4)
+            self.assertTrue(res.name == "Pro" and res.num == 4)
 
 
     def test_boolean_complex_selection(self):
@@ -954,4 +954,4 @@ class Test_mol_res_spin(UnitTestCase):
         # Test:
         self.assertEqual(len(sel), 2)
         for res in sel:
-            self.assert_(res.num in [-4, 4])
+            self.assertTrue(res.num in [-4, 4])

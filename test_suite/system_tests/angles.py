@@ -76,7 +76,7 @@ class Angles(SystemTestCase):
             interatoms = return_interatom_list(spin_hash=cdp.mol[0].res[i].spin[0]._hash)
 
             # Check the containers.
-            self.assert_(len(interatoms) <= 1)
+            self.assertTrue(len(interatoms) <= 1)
 
             # No interatomic container.
             if not interatoms:

@@ -141,7 +141,7 @@ class Test_diff_tensor(TestCase):
         self.assertRaises(RelaxError, setattr, self.diff_data, 'Diso', 1/(6*1e-8))
 
         # Make sure that the Diso parameter has not been set.
-        self.assert_(not hasattr(self.diff_data, 'Diso'))
+        self.assertTrue(not hasattr(self.diff_data, 'Diso'))
 
 
     def test_set_spheroid_errors(self):
@@ -322,9 +322,9 @@ class Test_diff_tensor(TestCase):
         self.diff_data.set(param='tm', value=1e-8)
 
         # Test that the tm parameter has been set correctly.
-        self.assert_(hasattr(self.diff_data, 'tm'))
+        self.assertTrue(hasattr(self.diff_data, 'tm'))
         self.assertEqual(self.diff_data.tm, 1e-8)
 
         # Test that the Diso parameter has been set correctly.
-        self.assert_(hasattr(self.diff_data, 'Diso'))
+        self.assertTrue(hasattr(self.diff_data, 'Diso'))
         self.assertEqual(self.diff_data.Diso, 1/(6*1e-8))

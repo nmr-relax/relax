@@ -265,7 +265,7 @@ class Pcs(SystemTestCase):
         print("\n")
         for spin, spin_id in spin_loop(return_id=True):
             print("Checking the PCS data of spin '%s'." % spin_id)
-            self.assert_(hasattr(spin, 'pcs'))
+            self.assertTrue(hasattr(spin, 'pcs'))
             self.assertEqual(spin.pcs['dy'], pcs_data[spin_id])
             self.assertEqual(spin.pcs_err['dy'], 0.1)
 
@@ -302,7 +302,7 @@ class Pcs(SystemTestCase):
         print("\n")
         for spin, spin_id in spin_loop(return_id=True):
             print("Checking the PCS data of spin '%s'." % spin_id)
-            self.assert_(hasattr(spin, 'pcs'))
+            self.assertTrue(hasattr(spin, 'pcs'))
             self.assertEqual(spin.pcs['dy'], pcs_data[spin_id])
             self.assertEqual(spin.pcs_err['dy'], 0.1)
 
@@ -338,10 +338,10 @@ class Pcs(SystemTestCase):
         self.interpreter.pcs.copy(pipe_from='orig', align_id='tb')
 
         # Checks.
-        self.assert_(hasattr(cdp, 'align_ids'))
-        self.assert_('tb' in cdp.align_ids)
-        self.assert_(hasattr(cdp, 'pcs_ids'))
-        self.assert_('tb' in cdp.pcs_ids)
+        self.assertTrue(hasattr(cdp, 'align_ids'))
+        self.assertTrue('tb' in cdp.align_ids)
+        self.assertTrue(hasattr(cdp, 'pcs_ids'))
+        self.assertTrue('tb' in cdp.pcs_ids)
         self.assertEqual(count_spins(), 26)
         self.assertEqual(len(cdp.interatomic), 0)
         i = 0
@@ -384,17 +384,17 @@ class Pcs(SystemTestCase):
         ]
         for i in range(2):
             print("\nChecking data pipe '%s'." % pipes[i])
-            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
-            self.assert_('tb' in ds[pipes[i]].align_ids)
-            self.assert_(hasattr(ds[pipes[i]], 'pcs_ids'))
-            self.assert_('tb' in ds[pipes[i]].pcs_ids)
+            self.assertTrue(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assertTrue('tb' in ds[pipes[i]].align_ids)
+            self.assertTrue(hasattr(ds[pipes[i]], 'pcs_ids'))
+            self.assertTrue('tb' in ds[pipes[i]].pcs_ids)
             self.assertEqual(count_spins(), 25)
             self.assertEqual(len(cdp.interatomic), 0)
             j = 0
             for spin in spin_loop(pipe=pipes[i]):
                 # Atom C2 in the 'new' data pipe has no PCSs.
                 if i == 1 and j == 1:
-                    self.assert_(not hasattr(spin, 'pcs'))
+                    self.assertTrue(not hasattr(spin, 'pcs'))
                 else:
                     if pcs[i][j] == None:
                         self.assertEqual(pcs[i][j], spin.pcs['tb'])
@@ -446,17 +446,17 @@ class Pcs(SystemTestCase):
         ]
         for i in range(2):
             print("\nChecking data pipe '%s'." % pipes[i])
-            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
-            self.assert_('tb' in ds[pipes[i]].align_ids)
-            self.assert_(hasattr(ds[pipes[i]], 'pcs_ids'))
-            self.assert_('tb' in ds[pipes[i]].pcs_ids)
+            self.assertTrue(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assertTrue('tb' in ds[pipes[i]].align_ids)
+            self.assertTrue(hasattr(ds[pipes[i]], 'pcs_ids'))
+            self.assertTrue('tb' in ds[pipes[i]].pcs_ids)
             self.assertEqual(count_spins(), 25)
             self.assertEqual(len(cdp.interatomic), 0)
             j = 0
             for spin in spin_loop(pipe=pipes[i]):
                 # Atom C2 in the 'new' data pipe has no PCSs.
                 if i == 1 and j == 1:
-                    self.assert_(not hasattr(spin, 'pcs'))
+                    self.assertTrue(not hasattr(spin, 'pcs'))
                 else:
                     if pcs[i][j] == None:
                         self.assertEqual(None, spin.pcs['tb'])

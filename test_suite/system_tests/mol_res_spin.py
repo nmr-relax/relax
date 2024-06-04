@@ -54,8 +54,8 @@ class Mol_res_spin(SystemTestCase):
 
         # Make sure that certain spin IDs have been removed.
         print("The spin ID lookup table:\n%s" % cdp.mol._spin_id_lookup)
-        self.assert_(':3' not in cdp.mol._spin_id_lookup)
-        self.assert_('#CaM' not in cdp.mol._spin_id_lookup)
+        self.assertTrue(':3' not in cdp.mol._spin_id_lookup)
+        self.assertTrue('#CaM' not in cdp.mol._spin_id_lookup)
 
         # Create some more spins.
         self.interpreter.spin.create(spin_name='N', spin_num=3, res_name='Gly', res_num=4, mol_name='CaM')
@@ -63,8 +63,8 @@ class Mol_res_spin(SystemTestCase):
 
         # Make sure that certain spin IDs have been removed.
         print("The spin ID lookup table:\n%s" % cdp.mol._spin_id_lookup)
-        self.assert_('@N' not in cdp.mol._spin_id_lookup)
-        self.assert_('@H' not in cdp.mol._spin_id_lookup)
+        self.assertTrue('@N' not in cdp.mol._spin_id_lookup)
+        self.assertTrue('@H' not in cdp.mol._spin_id_lookup)
 
 
     def test_residue_delete(self):

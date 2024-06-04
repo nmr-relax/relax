@@ -106,9 +106,9 @@ class Bruker(GuiTestCase, system_tests.bruker.Bruker):
         analysis.relax_data.wizard._go_next(None)
 
         # Check that no data was loaded.
-        self.assert_(not hasattr(cdp, 'ri_ids'))
-        self.assert_(not hasattr(cdp, 'spectrometer_frq'))
-        self.assert_(not hasattr(cdp, 'ri_type'))
+        self.assertTrue(not hasattr(cdp, 'ri_ids'))
+        self.assertTrue(not hasattr(cdp, 'spectrometer_frq'))
+        self.assertTrue(not hasattr(cdp, 'ri_type'))
         for spin in spin_loop():
-            self.assert_(not hasattr(spin, 'ri_data'))
-            self.assert_(not hasattr(spin, 'ri_data_err'))
+            self.assertTrue(not hasattr(spin, 'ri_data'))
+            self.assertTrue(not hasattr(spin, 'ri_data_err'))

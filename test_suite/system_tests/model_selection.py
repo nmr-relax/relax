@@ -83,5 +83,5 @@ class Modsel(SystemTestCase):
         dp_aic = pipes.get_pipe('aic')
 
         # Test if the spheroid has been selected.
-        self.assert_(hasattr(dp_aic, 'diff_tensor'))
+        self.assertTrue(hasattr(dp_aic, 'diff_tensor'))
         self.assertEqual(dp_aic.diff_tensor.type, 'spheroid')

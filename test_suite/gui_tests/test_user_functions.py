@@ -85,8 +85,8 @@ class User_functions(GuiTestCase):
         uf.wizard._go_next(None)
 
         # Check the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 3)
         self.assertEqual(cdp.structure.structural_data[0].num, 1)
         self.assertEqual(cdp.structure.structural_data[1].num, 2)
@@ -229,7 +229,7 @@ class User_functions(GuiTestCase):
         uf.page.uf_args['file'].selection_win_data()
         file = uf.page.uf_args['file'].GetValue()
         print("File names:  %s" % file)
-        self.assert_(isinstance(file, str))
+        self.assertTrue(isinstance(file, str))
         self.assertEqual(file, 'test_file')
 
         # Set the file to nothing in the wizard, open the Sequence window, close the window, and check that None comes back.
@@ -387,8 +387,8 @@ class User_functions(GuiTestCase):
         uf.wizard._go_next(None)
 
         # Check the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 2)
         self.assertEqual(cdp.structure.structural_data[0].num, 1)
         self.assertEqual(cdp.structure.structural_data[1].num, 3)
@@ -530,8 +530,8 @@ class User_functions(GuiTestCase):
             self.assertEqual(R[2][2], None)
 
         # Check the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 2)
         self.assertEqual(cdp.structure.structural_data[0].num, 1)
         self.assertEqual(cdp.structure.structural_data[1].num, 3)

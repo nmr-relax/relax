@@ -1265,7 +1265,7 @@ class Structure(SystemTestCase):
         cdp.structure.collapse_ensemble(model_num=2, model_to=1)
 
         # Check the collapsed ensemble.
-        self.assert_(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp, 'structure'))
         self.assertEqual(len(cdp.structure.structural_data), 1)
         self.assertEqual(cdp.structure.structural_data[0].num, 1)
         self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
@@ -3611,8 +3611,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=2)
 
         # Test the structure metadata.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 2)
         self.assertEqual(cdp.structure.structural_data[0].num, 1)
         self.assertEqual(cdp.structure.structural_data[1].num, 2)
@@ -3621,8 +3621,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(model=1)
 
         # Test the structure metadata.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 1)
         self.assertEqual(cdp.structure.structural_data[0].num, 2)
 
@@ -3631,8 +3631,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(model=3)
 
         # Test the structure metadata.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 1)
         self.assertEqual(cdp.structure.structural_data[0].num, 2)
 
@@ -3641,8 +3641,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(model=2)
 
         # Test the structure metadata.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 1)
         self.assertEqual(cdp.structure.structural_data[0].num, 10)
 
@@ -3663,10 +3663,10 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete()
 
         # Checks.
-        self.assert_(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp, 'structure'))
         self.assertEqual(len(cdp.structure.structural_data), 0)
         self.interpreter.pipe.switch('mf')
-        self.assert_(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp, 'structure'))
         self.assertEqual(len(cdp.structure.structural_data), 1)
 
 
@@ -3718,7 +3718,7 @@ class Structure(SystemTestCase):
         ]
 
         # Test the results.
-        self.assert_(hasattr(cdp.structure, 'displacements'))
+        self.assertTrue(hasattr(cdp.structure, 'displacements'))
         for i in range(len(ids)):
             for j in range(len(ids)):
                 # Check the translation.
@@ -3743,7 +3743,7 @@ class Structure(SystemTestCase):
         self.interpreter.state.load(self.tmpfile)
 
         # Test the re-loaded data.
-        self.assert_(hasattr(cdp.structure, 'displacements'))
+        self.assertTrue(hasattr(cdp.structure, 'displacements'))
         for i in range(len(ids)):
             for j in range(len(ids)):
                 # Check the translation.
@@ -3809,7 +3809,7 @@ class Structure(SystemTestCase):
         ]
 
         # Test the results.
-        self.assert_(hasattr(cdp.structure, 'displacements'))
+        self.assertTrue(hasattr(cdp.structure, 'displacements'))
         for i in range(len(ids)):
             for j in range(len(ids)):
                 # Check the translation.
@@ -3834,7 +3834,7 @@ class Structure(SystemTestCase):
         self.interpreter.state.load(self.tmpfile)
 
         # Test the re-loaded data.
-        self.assert_(hasattr(cdp.structure, 'displacements'))
+        self.assertTrue(hasattr(cdp.structure, 'displacements'))
         for i in range(len(ids)):
             for j in range(len(ids)):
                 # Check the translation.
@@ -3943,10 +3943,10 @@ class Structure(SystemTestCase):
         self.interpreter.results.read(file='str_internal', dir=path)
 
         # Test the structure metadata.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assert_(len(cdp.structure.structural_data))
-        self.assert_(len(cdp.structure.structural_data[0].mol))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(len(cdp.structure.structural_data))
+        self.assertTrue(len(cdp.structure.structural_data[0].mol))
 
         mol = cdp.structure.structural_data[0].mol[0]
         self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
@@ -4122,8 +4122,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_model(model_num=4)
 
         # Check that the models were correctly created.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 3)
 
         # Create a structure with some atoms.
@@ -4253,12 +4253,12 @@ class Structure(SystemTestCase):
         ]
 
         # Check the helix data.
-        self.assert_(hasattr(cdp.structure, 'helices'))
+        self.assertTrue(hasattr(cdp.structure, 'helices'))
         self.assertEqual(len(cdp.structure.helices), 1)
         self.assertEqual(cdp.structure.helices[0], helices[0])
 
         # Check the sheet data.
-        self.assert_(hasattr(cdp.structure, 'sheets'))
+        self.assertTrue(hasattr(cdp.structure, 'sheets'))
         self.assertEqual(len(cdp.structure.sheets), 2)
         self.assertEqual(cdp.structure.sheets[0], sheets[0])
         self.assertEqual(cdp.structure.sheets[1], sheets[1])
@@ -4342,9 +4342,9 @@ class Structure(SystemTestCase):
                 proj[:, mode] = -proj[:, mode]
 
         # Checks.
-        self.assert_(hasattr(cdp.structure, 'pca_values'))
-        self.assert_(hasattr(cdp.structure, 'pca_vectors'))
-        self.assert_(hasattr(cdp.structure, 'pca_proj'))
+        self.assertTrue(hasattr(cdp.structure, 'pca_values'))
+        self.assertTrue(hasattr(cdp.structure, 'pca_vectors'))
+        self.assertTrue(hasattr(cdp.structure, 'pca_proj'))
         self.assertEqual(len(cdp.structure.pca_values), 4)
         for mode in range(4):
             self.assertAlmostEqual(cdp.structure.pca_values[mode], values[mode], 5)
@@ -4378,9 +4378,9 @@ class Structure(SystemTestCase):
                 proj[:, mode] = -proj[:, mode]
 
         # Checks.
-        self.assert_(hasattr(cdp.structure, 'pca_values'))
-        self.assert_(hasattr(cdp.structure, 'pca_vectors'))
-        self.assert_(hasattr(cdp.structure, 'pca_proj'))
+        self.assertTrue(hasattr(cdp.structure, 'pca_values'))
+        self.assertTrue(hasattr(cdp.structure, 'pca_vectors'))
+        self.assertTrue(hasattr(cdp.structure, 'pca_proj'))
         self.assertEqual(len(cdp.structure.pca_values), 4)
         for mode in range(4):
             self.assertAlmostEqual(cdp.structure.pca_values[mode], values[mode], 5)
@@ -4566,8 +4566,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('1UBQ.pdb', dir=path)
 
         # Check the data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 1)
         self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
 
@@ -4612,8 +4612,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.load_spins()
 
         # Test the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 2)
         self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
         self.assertEqual(len(cdp.structure.structural_data[1].mol), 3)
@@ -4659,7 +4659,7 @@ class Structure(SystemTestCase):
         self.interpreter.interatom.define(spin_id1='@CA', spin_id2='#1F35_N_H_molmol_mol1:3@N')
         self.interpreter.interatom.unit_vectors()
         print(cdp.interatomic[0])
-        self.assert_(hasattr(cdp.interatomic[0], 'vector'))
+        self.assertTrue(hasattr(cdp.interatomic[0], 'vector'))
 
 
     def test_read_pdb_internal2(self):
@@ -4780,8 +4780,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.load_spins()
 
         # Test the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 1)
         self.assertEqual(len(cdp.structure.structural_data[0].mol), 2)
 
@@ -4817,8 +4817,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.load_spins()
 
         # Test the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 1)
         self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
 
@@ -5231,8 +5231,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_model(model_num=4)
 
         # Check that the models were correctly created.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 3)
 
         # Create a structure with some atoms.
@@ -5255,7 +5255,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.rmsd()
 
         # Checks.
-        self.assert_(hasattr(cdp.structure, 'rmsd'))
+        self.assertTrue(hasattr(cdp.structure, 'rmsd'))
         self.assertAlmostEqual(cdp.structure.rmsd, sqrt(4.0/3.0))
 
 
@@ -5280,7 +5280,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.rmsd(molecules=[['X', 'Y', 'Z']])
 
         # Checks.
-        self.assert_(hasattr(cdp.structure, 'rmsd'))
+        self.assertTrue(hasattr(cdp.structure, 'rmsd'))
         self.assertAlmostEqual(cdp.structure.rmsd, sqrt(4.0/3.0))
 
 
@@ -5293,8 +5293,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_model(model_num=4)
 
         # Check that the models were correctly created.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertTrue(hasattr(cdp, 'structure'))
+        self.assertTrue(hasattr(cdp.structure, 'structural_data'))
         self.assertEqual(len(cdp.structure.structural_data), 3)
 
         # Create a structure with some atoms.
@@ -5340,7 +5340,7 @@ class Structure(SystemTestCase):
         rmsd = sqrt(mean(all_rmsd**2))
 
         # Checks (the values match the VMD 1.9.1 RMSD numbers).
-        self.assert_(hasattr(cdp.structure, 'rmsd'))
+        self.assertTrue(hasattr(cdp.structure, 'rmsd'))
         self.assertAlmostEqual(cdp.structure.rmsd, rmsd)
 
 

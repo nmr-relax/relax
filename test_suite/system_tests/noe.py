@@ -288,7 +288,7 @@ class Noe(SystemTestCase):
             file_name = "%s.agr" % ids[i]
 
             # Does the file exist?
-            self.assert_(access(ds.tmpdir+sep+file_name, F_OK))
+            self.assertTrue(access(ds.tmpdir+sep+file_name, F_OK))
 
             # Open the file and extract the contents.
             file = open(ds.tmpdir + sep + file_name)

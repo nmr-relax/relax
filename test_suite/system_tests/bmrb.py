@@ -117,7 +117,7 @@ class Bmrb(SystemTestCase):
 
         # The diffusion tensor.
         if version != '3.0':
-            self.assert_(hasattr(new_pipe, 'diff_tensor'))
+            self.assertTrue(hasattr(new_pipe, 'diff_tensor'))
             self.data_cont_comp(label='Diff tensor', cont_old=old_pipe.diff_tensor, cont_new=new_pipe.diff_tensor, prec=4, blacklist=blacklist_diff)
 
         # The global data structures.
@@ -163,7 +163,7 @@ class Bmrb(SystemTestCase):
                 continue
 
             # Does it exist?
-            self.assert_(hasattr(cont_new, name))
+            self.assertTrue(hasattr(cont_new, name))
 
             # Compare lists.
             if (isinstance(obj_old, list) or isinstance(obj_old, ndarray)):
@@ -200,7 +200,7 @@ class Bmrb(SystemTestCase):
 
         # Check that the new container has relaxation data.
         for name in ['spectrometer_frq', 'ri_ids', 'ri_type']:
-            self.assert_(hasattr(cont_new, name))
+            self.assertTrue(hasattr(cont_new, name))
 
         # Check the IDs.
         old_ids = deepcopy(cont_old.ri_ids)
@@ -220,7 +220,7 @@ class Bmrb(SystemTestCase):
 
         # Check that the new container has relaxation data.
         for name in ['ri_data', 'ri_data_err']:
-            self.assert_(hasattr(cont_new, name))
+            self.assertTrue(hasattr(cont_new, name))
 
         # Check the IDs.
         old_ids = sorted(cont_old.ri_data.keys())
@@ -288,8 +288,8 @@ class Bmrb(SystemTestCase):
         self.interpreter.state.load('corrupted_state', dir=self.tmpdir)
 
         # Checks.
-        self.assert_(hasattr(cdp, 'exp_info'))
-        self.assert_(hasattr(cdp.exp_info, 'software'))
+        self.assertTrue(hasattr(cdp, 'exp_info'))
+        self.assertTrue(hasattr(cdp.exp_info, 'software'))
         self.assertEqual(len(cdp.exp_info.software), 1)
         self.assertEqual(cdp.exp_info.software[0].name, 'software')
         self.assertEqual(cdp.exp_info.software[0].desc, 'Software program used in the analysis')

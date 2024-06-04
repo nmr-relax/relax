@@ -92,7 +92,7 @@ class Relax_fit(SystemTestCase):
         for spin in spin_loop():
             # No data present.
             if chi2[i] == None:
-                self.assert_(not hasattr(spin, 'chi2'))
+                self.assertTrue(not hasattr(spin, 'chi2'))
 
             # Data present.
             else:
@@ -224,14 +224,14 @@ class Relax_fit(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'curve_fitting'+sep+'relax_fit_inversion_recovery.py')
 
         # Check that the Iinf parameter files have been created.
-        self.assert_(access(ds.tmpdir+sep+'i0.out', F_OK))
-        self.assert_(access(ds.tmpdir+sep+'iinf.out', F_OK))
-        self.assert_(access(ds.tmpdir+sep+'rx.out', F_OK))
+        self.assertTrue(access(ds.tmpdir+sep+'i0.out', F_OK))
+        self.assertTrue(access(ds.tmpdir+sep+'iinf.out', F_OK))
+        self.assertTrue(access(ds.tmpdir+sep+'rx.out', F_OK))
 
         # Check that the Iinf grace graphs have been created.
-        self.assert_(access(ds.tmpdir+sep+'grace'+sep+'i0.agr', F_OK))
-        self.assert_(access(ds.tmpdir+sep+'grace'+sep+'iinf.agr', F_OK))
-        self.assert_(access(ds.tmpdir+sep+'grace'+sep+'rx.agr', F_OK))
+        self.assertTrue(access(ds.tmpdir+sep+'grace'+sep+'i0.agr', F_OK))
+        self.assertTrue(access(ds.tmpdir+sep+'grace'+sep+'iinf.agr', F_OK))
+        self.assertTrue(access(ds.tmpdir+sep+'grace'+sep+'rx.agr', F_OK))
 
 
     def test_curve_fitting_height(self):

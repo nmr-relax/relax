@@ -437,7 +437,7 @@ class Spin_base_class(UnitTestCase):
         # Test that the first spin is now 6, C19.
         self.assertEqual(dp.mol[0].res[0].spin[0].num, 6)
         self.assertEqual(dp.mol[0].res[0].spin[0].name, 'C19')
-        self.assert_(not hasattr(dp.mol[0].res[0].spin[0], 'x'))
+        self.assertTrue(not hasattr(dp.mol[0].res[0].spin[0], 'x'))
 
 
     def test_delete_spin_num(self):
@@ -456,7 +456,7 @@ class Spin_base_class(UnitTestCase):
         # Test that the first spin is now 6, C19.
         self.assertEqual(dp.mol[0].res[0].spin[0].num, 6)
         self.assertEqual(dp.mol[0].res[0].spin[0].name, 'C19')
-        self.assert_(not hasattr(dp.mol[0].res[0].spin[0], 'x'))
+        self.assertTrue(not hasattr(dp.mol[0].res[0].spin[0], 'x'))
 
 
     def test_delete_spin_all(self):

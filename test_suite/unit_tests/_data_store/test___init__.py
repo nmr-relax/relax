@@ -61,14 +61,14 @@ class Test___init__(PackageTestCase):
         ds.add(pipe_name='new', pipe_type='mf')
 
         # Test that the new data pipe exists.
-        self.assert_('new' in ds)
+        self.assertTrue('new' in ds)
 
 
     def test_repr(self):
         """Unit test for the validity of the __repr__() method."""
 
         # Test that __repr__() returns a string.
-        self.assert_(type(ds.__repr__()), str)
+        self.assertTrue(type(ds.__repr__()), str)
 
 
     def test_reset(self):
@@ -81,13 +81,13 @@ class Test___init__(PackageTestCase):
         self.assertEqual(list(ds.keys()), [])
 
         # Test that the object ds.test is deleted.
-        self.assert_(not hasattr(ds, 'test'))
+        self.assertTrue(not hasattr(ds, 'test'))
 
         # Test that the object methods still exist.
-        self.assert_(hasattr(ds, '__new__'))
-        self.assert_(hasattr(ds, '__repr__'))
-        self.assert_(hasattr(ds, '__reset__'))
-        self.assert_(hasattr(ds, 'add'))
+        self.assertTrue(hasattr(ds, '__new__'))
+        self.assertTrue(hasattr(ds, '__repr__'))
+        self.assertTrue(hasattr(ds, '__reset__'))
+        self.assertTrue(hasattr(ds, 'add'))
 
         # Test that the object's initial objects still exist.
-        self.assert_(hasattr(ds, 'current_pipe'))
+        self.assertTrue(hasattr(ds, 'current_pipe'))

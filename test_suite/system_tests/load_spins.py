@@ -62,4 +62,4 @@ class Load_spins(SystemTestCase):
             self.assertEqual(cdp.mol[0].res[0].spin[i].num, nums[i])
             self.assertEqual(cdp.mol[0].res[0].spin[i].name, names[i])
             self.assertEqual(cdp.mol[0].res[0].spin[i].element, elements[i])
-            self.assert_(hasattr(cdp.mol[0].res[0].spin[i], 'pos'))
+            self.assertTrue(hasattr(cdp.mol[0].res[0].spin[i], 'pos'))

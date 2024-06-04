@@ -66,7 +66,7 @@ class Ct(SystemTestCase):
         for res in residue_loop():
             # Residues -2 and -1 have data.
             if res.num == -2 or res.num == -1:
-                self.assert_(res.spin[0].select)
+                self.assertTrue(res.spin[0].select)
                 self.assertAlmostEqual(res.spin[0].j0, j0[index])
                 self.assertAlmostEqual(res.spin[0].f_eta, f_eta[index])
                 self.assertAlmostEqual(res.spin[0].f_r2, f_r2[index])
@@ -74,7 +74,7 @@ class Ct(SystemTestCase):
 
             # Other residues have insufficient data.
             else:
-                self.assert_(not res.spin[0].select)
+                self.assertTrue(not res.spin[0].select)
 
 
     def test_set_value(self):

@@ -95,7 +95,7 @@ class Sequence_base_class(UnitTestCase):
         self.assertEqual(dp_new.mol[0].res[4].name, 'SER')
 
         # Test that the extra object was not copied.
-        self.assert_(not hasattr(dp_new.mol[0].res[2].spin[0], 'test'))
+        self.assertTrue(not hasattr(dp_new.mol[0].res[2].spin[0], 'test'))
 
 
     def test_display_protein_sequence(self):

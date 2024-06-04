@@ -45,4 +45,4 @@ class Test___init__(PackageTestCase):
     def test_correct_package(self):
         """Just be sure that the correct package is loaded."""
 
-        self.assert_('model_selection' in self.package.__all__)
+        self.assertTrue('model_selection' in self.package.__all__)

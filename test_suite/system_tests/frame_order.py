@@ -477,13 +477,13 @@ class Frame_order(SystemTestCase):
             setattr(cdp, param, curr+delta)
             self.interpreter.minimise.calculate()
             print("%-20s %10.5f" % ("chi2 up", cdp.chi2))
-            self.assert_(cdp.chi2 > ref_chi2)
+            self.assertTrue(cdp.chi2 > ref_chi2)
 
             # Deviate downwards.
             setattr(cdp, param, curr-delta)
             self.interpreter.minimise.calculate()
             print("%-20s %10.5f" % ("chi2 down", cdp.chi2))
-            self.assert_(cdp.chi2 > ref_chi2)
+            self.assertTrue(cdp.chi2 > ref_chi2)
 
             # Reset.
             setattr(cdp, param, curr)
@@ -1720,7 +1720,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assert_(not hasattr(cdp, 'sobol_points_used'))
+        self.assertTrue(not hasattr(cdp, 'sobol_points_used'))
 
 
     def test_count_sobol_points_rotor(self):
@@ -3453,8 +3453,8 @@ class Frame_order(SystemTestCase):
 
                     # Check the X and nX vectors.
                     if res_name in ['X', 'nX']:
-                        self.assert_(theta >= X_theta_min - epsilon)
-                        self.assert_(theta <= X_theta_max + epsilon)
+                        self.assertTrue(theta >= X_theta_min - epsilon)
+                        self.assertTrue(theta <= X_theta_max + epsilon)
                         if phi < 0.1:
                             self.assertAlmostEqual(phi, 0.0, 3)
                         else:
@@ -3463,38 +3463,38 @@ class Frame_order(SystemTestCase):
 
                     # Check the Y vector.
                     elif res_name == 'Y':
-                        self.assert_(r/100.0 >= 1.0 - epsilon)
-                        self.assert_(theta >= pi/4.0 - epsilon)
-                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertTrue(r/100.0 >= 1.0 - epsilon)
+                        self.assertTrue(theta >= pi/4.0 - epsilon)
+                        self.assertTrue(theta <= 2.0*pi - pi/4.0 + epsilon)
                         self.assertAlmostEqual(new_pos[1], 100.0, 3)
 
                     # Check the Z vector (should not move).
                     elif res_name == 'Z':
-                        self.assert_(r/100.0 >= 1.0 - epsilon)
+                        self.assertTrue(r/100.0 >= 1.0 - epsilon)
                         self.assertAlmostEqual(new_pos[0], -70.711, 3)
                         self.assertAlmostEqual(new_pos[1], 0.0, 3)
                         self.assertAlmostEqual(new_pos[2], 70.711, 3)
 
                     # Check the nY vector.
                     elif res_name == 'nY':
-                        self.assert_(r/100.0 >= 1.0 - epsilon)
-                        self.assert_(theta >= pi/4.0 - epsilon)
-                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertTrue(r/100.0 >= 1.0 - epsilon)
+                        self.assertTrue(theta >= pi/4.0 - epsilon)
+                        self.assertTrue(theta <= 2.0*pi - pi/4.0 + epsilon)
                         self.assertAlmostEqual(new_pos[1], -100.0, 3)
 
                     # Check the nZ vector (should not move).
                     elif res_name == 'nZ':
-                        self.assert_(r/100.0 >= 1.0 - epsilon)
-                        self.assert_(theta >= pi/4.0 - epsilon)
-                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertTrue(r/100.0 >= 1.0 - epsilon)
+                        self.assertTrue(theta >= pi/4.0 - epsilon)
+                        self.assertTrue(theta <= 2.0*pi - pi/4.0 + epsilon)
                         self.assertAlmostEqual(new_pos[1], 0.0, 3)
 
                     # Check the centre.
                     elif res_name == 'C':
-                        self.assert_(r/100.0 <= 1.4142135623730951 + epsilon)
+                        self.assertTrue(r/100.0 <= 1.4142135623730951 + epsilon)
                         if not (new_pos[0] == 0.0 and new_pos[1] == 0.0 and new_pos[2] == 0.0):
-                            self.assert_(theta >= pi/4.0 - epsilon)
-                            self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                            self.assertTrue(theta >= pi/4.0 - epsilon)
+                            self.assertTrue(theta <= 2.0*pi - pi/4.0 + epsilon)
                         self.assertAlmostEqual(new_pos[1], 0.0, 3)
 
                     # Check the origin.
@@ -3577,8 +3577,8 @@ class Frame_order(SystemTestCase):
 
                     # Check the X and nX vectors.
                     if res_name in ['X', 'nX']:
-                        self.assert_(theta >= X_theta_min - epsilon)
-                        self.assert_(theta <= X_theta_max + epsilon)
+                        self.assertTrue(theta >= X_theta_min - epsilon)
+                        self.assertTrue(theta <= X_theta_max + epsilon)
                         if phi < 0.1:
                             self.assertAlmostEqual(phi, 0.0, 3)
                         else:
@@ -3587,38 +3587,38 @@ class Frame_order(SystemTestCase):
 
                     # Check the Y vector.
                     elif res_name == 'Y':
-                        self.assert_(r/100.0 >= 1.0 - epsilon)
-                        self.assert_(theta >= pi/4.0 - epsilon)
-                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertTrue(r/100.0 >= 1.0 - epsilon)
+                        self.assertTrue(theta >= pi/4.0 - epsilon)
+                        self.assertTrue(theta <= 2.0*pi - pi/4.0 + epsilon)
                         self.assertAlmostEqual(new_pos[1], 100.0, 3)
 
                     # Check the Z vector (should not move).
                     elif res_name == 'Z':
-                        self.assert_(r/100.0 >= 1.0 - epsilon)
+                        self.assertTrue(r/100.0 >= 1.0 - epsilon)
                         self.assertAlmostEqual(new_pos[0], 0.0, 3)
                         self.assertAlmostEqual(new_pos[1], 0.0, 3)
                         self.assertAlmostEqual(new_pos[2], 100.0, 3)
 
                     # Check the nY vector.
                     elif res_name == 'nY':
-                        self.assert_(r/100.0 >= 1.0 - epsilon)
-                        self.assert_(theta >= pi/4.0 - epsilon)
-                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertTrue(r/100.0 >= 1.0 - epsilon)
+                        self.assertTrue(theta >= pi/4.0 - epsilon)
+                        self.assertTrue(theta <= 2.0*pi - pi/4.0 + epsilon)
                         self.assertAlmostEqual(new_pos[1], -100.0, 3)
 
                     # Check the nZ vector (should not move).
                     elif res_name == 'nZ':
-                        self.assert_(r/100.0 >= 1.0 - epsilon)
-                        self.assert_(theta >= pi/4.0 - epsilon)
-                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                        self.assertTrue(r/100.0 >= 1.0 - epsilon)
+                        self.assertTrue(theta >= pi/4.0 - epsilon)
+                        self.assertTrue(theta <= 2.0*pi - pi/4.0 + epsilon)
                         self.assertAlmostEqual(new_pos[1], 0.0, 3)
 
                     # Check the centre.
                     elif res_name == 'C':
-                        self.assert_(r/100.0 <= 1.4142135623730951 + epsilon)
+                        self.assertTrue(r/100.0 <= 1.4142135623730951 + epsilon)
                         if not (new_pos[0] == 0.0 and new_pos[1] == 0.0 and new_pos[2] == 0.0):
-                            self.assert_(theta >= pi/4.0 - epsilon)
-                            self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                            self.assertTrue(theta >= pi/4.0 - epsilon)
+                            self.assertTrue(theta <= 2.0*pi - pi/4.0 + epsilon)
                         self.assertAlmostEqual(new_pos[1], 0.0, 3)
 
                     # Check the origin.
@@ -3703,22 +3703,22 @@ class Frame_order(SystemTestCase):
                     # Check the Y vector.
                     elif res_name == 'Y':
                         self.assertAlmostEqual(r/100.0, 1.0, 3)
-                        self.assert_(new_pos[0] >= -70.711 - epsilon)
-                        self.assert_(new_pos[0] <= 70.711 + epsilon)
-                        self.assert_(new_pos[1] >= 0.0 - epsilon)
-                        self.assert_(new_pos[1] <= 100.0 + epsilon)
-                        self.assert_(new_pos[2] >= -70.711 - epsilon)
-                        self.assert_(new_pos[2] <= 70.711 + epsilon)
+                        self.assertTrue(new_pos[0] >= -70.711 - epsilon)
+                        self.assertTrue(new_pos[0] <= 70.711 + epsilon)
+                        self.assertTrue(new_pos[1] >= 0.0 - epsilon)
+                        self.assertTrue(new_pos[1] <= 100.0 + epsilon)
+                        self.assertTrue(new_pos[2] >= -70.711 - epsilon)
+                        self.assertTrue(new_pos[2] <= 70.711 + epsilon)
 
                     # Check the Z vector (should not move).
                     elif res_name == 'Z':
                         self.assertAlmostEqual(r/100.0, 1.0, 3)
-                        self.assert_(new_pos[0] >= -70.711 - epsilon)
-                        self.assert_(new_pos[0] <= 0.0 + epsilon)
-                        self.assert_(new_pos[1] >= -100.0 - epsilon)
-                        self.assert_(new_pos[1] <= 100.0 + epsilon)
-                        self.assert_(new_pos[2] >= 0.0 - epsilon)
-                        self.assert_(new_pos[2] <= 70.711 + epsilon)
+                        self.assertTrue(new_pos[0] >= -70.711 - epsilon)
+                        self.assertTrue(new_pos[0] <= 0.0 + epsilon)
+                        self.assertTrue(new_pos[1] >= -100.0 - epsilon)
+                        self.assertTrue(new_pos[1] <= 100.0 + epsilon)
+                        self.assertTrue(new_pos[2] >= 0.0 - epsilon)
+                        self.assertTrue(new_pos[2] <= 70.711 + epsilon)
 
                     # Check the nX vector.
                     elif res_name == 'nX':
@@ -3729,22 +3729,22 @@ class Frame_order(SystemTestCase):
                     # Check the nY vector.
                     elif res_name == 'nY':
                         self.assertAlmostEqual(r/100.0, 1.0, 3)
-                        self.assert_(new_pos[0] >= -70.711 - epsilon)
-                        self.assert_(new_pos[0] <= 70.711 + epsilon)
-                        self.assert_(new_pos[1] >= -100.0 - epsilon)
-                        self.assert_(new_pos[1] <= 0.0 + epsilon)
-                        self.assert_(new_pos[2] >= -70.711 - epsilon)
-                        self.assert_(new_pos[2] <= 70.711 + epsilon)
+                        self.assertTrue(new_pos[0] >= -70.711 - epsilon)
+                        self.assertTrue(new_pos[0] <= 70.711 + epsilon)
+                        self.assertTrue(new_pos[1] >= -100.0 - epsilon)
+                        self.assertTrue(new_pos[1] <= 0.0 + epsilon)
+                        self.assertTrue(new_pos[2] >= -70.711 - epsilon)
+                        self.assertTrue(new_pos[2] <= 70.711 + epsilon)
 
                     # Check the nZ vector (should not move).
                     elif res_name == 'nZ':
                         self.assertAlmostEqual(r/100.0, 1.0, 3)
-                        self.assert_(new_pos[0] >= 0.0 - epsilon)
-                        self.assert_(new_pos[0] <= 70.711 + epsilon)
-                        self.assert_(new_pos[1] >= -100.0 - epsilon)
-                        self.assert_(new_pos[1] <= 100.0 + epsilon)
-                        self.assert_(new_pos[2] >= -70.711 - epsilon)
-                        self.assert_(new_pos[2] <= 0.0 + epsilon)
+                        self.assertTrue(new_pos[0] >= 0.0 - epsilon)
+                        self.assertTrue(new_pos[0] <= 70.711 + epsilon)
+                        self.assertTrue(new_pos[1] >= -100.0 - epsilon)
+                        self.assertTrue(new_pos[1] <= 100.0 + epsilon)
+                        self.assertTrue(new_pos[2] >= -70.711 - epsilon)
+                        self.assertTrue(new_pos[2] <= 0.0 + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -3835,19 +3835,19 @@ class Frame_order(SystemTestCase):
                     elif res_name == 'Y':
                         self.assertAlmostEqual(r/100.0, 1.0, 3)
                         self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                        self.assert_(new_pos[1] >= 0.0 - epsilon)
-                        self.assert_(new_pos[1] <= 100.0 + epsilon)
-                        self.assert_(new_pos[2] >= -100.0 - epsilon)
-                        self.assert_(new_pos[2] <= 100.0 + epsilon)
+                        self.assertTrue(new_pos[1] >= 0.0 - epsilon)
+                        self.assertTrue(new_pos[1] <= 100.0 + epsilon)
+                        self.assertTrue(new_pos[2] >= -100.0 - epsilon)
+                        self.assertTrue(new_pos[2] <= 100.0 + epsilon)
 
                     # Check the Z vector (should not move).
                     elif res_name == 'Z':
                         self.assertAlmostEqual(r/100.0, 1.0, 3)
                         self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                        self.assert_(new_pos[1] >= -100.0 - epsilon)
-                        self.assert_(new_pos[1] <= 100.0 + epsilon)
-                        self.assert_(new_pos[2] >= 0.0 - epsilon)
-                        self.assert_(new_pos[2] <= 100.0 + epsilon)
+                        self.assertTrue(new_pos[1] >= -100.0 - epsilon)
+                        self.assertTrue(new_pos[1] <= 100.0 + epsilon)
+                        self.assertTrue(new_pos[2] >= 0.0 - epsilon)
+                        self.assertTrue(new_pos[2] <= 100.0 + epsilon)
 
                     # Check the X and nX vectors.
                     elif res_name == 'nX':
@@ -3859,19 +3859,19 @@ class Frame_order(SystemTestCase):
                     elif res_name == 'nY':
                         self.assertAlmostEqual(r/100.0, 1.0, 3)
                         self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                        self.assert_(new_pos[1] >= -100.0 - epsilon)
-                        self.assert_(new_pos[1] <= 0.0 + epsilon)
-                        self.assert_(new_pos[2] >= -100.0 - epsilon)
-                        self.assert_(new_pos[2] <= 100.0 + epsilon)
+                        self.assertTrue(new_pos[1] >= -100.0 - epsilon)
+                        self.assertTrue(new_pos[1] <= 0.0 + epsilon)
+                        self.assertTrue(new_pos[2] >= -100.0 - epsilon)
+                        self.assertTrue(new_pos[2] <= 100.0 + epsilon)
 
                     # Check the nZ vector (should not move).
                     elif res_name == 'nZ':
                         self.assertAlmostEqual(r/100.0, 1.0, 3)
                         self.assertAlmostEqual(new_pos[0], 0.0, 3)
-                        self.assert_(new_pos[1] >= -100.0 - epsilon)
-                        self.assert_(new_pos[1] <= 100.0 + epsilon)
-                        self.assert_(new_pos[2] >= -100.0 - epsilon)
-                        self.assert_(new_pos[2] <= 0.0 + epsilon)
+                        self.assertTrue(new_pos[1] >= -100.0 - epsilon)
+                        self.assertTrue(new_pos[1] <= 100.0 + epsilon)
+                        self.assertTrue(new_pos[2] >= -100.0 - epsilon)
+                        self.assertTrue(new_pos[2] <= 0.0 + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -4057,21 +4057,21 @@ class Frame_order(SystemTestCase):
                     if res_name == 'X':
                         if abs(phi) > max_phi:
                             max_phi = abs(phi)
-                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                        self.assert_(phi >= -cone_sigma_max - lateral_slide)
-                        self.assert_(phi <= cone_sigma_max + lateral_slide)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assertTrue(phi >= -cone_sigma_max - lateral_slide)
+                        self.assertTrue(phi <= cone_sigma_max + lateral_slide)
 
                     # Check the Y vector.
                     elif res_name == 'Y':
-                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                        self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
-                        self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assertTrue(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                        self.assertTrue(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
 
                     # Check the Z vector (should be in the cone defined by theta).
                     elif res_name == 'Z':
-                        self.assert_(theta <= cone_theta + epsilon)
+                        self.assertTrue(theta <= cone_theta + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -4168,21 +4168,21 @@ class Frame_order(SystemTestCase):
                     if res_name == 'X':
                         if abs(phi) > max_phi:
                             max_phi = abs(phi)
-                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                        self.assert_(phi >= -cone_sigma_max - lateral_slide)
-                        self.assert_(phi <= cone_sigma_max + lateral_slide)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assertTrue(phi >= -cone_sigma_max - lateral_slide)
+                        self.assertTrue(phi <= cone_sigma_max + lateral_slide)
 
                     # Check the Y vector.
                     elif res_name == 'Y':
-                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                        self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
-                        self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assertTrue(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                        self.assertTrue(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
 
                     # Check the Z vector (should be in the cone defined by theta).
                     elif res_name == 'Z':
-                        self.assert_(theta <= cone_theta + epsilon)
+                        self.assertTrue(theta <= cone_theta + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -4271,17 +4271,17 @@ class Frame_order(SystemTestCase):
 
                     # Check the X vector.
                     if res_name == 'X':
-                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta + epsilon)
 
                     # Check the Y vector.
                     elif res_name == 'Y':
-                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta + epsilon)
 
                     # Check the Z vector (should be in the cone defined by theta).
                     elif res_name == 'Z':
-                        self.assert_(theta <= cone_theta + epsilon)
+                        self.assertTrue(theta <= cone_theta + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -4369,21 +4369,21 @@ class Frame_order(SystemTestCase):
                     if res_name == 'X':
                         if abs(phi) > max_phi:
                             max_phi = abs(phi)
-                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                        self.assert_(phi >= -lateral_slide)
-                        self.assert_(phi <= lateral_slide)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assertTrue(phi >= -lateral_slide)
+                        self.assertTrue(phi <= lateral_slide)
 
                     # Check the Y vector.
                     elif res_name == 'Y':
-                        self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
-                        self.assert_(phi-pi/2.0 >= -lateral_slide)
-                        self.assert_(phi-pi/2.0 <= lateral_slide)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta + epsilon)
+                        self.assertTrue(phi-pi/2.0 >= -lateral_slide)
+                        self.assertTrue(phi-pi/2.0 <= lateral_slide)
 
                     # Check the Z vector (should be in the cone defined by theta).
                     elif res_name == 'Z':
-                        self.assert_(theta <= cone_theta + epsilon)
+                        self.assertTrue(theta <= cone_theta + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -4479,22 +4479,22 @@ class Frame_order(SystemTestCase):
 
                     # Check the X vector.
                     if res_name == 'X':
-                        self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta_x - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta_x + epsilon)
 
                     # Check the Y vector.
                     elif res_name == 'Y':
                         if abs(phi-pi/2.0) > max_phi:
                             max_phi = abs(phi-pi/2.0)
-                        self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
-                        self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
-                        self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
-                        self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta_y - vertical_slide)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta_y + vertical_slide)
+                        self.assertTrue(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                        self.assertTrue(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
 
                     # Check the Z vector (should be in the cone defined by theta).
                     elif res_name == 'Z':
                         theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
-                        self.assert_(theta <= theta_max + epsilon)
+                        self.assertTrue(theta <= theta_max + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -4587,22 +4587,22 @@ class Frame_order(SystemTestCase):
 
                     # Check the X vector.
                     if res_name == 'X':
-                        self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta_x - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta_x + epsilon)
 
                     # Check the Y vector.
                     elif res_name == 'Y':
                         if abs(phi-pi/2.0) > max_phi:
                             max_phi = abs(phi-pi/2.0)
-                        self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
-                        self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
-                        self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
-                        self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta_y - vertical_slide)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta_y + vertical_slide)
+                        self.assertTrue(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                        self.assertTrue(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
 
                     # Check the Z vector (should be in the cone defined by theta).
                     elif res_name == 'Z':
                         theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
-                        self.assert_(theta <= theta_max + epsilon)
+                        self.assertTrue(theta <= theta_max + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -4692,13 +4692,13 @@ class Frame_order(SystemTestCase):
 
                     # Check the X and Y vectors.
                     if res_name in ['X', 'Y']:
-                        self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta_x - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta_x + epsilon)
 
                     # Check the Z vector (should be in the cone defined by theta).
                     elif res_name == 'Z':
                         theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
-                        self.assert_(theta <= theta_max + epsilon)
+                        self.assertTrue(theta <= theta_max + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -4788,22 +4788,22 @@ class Frame_order(SystemTestCase):
 
                     # Check the X vector.
                     if res_name == 'X':
-                        self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
-                        self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta_x - epsilon)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta_x + epsilon)
 
                     # Check the Y vector.
                     elif res_name == 'Y':
                         if abs(phi-pi/2.0) > max_phi:
                             max_phi = abs(phi-pi/2.0)
-                        self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
-                        self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
-                        self.assert_(phi-pi/2.0 >= -lateral_slide)
-                        self.assert_(phi-pi/2.0 <= lateral_slide)
+                        self.assertTrue(theta >= pi/2.0 - cone_theta_y - vertical_slide)
+                        self.assertTrue(theta <= pi/2.0 + cone_theta_y + vertical_slide)
+                        self.assertTrue(phi-pi/2.0 >= -lateral_slide)
+                        self.assertTrue(phi-pi/2.0 <= lateral_slide)
 
                     # Check the Z vector (should be in the cone defined by theta).
                     elif res_name == 'Z':
                         theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
-                        self.assert_(theta <= theta_max + epsilon)
+                        self.assertTrue(theta <= theta_max + epsilon)
 
                     # Check the centre.
                     elif res_name == 'C':
@@ -4890,15 +4890,15 @@ class Frame_order(SystemTestCase):
                     # Check the X vector.
                     if res_name == 'X':
                         self.assertAlmostEqual(theta, pi/2.0, 3)
-                        self.assert_(phi >= -cone_sigma_max)
-                        self.assert_(phi <= cone_sigma_max)
+                        self.assertTrue(phi >= -cone_sigma_max)
+                        self.assertTrue(phi <= cone_sigma_max)
                         self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
                     # Check the Y vector.
                     elif res_name == 'Y':
                         self.assertAlmostEqual(theta, pi/2.0, 3)
-                        self.assert_(phi-pi/2.0 >= -cone_sigma_max)
-                        self.assert_(phi-pi/2.0 <= cone_sigma_max)
+                        self.assertTrue(phi-pi/2.0 >= -cone_sigma_max)
+                        self.assertTrue(phi-pi/2.0 <= cone_sigma_max)
                         self.assertAlmostEqual(new_pos[2], 0.0, 3)
 
                     # Check the Z vector (should not move).

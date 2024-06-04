@@ -167,7 +167,7 @@ class Noe(GuiTestCase):
             i += 1
 
         # Check the created files.
-        self.assert_(access(ds.tmpdir+sep+'grace'+sep+'noe.agr', F_OK))
+        self.assertTrue(access(ds.tmpdir+sep+'grace'+sep+'noe.agr', F_OK))
 
 
     def test_noe_analysis_memory_leaks(self):

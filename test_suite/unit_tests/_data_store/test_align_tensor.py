@@ -165,7 +165,7 @@ class Test_align_tensor(TestCase):
         self.assertRaises(RelaxError, setattr, self.align_data, 'Szz', -23.0)
 
         # Make sure that the Szz parameter has not been set.
-        self.assert_(not hasattr(self.align_data, 'Szz'))
+        self.assertTrue(not hasattr(self.align_data, 'Szz'))
 
 
     def test_set_errors(self):
@@ -322,5 +322,5 @@ class Test_align_tensor(TestCase):
         self.align_data.set(param='Axx', value=0.0001)
 
         # Test that the Axx parameter has been set correctly.
-        self.assert_(hasattr(self.align_data, 'Axx'))
+        self.assertTrue(hasattr(self.align_data, 'Axx'))
         self.assertEqual(self.align_data.Axx, 0.0001)

@@ -59,7 +59,7 @@ class Test_pipes(UnitTestCase):
         pipes.copy('orig', 'new')
 
         # Test that the new data pipe exists.
-        self.assert_('new' in ds)
+        self.assertTrue('new' in ds)
 
         # Test that the new data pipe has the object 'x' and that its value is 1.
         self.assertEqual(ds['new'].x, 1)
@@ -68,7 +68,7 @@ class Test_pipes(UnitTestCase):
         ds['new'].x = 2
 
         # Test that the two values are different.
-        self.assert_(ds['orig'].x != ds['new'].x)
+        self.assertTrue(ds['orig'].x != ds['new'].x)
 
         # Test that the new data pipe has the object 'mol[0].res[0].spin[0].num' and that its value is 1.
         self.assertEqual(ds['new'].mol[0].res[0].spin[0].num, 1)
@@ -90,7 +90,7 @@ class Test_pipes(UnitTestCase):
         pipes.copy(pipe_to='new')
 
         # Test that the new data pipe exists.
-        self.assert_('new' in ds)
+        self.assertTrue('new' in ds)
 
         # Test that the new data pipe has the object 'x' and that its value is 1.
         self.assertEqual(ds['new'].x, 1)
@@ -99,7 +99,7 @@ class Test_pipes(UnitTestCase):
         ds['new'].x = 2
 
         # Test that the two values are different.
-        self.assert_(ds['orig'].x != ds['new'].x)
+        self.assertTrue(ds['orig'].x != ds['new'].x)
 
         # Test that the new data pipe has the object 'mol[0].res[0].spin[0].num' and that its value is 1.
         self.assertEqual(ds['new'].mol[0].res[0].spin[0].num, 1)
@@ -132,7 +132,7 @@ class Test_pipes(UnitTestCase):
         pipes.create(name, 'mf')
 
         # Test that the data pipe exists.
-        self.assert_(name in ds)
+        self.assertTrue(name in ds)
 
         # Test that the current pipe is the new pipe.
         self.assertEqual(pipes.cdp_name(), name)
@@ -172,7 +172,7 @@ class Test_pipes(UnitTestCase):
         pipes.delete(name)
 
         # Test that the data pipe no longer exists.
-        self.assert_(name not in ds)
+        self.assertTrue(name not in ds)
 
         # Test that the current pipe is None (as the current pipe was deleted).
         self.assertEqual(pipes.cdp_name(), None)

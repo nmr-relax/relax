@@ -344,7 +344,7 @@ class N_state_model(SystemTestCase):
 
             # Check the simulation values.
             for sim_index in range(cdp.sim_number):
-                self.assert_(abs(spin.pcs_sim[tag][sim_index] - spin.pcs[tag]) < 6.0*spin.pcs_err[tag])
+                self.assertTrue(abs(spin.pcs_sim[tag][sim_index] - spin.pcs[tag]) < 6.0*spin.pcs_err[tag])
 
             # Increment the spin index.
             i += 1
@@ -686,7 +686,7 @@ class N_state_model(SystemTestCase):
                     # Check that the container is clean.
                     for name in spin_deselect_blacklist:
                         print("    Checking the blacklisted object %s." % name)
-                        self.assert_(not hasattr(spin, name))
+                        self.assertTrue(not hasattr(spin, name))
 
                     # Skip the rest of the checks.
                     continue
@@ -708,7 +708,7 @@ class N_state_model(SystemTestCase):
 
                 # Check the simulation values.
                 for sim_index in range(cdp.sim_number):
-                    self.assert_(abs(spin.pcs_sim[tag][sim_index] - spin.pcs[tag]) < 6.0*spin.pcs_err[tag])
+                    self.assertTrue(abs(spin.pcs_sim[tag][sim_index] - spin.pcs[tag]) < 6.0*spin.pcs_err[tag])
 
                 # Increment the spin index.
                 i += 1
@@ -732,7 +732,7 @@ class N_state_model(SystemTestCase):
                     # Check that the container is clean.
                     for name in interatom_deselect_blacklist:
                         print("    Checking the blacklisted object %s." % name)
-                        self.assert_(not hasattr(interatom, name))
+                        self.assertTrue(not hasattr(interatom, name))
 
                     # Skip the rest of the checks.
                     continue
@@ -754,7 +754,7 @@ class N_state_model(SystemTestCase):
 
                 # Check the simulation values.
                 for sim_index in range(cdp.sim_number):
-                    self.assert_(abs(interatom.rdc_sim[tag][sim_index] - interatom.rdc[tag]) < 6.0*interatom.rdc_err[tag])
+                    self.assertTrue(abs(interatom.rdc_sim[tag][sim_index] - interatom.rdc[tag]) < 6.0*interatom.rdc_err[tag])
 
                 # Increment the interatom index.
                 i += 1
@@ -812,8 +812,8 @@ class N_state_model(SystemTestCase):
             print(spin)
 
             # Check for simulation data.
-            self.assert_(hasattr(spin, 'pcs_sim'))
-            self.assert_(key in spin.pcs_sim)
+            self.assertTrue(hasattr(spin, 'pcs_sim'))
+            self.assertTrue(key in spin.pcs_sim)
 
             # Check the values of the simulated data.
             for i in range(cdp.sim_number):
@@ -825,8 +825,8 @@ class N_state_model(SystemTestCase):
             print(interatom)
 
             # Check for simulation data.
-            self.assert_(hasattr(interatom, 'rdc_sim'))
-            self.assert_(key in interatom.rdc_sim)
+            self.assertTrue(hasattr(interatom, 'rdc_sim'))
+            self.assertTrue(key in interatom.rdc_sim)
 
             # Check the values of the simulated data.
             for i in range(cdp.sim_number):
@@ -1095,7 +1095,7 @@ class N_state_model(SystemTestCase):
         files = listdir(ds.tmpdir)
         for file in files:
             print("Checking file %s." % file)
-            self.assert_(file in ['NOE_viol_S_sorted', 'ensembles_superimposed', 'RDC_PAN_dist.agr', 'Q_factors_S', 'NOE_viol_curve.agr', 'NOE_viol_dist.agr', 'RDC_PAN_curve.agr', 'NOE_viol_S', 'Q_factors_R_sorted', 'NOE_results', 'Q_factors_R', 'NOE_viol_R_sorted', 'logs', 'NOE_viol_R', 'Q_factors_S_sorted', 'RDC_PAN_results', 'correlation_plot.agr', 'correlation_plot_scaled.agr'])
+            self.assertTrue(file in ['NOE_viol_S_sorted', 'ensembles_superimposed', 'RDC_PAN_dist.agr', 'Q_factors_S', 'NOE_viol_curve.agr', 'NOE_viol_dist.agr', 'RDC_PAN_curve.agr', 'NOE_viol_S', 'Q_factors_R_sorted', 'NOE_results', 'Q_factors_R', 'NOE_viol_R_sorted', 'logs', 'NOE_viol_R', 'Q_factors_S_sorted', 'RDC_PAN_results', 'correlation_plot.agr', 'correlation_plot_scaled.agr'])
 
         # Check the sub-directory files.
         subdirs = ['ensembles_superimposed', 'logs', 'NOE_results', 'RDC_PAN_results']
@@ -1106,7 +1106,7 @@ class N_state_model(SystemTestCase):
         for i in range(len(subdirs)):
             for file in listdir(ds.tmpdir + sep + subdirs[i]):
                 print("Checking file %s." % file)
-                self.assert_(file in files[i])
+                self.assertTrue(file in files[i])
 
 
     def test_populations(self):

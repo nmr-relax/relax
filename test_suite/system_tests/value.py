@@ -66,7 +66,7 @@ class Value(SystemTestCase):
             # Check the values.
             self.assertEqual(ds[pipe].mol[0].res[0].spin[0].s2, 0.8)
             self.assertEqual(ds[pipe].mol[0].res[1].spin[0].s2, 0.8)
-            self.assert_(not hasattr(ds[pipe].mol[0].res[2].spin[0], 's2'))
+            self.assertTrue(not hasattr(ds[pipe].mol[0].res[2].spin[0], 's2'))
 
             # Check the errors.
             self.assertEqual(ds[pipe].mol[0].res[0].spin[0].s2_err, 0.1)

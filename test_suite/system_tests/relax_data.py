@@ -123,28 +123,28 @@ class Relax_data(SystemTestCase):
 
         # Checks.
         self.assertEqual(cdp.ri_ids, ['R1_900', 'NOE_900', 'R1_500', 'R2_500', 'NOE_500'])
-        self.assert_(not 'R2_900' in cdp.spectrometer_frq)
-        self.assert_(not 'R2_900' in cdp.ri_type)
+        self.assertTrue(not 'R2_900' in cdp.spectrometer_frq)
+        self.assertTrue(not 'R2_900' in cdp.ri_type)
         for spin in spin_loop():
             # Protons.
             if spin.name in ['H', 'HE1']:
-                self.assert_(not hasattr(spin, 'ri_data'))
+                self.assertTrue(not hasattr(spin, 'ri_data'))
 
             # Nitrogens.
             else:
-                self.assert_(not 'R2_900' in spin.ri_data)
-                self.assert_(not 'R2_900' in spin.ri_data_err)
+                self.assertTrue(not 'R2_900' in spin.ri_data)
+                self.assertTrue(not 'R2_900' in spin.ri_data_err)
 
         # Switch to the second pipe.
         self.interpreter.pipe.switch('delete 2')
 
         # Checks.
-        self.assert_(not hasattr(cdp, 'ri_ids'))
-        self.assert_(not hasattr(cdp, 'spectrometer_frq'))
-        self.assert_(not hasattr(cdp, 'ri_type'))
+        self.assertTrue(not hasattr(cdp, 'ri_ids'))
+        self.assertTrue(not hasattr(cdp, 'spectrometer_frq'))
+        self.assertTrue(not hasattr(cdp, 'ri_type'))
         for spin in spin_loop():
-            self.assert_(not hasattr(spin, 'ri_data'))
-            self.assert_(not hasattr(spin, 'ri_data_err'))
+            self.assertTrue(not hasattr(spin, 'ri_data'))
+            self.assertTrue(not hasattr(spin, 'ri_data_err'))
 
 
     def test_reset(self):
