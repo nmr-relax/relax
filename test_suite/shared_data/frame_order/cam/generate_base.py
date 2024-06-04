@@ -124,7 +124,7 @@ class Main:
         """Calculate the averaged PCS for all states."""
 
         # Printout.
-        sys.stdout.write("\n\nRotating %s states for the PCS:\n\n" % locale.format("%d", self.N**self.MODES, grouping=True))
+        sys.stdout.write("\n\nRotating %s states for the PCS:\n\n" % locale.format_string("%d", self.N**self.MODES, grouping=True))
 
         # Turn off the relax interpreter echoing to allow the progress meter to be shown correctly.
         self.interpreter.off()
@@ -225,7 +225,7 @@ class Main:
             rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
 
         # Printout.
-        sys.stdout.write("\n\nRotating %s states for the RDC:\n\n" % locale.format("%d", self.N**self.MODES, grouping=True))
+        sys.stdout.write("\n\nRotating %s states for the RDC:\n\n" % locale.format_string("%d", self.N**self.MODES, grouping=True))
 
         # Turn off the relax interpreter echoing to allow the progress meter to be shown correctly.
         self.interpreter.off()
@@ -458,7 +458,7 @@ class Main:
 
         # Dump the progress.
         if i % b == 0:
-            num = locale.format("%d", i, grouping=True)
+            num = locale.format_string("%d", i, grouping=True)
             sys.stderr.write('\b%12s\n' % num)
 
 
