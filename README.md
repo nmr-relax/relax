@@ -1,5 +1,3 @@
-# relax [![Build Status](https://travis-ci.com/nmr-relax/relax.svg?branch=master)](https://travis-ci.com/nmr-relax/relax)
-```
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2003 Edward d'Auvergne                                        #
@@ -20,7 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-```
 
 See the 'docs' directory for more information.
 

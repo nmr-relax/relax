@@ -20,14 +20,6 @@
 ###############################################################################
 
 
-Preparations
-============
-
-Prior to release, check that everything is ready.  These steps are now automated thanks to Travis CI (https://en.wikipedia.org/wiki/Travis_CI).  Simply check that the latest master branch builds are passing:
-
-    - https://travis-ci.com/nmr-relax/relax/builds
-
-
 Temporary branch
 ================
 
