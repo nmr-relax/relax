@@ -293,6 +293,25 @@ def norm(x, ord=None, axis=None):
 
 
 
+# The inspect module.
+inspect_getfullargspec = False
+try:
+    from inspect import getfullargspec
+    inspect_getfullargspec = True
+except ImportError:
+    from inspect import getargspec
+
+
+def getfullargspec_replacement(obj):
+    """Replacement inspect.getfullargspec() function for Python versions without it."""
+
+    return getargspec(obj) + (None, None, None)
+
+
+if not inspect_getfullargspec:
+    getfullargspec = getfullargspec_replacement
+
+
 class Bzip2Fixed(BZ2File):
     """Incredibly nasty hack for bzip2 files support in Python 3.0, 3.1 and 3.2."""
 

@@ -20,12 +20,12 @@
 ###############################################################################
 
 # Python module imports.
-from inspect import getargspec
 from re import search
 import types
 from unittest import TestCase
 
 # relax module imports.
+from lib.compat import getfullargspec
 from specific_analyses.api_base import API_base
 from specific_analyses.consistency_tests.api import Consistency_tests
 from specific_analyses.frame_order.api import Frame_order
@@ -107,8 +107,8 @@ class Test_api(TestCase):
                 continue
 
             # Get the args and their default values.
-            args_base, varargs_base, varkw_base, defaults_base = getargspec(obj_base)
-            args, varargs, varkw, defaults = getargspec(obj)
+            args_base, varargs_base, varkw_base, defaults_base, kwonlyargs_base, kwonlydefaults_base, annotations_base = getfullargspec(obj_base)
+            args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, annotations = getfullargspec(obj)
 
             # Check the args.
             if args_base != args or varargs_base != varargs or varkw_base != varkw:
