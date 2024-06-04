@@ -127,7 +127,7 @@ except ImportError:
     try:
         from distro import linux_distribution
     except ImportError:
-        def linux_distribution(): return [None]
+        def linux_distribution(): return ["", "", ""]
 
 
 def bz2_open(file, mode='r'):
