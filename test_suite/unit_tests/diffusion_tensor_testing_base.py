@@ -222,7 +222,7 @@ class Diffusion_tensor_base_class(UnitTestCase):
         dp = pipes.get_pipe('test')
 
         # Test that the diff_tensor object does not exist.
-        self.failIf(hasattr(dp, 'diff_tensor'))
+        self.assertTrue(not hasattr(dp, 'diff_tensor'))
 
 
     def test_delete_fail_no_data(self):

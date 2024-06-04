@@ -131,7 +131,7 @@ class Align_tensor_base_class(UnitTestCase):
         dp = pipes.get_pipe('test')
 
         # Test that Axx does not exist.
-        self.failIf(hasattr(dp, 'align_tensors'))
+        self.assertTrue(not hasattr(dp, 'align_tensors'))
 
 
     def test_delete_fail_no_data(self):
