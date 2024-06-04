@@ -169,7 +169,7 @@ Move the distribution files and their signatures to the mirror directory for the
 
 $ rsync -av --progress --no-perms -e ssh edauvergne@frs.sourceforge.net:/home/frs/project/nmr-relax/ .
 
-Change "edauvergne" to your user name.  Then rsync the entire directory contents to download.gna.org/upload/relax/ using the command:
+Change "edauvergne" to your user name.  Then rsync the entire directory contents using the command:
 
 $ rsync --delete -avP --copy-links --progress --partial --no-perms -e ssh --numeric-ids . edauvergne@frs.sourceforge.net:/home/frs/project/nmr-relax/
 
