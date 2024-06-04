@@ -92,7 +92,7 @@ class Uf_info(object):
             raise RelaxError("The user function %s has already been set up." % name)
 
         # First check if the user function class has been set up.
-        if search('\.', name):
+        if search(r'\.', name):
             # Split up the name.
             class_name, fn_name = name.split('.')
 
@@ -161,7 +161,7 @@ class Uf_info(object):
         # Loop over the user functions.
         for i in range(len(self._uf_names)):
             # Restriction.
-            if uf_class and not search("^%s\." % uf_class, self._uf_names[i]):
+            if uf_class and not search(r"^%s\." % uf_class, self._uf_names[i]):
                 continue
 
             yield self._uf_names[i], self._uf[self._uf_names[i]]

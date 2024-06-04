@@ -254,7 +254,7 @@ table = uf_tables.add_table(label="table: min - conjugate gradient", caption="Mi
 table.add_headings(["Minimisation algorithm", "Patterns"])
 table.add_row(["Fletcher-Reeves", "'^[Ff][Rr]$' or '^[Ff]letcher[-_ ][Rr]eeves$'"])
 table.add_row(["Polak-Ribiere", "'^[Pp][Rr]$' or '^[Pp]olak[-_ ][Rr]ibiere$'"])
-table.add_row(["Polak-Ribiere +", "'^[Pp][Rr]\+$' or '^[Pp]olak[-_ ][Rr]ibiere\+$'"])
+table.add_row(["Polak-Ribiere +", r"'^[Pp][Rr]\+$' or '^[Pp]olak[-_ ][Rr]ibiere\+$'"])
 table.add_row(["Hestenes-Stiefel", "'^[Hh][Ss]$' or '^[Hh]estenes[-_ ][Ss]tiefel$'"])
 uf.desc[-1].add_table(table.label)
 uf.desc[-1].add_paragraph("Miscellaneous unconstrained methods:")

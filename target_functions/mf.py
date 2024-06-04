@@ -41,7 +41,7 @@ from target_functions.chi2 import chi2, dchi2_element, d2chi2_element
 
 class Mf:
     def __init__(self, init_params=None, model_type=None, diff_type=None, diff_params=None, scaling_matrix=None, num_spins=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, h_bar=0, mu0=0, num_params=None, vectors=None):
-        """The model-free minimisation class.
+        r"""The model-free minimisation class.
 
         This class should be initialised before every calculation.
 

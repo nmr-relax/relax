@@ -112,7 +112,7 @@ class Interpreter:
         uf_name = kargs.pop('uf_name')
 
         # Split up the name.
-        if search('\.', uf_name):
+        if search(r'\.', uf_name):
             class_name, uf_name = uf_name.split('.')
         else:
             class_name = None
@@ -176,7 +176,7 @@ class Interpreter:
         self._uf_dict = {}
         for name, data in uf_info.uf_loop():
             # Split up the name.
-            if search('\.', name):
+            if search(r'\.', name):
                 class_name, uf_name = name.split('.')
             else:
                 class_name = None
@@ -336,7 +336,7 @@ def exec_script(name, globals):
     module, ext = path.splitext(tail)
 
     # Check if the script name is ok.
-    if search('\.', module):
+    if search(r'\.', module):
         raise RelaxError("The relax script must not contain the '.' character (except before the extension '*.py').")
     if ext != '.py':
         raise RelaxError("The script must have the extension *.py.")
@@ -350,7 +350,7 @@ def exec_script(name, globals):
     # Parse the code in the module for old user function calls.
     for old_uf in uf_translation_table:
         # Find an old call.
-        if search('[ \\n]'+old_uf+'\(', text):
+        if search('[ \\n]'+old_uf+r'\(', text):
             raise RelaxError("The user function '%s' has been renamed to '%s', please update your script." % (old_uf, uf_translation_table[old_uf]))
 
     # Execute the module.

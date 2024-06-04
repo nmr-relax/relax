@@ -31,7 +31,7 @@ from numpy import dot, sum, transpose
 
 
 def chi2(data, back_calc_vals, errors):
-    """Function to calculate the chi-squared value.
+    r"""Function to calculate the chi-squared value.
 
     The chi-squared equation
     ========================
@@ -71,7 +71,7 @@ def chi2(data, back_calc_vals, errors):
 
 
 def chi2_rankN(data, back_calc_vals, errors):
-    """Function to calculate the chi-squared value for multiple numpy array axis.
+    r"""Function to calculate the chi-squared value for multiple numpy array axis.
 
     The chi-squared equation
     ========================
@@ -111,7 +111,7 @@ def chi2_rankN(data, back_calc_vals, errors):
 
 
 def dchi2(dchi2, M, data, back_calc_vals, back_calc_grad, errors):
-    """Calculate the full chi-squared gradient.
+    r"""Calculate the full chi-squared gradient.
 
     The chi-squared gradient
     ========================
@@ -158,7 +158,7 @@ def dchi2(dchi2, M, data, back_calc_vals, back_calc_grad, errors):
 
 
 def dchi2_element(data, back_calc_vals, back_calc_grad_j, errors):
-    """Calculate the chi-squared gradient element j.
+    r"""Calculate the chi-squared gradient element j.
 
     The chi-squared gradient
     ========================
@@ -202,7 +202,7 @@ def dchi2_element(data, back_calc_vals, back_calc_grad_j, errors):
 
 
 def d2chi2(d2chi2, M, data, back_calc_vals, back_calc_grad, back_calc_hess, errors):
-    """Calculate the full chi-squared Hessian.
+    r"""Calculate the full chi-squared Hessian.
 
     The chi-squared Hessian
     =======================
@@ -254,7 +254,7 @@ def d2chi2(d2chi2, M, data, back_calc_vals, back_calc_grad, back_calc_hess, erro
 
 
 def d2chi2_element(data, back_calc_vals, back_calc_grad_j, back_calc_grad_k, back_calc_hess_jk, errors):
-    """Calculate the chi-squared Hessian element {j, k}.
+    r"""Calculate the chi-squared Hessian element {j, k}.
 
     The chi-squared Hessian
     =======================

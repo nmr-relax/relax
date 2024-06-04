@@ -84,7 +84,7 @@ def factorial(n):
 
 
 def pec(x, y):
-    """The 2D pseudo-elliptic cosine function.
+    r"""The 2D pseudo-elliptic cosine function.
 
     This is defined as::
 

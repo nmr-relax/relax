@@ -1726,7 +1726,7 @@ def set_domain(tensor=None, domain=None):
 
 
 def svd(basis_set='irreducible 5D', tensors=None, precision=1):
-    """Calculate the singular values of all the loaded tensors.
+    r"""Calculate the singular values of all the loaded tensors.
 
     The basis set can be set to one of:
 

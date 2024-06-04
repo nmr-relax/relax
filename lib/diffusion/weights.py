@@ -34,7 +34,7 @@ from numpy import outer
 ################
 
 def calc_sphere_ci(data, diff_data):
-    """Weight for spherical diffusion.
+    r"""Weight for spherical diffusion.
 
     The equation is::
 
@@ -55,7 +55,7 @@ def calc_sphere_ci(data, diff_data):
 ###################
 
 def calc_spheroid_ci(data, diff_data):
-    """Weights for spheroidal diffusion.
+    r"""Weights for spheroidal diffusion.
 
     The equations are::
 
@@ -87,7 +87,7 @@ def calc_spheroid_ci(data, diff_data):
 ###########################
 
 def calc_spheroid_dci(data, diff_data):
-    """Weight gradient for spheroidal diffusion.
+    r"""Weight gradient for spheroidal diffusion.
 
     The equations are::
 
@@ -117,7 +117,7 @@ def calc_spheroid_dci(data, diff_data):
 ##########################
 
 def calc_spheroid_d2ci(data, diff_data):
-    """Weight Hessian for spheroidal diffusion.
+    r"""Weight Hessian for spheroidal diffusion.
 
     The equations are::
 
@@ -156,7 +156,7 @@ def calc_spheroid_d2ci(data, diff_data):
 ####################
 
 def calc_ellipsoid_ci(data, diff_data):
-    """Weight equations for ellipsoidal diffusion.
+    r"""Weight equations for ellipsoidal diffusion.
 
     The equations are::
 
@@ -235,7 +235,7 @@ def calc_ellipsoid_ci(data, diff_data):
 ############################
 
 def calc_ellipsoid_dci(data, diff_data):
-    """Weight gradient for ellipsoidal diffusion.
+    r"""Weight gradient for ellipsoidal diffusion.
 
     Oi partial derivatives
     ======================
@@ -436,7 +436,7 @@ def calc_ellipsoid_dci(data, diff_data):
 ###########################
 
 def calc_ellipsoid_d2ci(data, diff_data):
-    """Weight Hessian for ellipsoidal diffusion.
+    r"""Weight Hessian for ellipsoidal diffusion.
 
     Oi-Oj partial derivatives
     =========================

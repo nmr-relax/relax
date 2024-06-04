@@ -27,7 +27,7 @@ from numpy import dot, sum
 
 
 def ave_rdc_5D(dj, vect, N, A, weights=None):
-    """Calculate the ensemble average RDC, using the 5D tensor.
+    r"""Calculate the ensemble average RDC, using the 5D tensor.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural ensemble, using the 5D vector form of the alignment tensor.  The formula for this ensemble average RDC value is::
 
@@ -88,7 +88,7 @@ def ave_rdc_5D(dj, vect, N, A, weights=None):
 
 
 def ave_rdc_tensor(dj, vect, N, A, weights=None):
-    """Calculate the ensemble average RDC, using the 3D tensor.
+    r"""Calculate the ensemble average RDC, using the 3D tensor.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average RDC value is::
 
@@ -163,7 +163,7 @@ def ave_rdc_tensor(dj, vect, N, A, weights=None):
 
 
 def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
-    """Calculate the ensemble average RDC gradient element for Amn, using the 3D tensor.
+    r"""Calculate the ensemble average RDC gradient element for Amn, using the 3D tensor.
 
     This function calculates the average RDC gradient for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average RDC gradient element is::
 
@@ -225,7 +225,7 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
 
 
 def ave_rdc_tensor_pseudoatom(dj, vect, N, A, weights=None):
-    """Calculate the ensemble and pseudo-atom averaged RDC, using the 3D tensor.
+    r"""Calculate the ensemble and pseudo-atom averaged RDC, using the 3D tensor.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The RDC for each pseudo-atom is calculated and then averaged.  The formula for this ensemble and pseudo-atom average RDC value is::
 
@@ -297,7 +297,7 @@ def ave_rdc_tensor_pseudoatom(dj, vect, N, A, weights=None):
 
 
 def ave_rdc_tensor_pseudoatom_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
-    """Calculate the ensemble and pseudo-atom average RDC gradient element for Amn, using the 3D tensor.
+    r"""Calculate the ensemble and pseudo-atom average RDC gradient element for Amn, using the 3D tensor.
 
     This function calculates the average RDC gradient for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average RDC gradient element is::
 

@@ -352,13 +352,13 @@ uf.desc[-1].add_item_list_element("'unitary 9D'", "The inter-tensor vector angle
 uf.desc[-1].add_item_list_element("'unitary 5D'", "The inter-tensor vector angles for the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.")
 uf.desc[-1].add_item_list_element("'geometric 5D'", "The inter-tensor vector angles for the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.  This is also the Pales standard notation.")
 uf.desc[-1].add_paragraph("The full matrix angle via the Euclidean inner product is defined as")
-uf.desc[-1].add_verbatim("""\
+uf.desc[-1].add_verbatim(r"""\
                    /   <A1 , A2>   \ 
     theta = arccos | ------------- | ,
                    \ ||A1||.||A2|| / \
 """)
 uf.desc[-1].add_paragraph("where <a,b> is the Euclidean inner product and ||a|| is the Frobenius norm of the matrix.  For the irreducible spherical tensor 5D basis set, the Am components are defined as")
-uf.desc[-1].add_verbatim("""\
+uf.desc[-1].add_verbatim(r"""\
             / 4pi \ 1/2
        A0 = | --- |     Szz ,
             \  5  /
@@ -372,13 +372,13 @@ uf.desc[-1].add_verbatim("""\
             \ 15  / \
 """)
 uf.desc[-1].add_paragraph("and, for this complex notation, the angle is")
-uf.desc[-1].add_verbatim("""\
+uf.desc[-1].add_verbatim(r"""\
                    / Re(<A1|A2>) \ 
     theta = arccos | ----------- | ,
                    \  |A1|.|A2|  / \
 """)
 uf.desc[-1].add_paragraph("where the inner product is defined as")
-uf.desc[-1].add_verbatim("""\
+uf.desc[-1].add_verbatim(r"""\
                ___
                \      1    2*
     <A1|A2> =   >   Am . Am   ,
@@ -386,7 +386,7 @@ uf.desc[-1].add_verbatim("""\
               m=-2,2 \
 """)
 uf.desc[-1].add_paragraph("and where Am* = (-1)^m A-m, and the norm is defined as |A1| = Re(sqrt(<A1|A1>)).  For all other basis sets whereby the map is real matrix -> real vector, the inter-tensor angle is defined as")
-uf.desc[-1].add_verbatim("""\
+uf.desc[-1].add_verbatim(r"""\
                    /  <A1|A2>  \ 
     theta = arccos | --------- | ,
                    \ |A1|.|A2| / \
@@ -550,7 +550,7 @@ uf.desc[-1].add_verbatim("""\
     | SzzN SxxyyN SxyN SxzN SyzN |\
 """)
 uf.desc[-1].add_paragraph("For the irreducible spherical tensor basis set, the Am components are defined as")
-uf.desc[-1].add_verbatim("""\
+uf.desc[-1].add_verbatim(r"""\
             / 4pi \ 1/2
        A0 = | --- |     Szz ,
             \  5  /

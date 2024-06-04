@@ -809,7 +809,7 @@ def get_mf_data(mfout_lines, pos):
     err = row[4]
 
     # The Modelfree4 '*' column fusion bug.
-    if search('\*', val) or search('\*', err):
+    if search(r'\*', val) or search(r'\*', err):
         # Split by the '*' character.
         val_row = val.split('*')
         err_row = err.split('*')

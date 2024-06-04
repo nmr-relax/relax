@@ -796,11 +796,11 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
     data = []
     for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(selection=selection, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
         # Remove the '+' regular expression character from the mol, res, and spin names!
-        if mol_name and search('\+', mol_name):
+        if mol_name and search(r'\+', mol_name):
             mol_name = mol_name.replace('+', '')
-        if res_name and search('\+', res_name):
+        if res_name and search(r'\+', res_name):
             res_name = res_name.replace('+', '')
-        if atom_name and search('\+', atom_name):
+        if atom_name and search(r'\+', atom_name):
             atom_name = atom_name.replace('+', '')
 
         # The spin identification string.
@@ -917,11 +917,11 @@ def load_spins(spin_id=None, str_id=None, from_mols=None, mol_name_target=None, 
             atom_num = None
 
         # Remove the '+' regular expression character from the mol, res, and spin names!
-        if mol_name and search('\+', mol_name):
+        if mol_name and search(r'\+', mol_name):
             mol_name = mol_name.replace('+', '')
-        if res_name and search('\+', res_name):
+        if res_name and search(r'\+', res_name):
             res_name = res_name.replace('+', '')
-        if atom_name and search('\+', atom_name):
+        if atom_name and search(r'\+', atom_name):
             atom_name = atom_name.replace('+', '')
 
         # Generate a spin ID for the current atom.
@@ -1027,9 +1027,9 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
         selection = cdp.structure.selection(atom_id=new_id)
         for res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(selection=selection, str_id=str_id, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
             # Remove the '+' regular expression character from the res and atom names.
-            if res_name and search('\+', res_name):
+            if res_name and search(r'\+', res_name):
                 res_name = res_name.replace('+', '')
-            if atom_name and search('\+', atom_name):
+            if atom_name and search(r'\+', atom_name):
                 atom_name = atom_name.replace('+', '')
 
             # No spin number.
@@ -1185,7 +1185,7 @@ def pca(pipes=None, models=None, molecules=None, obs_pipes=None, obs_models=None
         file = open_write_file("graph_pc%s_pc%s.agr" % (mode+1, mode+2), dir=dir, force=True)
 
         # The header.
-        write_xy_header(format=format, file=file, title="Principle component projections", sets=[sets], set_names=[labels], axis_labels=[['PC mode %i (\cE\C)' % (mode+1), 'PC mode %i (\cE\C)' % (mode+2)]], linestyle=[[0]*sets])
+        write_xy_header(format=format, file=file, title="Principle component projections", sets=[sets], set_names=[labels], axis_labels=[[r'PC mode %i (\cE\C)' % (mode+1), r'PC mode %i (\cE\C)' % (mode+2)]], linestyle=[[0]*sets])
 
         # The data.
         write_xy_data(format=format, data=data, file=file, graph_type='xy')

@@ -142,7 +142,7 @@ def vector_angle_atan2(vector1, vector2):
 
 
 def vector_angle_complex_conjugate(v1=None, v2=None, v1_conj=None, v2_conj=None):
-    """Calculate the inter-vector angle between two complex vectors using the arccos formula.
+    r"""Calculate the inter-vector angle between two complex vectors using the arccos formula.
 
     The formula is::
 

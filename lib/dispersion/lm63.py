@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The Luz and Meiboom (1963) 2-site fast exchange U{LM63<http://wiki.nmr-relax.com/LM63>} model.
+r"""The Luz and Meiboom (1963) 2-site fast exchange U{LM63<http://wiki.nmr-relax.com/LM63>} model.
 
 Description
 ===========

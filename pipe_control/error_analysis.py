@@ -192,7 +192,7 @@ def monte_carlo_create_data(method=None, distribution=None, fixed_error=None):
 
 
 def monte_carlo_error_analysis():
-    """Function for calculating errors from the Monte Carlo simulations.
+    r"""Function for calculating errors from the Monte Carlo simulations.
 
     The standard deviation formula used to calculate the errors is the square root of the
     bias-corrected variance, given by the formula::

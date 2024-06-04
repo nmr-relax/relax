@@ -181,7 +181,7 @@ uf.desc[-1].add_item_list_element(None, "1 / tm = 6Diso.")
 # The spheroid (axially symmetric diffusion).
 uf.desc.append(Desc_container("The spheroid (axially symmetric diffusion)"))
 uf.desc[-1].add_paragraph("When two of the three eigenvalues of the diffusion tensor are equal, the molecule diffuses as a spheroid.  Four pieces of information are required to specify this tensor, the two geometric parameters, Diso and Da, and the two orientational parameters, the polar angle theta and the azimuthal angle phi describing the orientation of the axis of symmetry.  The correlation function of the global diffusion is")
-uf.desc[-1].add_verbatim("""
+uf.desc[-1].add_verbatim(r"""
                _1_
              1 \          - tau / tau_i
     C(tau) = -  >  ci . e              ,
@@ -217,7 +217,7 @@ uf.desc[-1].add_paragraph("The spheroid type should be 'oblate', 'prolate', or N
 # The ellipsoid (rhombic diffusion).
 uf.desc.append(Desc_container("The ellipsoid (rhombic diffusion)"))
 uf.desc[-1].add_paragraph("When all three eigenvalues of the diffusion tensor are different, the molecule diffuses as an ellipsoid.  This diffusion is also known as fully anisotropic, asymmetric, or rhombic. The full tensor is specified by six pieces of information, the three geometric parameters Diso, Da, and Dr representing the isotropic, anisotropic, and rhombic components of the tensor, and the three Euler angles alpha, beta, and gamma orienting the tensor within the PDB frame.  The correlation function is")
-uf.desc[-1].add_verbatim("""
+uf.desc[-1].add_verbatim(r"""
                _2_
              1 \          - tau / tau_i
     C(tau) = -  >  ci . e              ,

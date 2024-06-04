@@ -77,7 +77,7 @@ def base_data_types():
 
 
 def calc_ave_dist(atom1, atom2, exp=1):
-    """Calculate the average distances.
+    r"""Calculate the average distances.
 
     The formula used is::
 

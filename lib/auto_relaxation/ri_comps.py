@@ -996,7 +996,7 @@ def d2r1_comps(data, i, params):
 
 # Dipolar.
 def calc_fixed_dip(data):
-    """Calculate the fixed component of the dipolar constant.
+    r"""Calculate the fixed component of the dipolar constant.
 
     The equation is::
 
@@ -1010,7 +1010,7 @@ def calc_fixed_dip(data):
 
 # CSA.
 def calc_fixed_csa(data):
-    """Calculate the fixed component of the CSA constants.
+    r"""Calculate the fixed component of the CSA constants.
 
     The equation is::
 
@@ -1030,7 +1030,7 @@ def calc_fixed_csa(data):
 
 # Function.
 def comp_dip_const_func(data, bond_length):
-    """Calculate the dipolar constant.
+    r"""Calculate the dipolar constant.
 
     Dipolar constant
     ================
@@ -1050,7 +1050,7 @@ def comp_dip_const_func(data, bond_length):
 
 # Gradient.
 def comp_dip_const_grad(data, bond_length):
-    """Calculate the derivative of the dipolar constant.
+    r"""Calculate the derivative of the dipolar constant.
 
     Dipolar constant gradient
     =========================
@@ -1070,7 +1070,7 @@ def comp_dip_const_grad(data, bond_length):
 
 # Hessian.
 def comp_dip_const_hess(data, bond_length):
-    """Calculate the second derivative of the dipolar constant.
+    r"""Calculate the second derivative of the dipolar constant.
 
     Dipolar constant Hessian
     ========================
@@ -1095,7 +1095,7 @@ def comp_dip_const_hess(data, bond_length):
 
 # Function.
 def comp_csa_const_func(data, csa):
-    """Calculate the CSA constant.
+    r"""Calculate the CSA constant.
 
     CSA constant
     ============
@@ -1113,7 +1113,7 @@ def comp_csa_const_func(data, csa):
 
 # Gradient.
 def comp_csa_const_grad(data, csa):
-    """Calculate the derivative of the CSA constant.
+    r"""Calculate the derivative of the CSA constant.
 
     CSA constant gradient
     =====================
@@ -1131,7 +1131,7 @@ def comp_csa_const_grad(data, csa):
 
 # Hessian.
 def comp_csa_const_hess(data, params):
-    """Calculate the second derivative of the CSA constant.
+    r"""Calculate the second derivative of the CSA constant.
 
     CSA constant Hessian
     ====================
@@ -1154,7 +1154,7 @@ def comp_csa_const_hess(data, params):
 
 # Function.
 def comp_rex_const_func(rhoex, frq):
-    """Calculate the Rex value.
+    r"""Calculate the Rex value.
 
     Rex constant
     ============
@@ -1169,7 +1169,7 @@ def comp_rex_const_func(rhoex, frq):
 
 # Gradient.
 def comp_rex_const_grad(frq):
-    """Calculate the Rex gradient.
+    r"""Calculate the Rex gradient.
 
     Rex gradient
     ============
@@ -1188,7 +1188,7 @@ def comp_rex_const_grad(frq):
 
 
 def comp_r2_dip_const(dip_const_data):
-    """Calculate the R1 dipolar constant components.
+    r"""Calculate the R1 dipolar constant components.
 
     The equations are::
 
@@ -1245,7 +1245,7 @@ def comp_r2_csa_const(csa_const_data):
 
 # R1.
 def comp_r1_dip_jw(jw_data, frq_num):
-    """Calculate the R1 dipolar J(w) components.
+    r"""Calculate the R1 dipolar J(w) components.
 
     The equations are::
 
@@ -1265,7 +1265,7 @@ def comp_r1_dip_jw(jw_data, frq_num):
 
 # R2.
 def comp_r2_dip_jw(jw_data, frq_num):
-    """Calculate the R2 dipolar J(w) components.
+    r"""Calculate the R2 dipolar J(w) components.
 
     The equations are::
 
@@ -1285,7 +1285,7 @@ def comp_r2_dip_jw(jw_data, frq_num):
 
 # sigma_noe.
 def comp_sigma_noe_dip_jw(jw_data, frq_num):
-    """Calculate the sigma_noe dipolar J(w) components.
+    r"""Calculate the sigma_noe dipolar J(w) components.
 
     The equations are::
 
@@ -1311,7 +1311,7 @@ def comp_sigma_noe_dip_jw(jw_data, frq_num):
 
 # R1.
 def comp_r1_csa_jw(jw_data, frq_num):
-    """Calculate the R1 CSA J(w) components.
+    r"""Calculate the R1 CSA J(w) components.
 
     The equations are::
 
@@ -1331,7 +1331,7 @@ def comp_r1_csa_jw(jw_data, frq_num):
 
 # R2.
 def comp_r2_csa_jw(jw_data, frq_num):
-    """Calculate the R1 CSA J(w) components.
+    r"""Calculate the R1 CSA J(w) components.
 
     The equations are::
 

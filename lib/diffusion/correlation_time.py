@@ -215,7 +215,7 @@ def calc_spheroid_dti(data, diff_data):
 ####################################
 
 def calc_spheroid_d2ti(data, diff_data):
-    """Diffusional correlation time Hessians.
+    r"""Diffusional correlation time Hessians.
 
     tm-tm partial derivatives
     =========================
@@ -366,7 +366,7 @@ def calc_spheroid_d2ti(data, diff_data):
 ##############################
 
 def calc_ellipsoid_ti(data, diff_data):
-    """Diffusional correlation times.
+    r"""Diffusional correlation times.
 
     The equations for the parameters {Diso, Da, Dr} are::
 
@@ -603,7 +603,7 @@ def calc_ellipsoid_dti(data, diff_data):
 ######################################
 
 def calc_ellipsoid_d2ti(data, diff_data):
-    """Diffusional correlation time Hessians.
+    r"""Diffusional correlation time Hessians.
 
     tm-tm partial derivatives
     =========================

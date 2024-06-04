@@ -28,7 +28,7 @@ from math import log, sqrt
 
 
 def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
-    """Calculate the R2eff/R1rho value for the fixed relaxation time data.
+    r"""Calculate the R2eff/R1rho value for the fixed relaxation time data.
 
     The formula is::
 
@@ -52,7 +52,7 @@ def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
 
 
 def calc_two_point_r2eff_err(relax_time=None, I_ref=None, I=None, I_ref_err=None, I_err=None):
-    """Calculate the R2eff/R1rho error for the fixed relaxation time data.
+    r"""Calculate the R2eff/R1rho error for the fixed relaxation time data.
 
     The formula is::
 

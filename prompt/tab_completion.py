@@ -48,7 +48,7 @@ class Tab_completion:
         """Function to create the dictionary of options for tab completion."""
 
         # Split the input.
-        list = split('\.', self.input)
+        list = split(r'\.', self.input)
         if len(list) == 0:
             return
 

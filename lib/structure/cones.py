@@ -357,7 +357,7 @@ class Pseudo_elliptic2(Base):
 
 
 class Square(Base):
-    """The class for the square cone.
+    r"""The class for the square cone.
 
     The cone is defined by::
 

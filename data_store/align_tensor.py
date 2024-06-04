@@ -406,7 +406,7 @@ def calc_S_diag(tensor):
 
 
 def calc_A0(Szz):
-    """Function for calculating the A0 irreducible component of the Saupe order matrix.
+    r"""Function for calculating the A0 irreducible component of the Saupe order matrix.
 
     The equation for calculating the parameter is::
 
@@ -426,7 +426,7 @@ def calc_A0(Szz):
 
 
 def calc_A1(Sxz, Syz):
-    """Function for calculating the A1 irreducible component of the Saupe order matrix.
+    r"""Function for calculating the A1 irreducible component of the Saupe order matrix.
 
     The equation for calculating the parameter is::
 
@@ -448,7 +448,7 @@ def calc_A1(Sxz, Syz):
 
 
 def calc_A2(Sxx, Syy, Sxy):
-    """Function for calculating the A2 irreducible component of the Saupe order matrix.
+    r"""Function for calculating the A2 irreducible component of the Saupe order matrix.
 
     The equation for calculating the parameter is::
 
@@ -470,7 +470,7 @@ def calc_A2(Sxx, Syy, Sxy):
 
 
 def calc_Am1(Sxz, Syz):
-    """Function for calculating the A-1 irreducible component of the Saupe order matrix.
+    r"""Function for calculating the A-1 irreducible component of the Saupe order matrix.
 
     The equation for calculating the parameter is::
 
@@ -492,7 +492,7 @@ def calc_Am1(Sxz, Syz):
 
 
 def calc_Am2(Sxx, Syy, Sxy):
-    """Function for calculating the A-2 irreducible component of the Saupe order matrix.
+    r"""Function for calculating the A-2 irreducible component of the Saupe order matrix.
 
     The equation for calculating the parameter is::
 

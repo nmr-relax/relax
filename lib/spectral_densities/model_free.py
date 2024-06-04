@@ -27,7 +27,7 @@ from numpy import sum
 # Spectral density values. #
 ############################
 
-"""
+r"""
     The spectral density equation
     =============================
 
@@ -95,7 +95,7 @@ from numpy import sum
 ##########################################################
 
 def calc_jw(data, params):
-    """Spectral density function.
+    r"""Spectral density function.
 
     Calculate the spectral density values for the original model-free formula with no parameters {}
     with or without diffusion tensor parameters.
@@ -117,7 +117,7 @@ def calc_jw(data, params):
 #####################################################
 
 def calc_S2_jw(data, params):
-    """Spectral density function.
+    r"""Spectral density function.
 
     Calculate the spectral density values for the original model-free formula with the single
     parameter {S2} with or without diffusion tensor parameters.
@@ -139,7 +139,7 @@ def calc_S2_jw(data, params):
 #########################################################
 
 def calc_S2_te_jw(data, params):
-    """Spectral density function.
+    r"""Spectral density function.
 
     Calculate the spectral density values for the original model-free formula with the parameters
     {S2, te} with or without diffusion tensor parameters.
@@ -161,7 +161,7 @@ def calc_S2_te_jw(data, params):
 ##############################################################
 
 def calc_S2f_S2_ts_jw(data, params):
-    """Spectral density function.
+    r"""Spectral density function.
 
     Calculate the spectral density values for the extended model-free formula with the parameters
     {S2f, S2, ts} with or without diffusion tensor parameters.
@@ -183,7 +183,7 @@ def calc_S2f_S2_ts_jw(data, params):
 ##################################################################
 
 def calc_S2f_tf_S2_ts_jw(data, params):
-    """Spectral density function.
+    r"""Spectral density function.
 
     Calculate the spectral density values for the extended model-free formula with the parameters
     {S2f, tf, S2, ts} with or without diffusion tensor parameters.
@@ -205,7 +205,7 @@ def calc_S2f_tf_S2_ts_jw(data, params):
 #################################################################
 
 def calc_S2f_S2s_ts_jw(data, params):
-    """Spectral density function.
+    r"""Spectral density function.
 
     Calculate the spectral density values for the extended model-free formula with the parameters
     {S2f, S2s, ts} with or without diffusion tensor parameters.
@@ -227,7 +227,7 @@ def calc_S2f_S2s_ts_jw(data, params):
 #####################################################################
 
 def calc_S2f_tf_S2s_ts_jw(data, params):
-    """Spectral density function.
+    r"""Spectral density function.
 
     Calculate the spectral density values for the extended model-free formula with the parameters
     {S2f, tf, S2s, ts} with or without diffusion tensor parameters.
@@ -250,7 +250,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 # Spectral density gradients. #
 ###############################
 
-"""
+r"""
     The spectral density gradients
     ==============================
 
@@ -448,7 +448,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 # {} with diffusion parameters.
 
 def calc_diff_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with no parameters {} together with diffusion tensor parameters.
@@ -466,7 +466,7 @@ def calc_diff_djw_dGj(data, params, j):
 
 
 def calc_ellipsoid_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with no parameters {} together with diffusion tensor parameters.
@@ -486,7 +486,7 @@ def calc_ellipsoid_djw_dGj(data, params, j):
 # {S2} with diffusion parameters.
 
 def calc_diff_S2_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with the parameter {S2} together with diffusion tensor parameters.
@@ -504,7 +504,7 @@ def calc_diff_S2_djw_dGj(data, params, j):
 
 
 def calc_ellipsoid_S2_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with the parameter {S2} together with diffusion tensor parameters.
@@ -524,7 +524,7 @@ def calc_ellipsoid_S2_djw_dGj(data, params, j):
 # {S2, te} with diffusion parameters.
 
 def calc_diff_S2_te_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -542,7 +542,7 @@ def calc_diff_S2_te_djw_dGj(data, params, j):
 
 
 def calc_ellipsoid_S2_te_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -570,7 +570,7 @@ def calc_ellipsoid_S2_te_djw_dGj(data, params, j):
 # {} with diffusion parameters.
 
 def calc_diff_djw_dOj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the O partial derivative of the original model-free
     formula with no parameters {} together with diffusion tensor parameters.
@@ -590,7 +590,7 @@ def calc_diff_djw_dOj(data, params, j):
 # {S2} with diffusion parameters.
 
 def calc_diff_S2_djw_dOj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the O partial derivative of the original model-free
     formula with the parameter {S2} together with diffusion tensor parameters.
@@ -610,7 +610,7 @@ def calc_diff_S2_djw_dOj(data, params, j):
 # {S2, te} with diffusion parameters.
 
 def calc_diff_S2_te_djw_dOj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the O partial derivative of the original model-free
     formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -634,7 +634,7 @@ def calc_diff_S2_te_djw_dOj(data, params, j):
 # {S2} with or without diffusion parameters.
 
 def calc_S2_djw_dS2(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the S2 partial derivative of the original model-free
     formula with the single parameter {S2} with or without diffusion tensor parameters.
@@ -654,7 +654,7 @@ def calc_S2_djw_dS2(data, params, j):
 # {S2, te} with or without diffusion parameters.
 
 def calc_S2_te_djw_dS2(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the S2 partial derivative of the original model-free
     formula with the parameters {S2, te} with or without diffusion tensor parameters.
@@ -678,7 +678,7 @@ def calc_S2_te_djw_dS2(data, params, j):
 # {S2, te} with or without diffusion parameters.
 
 def calc_S2_te_djw_dte(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the te partial derivative of the original model-free
     formula with the parameters {S2, te} with or without diffusion tensor parameters.
@@ -702,7 +702,7 @@ def calc_S2_te_djw_dte(data, params, j):
 # {S2f, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
@@ -720,7 +720,7 @@ def calc_diff_S2f_S2_ts_djw_dGj(data, params, j):
 
 
 def calc_ellipsoid_S2f_S2_ts_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
@@ -744,7 +744,7 @@ def calc_ellipsoid_S2f_S2_ts_djw_dGj(data, params, j):
 # {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2_ts_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
@@ -762,7 +762,7 @@ def calc_diff_S2f_tf_S2_ts_djw_dGj(data, params, j):
 
 
 def calc_ellipsoid_S2f_tf_S2_ts_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
@@ -790,7 +790,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_djw_dGj(data, params, j):
 # {S2f, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_djw_dOj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
@@ -810,7 +810,7 @@ def calc_diff_S2f_S2_ts_djw_dOj(data, params, j):
 # {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2_ts_djw_dOj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
@@ -834,7 +834,7 @@ def calc_diff_S2f_tf_S2_ts_djw_dOj(data, params, j):
 # {S2f, S2, ts} and {S2f, tf, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_S2_ts_djw_dS2(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the S2 partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without diffusion tensor
@@ -859,7 +859,7 @@ def calc_S2f_S2_ts_djw_dS2(data, params, j):
 # {S2f, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_S2_ts_djw_dS2f(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the S2f partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} with or without diffusion tensor parameters.
@@ -879,7 +879,7 @@ def calc_S2f_S2_ts_djw_dS2f(data, params, j):
 # {S2f, tf, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_tf_S2_ts_djw_dS2f(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the S2f partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} with or without diffusion tensor parameters.
@@ -903,7 +903,7 @@ def calc_S2f_tf_S2_ts_djw_dS2f(data, params, j):
 # {S2f, tf, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_tf_S2_ts_djw_dtf(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the tf partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} with or without diffusion tensor parameters.
@@ -927,7 +927,7 @@ def calc_S2f_tf_S2_ts_djw_dtf(data, params, j):
 # {S2f, S2, ts} and {S2f, tf, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_S2_ts_djw_dts(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the ts partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without diffusion tensor
@@ -952,7 +952,7 @@ def calc_S2f_S2_ts_djw_dts(data, params, j):
 # {S2f, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
@@ -970,7 +970,7 @@ def calc_diff_S2f_S2s_ts_djw_dGj(data, params, j):
 
 
 def calc_ellipsoid_S2f_S2s_ts_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
@@ -994,7 +994,7 @@ def calc_ellipsoid_S2f_S2s_ts_djw_dGj(data, params, j):
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor parameters.
@@ -1012,7 +1012,7 @@ def calc_diff_S2f_tf_S2s_ts_djw_dGj(data, params, j):
 
 
 def calc_ellipsoid_S2f_tf_S2s_ts_djw_dGj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor parameters.
@@ -1040,7 +1040,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_djw_dGj(data, params, j):
 # {S2f, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_djw_dOj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
@@ -1060,7 +1060,7 @@ def calc_diff_S2f_S2s_ts_djw_dOj(data, params, j):
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_djw_dOj(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor parameters.
@@ -1084,7 +1084,7 @@ def calc_diff_S2f_tf_S2s_ts_djw_dOj(data, params, j):
 # {S2f, S2s, ts} with or without diffusion parameters..
 
 def calc_S2f_S2s_ts_djw_dS2f(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the S2f partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} with or without diffusion tensor parameters.
@@ -1104,7 +1104,7 @@ def calc_S2f_S2s_ts_djw_dS2f(data, params, j):
 # {S2f, tf, S2s, ts} with or without diffusion parameters..
 
 def calc_S2f_tf_S2s_ts_djw_dS2f(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the S2f partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} with or without diffusion tensor parameters.
@@ -1128,7 +1128,7 @@ def calc_S2f_tf_S2s_ts_djw_dS2f(data, params, j):
 # {S2f, S2s, ts} and {S2f, tf, S2s, ts} with or without diffusion parameters.
 
 def calc_S2f_tf_S2s_ts_djw_dS2s(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the S2s partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without diffusion
@@ -1153,7 +1153,7 @@ def calc_S2f_tf_S2s_ts_djw_dS2s(data, params, j):
 # {S2f, tf, S2s, ts} with or without diffusion parameters.
 
 def calc_S2f_tf_S2s_ts_djw_dtf(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the tf partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} with or without diffusion tensor parameters.
@@ -1177,7 +1177,7 @@ def calc_S2f_tf_S2s_ts_djw_dtf(data, params, j):
 # {S2f, S2s, ts} and {S2f, tf, S2s, ts} with or without diffusion parameters.
 
 def calc_S2f_S2s_ts_djw_dts(data, params, j):
-    """Spectral density gradient.
+    r"""Spectral density gradient.
 
     Calculate the spectral desity values for the ts partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without diffusion
@@ -1201,7 +1201,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 # Spectral density Hessians. #
 ##############################
 
-"""
+r"""
     The spectral density Hessians
     =============================
 
@@ -1739,7 +1739,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 # {} with diffusion parameters.
 
 def calc_diff_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
@@ -1757,7 +1757,7 @@ def calc_diff_d2jw_dGjdGk(data, params, j, k):
 
 
 def calc_ellipsoid_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
@@ -1777,7 +1777,7 @@ def calc_ellipsoid_d2jw_dGjdGk(data, params, j, k):
 # {S2} with diffusion parameters.
 
 def calc_diff_S2_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
@@ -1795,7 +1795,7 @@ def calc_diff_S2_d2jw_dGjdGk(data, params, j, k):
 
 
 def calc_ellipsoid_S2_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
@@ -1815,7 +1815,7 @@ def calc_ellipsoid_S2_d2jw_dGjdGk(data, params, j, k):
 # {S2, te} with diffusion parameters.
 
 def calc_diff_S2_te_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -1843,7 +1843,7 @@ def calc_diff_S2_te_d2jw_dGjdGk(data, params, j, k):
 
 
 def calc_ellipsoid_S2_te_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -1886,7 +1886,7 @@ def calc_ellipsoid_S2_te_d2jw_dGjdGk(data, params, j, k):
 # {} with diffusion parameters.
 
 def calc_diff_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
@@ -1904,7 +1904,7 @@ def calc_diff_d2jw_dGjdOj(data, params, j, k):
 
 
 def calc_ellipsoid_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
@@ -1924,7 +1924,7 @@ def calc_ellipsoid_d2jw_dGjdOj(data, params, j, k):
 # {S2} with diffusion parameters.
 
 def calc_diff_S2_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
@@ -1942,7 +1942,7 @@ def calc_diff_S2_d2jw_dGjdOj(data, params, j, k):
 
 
 def calc_ellipsoid_S2_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
@@ -1962,7 +1962,7 @@ def calc_ellipsoid_S2_d2jw_dGjdOj(data, params, j, k):
 # {S2, te} with diffusion parameters.
 
 def calc_diff_S2_te_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -1980,7 +1980,7 @@ def calc_diff_S2_te_d2jw_dGjdOj(data, params, j, k):
 
 
 def calc_ellipsoid_S2_te_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -2008,7 +2008,7 @@ def calc_ellipsoid_S2_te_d2jw_dGjdOj(data, params, j, k):
 # {S2} with diffusion parameters.
 
 def calc_diff_S2_d2jw_dGjdS2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
@@ -2026,7 +2026,7 @@ def calc_diff_S2_d2jw_dGjdS2(data, params, j, k):
 
 
 def calc_ellipsoid_S2_d2jw_dGjdS2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
@@ -2046,7 +2046,7 @@ def calc_ellipsoid_S2_d2jw_dGjdS2(data, params, j, k):
 # {S2, te} with diffusion parameters.
 
 def calc_diff_S2_te_d2jw_dGjdS2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -2064,7 +2064,7 @@ def calc_diff_S2_te_d2jw_dGjdS2(data, params, j, k):
 
 
 def calc_ellipsoid_S2_te_d2jw_dGjdS2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -2092,7 +2092,7 @@ def calc_ellipsoid_S2_te_d2jw_dGjdS2(data, params, j, k):
 # {S2, te} with diffusion parameters.
 
 def calc_diff_S2_te_d2jw_dGjdte(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - te double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -2110,7 +2110,7 @@ def calc_diff_S2_te_d2jw_dGjdte(data, params, j, k):
 
 
 def calc_ellipsoid_S2_te_d2jw_dGjdte(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - te double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -2134,7 +2134,7 @@ def calc_ellipsoid_S2_te_d2jw_dGjdte(data, params, j, k):
 # {} with diffusion parameters.
 
 def calc_diff_d2jw_dOjdOk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     original model-free formula with no parameters {} together with diffusion tensor parameters.
@@ -2154,7 +2154,7 @@ def calc_diff_d2jw_dOjdOk(data, params, j, k):
 # {S2} with diffusion parameters.
 
 def calc_diff_S2_d2jw_dOjdOk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     original model-free formula with the parameter {S2} together with diffusion tensor parameters.
@@ -2174,7 +2174,7 @@ def calc_diff_S2_d2jw_dOjdOk(data, params, j, k):
 # {S2, te} with diffusion parameters.
 
 def calc_diff_S2_te_d2jw_dOjdOk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     original model-free formula with the parameters {S2, te} together with diffusion tensor
@@ -2199,7 +2199,7 @@ def calc_diff_S2_te_d2jw_dOjdOk(data, params, j, k):
 # {S2} with diffusion parameters.
 
 def calc_diff_S2_d2jw_dOjdS2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - S2 double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
@@ -2219,7 +2219,7 @@ def calc_diff_S2_d2jw_dOjdS2(data, params, j, k):
 # {S2, te} with diffusion parameters.
 
 def calc_diff_S2_te_d2jw_dOjdS2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - S2 double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -2243,7 +2243,7 @@ def calc_diff_S2_te_d2jw_dOjdS2(data, params, j, k):
 # {S2, te} with diffusion parameters.
 
 def calc_diff_S2_te_d2jw_dOjdte(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - te double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
@@ -2267,7 +2267,7 @@ def calc_diff_S2_te_d2jw_dOjdte(data, params, j, k):
 # {S2, te} with or without diffusion parameters.
 
 def calc_S2_te_d2jw_dS2dte(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the S2 - te double partial derivative of the original
     model-free formula with the parameters {S2, te} with or without diffusion tensor parameters.
@@ -2291,7 +2291,7 @@ def calc_S2_te_d2jw_dS2dte(data, params, j, k):
 # {S2, te} with or without diffusion parameters.
 
 def calc_S2_te_d2jw_dte2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the te - te double partial derivative of the original
     model-free formula with the parameters {S2, te} with or without diffusion tensor parameters.
@@ -2315,7 +2315,7 @@ def calc_S2_te_d2jw_dte2(data, params, j, k):
 # {S2f, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
@@ -2343,7 +2343,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdGk(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
@@ -2382,7 +2382,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk(data, params, j, k):
 # {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2416,7 +2416,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2469,7 +2469,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk(data, params, j, k):
 # {S2f, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
@@ -2487,7 +2487,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdOj(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
@@ -2511,7 +2511,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj(data, params, j, k):
 # {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2_ts_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2530,7 +2530,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dGjdOj(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2559,7 +2559,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj(data, params, j, k):
 # {S2f, S2, ts} or {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_d2jw_dGjdS2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
@@ -2578,7 +2578,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdS2(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
@@ -2607,7 +2607,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2(data, params, j, k):
 # {S2f, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_d2jw_dGjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
@@ -2625,7 +2625,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdS2f(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
@@ -2645,7 +2645,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f(data, params, j, k):
 # {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2664,7 +2664,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2693,7 +2693,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f(data, params, j, k):
 # {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2_ts_d2jw_dGjdtf(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2712,7 +2712,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dGjdtf(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2737,7 +2737,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf(data, params, j, k):
 # {S2f, S2, ts} or {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_d2jw_dGjdts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
@@ -2756,7 +2756,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdts(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
@@ -2781,7 +2781,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdts(data, params, j, k):
 # {S2f, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_d2jw_dOjdOk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     extended model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor
@@ -2802,7 +2802,7 @@ def calc_diff_S2f_S2_ts_d2jw_dOjdOk(data, params, j, k):
 # {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     extended model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2827,7 +2827,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk(data, params, j, k):
 # {S2f, S2, ts} and {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_d2jw_dOjdS2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - S2 double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} and {S2f, tf, S2, ts} together with
@@ -2852,7 +2852,7 @@ def calc_diff_S2f_S2_ts_d2jw_dOjdS2(data, params, j, k):
 # {S2f, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_d2jw_dOjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - S2f double partial derivative of the
     extended model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor
@@ -2873,7 +2873,7 @@ def calc_diff_S2f_S2_ts_d2jw_dOjdS2f(data, params, j, k):
 # {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - S2f double partial derivative of the
     extended model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2898,7 +2898,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f(data, params, j, k):
 # {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
@@ -2923,7 +2923,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf(data, params, j, k):
 # {S2f, S2, ts} and {S2f, tf, S2, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2_ts_d2jw_dOjdts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
@@ -2948,7 +2948,7 @@ def calc_diff_S2f_S2_ts_d2jw_dOjdts(data, params, j, k):
 # {S2f, S2, ts} or {S2f, tf, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_S2_ts_d2jw_dS2dts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the S2 - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without
@@ -2973,7 +2973,7 @@ def calc_S2f_S2_ts_d2jw_dS2dts(data, params, j, k):
 # {S2f, tf, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_tf_S2_ts_d2jw_dS2fdtf(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the S2f - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} with or without diffusion tensor
@@ -2998,7 +2998,7 @@ def calc_S2f_tf_S2_ts_d2jw_dS2fdtf(data, params, j, k):
 # {S2f, S2, ts} or {S2f, tf, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_S2_ts_d2jw_dS2fdts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the S2f - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without
@@ -3023,7 +3023,7 @@ def calc_S2f_S2_ts_d2jw_dS2fdts(data, params, j, k):
 # {S2f, tf, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_tf_S2_ts_d2jw_dtf2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the tf - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2, ts} with or without diffusion tensor
@@ -3048,7 +3048,7 @@ def calc_S2f_tf_S2_ts_d2jw_dtf2(data, params, j, k):
 # {S2f, S2, ts} or {S2f, tf, S2, ts} with or without diffusion parameters.
 
 def calc_S2f_S2_ts_d2jw_dts2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the ts - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without
@@ -3073,7 +3073,7 @@ def calc_S2f_S2_ts_d2jw_dts2(data, params, j, k):
 # {S2f, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
@@ -3101,7 +3101,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdGk(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
@@ -3139,7 +3139,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk(data, params, j, k):
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3173,7 +3173,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3226,7 +3226,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk(data, params, j, k):
 # {S2f, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
@@ -3244,7 +3244,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdOj(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
@@ -3268,7 +3268,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj(data, params, j, k):
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3287,7 +3287,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdOj(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3316,7 +3316,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj(data, params, j, k):
 # {S2f, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
@@ -3334,7 +3334,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
@@ -3358,7 +3358,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3377,7 +3377,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3406,7 +3406,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
 # {S2f, S2s, ts} or {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_d2jw_dGjdS2s(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2s double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
@@ -3425,7 +3425,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdS2s(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - S2s double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
@@ -3454,7 +3454,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s(data, params, j, k):
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdtf(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3473,7 +3473,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdtf(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3498,7 +3498,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf(data, params, j, k):
 # {S2f, S2s, ts} or {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_d2jw_dGjdts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
@@ -3517,7 +3517,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdts(data, params, j, k):
 
 
 def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Gj - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
@@ -3542,7 +3542,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdts(data, params, j, k):
 # {S2f, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_d2jw_dOjdOk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     extended model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor
@@ -3563,7 +3563,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dOjdOk(data, params, j, k):
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     extended model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3588,7 +3588,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk(data, params, j, k):
 # {S2f, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_d2jw_dOjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - S2f double partial derivative of the
     extended model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor
@@ -3609,7 +3609,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dOjdS2f(data, params, j, k):
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - S2f double partial derivative of the
     extended model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3634,7 +3634,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f(data, params, j, k):
 # {S2f, S2s, ts} and {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2s(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - S2 double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} and {S2f, tf, S2s, ts} together with
@@ -3659,7 +3659,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2s(data, params, j, k):
 # {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
@@ -3684,7 +3684,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf(data, params, j, k):
 # {S2f, S2s, ts} and {S2f, tf, S2s, ts} with diffusion parameters.
 
 def calc_diff_S2f_S2s_ts_d2jw_dOjdts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the Oj - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
@@ -3709,7 +3709,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dOjdts(data, params, j, k):
 # {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without diffusion parameters.
 
 def calc_S2f_S2s_ts_d2jw_dS2fdS2s(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the S2f - S2s double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without
@@ -3734,7 +3734,7 @@ def calc_S2f_S2s_ts_d2jw_dS2fdS2s(data, params, j, k):
 # {S2f, tf, S2s, ts} with or without diffusion parameters.
 
 def calc_S2f_tf_S2s_ts_d2jw_dS2fdtf(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the S2f - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} with or without diffusion tensor
@@ -3759,7 +3759,7 @@ def calc_S2f_tf_S2s_ts_d2jw_dS2fdtf(data, params, j, k):
 # {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without diffusion parameters.
 
 def calc_S2f_S2s_ts_d2jw_dS2fdts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the S2f - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without
@@ -3784,7 +3784,7 @@ def calc_S2f_S2s_ts_d2jw_dS2fdts(data, params, j, k):
 # {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without diffusion parameters.
 
 def calc_S2f_S2s_ts_d2jw_dS2sdts(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the S2s - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without
@@ -3809,7 +3809,7 @@ def calc_S2f_S2s_ts_d2jw_dS2sdts(data, params, j, k):
 # {S2f, tf, S2s, ts} with or without diffusion parameters.
 
 def calc_S2f_tf_S2s_ts_d2jw_dtf2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the tf - tf double partial derivative of the extended
     model-free formula with the parameters {S2f, tf, S2s, ts} with or without diffusion tensor
@@ -3834,7 +3834,7 @@ def calc_S2f_tf_S2s_ts_d2jw_dtf2(data, params, j, k):
 # {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without diffusion parameters.
 
 def calc_S2f_S2s_ts_d2jw_dts2(data, params, j, k):
-    """Spectral density Hessian.
+    r"""Spectral density Hessian.
 
     Calculate the spectral desity values for the ts - ts double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without

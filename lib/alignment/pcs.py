@@ -31,7 +31,7 @@ from lib.physical_constants import kB, mu0
 
 
 def ave_pcs_tensor(dj, vect, N, A, weights=None):
-    """Calculate the ensemble average PCS, using the 3D tensor.
+    r"""Calculate the ensemble average PCS, using the 3D tensor.
 
     This function calculates the average PCS for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average PCS value is::
 
@@ -103,7 +103,7 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
 
 
 def ave_pcs_tensor_ddeltaij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
-    """Calculate the ensemble average PCS gradient element for Amn, using the 3D tensor.
+    r"""Calculate the ensemble average PCS gradient element for Amn, using the 3D tensor.
 
     This function calculates the alignment tensor parameter part of the average PCS gradient for a set of electron-nuclear spin unit vectors (paramagnetic to the nuclear spin) from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average PCS gradient element is::
 
@@ -165,7 +165,7 @@ def ave_pcs_tensor_ddeltaij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
 
 
 def ave_pcs_tensor_ddeltaij_dc(ddj=None, dj=None, r=None, unit_vect=None, N=None, Ai=None, dr_dc=None, weights=None):
-    """Calculate the ensemble average PCS gradient element for the paramagnetic centre coordinate c, using the 3D tensor.
+    r"""Calculate the ensemble average PCS gradient element for the paramagnetic centre coordinate c, using the 3D tensor.
 
     This function calculates the paramagnetic centre coordinate part of the average PCS gradient for a set of electron-nuclear spin unit vectors (paramagnetic to the nuclear spin) from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average PCS gradient element is::
 
