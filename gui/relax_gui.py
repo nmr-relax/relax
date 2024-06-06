@@ -284,7 +284,7 @@ class Main(wx.Frame):
                 "wxPython-Phoenix version %s.%s.%s detected." % (wx.VERSION[0], wx.VERSION[1], wx.VERSION[2]),
                 "This version of Phoenix is not stable and relax support is experimental.",
                 "Not all features of the GUI may be available or functional.",
-                "Please use wxPython \"Classic\" instead - otherwise use at your own risk."
+                "Please use wxPython-Phoenix version >= 4.1.0 or \"Classic\" instead - otherwise use at your own risk."
             ]
             for i in range(len(text)):
                 element = wx.StaticText(self, -1, text[i])
