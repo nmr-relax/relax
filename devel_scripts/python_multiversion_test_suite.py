@@ -46,11 +46,11 @@ def execute_sh(cmd, log=sys.stdout, err=sys.stderr):
 
     # Redirect STDOUT to the log file.
     for line in pipe.stdout.readlines():
-        log.write(line)
+        log.write(line.decode('utf-8'))
 
     # Redirect STDERR to the error file.
     for line in pipe.stderr.readlines():
-        err.write(line)
+        err.write(line.decode('utf-8'))
 
     # Flush.
     log.flush()
