@@ -67,7 +67,7 @@ class Fetch_docstrings:
             uf_names.append(self.uf_name)
             # The user function class.
             self.uf_class = None
-            if search('\.', self.uf_name):
+            if search(r'\.', self.uf_name):
                 # Split up the name.
                 class_name, uf_name = self.uf_name.split('.')
 

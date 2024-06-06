@@ -65,7 +65,7 @@ class Verification_test_runner:
         # Specific tests.
         for test in tests:
             # The entire test class.
-            if not search('\.', test):
+            if not search(r'\.', test):
                 # Check that the class exists.
                 if test not in globals():
                     raise RelaxError("The system test class '%s' does not exist." % test)

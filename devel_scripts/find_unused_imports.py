@@ -84,7 +84,7 @@ for root, dirs, files in walk(directory):
     # Loop over the files.
     for file in files:
         # Only check Python files.
-        if not search("\.py$", file):
+        if not search(r"\.py$", file):
             continue
 
         # Full path to the file.

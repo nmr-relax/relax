@@ -402,7 +402,7 @@ class Grid_base:
         # Allowed keys.
         allowed = []
         allowed += [8]    # Backspace.
-        if not search('\.', text):
+        if not search(r'\.', text):
             allowed += [46]    # Only one full stop.
         allowed += [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]    # Numbers.
         allowed += [127]    # Delete.

@@ -36,21 +36,21 @@ from version import version
 
 # Version control directories to skip.
 VERSION_CONTROL_DIRS = [
-    "\.git",
-    "\.hg",
-    "\.svn",
+    r"\.git",
+    r"\.hg",
+    r"\.svn",
 ]
 
 # Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o', '.os', 'obj', 'lib', and 'exp'.
 BLACKLISTED_FILES = [
-    "\.sconsign",
-    "^\.",
-    "\.pyc$",
-    "\.o$",
-    "\.os$",
-    "\.obj$",
-    "\.lib$",
-    "\.exp$",
+    r"\.sconsign",
+    r"^\.",
+    r"\.pyc$",
+    r"\.o$",
+    r"\.os$",
+    r"\.obj$",
+    r"\.lib$",
+    r"\.exp$",
 ]
 
 def gpg_sign(target, source, env):

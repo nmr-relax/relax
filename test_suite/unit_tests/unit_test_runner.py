@@ -395,7 +395,7 @@ class Unit_test_runner(object):
        @type:   list of str
     """
 
-    test_case_patterns = ['test_.*\.py$']
+    test_case_patterns = [r'test_.*\.py$']
     """@ivar:   A list of regex patterns against which files will be
                 tested to see if they are expected to contain unit tests. If
                 the file has the correct pattern the module contained inside the

@@ -82,7 +82,7 @@ def build_uf_menus(parent=None, menubar=None):
     menu_index = 0
     for name, data in uf_info.uf_loop():
         # Split up the name.
-        if search('\.', name):
+        if search(r'\.', name):
             class_name, uf_name = name.split('.')
         else:
             class_name = None

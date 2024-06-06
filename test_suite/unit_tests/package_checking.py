@@ -52,7 +52,7 @@ class PackageTestCase(UnitTestCase):
                 continue
 
             # Skip hidden files and directories.
-            if search("^\.", file):
+            if search(r"^\.", file):
                 continue
 
             # Skip the Python 3 '__pycache__' directories.
@@ -60,7 +60,7 @@ class PackageTestCase(UnitTestCase):
                 continue
 
             # Only check Python files and directories.
-            if not search("\.py$", file) and not isdir(path):
+            if not search(r"\.py$", file) and not isdir(path):
                 continue
 
             # Skip blacklisted files.

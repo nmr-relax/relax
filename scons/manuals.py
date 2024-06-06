@@ -285,7 +285,7 @@ def compile_api_manual_html(target, source, env):
             continue
 
         # Hidden files and directories.
-        if search('^\.', file):
+        if search(r'^\.', file):
             continue
 
         # Not a Python file.
@@ -313,7 +313,7 @@ def compile_api_manual_html(target, source, env):
             sys.stdout.write(line)
 
             # A new issue
-            if search("^\+----------", line):
+            if search(r"^\+----------", line):
                 issues.append("")
                 continue
 

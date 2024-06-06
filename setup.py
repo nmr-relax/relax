@@ -137,7 +137,7 @@ class Setup:
             file_list = []
             for file in filenames:
                 # Skip names starting with '.'.
-                if search('^\.', file):
+                if search(r'^\.', file):
                     continue
 
                 # Blacklist.
@@ -211,11 +211,11 @@ class Setup:
             # Loop over the files.
             for file in filenames:
                 # Skip names starting with '.'.
-                if search('^\.', file):
+                if search(r'^\.', file):
                     continue
 
                 # Skip non-Python source files.
-                if not search('\.py$', file):
+                if not search(r'\.py$', file):
                     continue
 
                 # Blacklist.

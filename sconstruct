@@ -406,7 +406,7 @@ class Main:
             for file in files:
                 # Loop over the extensions.
                 for ext in temp_extns:
-                    if search('\.' + ext + '$', file):
+                    if search(r'\.' + ext + '$', file):
                         remove(path.join(root, file))
 
         # Remove build directories.
@@ -442,7 +442,7 @@ class Main:
             for file in files:
                 # Loop over the extensions.
                 for ext in temp_extns:
-                    if search('\.' + ext + '$', file):
+                    if search(r'\.' + ext + '$', file):
                         remove(path.join(root, file))
 
         # Remove relax save state files.
