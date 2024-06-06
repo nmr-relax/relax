@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009,2011-2016,2019 Edward d'Auvergne                    #
+# Copyright (C) 2003-2009,2011-2016,2019,2024 Edward d'Auvergne               #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2011 Han Sun                                                  #
