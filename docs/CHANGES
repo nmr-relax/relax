@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2016,2019-2020 Edward d'Auvergne                         #
+# Copyright (C) 2006-2016,2019-2020,2024 Edward d'Auvergne                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -18,6 +18,78 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+
+Version 5.1.0
+(07 June 2024, from master)
+https://sourceforge.net/p/nmr-relax/code/ci/5.1.0/tree/
+
+    Features:
+        * Full support for the stable wxPython versions >= 4.1.0.
+        * Addition of a double pivot finding script.
+        * Redesign of the GUI splash screen.
+        * Improved layout of GUI elements.
+        * Support for Python versions >= 3.11.
+
+
+    Changes:
+        * Release checklist document: Usage of environmental variables for command line simplification.
+        * Release checklist document: Version number updates for the new 5.0.x releases.
+        * CHANGES file: Date fix and removal of an insignificant changes entry.
+        * Copyright: Updated the years for the release checklist.
+        * Wiki backup scripts: These have been updated for the migration to the SourceForge servers.  The scripts were previously configured for Troels' brother's server which hosted the relax wiki.
+        * Wiki backup scripts: Renamed the FTP backup script to be the wiki file backup script.
+        * Wiki MySQL backup script: Fixes for properly handling the SourceForge shell.  The important commands are now echoed into the log as well.
+        * FSF Copyright Validation script: Bug fix for the handling of file renames.  File renames, when made in the current repository, were not being followed.
+        * FSF Copyright Validation script: Removal of a DeprecationWarning.
+        * FSF Copyright Validation configuration: Blocked incorrect git history for one of the Docker scripts.
+        * FSF Copyright Validation script: Better documentation of the blank config.
+        * FSF Copyright Validation configuration: Fix for the 'README' to 'README.md' rename.  The committer information file was created just after this rename.
+        * FSF Copyright Validation configuration: Ignore an insignificant commit.
+        * Sample scripts: Addition of the double pivot finding script from Edward's QRB paper.  The reference is https://doi.org/10.1017/S0033583519000015.
+        * Sample scripts: Added some documentation to the double pivot finding algorithm script.
+        * GUI: The main window title now includes the git hash when running from the repository.
+        * Sample scripts: Addition of a copyright notice to the double pivot finding algorithm.
+        * FSF Copyright Validation configuration: Add some copyright years to sample_scripts/pivot_finder.py.
+        * Graphics: Addition of a PNG version of the pipe_bundle icon.
+        * wxPython: Versions >= 4.1.0 are now considered stable.
+        * wxPython: Fixes for allowing relax to run on wxPython >= 4.1.0.
+        * Travis CI config: Removal of the obsolete configuration file.  Travis CI no longer supports open source projects and hence the automated testing of relax using Travis CI configuration files via GitHub can be removed.
+        * GUI: Complete redesign of the GUI splash screen.  The static image has been replaced with an animation.  This consists of two stacked panels, with an animated gif on the bottom and a basic transparent bitmap on top.  The animation is of the frame order 1st motional mode in the CaM-IQ peptide complex.
+        * wxPython: Fix for the relax controller for versions >= 4.1.0.
+        * wxPython: Fix for the spin controller window title text for versions >= 4.1.0.
+        * wxPython: Text wrapping fix for all wizard windows for versions >= 4.1.0.
+        * wxPython: Truncated icon fix for all wizard windows for versions >= 4.1.0.  This caused the Oxygen icons in all user function GUI windows to be only partly shown.
+        * Copyright: Updated the main program copyrights for 2022.
+        * GUI: Added some additional spacing within the free file format GUI element.
+        * GUI: Improved size measurements of text elements by using wx.DC objects.  This uses wx.ScreenDC() objects to set the font and determine the size of the text element with that font, allowing for accurate width and height setting and measurements and hence improved widget layout.
+        * wxPython: Fix for the wizard page titles for versions >= 4.1.0.  The wx.StaticText size needs to be calculated via a DC object and set when creating the StaticText object.
+        * GUI: Dialog height fix for the reset() user function.
+        * Diffusion tensor display: The tm row now displays the hidden radian unit.
+        * wxPython: Fix for recent versions whereby wx.ScreenDC.GetTextExtent() now returns floats.  This was causing the wx.Sizer AddSpacer() function to fail, as it expects an integer argument.
+        * wxPython: More fixes for recent versions whereby floats are encountered instead of ints.
+        * wxPython: Another fix for recent versions whereby floats are encountered instead of ints.
+        * OpenDX: Depreciation error fix for the dx.map user function.
+        * Test suite: Fix for the Palmer.test_palmer_omp system test.  Art Palmer's modelfree4 64-bit Linux binary is producing slightly different results with the newer linked libraries (from ~2024).  The test has been updated to catch this.
+        * Development scripts: Added Python 3.12 to the list of Python versions to run the test suite against.
+        * Test suite: Support for Python versions >= 3.11.  The private method assert_() of the unittest.TestCase module has been removed.  This requires a switch to the public assertTrue() method within the whole test suite.
+        * Compat: Fix for the Linux distribution information if neither the platform or distro packages exist.  This information is used in the system information printout and in the test suite.
+        * Travis-CI: Removal of the last mentions of this shut down service.
+        * Release Checklist: Removal of an old mention of the Gna! infrastructure.
+        * Copyright: Updated the year to 2024.
+        * Python: Conversion of many strings to raw strings to avoid SystemWarnings for newer Python versions.
+        * Python: Fixes for the removal of failIf() and failUnless() from the unittest TestCase class.  These have been switched with assertTrue(...) and assertTrue(not ...) to retain Python 2.5 compatibility.
+        * Python: Fix for the removal of the depreciated inspect.getargspec() function.  This is now provided by inspect.getfullargspec().  A wrapper function in lib.compat has been added to allow for multiple Python support.
+        * Test suite: Work around for the now eliminated locale.format() function.  This can simply be replaced by locale.format_string() for Python versions 2.5 to 3.12.
+        * Development scripts: Fix for the multi Python version testing script for newer Python versions.
+        * GUI: Improved the warning text for wxPython-Phoenix 4.0.x versions.
+        * Python: Continued conversion of strings containing "\" to raw strings to avoid SystemWarnings.
+        * FSF Copyright Validation: Updated a number of copyright notices for 2024.  These were identified with the command './devel_scripts/fsfcv -c devel_scripts/fsfcv.conf.py'.
+
+
+    Bugfixes:
+        * GUI: Fix for the Help->Licence menu entry.  The full file path to the GPLv3 text is required.
+
+
 
 Version 5.0.0
 (24 August 2020, from master)
