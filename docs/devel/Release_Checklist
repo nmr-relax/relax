@@ -49,7 +49,7 @@ $ git add -f docs/relax.pdf
 $ git commit -m "Added the relax 5.0.0 manual to the repository."
 $ scons clean
 
-Copy the PDF manual to the mirror directory for the relax download site for uploading in one of the steps below.
+Note that for newer LaTeX versions, the 'swdefault' command in the 'allrunes.sty' file might need to be renamed to say 'swdefaultnew'.  Copy the PDF manual to the mirror directory for the relax download site for uploading in one of the steps below.
 
 
 
