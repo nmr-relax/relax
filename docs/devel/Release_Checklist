@@ -239,8 +239,8 @@ $ scons api_manual_html
 
 Then:
 
-    - Replace the old API documentation in the website repository and commit with a message such as "Updated the relax API documentation at http://www.nmr-relax.com/api/5.0/ to version 5.1.1.".
-    - If a new minor version is being released, create a new directory such as api/5.0/, copy the files there.
+    - Replace the old API documentation in the website repository and commit with a message such as "Updated the relax API documentation at http://www.nmr-relax.com/api/5.1/ to version 5.1.1.".
+    - If a new minor version is being released, create a new directory such as api/5.1/, copy the files there.
     - Update the api/index.html file to add the new version, and commit with a message such as "Updated the relax version number to 5.1.1 on the http://www.nmr-relax.com/api/index.html webpage.".
 
 
@@ -269,15 +269,16 @@ Compose and edit the message on the relax wiki, then post the release message to
 Wiki
 ----
 
-Create a new release page at the URL http://wiki.nmr-relax.com/Relax_x.y.z.  Use, for example, http://wiki.nmr-relax.com/Relax_4.0.1 as a guide.  The basic page structure is as follows:
+Create a new release page at the URL http://wiki.nmr-relax.com/Relax_x.y.z.  Use, for example, http://wiki.nmr-relax.com/Relax_5.1.0 as a guide.  The basic page structure is as follows:
 
     {{lowercase title}} - Start with this to allow the title to be in lowercase.  The URL on a wiki always starts with a capital, but the title can be changed to lowercase in this way.
-    = Description = - Create this section by writing a detailed and full description of the release.  Add internal wiki links and external links, for example to the relax manual web pages for the user functions.
-    = Download = - Create this section with links for downloading the release (simply copy the text from an older release).
-    = CHANGES file = - Create this section by cutting and pasting the part of the CHANGES file for this release.  Convert the Features, Changes, and Bugfixes titles to the subsection format == Features ==, == Changes ==, and == Bugfixes ==.  Strip all leading whitespace from the full list of changes so that the wiki can format the text.
-    = Links = - Links to the other release announcements.
-    = Announcements = - A transcluded section using {{:relax release announcements}}.
-    = See also = - Finally create this section which simply contains the text [[Category:Release_Notes]].
+    {{infobox}} - Copy and modify from the previous relax release.
+    == Description == - Create this section by writing a detailed and full description of the release.  Add internal wiki links and external links, for example to the relax manual web pages for the user functions.
+    == Download == - Create this section with links for downloading the release (simply copy the text from an older release).
+    == CHANGES file == - Create this section by cutting and pasting the part of the CHANGES file for this release.  Convert the Features, Changes, and Bugfixes titles to the subsection format == Features ==, == Changes ==, and == Bugfixes ==.  Strip all leading whitespace from the full list of changes so that the wiki can format the text.
+    == Links == - Links to the other release announcements.
+    == Announcements == - A transcluded section using {{:relax release announcements}}.
+    == See also == - Finally create this section which simply contains the text [[Category:Release_Notes]].
 
 For the changes file text, make the following conversions:
 
@@ -291,7 +292,7 @@ For the changes file text, make the following conversions:
     - Convert all symbols to use wiki formatting.
     - Convert all model parameters to use the {{:xyz}} parameter template infrastructure.
     - Convert all model names to internal wiki links (vi search "\<m[0-9]\>\|\<tm[0-9]\>\|No Rex\|R2eff\|LM63\|LM63 3-site\|CR72\|CR72 full\|IT99\|TSMFK01\|B14\|B14 full\|NS CPMG\|MMQ CR72\|NS MMQ\|M61\|DPL94\|TP02\|TAP03\|MP05\|NS R1rho\|BK13").
-    - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).  Open up the API documentation index (e.g. http://www.nmr-relax.com/api/5.0/identifier-index.html) and manually create the links.  This is a tedious task!
+    - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).  Open up the API documentation index (e.g. http://www.nmr-relax.com/api/5.1/identifier-index.html) and manually create the links.  This is a tedious task!
     - Add <code> tags for better formatting of certain elements (file and directory names, code elements, console output, GUI element, etc).
     - Convert any direct links if possible.
     - To avoid dead links, perform a final proof that all the links in the wiki article are correct by following the links.
